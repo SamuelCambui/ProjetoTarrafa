@@ -1,0 +1,292 @@
+{% extends 'ppg/base.html' %}
+
+{% block title %}PPG{% endblock %}
+
+{% block content %}
+                    
+
+                    <div class="mt-4">
+                        <div class="row">
+                            <h5 class="mb-0 text-primary">LISTA DE USUÁRIOS DO SISTEMA</h5>
+                        </div>
+                        <hr>
+                        
+                        {% with sucesso = get_flashed_messages(category_filter=["sucesso"]) %}
+                            {% if sucesso %}
+                            {%- for msg in sucesso %}
+                            <div class="row justify-content-center">
+                                <div class="col-auto">
+                                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                                        {{msg}}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor -%}
+                            </div>
+                            {% endif %}
+                        {% endwith %}
+
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4">
+                                <form>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fa fa-search"></i></span>
+                                        <input id="search-users" class="form-control" type="text"
+                                            placeholder="Nome, ID Lattes ou E-mail">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-xl-8 col-lg-8 text-end">
+                                {% if current_user.is_admin != false or current_user.is_superuser != false %}
+                                <button id="novoUsuario" class="btn btn-primary"><i class="fas fa-user-plus fa-sm"></i> Novo
+                                    usuário</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="table-responsive table mt-2" id="dataTable" role="grid"
+                            aria-describedby="dataTable_info">
+                            <table class="table table-striped my-0" id="dataTable">
+                                <thead class="table-primary tableas">
+                                    <tr>
+                                        <th class="text-light-emphasis">NOME DO USUÁRIO</th>
+                                        <th class="text-light-emphasis">ID LATTES</th>
+                                        <th class="text-light-emphasis">E-MAIL</th>
+                                        <th class="text-light-emphasis text-center">PERFIL</th>
+                                        <th class="text-light-emphasis text-center">ATIVO</th>
+                                        <th class="text-light-emphasis text-center">LOGADO</th>
+                                        <th class="text-light-emphasis text-center">AÇÕES</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-users">
+                                    {% for user in users %}
+                                    {% if current_user.idlattes == user.idlattes %}
+                                    <tr>
+                                        <td>{{user.full_name}}</td>
+                                        <td>{{user.idlattes}}</td>
+                                        <td>{{user.email if user.email is not none else ''}}</td>
+                                        <td class="text-center">{{user.perfil}}</td>
+                                        <td id="ativo{{user.idlattes}}" class="text-center">{{'Sim' if user.is_active else 'Não'}}</td>
+                                        <td id="logado{{user.idlattes}}" class="text-center">{{user.logado}}</td>
+                                        <td class="text-center">
+                                            
+                                            <a role="button" class="btn btn-warning" data-toggle="tooltip" title="Editar" onclick="AlterarSenha('{{user.email}}')">Alterar senha</i></a>
+                                            
+                                        </td>
+                                    </tr>
+                                    {% elif current_user.is_admin or current_user.is_superuser %}
+                                    <tr>
+                                        <td>{{user.full_name}}</td>
+                                        <td>{{user.idlattes}}</td>
+                                        <td>{{user.email if user.email is not none else ''}}</td>
+                                        <td class="text-center">{{user.perfil}}</td>
+                                        <td id="ativo{{user.idlattes}}" class="text-center">{{'Sim' if user.is_active else 'Não'}}</td>
+                                        <td id="logado{{user.idlattes}}" class="text-center">{{user.logado}}</td>
+                                        <td class="text-center">
+                                            
+                                            {% if user.is_active %}
+                                            <a role="button" class="acoes" onclick="SetStatus('{{user.idlattes}}')" data-toggle="tooltip" title="Desativar"><i id="lock{{user.idlattes}}" class="fas fa-user"></i></a>
+                                            {% else %}
+                                            <a role="button" class="acoes" onclick="SetStatus('{{user.idlattes}}')" data-toggle="tooltip" title="Ativar"><i id="lock{{user.idlattes}}" class="fas fa-user-slash"></i></a>
+                                            {% endif %} 
+                                            <a role="button" class="acoes" data-toggle="tooltip" title="Editar" onclick="GetUser('{{user.idlattes}}',{{'true' if current_user.is_superuser else 'false'}},{{'true' if current_user.is_admin else 'false'}})"><i class="fas fa-edit fa-beat"></i></a>
+                                            {% if current_user.idlattes != user.idlattes%}
+                                            <a role="button" class="acoes" data-toggle="tooltip" title="Excluir" onclick="DeleteUser('{{user.idlattes}}', '{{user.full_name}}')"><i class="fas fa-trash"></i></a>
+                                            {% else %}
+                                            <a role="button" class="acoes" data-toggle="tooltip" title="Excluir" aria-disabled="true"><i class="fas fa-trash"></i></a>
+                                            {% endif%}
+                                            <a role="button" class="acoes" data-toggle="tooltip" title="Mais"><i class="fas fa-ellipsis-v"></i></a>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                </tbody>
+                                <tfoot class="table-primary">
+                                    <tr>
+                                        <th class="text-light-emphasis">NOME DO USUÁRIO</th>
+                                        <th class="text-light-emphasis">ID LATTES</th>
+                                        <th class="text-light-emphasis">E-MAIL</th>
+                                        <th class="text-light-emphasis text-center">PERFIL</th>
+                                        <th class="text-light-emphasis text-center">ATIVO</th>
+                                        <th class="text-light-emphasis text-center">LOGADO</th>
+                                        <th class="text-light-emphasis text-center">AÇÕES</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+             
+{% endblock %}  
+
+    {% block modais %}
+        <!-- Modal Novo Usuário -->
+        <div class="modal fade" id="modalNovoUsuario" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Novo usuário</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+    
+                    <form id="cadastrar" type="submit">
+                        <div class="modal-body">
+                            
+                            <div class="mb-3">
+                                <label for="idLattes" class="form-label">ID Lattes:</label>
+                                <input id="idLattes" class="form-control" type="text">
+                            </div>
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label">Nome completo:</label>
+                                <input id="fullName" class="form-control" type="text">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">E-mail:</label>
+                                <input id="email" class="form-control" type="email">
+                            </div>
+                            <div id="superuserForm">
+                                {% if current_user.is_superuser %}
+                                <div class="mb-3">
+                                    <label for="selectPerfil" class="form-label">Tipo do perfil:</label>
+                                    <select id="selectPerfil" class="form-select">
+                                        <option>Dono</option>
+                                        <option>Administrador</option>
+                                        <option selected>Usuário comum</option>
+                                    </select>
+                                  </div>
+                                  <div class="mb-3">
+                                      <label for="idIes" class="form-label">ID IES</label>
+                                      <select id="idIes" class="form-select">
+                                        {{html | safe}}
+                                      </select>
+                                  </div>
+                                {% endif %}
+                            </div>
+                        </div>
+    
+                        <div id="cadastrarAlert"></div>
+                        
+                        <div class="modal-footer">
+                            <button class="btn btn-primary">Cadastrar</button>
+                        </div>
+                    </form>
+                    <div>
+                        <p style="text-align: center;">A senha padrão do novo usuário é o ID Lattes!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Modal Editar usuário -->
+        <div class="modal fade" id="modalEditarUsuario" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Editar usuário</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    
+                    <form id="editar" type="submit">
+                        <div class="modal-body">
+                            
+                            <div class="mb-3">
+                                <label for="editarIdLattes" class="form-label">ID Lattes:</label>
+                                <input id="editarIdLattes" class="form-control" type="text" disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editarFullName" class="form-label">Nome completo:</label>
+                                <input id="editarFullName" class="form-control" type="text">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editarEmail" class="form-label">E-mail:</label>
+                                <input id="editarEmail" class="form-control" type="email">
+                            </div>
+                            {% if current_user.is_superuser %}
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Inserir nova senha?</label><span class="form-switch" style="margin-left: 5px;"><input id="checkboxPassword" data-toggle="tooltip" data-placement="left" title="Clique para editar" class="form-check-input" role="switch" type="checkbox"></span>
+                                <input id="password" class="form-control" type="password" disabled>
+                                <small><input class="form-check-input" type="checkbox" onclick="mostrarSenha()"> Mostrar senha</small>
+                            </div>
+                            {% endif %}
+                            <div id="superuserEditForm">
+                                {% if current_user.is_superuser %}
+                                <div class="mb-3">
+                                    <label for="editarSelectPerfil" class="form-label">Tipo do perfil:</label>
+                                    <select id="editarSelectPerfil" class="form-select">
+                                        <option>Dono</option>
+                                        <option>Administrador</option>
+                                        <option>Usuário comum</option>
+                                    </select>
+                                  </div>
+                                  <div class="mb-3">
+                                      <label for="editarIdIes" class="form-label">ID IES</label>
+                                      <select id="editarIdIes" class="form-select">
+                                          {{html | safe}}
+                                      </select>
+                                  </div>
+                                  {% endif %}
+                            </div>
+                        </div>
+    
+                        <div id="editarAlert"></div>
+                        
+                        <div class="modal-footer">
+                            <button class="btn btn-primary">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal ALterar senha -->
+        <div class="modal fade" id="modalAlterarSenha" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Alteração de Senha</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    
+                    <div class="card mb-3" style="border:none;">
+                        <div class="card-body text-danger">
+                            <h5 class="card-title">Atenção:</h5>
+                            <p class="card-text">Por questões de segurança, a senha só poderá ser alterada através de um link enviado por e-mail.</p>
+                            <a id="link-alterar-senha" href="#" role="button" class="btn btn-danger" title="Alterar senha" >ENVIAR LINK para alteração de senha!</a>
+                            <p class="card-text" style="padding-top: 10px;">Após o envio, alguarde alguns instantes.<br>Verifique a caixa de SPAM, caso não encontre o e-mail.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+         <!-- Modal confirmação de exclusão -->
+         <div id="modalConfirmacao" class="modal" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill text-warning"></i> ALERTA DE EXCLUSÃO</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p id="msgExclusao" class="text-start"></p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button id="bt_excluir_usuario" type="button" class="btn btn-danger">Excluir</button>
+                </div>
+              </div>
+            </div>
+        </div>
+    {% endblock %}
+
+    
+
+    {% block scripts %}
+    <script src="{{ url_for('static', filename='ppg/js/scriptsusuarios.js') | hash_url}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/senha.js') | hash_url}}"></script>
+    {% endblock %}
+
+
+</body>
+
+</html>

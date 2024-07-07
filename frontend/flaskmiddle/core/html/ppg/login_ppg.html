@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>LOGIN - Tarrafa</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/Features-Small-Icons-icons.css">
+</head>
+
+<body style="background: rgb(55,77,170); height: auto;min-height: auto;">
+    <div style="margin:10px;" class="row justify-content-left">
+        <div class="col-auto justify-content-center align-items-center align-content-center">
+            <img src="/assets/img/icons/Logo-Oficial-PPGMCS-branco.png" style="height: 60px; padding-right:10px;">
+            <img src="/assets/img/usuarios/unimontes.png" style="height: 55px;">
+        </div>
+    </div>
+    <div class="container d-flex justify-content-center align-content-center flex-wrap" style="width: auto; padding-top:20px;">
+        <div class="row gx-4 gy-4 justify-content-center" style="width: 100%;">
+            <div class="col-xxl-4 d-flex justify-content-center align-items-center align-content-center align-self-center" style="width: 24%;">
+                <div class="row gy-3 d-flex justify-content-center align-items-center align-content-center" style="width: 300px;">
+                    <div class="col d-flex justify-content-center" style="width: 30%;"><img src="/assets/img/icons/logo_tarrafa_branco.png" loading="lazy" height="200" style="height: 136px;" /></div>
+                </div>
+            </div>
+            <div class="col-lg-6 d-flex justify-content-center align-content-center" style="width: 441px;">
+                <div class="card" style="background: rgba(255,255,255,0);border-style: none;width: 422px;">
+                    <div class="card-body" style="width: auto;border-style: none;border-color: rgba(33,37,41,0);">
+                        <form method="post">
+                            <div class="vstack gap-2">
+                                <input style="color: black;" class="form-control form-control-sm" type="email" name="username" placeholder="e-mail do usuário" required/>
+                                <input style="color: black;" class="form-control form-control-sm" name="password" type="password" id="password" placeholder="senha" required />
+                        
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-check"><input id="formCheck-1" class="form-check-input" type="checkbox" onclick="mostrarSenha()" /><label class="form-check-label" for="formCheck-1" style="font-size: 11px;color: var(--bs-gray-200);">Mostrar senha</label></div>
+                                    </div>
+                                    <div class="col text-end"><a id="esqueceu-senha" href="#" data-bs-toggle="modal" data-bs-target="#modalforgotpassword" style="font-size: 11px;color: var(--bs-gray-200);"><svg class="bi bi-unlock-fill" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 5px;">
+                                                <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2"></path>
+                                            </svg>Esqueceu a senha?</a></div>
+                                </div>
+                                <button class="btn btn-primary btn-sm" type="submit" style="background: var(--bs-btn-disabled-bg);border-style: none;border-color: #8c99d1;">Entrar</button>                            
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-cols-1" style="width: 800px;margin-top: 54px;">
+            <div class="col d-flex justify-content-center">
+                <p style="color: rgb(255,255,255);text-align: justify;font-size: 13px;"><span style="font-weight: bold;">Solução para integrar e acompanhar as informações de desempenho dos PPGs</span><span>, com foco na produção de docentes pesquisadores e discentes, utilizando fontes de dados disponíveis na Web, CAPES e CNPq, de modo a apoiar a implementação de políticas de gestão na Pós-graduação.</span></p>
+            </div>
+        </div>
+        
+    </div>
+    <div class="container py-4 py-xl-5" style="margin-top: 0px;">
+        <div class="row">
+            <div class="col">
+                <p class="w-lg-50" style="color: rgb(130,161,251);">
+                    Quem utiliza:</p>
+            </div>
+        </div>
+        <div class="row" style="color: #ffffff;">
+            {% for img in imagens %}
+            <div class="col">
+                <div style="width: 100px; height: 100px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+                    <img src="/assets/img/usuarios/{{img}}" loading="lazy" style="max-width: 60px; min-width: 60px; display: block; margin: 0 auto; height: auto;">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="container py-4 py-xl-5" style="margin-top: 0px;">
+        <div class="row mb-5">
+            <div class="col-md-8 col-xl-6 text-center mx-auto">
+                <p class="w-lg-50" style="color: rgb(255,255,255);"><img src="/assets/img/icons/simbolo_tarrafa_branco.png" width="88" height="51">Oferecemos:</p>
+            </div>
+        </div>
+        <div class="row gy-4 row-cols-1 row-cols-md-2 row-cols-xl-3" style="color: #ffffff;">
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-info-lg">
+                            <path d="m9.708 6.075-3.024.379-.108.502.595.108c.387.093.464.232.38.619l-.975 4.577c-.255 1.183.14 1.74 1.067 1.74.72 0 1.554-.332 1.933-.789l.116-.549c-.263.232-.65.325-.905.325-.363 0-.494-.255-.402-.704l1.323-6.208Zm.091-2.755a1.32 1.32 0 1 1-2.64 0 1.32 1.32 0 0 1 2.64 0"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>Dados gerais sobre os PPGs</h4>
+                        <p>informações de identificação, conceito, nível, corpo docente, discente e egressos...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-graph-up-arrow">
+                            <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>Indicadores de desempenho</h4>
+                        <p>evolução dos principais indicadores de produtividade, incluindo TCCs, projetos e sua realação com os produtos gerados...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-globe2">
+                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855-.143.268-.276.56-.395.872.705.157 1.472.257 2.282.287zM4.249 3.539c.142-.384.304-.744.481-1.078a6.7 6.7 0 0 1 .597-.933A7.01 7.01 0 0 0 3.051 3.05c.362.184.763.349 1.198.49zM3.509 7.5c.036-1.07.188-2.087.436-3.008a9.124 9.124 0 0 1-1.565-.667A6.964 6.964 0 0 0 1.018 7.5h2.49zm1.4-2.741a12.344 12.344 0 0 0-.4 2.741H7.5V5.091c-.91-.03-1.783-.145-2.591-.332M8.5 5.09V7.5h2.99a12.342 12.342 0 0 0-.399-2.741c-.808.187-1.681.301-2.591.332zM4.51 8.5c.035.987.176 1.914.399 2.741A13.612 13.612 0 0 1 7.5 10.91V8.5zm3.99 0v2.409c.91.03 1.783.145 2.591.332.223-.827.364-1.754.4-2.741zm-3.282 3.696c.12.312.252.604.395.872.552 1.035 1.218 1.65 1.887 1.855V11.91c-.81.03-1.577.13-2.282.287zm.11 2.276a6.696 6.696 0 0 1-.598-.933 8.853 8.853 0 0 1-.481-1.079 8.38 8.38 0 0 0-1.198.49 7.01 7.01 0 0 0 2.276 1.522zm-1.383-2.964A13.36 13.36 0 0 1 3.508 8.5h-2.49a6.963 6.963 0 0 0 1.362 3.675c.47-.258.995-.482 1.565-.667zm6.728 2.964a7.009 7.009 0 0 0 2.275-1.521 8.376 8.376 0 0 0-1.197-.49 8.853 8.853 0 0 1-.481 1.078 6.688 6.688 0 0 1-.597.933zM8.5 11.909v3.014c.67-.204 1.335-.82 1.887-1.855.143-.268.276-.56.395-.872A12.63 12.63 0 0 0 8.5 11.91zm3.555-.401c.57.185 1.095.409 1.565.667A6.963 6.963 0 0 0 14.982 8.5h-2.49a13.36 13.36 0 0 1-.437 3.008zM14.982 7.5a6.963 6.963 0 0 0-1.362-3.675c-.47.258-.995.482-1.565.667.248.92.4 1.938.437 3.008zM11.27 2.461c.177.334.339.694.482 1.078a8.368 8.368 0 0 0 1.196-.49 7.01 7.01 0 0 0-2.275-1.52c.218.283.418.597.597.932zm-.488 1.343a7.765 7.765 0 0 0-.395-.872C9.835 1.897 9.17 1.282 8.5 1.077V4.09c.81-.03 1.577-.13 2.282-.287z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>Rede de colaboração</h4>
+                        <p>grau de colaboração interna e entre os PPGs da instituição...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-search">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>Rastreamento dos currículos</h4>
+                        <p>informações sobre os currículos Lattes dos docentes permanentes, taxa de atualização e informações lançadas...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-list-columns-reverse">
+                            <path fill-rule="evenodd" d="M0 .5A.5.5 0 0 1 .5 0h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 0 .5m4 0a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1h-10A.5.5 0 0 1 4 .5m-4 2A.5.5 0 0 1 .5 2h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-4 2A.5.5 0 0 1 .5 4h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m-4 2A.5.5 0 0 1 .5 6h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1h-8a.5.5 0 0 1-.5-.5m-4 2A.5.5 0 0 1 .5 8h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1h-8a.5.5 0 0 1-.5-.5m-4 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1h-10a.5.5 0 0 1-.5-.5m-4 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m-4 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>Força das linhas de pesquisa</h4>
+                        <p>mapeamento do desempenho de cada linha e a distribuição da produção em cada uma...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-bezier2">
+                            <path fill-rule="evenodd" d="M1 2.5A1.5 1.5 0 0 1 2.5 1h1A1.5 1.5 0 0 1 5 2.5h4.134a1 1 0 1 1 0 1h-2.01c.18.18.34.381.484.605.638.992.892 2.354.892 3.895 0 1.993.257 3.092.713 3.7.356.476.895.721 1.787.784A1.5 1.5 0 0 1 12.5 11h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5H6.866a1 1 0 1 1 0-1h1.711a2.839 2.839 0 0 1-.165-.2C7.743 11.407 7.5 10.007 7.5 8c0-1.46-.246-2.597-.733-3.355-.39-.605-.952-1-1.767-1.112A1.5 1.5 0 0 1 3.5 5h-1A1.5 1.5 0 0 1 1 3.5zM2.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm10 10a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>Produtos vinculados aos TCCs</h4>
+                        <p>indicadores de desempenho dos TCCs defendidos, destacando as produções técnicas e bibliográficas associadas...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-bar-chart-fill">
+                            <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>Ranqueamento dos docentes</h4>
+                        <p>avaliação do desempenho individual de cada docente em relação aos PPGs de mesmo conceito, mesma região e de diferentes conceitos...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container py-4 py-xl-5">
+        <div class="row mb-5">
+            <div class="col-md-8 col-xl-6 text-center mx-auto">
+                <p class="w-lg-50" style="color: rgb(255,255,255);"><img src="/assets/img/icons/simbolo_tarrafa_branco.png" width="88" height="51">Planos futuros:</p>
+            </div>
+        </div>
+        <div class="row gy-4 row-cols-1 row-cols-md-2 row-cols-xl-3" style="color: #ffffff;">
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-info-lg">
+                            <path d="m9.708 6.075-3.024.379-.108.502.595.108c.387.093.464.232.38.619l-.975 4.577c-.255 1.183.14 1.74 1.067 1.74.72 0 1.554-.332 1.933-.789l.116-.549c-.263.232-.65.325-.905.325-.363 0-.494-.255-.402-.704l1.323-6.208Zm.091-2.755a1.32 1.32 0 1 1-2.64 0 1.32 1.32 0 0 1 2.64 0"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>Egressos</h4>
+                        <p>Suporte ao fluxo de acompanhamento de egressos, incluindo rastreamento dos currículos Lattes e envio de mensagens automatizadas...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-graph-up-arrow">
+                            <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>Simulações de desempenho</h4>
+                        <p>Ambiente de simulação incluindo a adição e remoção de docentes, produções e linhas de pesquisa...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-globe2">
+                            <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855-.143.268-.276.56-.395.872.705.157 1.472.257 2.282.287zM4.249 3.539c.142-.384.304-.744.481-1.078a6.7 6.7 0 0 1 .597-.933A7.01 7.01 0 0 0 3.051 3.05c.362.184.763.349 1.198.49zM3.509 7.5c.036-1.07.188-2.087.436-3.008a9.124 9.124 0 0 1-1.565-.667A6.964 6.964 0 0 0 1.018 7.5h2.49zm1.4-2.741a12.344 12.344 0 0 0-.4 2.741H7.5V5.091c-.91-.03-1.783-.145-2.591-.332M8.5 5.09V7.5h2.99a12.342 12.342 0 0 0-.399-2.741c-.808.187-1.681.301-2.591.332zM4.51 8.5c.035.987.176 1.914.399 2.741A13.612 13.612 0 0 1 7.5 10.91V8.5zm3.99 0v2.409c.91.03 1.783.145 2.591.332.223-.827.364-1.754.4-2.741zm-3.282 3.696c.12.312.252.604.395.872.552 1.035 1.218 1.65 1.887 1.855V11.91c-.81.03-1.577.13-2.282.287zm.11 2.276a6.696 6.696 0 0 1-.598-.933 8.853 8.853 0 0 1-.481-1.079 8.38 8.38 0 0 0-1.198.49 7.01 7.01 0 0 0 2.276 1.522zm-1.383-2.964A13.36 13.36 0 0 1 3.508 8.5h-2.49a6.963 6.963 0 0 0 1.362 3.675c.47-.258.995-.482 1.565-.667zm6.728 2.964a7.009 7.009 0 0 0 2.275-1.521 8.376 8.376 0 0 0-1.197-.49 8.853 8.853 0 0 1-.481 1.078 6.688 6.688 0 0 1-.597.933zM8.5 11.909v3.014c.67-.204 1.335-.82 1.887-1.855.143-.268.276-.56.395-.872A12.63 12.63 0 0 0 8.5 11.91zm3.555-.401c.57.185 1.095.409 1.565.667A6.963 6.963 0 0 0 14.982 8.5h-2.49a13.36 13.36 0 0 1-.437 3.008zM14.982 7.5a6.963 6.963 0 0 0-1.362-3.675c-.47.258-.995.482-1.565.667.248.92.4 1.938.437 3.008zM11.27 2.461c.177.334.339.694.482 1.078a8.368 8.368 0 0 0 1.196-.49 7.01 7.01 0 0 0-2.275-1.52c.218.283.418.597.597.932zm-.488 1.343a7.765 7.765 0 0 0-.395-.872C9.835 1.897 9.17 1.282 8.5 1.077V4.09c.81-.03 1.577-.13 2.282-.287z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>Comparações entre PPGs</h4>
+                        <p>Pareamento dos principais indicadores de desempenho entre diferentes PPGs...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-search">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>API externas</h4>
+                        <p>Utilização de fontes de dados personalizadas, como APIs de sistemas acadêmicos...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-list-columns-reverse">
+                            <path fill-rule="evenodd" d="M0 .5A.5.5 0 0 1 .5 0h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 0 .5m4 0a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1h-10A.5.5 0 0 1 4 .5m-4 2A.5.5 0 0 1 .5 2h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-4 2A.5.5 0 0 1 .5 4h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5m-4 2A.5.5 0 0 1 .5 6h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1h-8a.5.5 0 0 1-.5-.5m-4 2A.5.5 0 0 1 .5 8h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1h-8a.5.5 0 0 1-.5-.5m-4 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1h-10a.5.5 0 0 1-.5-.5m-4 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m-4 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m4 0a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>Bolsas de produtividade</h4>
+                        <p>Suporte aos bolsistas de produtividade, permitindo a comparação entre pares e simulação de progressão de nível...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex">
+                    <div class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex flex-shrink-0 justify-content-center align-items-center d-inline-block mb-3 bs-icon" style="background: rgb(100,121,211);"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-bezier2">
+                            <path fill-rule="evenodd" d="M1 2.5A1.5 1.5 0 0 1 2.5 1h1A1.5 1.5 0 0 1 5 2.5h4.134a1 1 0 1 1 0 1h-2.01c.18.18.34.381.484.605.638.992.892 2.354.892 3.895 0 1.993.257 3.092.713 3.7.356.476.895.721 1.787.784A1.5 1.5 0 0 1 12.5 11h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5H6.866a1 1 0 1 1 0-1h1.711a2.839 2.839 0 0 1-.165-.2C7.743 11.407 7.5 10.007 7.5 8c0-1.46-.246-2.597-.733-3.355-.39-.605-.952-1-1.767-1.112A1.5 1.5 0 0 1 3.5 5h-1A1.5 1.5 0 0 1 1 3.5zM2.5 2a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm10 10a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"></path>
+                        </svg></div>
+                    <div class="px-3">
+                        <h4>Integração com IA</h4>
+                        <p>Disponibilização de chatbots para consultas personalizadas à base de dados do sistema...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modals-->
+    <div class="modal fade" id="modalfirstlogin" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="text-primary fw-bold m-0">Primeiro acesso</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <!--Conteúdo aqui-->
+                <div class="col-lg-6" style="width: 100%;">
+                    <div class="p-5">
+                        <form id="firstAcessForm" class="user" autocomplete="off">
+                            <div class="input-group mb-2">
+                                <input class="form-control" id="CPF" type="text" placeholder="CPF" name="CPF" autocomplete="off" minlength="11" maxlength="11" required>
+                            </div>
+                            <div class="mb-4">
+                                <input class="form-control mb-2" id="IDlattes" type="text" placeholder="ID Lattes" name="IDlattes"
+                                    autocomplete="off" minlength="16" maxlength="16" required>
+                                <div id="first-acess-invalidation" class="input-invalidation"></div>
+                                <small>
+                                    <a data-toggle="collapse" href="#collapseIDlattes" role="button"
+                                        aria-expanded="false">Onde encontrar o ID do
+                                        Lattes?</a>
+                                </small>
+                            </div>
+                            <div id="collapseIDlattes" class="collapse mb-4">
+                                <div>
+                                    <p>
+                                        O ID do seu Lattes é uma sequência numérica encontrada na parte inicial
+                                        do seu currículo. É essa sequência que você deve inserir no formulário.
+                                    </p>
+                                    <p>
+                                        No caso da imagem mostrada, o ID Lattes do Professor Renê é: 5262545895128956
+                                    </p>
+                                </div>
+                                <picture><img class="img-fluid" src="/assets/img/utils/lattes.jpg"></picture>
+                            </div>
+                            <button class="btn btn-primary d-block w-100" type="submit">Verificar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalforgotpassword" data-bs-backdrop="static" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="text-primary fw-bold m-0">Recuperar senha</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <!--Conteúdo aqui-->
+                <div class="col-lg-6" style="width: 100%;">
+                    <div class="p-5">
+                        <div class="mb-4">
+                            <p>Informe o e-mail que foi utilizado no cadastro para que possamos enviar um link de
+                                recuperação de senha:</p>
+                        </div>
+                        <form id="forgotPasswordForm" class="user">
+                            <div class="mb-4">
+                                <input class="form-control mb-2" type="email" id="email" aria-describedby="emailHelp" placeholder="E-mail" name="email" required>
+                                <div id="forgot-password-validation" class="input-validation"></div>
+                                <div id="forgot-password-invalidation" class="input-invalidation"></div>
+                            </div>
+                            <div class="mb-3" id="divBtId" style="display:block;"><button id="btn_recuperar_senha" class="btn btn-primary d-block w-100" type="submit">Enviar</button>
+                            </div>
+                            <div id="divImgId" style="display:none;"><img id="imgLoadingId" height="50px" style="display:block; margin-left: auto;
+                                margin-right: auto" src="/assets/img/utils/wait.gif" /></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="{{ url_for('static', filename='assets/bootstrap/js/bootstrap.min.js') | hash_url}}"></script>
+    <script src="https://unpkg.com/default-passive-events"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+
+    <script src="{{ url_for('static', filename='assets/js/theme.js') | hash_url}}"></script>
+    <script>
+        axios.defaults.baseURL = '/';
+    </script>
+
+    <script src="{{ url_for('static', filename='assets/js/functions.js') | hash_url}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/senha.js') | hash_url}}"></script>
+    <script src="{{ url_for('static', filename='ppg/js/scriptslogin.js') | hash_url}}"></script>
+
+</body>
+
+</html>

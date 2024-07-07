@@ -1,0 +1,149 @@
+{
+    // Use o IntelliSense para saber mais sobre os atributos possíveis.
+    // Focalizar para exibir as descrições dos atributos existentes.
+    // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: FastAPI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "backend.app.main:app",
+                "--reload"
+            ],
+            "jinja": true,
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento"
+        },
+        {
+            "name": "Python: Flask",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "frontend/flaskmiddle/run.py",
+            "jinja": true,
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento"
+        },
+        {
+            "name": "Python: TAREFAS Celery windows",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "celery",
+            "args": [
+                "-A",
+                "backend.worker.celery_start_tasks",
+                "worker",
+                "--pool=threads",
+                "--concurrency=8",
+                "-Q",
+                "fila_tasks",
+                "-l",
+                "INFO"
+            ],
+            "jinja": true,
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento"
+        },
+        {
+            "name": "Python: DESPACHANTE Celery windows",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "celery",
+            "args": [
+                "-A",
+                "backend.worker.celery_start_despachante",
+                "worker",
+                "--pool=threads",
+                "--concurrency=8",
+                "-Q",
+                "fila_despachante",
+                "-l",
+                "INFO"
+            ],
+            "jinja": true,
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento"
+        },
+        {
+            "name": "Python: TAREFAS Celery linux",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "celery",
+            "args": [
+                "-A",
+                "backend.worker.celery_start_tasks",
+                "worker",
+                "--pool=gevent",
+                "-c",
+                "4",
+                "-Q",
+                "fila_tasks",
+                "-l",
+                "INFO",
+                "-n",
+                "worker2@%h"
+            ],
+            "jinja": true,
+            "justMyCode": true,
+            "gevent": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento"
+        },
+        {
+            "name": "Python: QUERIES Celery linux",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "celery",
+            "args": [
+                "-A",
+                "backend.worker.celery_start_queries",
+                "worker",
+                "--pool=gevent",
+                "-c",
+                "4",
+                "-Q",
+                "fila_queries",
+                "-l",
+                "INFO",
+                "-n",
+                "worker1@%h"
+            ],
+            "jinja": true,
+            "justMyCode": true,
+            "gevent": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento"
+        },
+        {
+            "name": "Python: Despachante",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/worker/despachante.py",  
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento",
+            "args": []
+        },
+        {
+            "name": "Python: gRPC SERVER",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/app/crud/crud_api.py",  
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento",
+            "args": []
+        },
+        {
+            "name": "Python: INDICADORES gRPC SERVER",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/app/api/api_v1/api.py",  
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento",
+            "args": []
+        },
+    ]
+
+}

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package proto;
+
+import "messages.proto";
+
+service Queries {
+  rpc ObtemContagemIndprodart (PpgRequest) returns (PpgJson);
+  rpc ObtemContagemQualis (PpgRequest) returns (PpgJson);
+}
+

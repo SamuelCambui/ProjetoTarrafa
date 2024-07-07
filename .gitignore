@@ -1,0 +1,13 @@
+.venv
+downloads
+curriculos
+dados
+backup
+sucupira_extract\.venv
+sucupira_extract\downloads\xls\
+sucupira_extract\downloads\xls_def\
+temp\.venv
+temp\logs*
+flask_session
+*.pyc
+
