@@ -25,33 +25,24 @@ sys.path.append(str(diretorio_raiz))
 
 from backend.core.config import settings
 from backend.db.db import DBConnectorPPG
-from backend.db.cache import RedisConnector
 from backend.app import crud
-import asyncio
 
 import requests
 
-import unicodedata
-
-import time
-
+from backend.app import crud
 
 from backend.worker.celery_start_queries import app_celery_queries
-from proto.out import queries_pb2_grpc, queries_pb2, messages_pb2
-import grpc
-from google.protobuf.json_format import ParseDict, MessageToJson, MessageToDict
+from protos.out import messages_pb2
+from google.protobuf.json_format import MessageToDict
 
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_indprodart_com_listanegra(id, anoi, anof, lista_negra):
     #db = DBConnectorPPG()
     try:
-        
-        with grpc.insecure_channel(settings.GRPC_SERVER_HOST+':50051') as channel:
-            stub = queries_pb2_grpc.QueriesStub(channel)
-            if stub:
-                response = stub.ObtemContagemIndprodart(messages_pb2.PpgRequest(id=id, anoi=anoi, anof=anof))
-                return MessageToDict(response)
-        return MessageToDict(messages_pb2.PpgJson())
+
+        respostaDict = crud.queries_ppg.retorna_contagem_de_indprodart_com_listanegra(id, anoi, anof, None)
+        retorno = messages_pb2.PpgJson(nome='dadosindprods', json=json.dumps(respostaDict))
+        return MessageToDict(retorno)
     except Exception as e:
         print(e)
         return MessageToDict(messages_pb2.PpgJson())
@@ -60,16 +51,15 @@ def tarefa_retorna_contagem_de_indprodart_com_listanegra(id, anoi, anof, lista_n
 def tarefa_retorna_contagem_de_qualis_com_listanegra(id, anoi, anof, lista_negra):
     # db = DBConnectorPPG()
     try:
-        retornos = {}
-        with grpc.insecure_channel(settings.GRPC_SERVER_HOST+':50051') as channel:
-            stub = queries_pb2_grpc.QueriesStub(channel)
-            if stub:
-                response = stub.ObtemContagemQualis(messages_pb2.PpgRequest(id=id, anoi=anoi, anof=anof))
-                return MessageToDict(response)
-        return MessageToDict(messages_pb2.PpgJson())
+        respostaDict = crud.queries_ppg.retorna_contagem_de_qualis_com_listanegra(id, anoi, anof, None)
+        retorno = messages_pb2.PpgJson(nome='dadosqualis', json=json.dumps(respostaDict))
+        return MessageToDict(retorno)
     except Exception as e:
         print(e)
         return MessageToDict(messages_pb2.PpgJson())
+    
+
+##################################################################    
 
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_qualis_discentes(id, anoi, anof):

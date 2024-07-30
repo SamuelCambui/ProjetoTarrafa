@@ -2,8 +2,13 @@ from flask_login import UserMixin
 from flask import jsonify
 import requests
 from requests import ConnectionError
-from config import Config
+from frontend.flaskmiddle.config import config
 from flask import abort
+
+from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2, usuario_pb2_grpc
+from google.protobuf.json_format import MessageToDict
+
+import grpc
 
 class Usuario(UserMixin):
     def __init__(self, idlattes, email, full_name, is_superuser, is_admin, id_ies):
@@ -15,13 +20,15 @@ class Usuario(UserMixin):
         self.id_ies = id_ies
         
     @staticmethod
-    def getUsuario(id, token):
+    def getUsuario(id):
         try:
-            ret = requests.get(f"{Config.FASTAPI_URL}{Config.API_STR}/users/{id}", headers = {
-                'accept': 'application/json',
-                'Authorization': f'Bearer {token}'
-            }).json()
-            user = Usuario(ret['idlattes'], ret['email'], ret['full_name'], ret['is_superuser'], ret['is_admin'], ret['id_ies'])
+            with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
+                stub = usuario_pb2_grpc.UsuarioStub(channel)
+                user = None
+                if stub:
+                    response = stub.ObtemUsuario (messages_pb2.UsuarioRequest(username=id))
+                    print('ok')
+                    user = Usuario(response.idlattes, response.email, response.full_name, response.is_superuser, response.is_admin, response.id_ies)
             return user
         except Exception as e:
             return None

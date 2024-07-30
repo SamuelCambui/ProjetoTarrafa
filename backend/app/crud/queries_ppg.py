@@ -19,7 +19,9 @@ from backend.db.db import DBConnectorPPG
 
 class QueriesPPG():
 
-    def retorna_id_ies(self, id: str, db: DBConnector):
+    def retorna_id_ies(self, id: str, db: DBConnector = None):
+        if not db:
+            db = DBConnectorPPG()
         query = "select id_ies from programas where codigo_programa = %(id)s"
         row = db.fetch_one(query, id=id)
         if row:

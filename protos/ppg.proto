@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package protos;
+
+import "messages.proto";
+
+service Indicadores {
+  rpc ObtemIndicadores (PpgRequest) returns (PpgResponse);
+}

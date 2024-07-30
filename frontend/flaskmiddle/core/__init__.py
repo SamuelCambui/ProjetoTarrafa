@@ -8,7 +8,7 @@ from flask_cors import CORS
 
 from itsdangerous import URLSafeSerializer
 
-from config import config
+from frontend.flaskmiddle.config import config
 
 
 app = Flask(__name__, template_folder='html', static_url_path='', static_folder='html')
@@ -19,16 +19,16 @@ CORS(app)
 
 Session(app)
 
-#login_control = LoginManager()
-#login_control.init_app(app)
+login_control = LoginManager()
+login_control.init_app(app)
 
 
 #logger = logging.getLogger('loggerProjeto')
 
-print('>>>>>>>>>', config.FASTAPI_URL)
+#print('>>>>>>>>>', config.FASTAPI_URL)
 
-from core.controller.routes import controller_principal as controller_principal_module
-from core.controller.routes_ppg import controller_ppg as controller_ppg_module
+from frontend.flaskmiddle.core.controller.routes import controller_principal as controller_principal_module
+from frontend.flaskmiddle.core.controller.routes_ppg import controller_ppg as controller_ppg_module
 
 controller_principal_module.register_blueprint(controller_ppg_module)
 

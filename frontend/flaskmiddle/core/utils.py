@@ -1,6 +1,6 @@
 import requests
 from flask import session
-from config import config
+from frontend.flaskmiddle.config import config
 
 class Utils:
     @staticmethod

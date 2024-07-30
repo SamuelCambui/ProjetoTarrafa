@@ -38,6 +38,7 @@ class CRUDUser():
         """
         for key, value in kwargs.items():
             query = f"SELECT * FROM usuarios where {key} = " + "%(identifier)s"
+            print(query)
             row = db.fetch_one(query, identifier = value)
             if row:
                 user = UserInDB(**row)

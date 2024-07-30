@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package protos;
+
+import "messages.proto";
+
+service Usuario {
+  rpc Login (LoginRequest) returns (LoginResponse);
+  rpc Logout (LogoutRequest) returns (LogoutResponse);
+  rpc ObtemUsuario (UsuarioRequest) returns (UsuarioResponse);
+}

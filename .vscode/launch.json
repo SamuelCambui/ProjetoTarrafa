@@ -4,19 +4,19 @@
     // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        {
-            "name": "Python: FastAPI",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "uvicorn",
-            "args": [
-                "backend.app.main:app",
-                "--reload"
-            ],
-            "jinja": true,
-            "justMyCode": false,
-            "envFile": "${workspaceFolder}/.env.desenvolvimento"
-        },
+        // {
+        //     "name": "Python: FastAPI",
+        //     "type": "debugpy",
+        //     "request": "launch",
+        //     "module": "uvicorn",
+        //     "args": [
+        //         "backend.app.main:app",
+        //         "--reload"
+        //     ],
+        //     "jinja": true,
+        //     "justMyCode": false,
+        //     "envFile": "${workspaceFolder}/.env.desenvolvimento"
+        // },
         {
             "name": "Python: Flask",
             "type": "debugpy",
@@ -124,21 +124,21 @@
             "envFile": "${workspaceFolder}/.env.desenvolvimento",
             "args": []
         },
-        {
-            "name": "Python: gRPC SERVER",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/backend/app/crud/crud_api.py",  
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "envFile": "${workspaceFolder}/.env.desenvolvimento",
-            "args": []
-        },
+        // {
+        //     "name": "Python: gRPC SERVER",
+        //     "type": "debugpy",
+        //     "request": "launch",
+        //     "program": "${workspaceFolder}/backend/app/crud/crud_api.py",  
+        //     "console": "integratedTerminal",
+        //     "justMyCode": true,
+        //     "envFile": "${workspaceFolder}/.env.desenvolvimento",
+        //     "args": []
+        // },
         {
             "name": "Python: INDICADORES gRPC SERVER",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/backend/app/api/api_v1/api.py",  
+            "program": "${workspaceFolder}/backend/app/api/api.py",  
             "console": "integratedTerminal",
             "justMyCode": true,
             "envFile": "${workspaceFolder}/.env.desenvolvimento",

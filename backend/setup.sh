@@ -28,3 +28,5 @@ pip install retry
 pip install grpcio
 pip install protobuf
 pip install grpcio-tools
+pip install grpcio-reflection
+pip install grpcio-health-checking

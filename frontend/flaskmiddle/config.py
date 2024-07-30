@@ -5,7 +5,8 @@ class Config(object):
 
     API_STR = os.getenv('API_STR')
     
-    FASTAPI_URL = os.getenv('BACKEND_HOST')
+    #FASTAPI_URL = os.getenv('BACKEND_HOST')
+    GRPC_SERVER_HOST = os.getenv('GRPC_SERVER_HOST')
     FRONTEND_HOST = os.getenv('FRONTEND_HOST')
     FRONTEND = os.getenv('FRONTEND')
     FRONTEND_PORT = os.getenv('FRONTEND_PORT')

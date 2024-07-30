@@ -7,7 +7,51 @@ from backend.app import crud
 
 from functools import wraps
 
+from google.protobuf.json_format import ParseDict, MessageToJson, MessageToDict
+from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2
+
+
 import json
+
+import pickle
+from grpc import ServicerContext
+
+def cache_grpc(func):
+   @wraps(func)
+   def wrapper(self, request, context: ServicerContext):
+      redis = RedisConnector()
+
+      # Criar uma chave única para o cache
+      cache_key = f"{func.__name__}_{request.id}_{request.anoi}_{request.anof}"
+
+      print(cache_key)
+      universidade = None
+      if request.id:
+         universidade = crud.queries_ppg.retorna_id_ies(request.id)
+      
+      try:
+         # Tentar obter o resultado do cache
+         cached_result = redis.existsField(universidade, cache_key)
+         if cached_result:
+            print('Cache hit')
+            res = redis.getField(universidade, cache_key)
+            return ParseDict(res, messages_pb2.PpgResponse())#(cached_result)
+      except Exception as e:
+         print(f"Error retrieving from cache: {e}")
+
+      # Chamar a função original
+      result = func(self, request, context)
+
+      try:
+         # Salvar o resultado no cache
+         redis.setField(universidade, cache_key, MessageToDict(result))
+         print('Cache set')
+      except Exception as e:
+         print(f"Error setting cache: {e}")
+
+      return result
+   return wrapper
+
 
 def cache_redis_sync(func):
    @wraps(func)

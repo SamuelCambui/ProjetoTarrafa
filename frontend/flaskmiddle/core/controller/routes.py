@@ -25,9 +25,9 @@ from flask_login import LoginManager, utils, login_user, logout_user, login_requ
 from werkzeug.exceptions import HTTPException
 
 #from core import login_control
-from core.models.User import Usuario
+from frontend.flaskmiddle.core.models.User import Usuario
 
-from config import config
+from frontend.flaskmiddle.config import config
 
 import hashlib
 import time
