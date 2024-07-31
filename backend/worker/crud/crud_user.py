@@ -1,17 +1,18 @@
 from typing import Optional
-#from DBConnectors import DBConnector
-from backend.db.db import DBConnector
 
+from backend.db.db import DBConnector
 from backend.core.utils import InsertQuery, UpdateQuery
-from backend.core.security import get_password_hash, verify_password
 from backend.schemas.user import User, UserInDB
-from backend.app import crud
+from backend.worker import crud
+from backend.db.db import DBConnectorPPG
+from backend.core.utils import tratamento_excecao_com_db, tratamento_excecao
+
 
 
 
 class CRUDUser():
 
-    async def get_user_db(self, db:DBConnector, **kwargs) ->Optional[User]:
+    def get_user_db(self, db:DBConnector, **kwargs) ->Optional[User]:
         """
         Retorna os dados do usuário e link para a foto do perfil lattes
         
@@ -26,16 +27,18 @@ class CRUDUser():
                 user = UserInDB(**row)
                 #query = f"SELECT linkavatar FROM public.curriculos_lattes where idlattes='{user.idlattes}'"
                # rowavatar = db.fetch_one(query)
-                rowavatar = await crud.queries_ppg.retorna_link_avatar_lattes(user.idlattes, True, db)
+                rowavatar = crud.queries_ppg.retorna_link_avatar_lattes(user.idlattes, True, db)
 
                 if row:
                     return user,rowavatar
             return None, None
 
-    async def verify_in_db(self, db : DBConnector, **kwargs) -> Optional[User]:
+    @tratamento_excecao_com_db
+    def verify_in_db(self, db: DBConnector, **kwargs) -> Optional[User]:
         """
         Verificando se existe o usuário no banco de dados
         """
+        
         for key, value in kwargs.items():
             query = f"SELECT * FROM usuarios where {key} = " + "%(identifier)s"
             print(query)
@@ -45,21 +48,7 @@ class CRUDUser():
                 return user
             return None
 
-    async def retorna_dominios(self, db : DBConnector):
-        """
-        Retorna os domínios de emails cadastrados na tabela usuarios
-        """
-        
-        query = "SELECT email FROM usuarios"
-        rows = db.fetch_all(query)
-        dominios = []
-        if rows:
-            for row in rows:
-                if len(row) > 0 and row[0] != None:
-                    dominios.append(row[0][row[0].index('@')+1:])
-        dominios = list(set(dominios))
-        dominios.sort()
-        return dominios
+
 
     async def create(self, db: DBConnector, **obj_in) -> User:
         """
@@ -85,19 +74,19 @@ class CRUDUser():
         update_query = UpdateQuery("usuarios",'idlattes', **obj_in)
         return db.update(update_query, **obj_in)
 
-    async def authenticate(self, db: DBConnector, *, password: str, **kwargs) -> Optional[User]:
+    @tratamento_excecao_com_db
+    def authenticate(self, db: DBConnector, *, password: str, **kwargs) -> Optional[User]:
         """
         Autenticando usuario no banco
         """
-        user, useravatar = await self.get_user_db(db, **kwargs)
+        user, useravatar = self.get_user_db(db, **kwargs)
         if type(user) is not UserInDB:
             return None, None
         if not user:
             return None, None
-        if not verify_password(password, user.hashed_password):
-            return None, None
 
         return user, useravatar
+
 
     def is_active(self, user: User) -> bool:
         """

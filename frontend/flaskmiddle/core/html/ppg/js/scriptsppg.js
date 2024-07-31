@@ -1,9 +1,38 @@
+function run_waitMe(element, tipo, text, transparencia) {
+	$(element).waitMe({
+		//none, rotateplane, stretch, orbit, roundBounce, win8,
+		//win8_linear, ios, facebook, rotation, timer, pulse,
+		//progressBar, bouncePulse or img
+		effect: tipo === 'progress' ? 'progressBar' : 'bouncePulse',
+		//place text under the effect (string).
+		text: text,
+		//background for container (string).
+		bg: transparencia === true ? 'rgba(255,255,255,0.7)' : '#f8f9fc',
+		//color for background animation and text (string).
+		color: transparencia === true ? '#93a3d2' : '#4e73df',
+		//max size
+		maxSize: '50',
+		//wait time im ms to close
+		waitTime: -1,
+		//url to image
+		source: '',
+		//or 'horizontal'
+		textPos: 'vertical',
+		//font size
+		fontSize: '',
+		// callback
+		onClose: function () { }
+	});
+}
+
 
 $(document).ready(function () {
 	fetchCharts();
 });
 
 function fetchCharts() {
+	const element_indicadores = `#status-carregamento-indicadores-tab`;
+	run_waitMe(element_indicadores, 'outro', '', true);
 	axios.get(`/ppg/graficos/indicadores-paralelo-tab/32014015010P7/2017/2021`)
 		.then(response => {
 			fetch_qualis_ppg('chartqualisproductions', response.data.dadosqualis);
@@ -12,6 +41,9 @@ function fetchCharts() {
 		})
 		.catch(error => {
 			console.error('Erro ao buscar dados de indicadores-tab: ', error);
+		})
+		.finally(() => {
+			$(element_indicadores).waitMe('hide');
 		});
 
 }

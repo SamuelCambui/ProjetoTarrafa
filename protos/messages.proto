@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package protos;
 
-
 message PpgRequest {
     string id = 1;
     int32 anoi = 2;

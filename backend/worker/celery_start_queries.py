@@ -1,16 +1,6 @@
 from celery import Celery
 
-import os
-import sys
-
-from pathlib import Path
-
-# Adiciona o diretório raiz do projeto ao sys.path
-diretorio_raiz = Path(__name__).resolve().parent.parent  # Ajuste conforme a necessidade
-sys.path.append(str(diretorio_raiz))
-
 from backend.core.config import settings
-from backend.app import crud
 
 #os.environ.setdefault("FORKED_BY_MULTIPROCESSING", "1") #para SO Windows apenas
 broker = 'redis://'+settings.LOCAL_REDIS_URL

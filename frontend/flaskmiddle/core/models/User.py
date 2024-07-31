@@ -5,7 +5,7 @@ from requests import ConnectionError
 from frontend.flaskmiddle.config import config
 from flask import abort
 
-from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2, usuario_pb2_grpc
+from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2, usuarios_pb2_grpc
 from google.protobuf.json_format import MessageToDict
 
 import grpc
@@ -23,7 +23,7 @@ class Usuario(UserMixin):
     def getUsuario(id):
         try:
             with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
-                stub = usuario_pb2_grpc.UsuarioStub(channel)
+                stub = usuarios_pb2_grpc.UsuarioStub(channel)
                 user = None
                 if stub:
                     response = stub.ObtemUsuario (messages_pb2.UsuarioRequest(username=id))

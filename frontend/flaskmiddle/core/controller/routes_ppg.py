@@ -1,32 +1,21 @@
 import json
 import requests
 import os
-
-import time
-
 from flask import (Blueprint, flash, redirect, render_template, request, session)
-
 from flask.helpers import url_for
 from flask_login import utils, login_user, logout_user, login_required, current_user
-
-from frontend.flaskmiddle.core.models.User import Usuario
-from frontend.flaskmiddle.core import login_control
-
-from frontend.flaskmiddle.config import config
-
+from google.protobuf.json_format import MessageToDict
+import grpc
 import sys
 from pathlib import Path
 
 # Adiciona o diretório raiz do projeto ao sys.path
 diretorio_raiz = Path(__name__).resolve().parent
 sys.path.append(str(diretorio_raiz))
-
-from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2, usuario_pb2_grpc
-from google.protobuf.json_format import MessageToDict
-
-import grpc
-# from grpc_requests import Client
-#from google.protobuf.json_format import ParseDict, MessageToJson
+from frontend.flaskmiddle.core.models.User import Usuario
+from frontend.flaskmiddle.core import login_control
+from frontend.flaskmiddle.config import config
+from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2, usuarios_pb2_grpc
 
 controller_ppg = Blueprint('controller_ppg', __name__, url_prefix='/ppg')
 
@@ -46,12 +35,11 @@ def unauthorized():
 def login_post():
     try:
         email = request.form.get("username").strip()
-        #email = uname+'@'+request.form.get("selectUniversidade")
         passw = request.form.get("password").strip()
 
         response = None
         with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
-            stub = usuario_pb2_grpc.UsuarioStub(channel)
+            stub = usuarios_pb2_grpc.UsuarioStub(channel)
             if stub:
                 response = stub.Login(messages_pb2.LoginRequest(username=email, password=passw))
         

@@ -2,7 +2,6 @@ from backend.core.config import settings
 
 import psycopg2
 import psycopg2.extras
-from psycopg2 import OperationalError
 
 class DBConnector:
   dbconn = None

@@ -30,3 +30,4 @@ pip install protobuf
 pip install grpcio-tools
 pip install grpcio-reflection
 pip install grpcio-health-checking
+pip install pytest pytest-celery

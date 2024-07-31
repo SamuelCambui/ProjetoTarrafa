@@ -1,38 +1,16 @@
 from __future__ import print_function
 
-import json
-
-import sys
-from pathlib import Path
-import time
-
-
-# Adiciona o diretório raiz do projeto ao sys.path
-diretorio_raiz = Path(__name__).resolve().parent
-sys.path.append(str(diretorio_raiz))
-
-from celery import group
 from backend.worker.queries import *
-
-from backend.app import crud
-from backend import schemas
-from backend.core import deps
-from backend.core import security
-
-from protos.out import messages_pb2, usuario_pb2_grpc
-from google.protobuf.json_format import Parse, MessageToJson, ParseDict
-
-from backend.db.db import DBConnectorPPG
+from protos.out import messages_pb2, usuarios_pb2_grpc
 
 
 # Implementação do serviço gRPC
-class Usuario(usuario_pb2_grpc.UsuarioServicer):
+class Usuario(usuarios_pb2_grpc.UsuarioServicer):
 
     async def ObtemUsuario(self, request, context):
         print('ObtemUsuario chamada...')
         try:
-            db = DBConnectorPPG()
-            user = await crud.user.verify_in_db(db, email = request.username)
+            user = tarefa_verifica_usuario.apply(kwargs={'username':request.username}).get()
             if user:
                 usuarioResponse = messages_pb2.UsuarioResponse()
                 usuarioResponse.idlattes = user.idlattes
@@ -48,23 +26,16 @@ class Usuario(usuario_pb2_grpc.UsuarioServicer):
         except Exception as e:
             print(e)
             return messages_pb2.UsuarioResponse()
-        finally:
-            db.close()
         
 
     async def Login(self, request, context):
         print('Login chamada...')
         try:
-            db = DBConnectorPPG()
-            userLogin = crud.user
-            user, useravatar = await userLogin.authenticate(
-                db, 
-                password=request.password,
-                email=request.username, 
-            )
+            user, useravatar = tarefa_autentica_usuario.apply(kwargs={'username':request.username , 'password':request.password}).get()
+
             if not user:
                 raise
-            elif not crud.user.is_active(user):
+            elif not user.is_active:
                 raise 
 
             loginResponse = messages_pb2.LoginResponse()
@@ -76,13 +47,11 @@ class Usuario(usuario_pb2_grpc.UsuarioServicer):
 
             return loginResponse
 
-        except:
+        except Exception as e:
             loginResponse = messages_pb2.LoginResponse()
             loginResponse.erro = True
             return loginResponse
-        
-        finally:
-            db.close()
+
 
         
 

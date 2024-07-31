@@ -1,22 +1,12 @@
 from __future__ import print_function
-
-import json
-
 import sys
 from pathlib import Path
-import time
-
-
-# Adiciona o diretório raiz do projeto ao sys.path
-diretorio_raiz = Path(__name__).resolve().parent
-sys.path.append(str(diretorio_raiz))
-
 from celery import group
+from google.protobuf.json_format import Parse, MessageToJson, ParseDict
+
 from backend.worker.queries import *
 from backend.db.cache import cache_grpc
-
 from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2
-from google.protobuf.json_format import Parse, MessageToJson, ParseDict
 
 
 # Implementação do serviço gRPC
@@ -38,11 +28,8 @@ class Indicadores(ppg_pb2_grpc.IndicadoresServicer):
             
             job = group(tarefas)
             result = job.apply_async()
-            start_time = time.time()
             ret_values = result.get()
             print('Coletando resultados das tarefas...')
-            end_time = time.time()  # Tempo final
-            print(f"Tempo de execução  ret: {end_time - start_time} segundos")
             
             ppg_response = messages_pb2.PpgResponse()
             for result in ret_values:

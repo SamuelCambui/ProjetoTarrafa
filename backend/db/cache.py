@@ -1,20 +1,14 @@
-from backend.core.config import settings
-
-from redis import asyncio as aioredis
 from redis import Redis
-from backend.core import utils
-from backend.app import crud
-
 from functools import wraps
-
 from google.protobuf.json_format import ParseDict, MessageToJson, MessageToDict
 from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2
-
-
 import json
-
 import pickle
 from grpc import ServicerContext
+
+from backend.core import utils
+from backend.worker import crud
+from backend.core.config import settings
 
 def cache_grpc(func):
    @wraps(func)
