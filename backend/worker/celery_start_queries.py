@@ -1,8 +1,9 @@
 from celery import Celery
 
+import os
 from backend.core.config import settings
 
-#os.environ.setdefault("FORKED_BY_MULTIPROCESSING", "1") #para SO Windows apenas
+os.environ.setdefault("FORKED_BY_MULTIPROCESSING", "1") #para SO Windows apenas
 
 porta = settings.REDIS_PORT
 backend = 'redis://'+settings.LOCAL_REDIS_URL+':'+porta+'/1'

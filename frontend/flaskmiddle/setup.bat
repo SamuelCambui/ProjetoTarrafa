@@ -14,6 +14,6 @@ pip install requests==2.31.0
 pip install jellyfish
 pip install jaro-winkler
 pip install beautifulsoup4
-pip install gunicorn
 pip install gevent
+
 
