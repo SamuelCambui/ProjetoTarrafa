@@ -156,8 +156,11 @@ async def get_grafo_name(path):
 def tratamento_excecao_com_db(func):
     def wrapper(*args, **kwargs):
         try:
-            db = DBConnectorPPG()
-            kwargs['db'] = db
+            if 'db' not in kwargs:
+                db = DBConnectorPPG()
+                kwargs['db'] = db
+            else:
+                db = kwargs['db']
             return func(*args, **kwargs)
         except Exception as error:
             nome_funcao = func.__name__

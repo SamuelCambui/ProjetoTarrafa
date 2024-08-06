@@ -6,15 +6,15 @@ import psycopg2.extras
 class DBConnector:
   dbconn = None
   
-  def __init__(self, db_name):
+  def __init__(self, db_name, db_host, db_port, db_user, db_pass):
     try:
       if self.dbconn is None:
           self.dbconn = psycopg2.connect(
-            host=settings.POSTGRES_HOST_2,
-            port=settings.POSTGRES_PORT,
+            host=db_host,
+            port=db_port,
             database=db_name,
-            user=settings.POSTGRES_USER,
-            password=settings.POSTGRES_PASSWORD,
+            user=db_user,
+            password=db_pass
           )
     except Exception as err:
       print('DBCONNECTOR:', err)
@@ -166,11 +166,23 @@ class DBConnector:
 
 
 class DBConnectorPPG(DBConnector):
-  def __init__(self):
-    super().__init__(settings.POSTGRES_DB_2)
+  def __init__(self, 
+               db_name=settings.POSTGRES_DB_2, 
+               db_host=settings.POSTGRES_HOST_2, 
+               db_port=settings.POSTGRES_PORT, 
+               db_user=settings.POSTGRES_USER, 
+               db_pass=settings.POSTGRES_PASSWORD
+              ):
+    super().__init__(db_name, db_host, db_port, db_user, db_pass)
 
 
 class DBConnectorGRAD(DBConnector):
-  def __init__(self):
-    super().__init__(settings.POSTGRES_DB_GRAD)
+  def __init__(self, 
+               db_name=settings.POSTGRES_DB_2, 
+               db_host=settings.POSTGRES_HOST_2, 
+               db_port=settings.POSTGRES_PORT, 
+               db_user=settings.POSTGRES_USER, 
+               db_pass=settings.POSTGRES_PASSWORD
+              ):
+    super().__init__(db_name, db_host, db_port, db_user, db_pass)
       

@@ -2,6 +2,7 @@ from typing import Optional
 
 from backend.db.db import DBConnector
 from backend.core.utils import InsertQuery, UpdateQuery
+from backend.core.security import verify_password
 from backend.schemas.user import User, UserInDB
 from backend.worker import crud
 from backend.db.db import DBConnectorPPG
@@ -48,8 +49,6 @@ class CRUDUser():
                 return user
             return None
 
-
-
     async def create(self, db: DBConnector, **obj_in) -> User:
         """
         Criando um novo usuário
@@ -83,6 +82,8 @@ class CRUDUser():
         if type(user) is not UserInDB:
             return None, None
         if not user:
+            return None, None
+        if not verify_password(password, user.hashed_password):
             return None, None
 
         return user, useravatar
