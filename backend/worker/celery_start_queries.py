@@ -3,14 +3,14 @@ from celery import Celery
 from backend.core.config import settings
 
 #os.environ.setdefault("FORKED_BY_MULTIPROCESSING", "1") #para SO Windows apenas
-broker = 'redis://'+settings.LOCAL_REDIS_URL
+
 porta = settings.REDIS_PORT
-#app_celery = Celery('tasks', broker=broker+':'+porta+'/1',  backend=broker+':'+porta+'/1')
+backend = 'redis://'+settings.LOCAL_REDIS_URL+':'+porta+'/1'
+broker = 'amqp://'+settings.RABBITMQ_DEFAULT_USER+':'+ settings.RABBITMQ_DEFAULT_PASS+'@'+settings.RABBITMQ_HOST+':5672/'+settings.RABBITMQ_DEFAULT_VHOST
 
 app_celery_queries = Celery('queries',
-               broker='amqp://'+settings.RABBITMQ_DEFAULT_USER+':'+ settings.RABBITMQ_DEFAULT_PASS+'@'+settings.RABBITMQ_HOST+':5672/'+settings.RABBITMQ_DEFAULT_VHOST,
-               #broker=broker+':'+porta+'/1',  
-               backend=broker+':'+porta+'/1',
+               broker=broker,
+               backend=backend,
                include=['backend.worker.queries'])
 
 app_celery_queries.conf.update(

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 pip install --upgrade pip setuptools wheel
-pip install fastapi==0.95.1
 pip install psycopg2-binary
 pip install pydantic==1.10.7
 pip install uvicorn==0.22.0
