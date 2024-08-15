@@ -178,7 +178,7 @@ class DBConnectorPPG(DBConnector):
 
 class DBConnectorGRAD(DBConnector):
   def __init__(self, 
-               db_name=settings.POSTGRES_DB_2, 
+               db_name=settings.POSTGRES_DB_GRAD, 
                db_host=settings.POSTGRES_HOST_2, 
                db_port=settings.POSTGRES_PORT, 
                db_user=settings.POSTGRES_USER, 

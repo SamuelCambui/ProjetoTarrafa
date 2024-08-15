@@ -19,6 +19,10 @@ pip install beautifulsoup4
 pip install celery
 pip install zeep
 pip install xmltodict
+<<<<<<< Updated upstream
+=======
+pip install gunicorn
+>>>>>>> Stashed changes
 pip install gevent
 pip install flower
 pip install pika

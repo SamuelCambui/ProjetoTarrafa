@@ -181,3 +181,27 @@ def tratamento_excecao(func):
             print(f"Erro: {str(error)}")
             raise error
     return wrapper
+
+def tratamento_excecao_com_db(tipo_banco : Literal['ppg'] | Literal['grad']= 'ppg'):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                if 'db' not in kwargs:
+                    if tipo_banco == 'grad':
+                        db = DBConnectorGRAD()
+                    else:
+                        db = DBConnectorPPG()
+                    kwargs['db'] = db
+                else:
+                    db = kwargs['db']
+                return func(*args, **kwargs)
+            except Exception as error:
+                nome_funcao = func.__name__
+                print(f"A exceção foi gerada na função: {nome_funcao}")
+                print(f"Erro: {str(error)}")
+                raise error
+            finally:
+                db.close()
+        return wrapper
+    return decorator
