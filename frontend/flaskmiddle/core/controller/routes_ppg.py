@@ -110,3 +110,28 @@ def indicadores(id, anoi, anof):
                 print('ok')
                 retorno = processa_retorno(response)
     return retorno
+
+@controller_ppg.get("graficos/docentes-paralelo-tab/<id>/<anoi>/<anof>")
+@login_required
+def docentes(id, anoi, anof):
+   return ""
+
+@controller_ppg.get("graficos/bancas-paralelo-tab/<id>/<anoi>/<anof>")
+@login_required
+def bancas(id, anoi, anof):
+    return ""
+
+@controller_ppg.get("graficos/egressos-paralelo-tab/<id>/<anoi>/<anof>")
+@login_required
+def egressos(id, anoi, anof):
+    return ""
+
+@controller_ppg.get("graficos/projetos-paralelo-tab/<id>/<anoi>/<anof>")
+@login_required
+def projetos(id, anoi, anof):
+    return ""
+
+@controller_ppg.get("graficos/geral-paralelo-tab/<id>/<anoi>/<anof>")
+@login_required
+def geral(id, anoi, anof):
+    return ""

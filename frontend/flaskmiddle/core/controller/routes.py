@@ -42,4 +42,4 @@ def hash_url(url):
 
 @controller_principal.route("/")
 def root(pagina=None):
-    pass
+    return ""

@@ -156,7 +156,7 @@ async def get_grafo_name(path):
 def tratamento_excecao_com_db(func):
     def wrapper(*args, **kwargs):
         try:
-            if 'db' not in kwargs:
+            if 'db' not in kwargs or kwargs['db'] is None:
                 db = DBConnectorPPG()
                 kwargs['db'] = db
             else:

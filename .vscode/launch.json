@@ -27,7 +27,7 @@
                 "-Q",
                 "fila_queries",
                 "-l",
-                "INFO",
+                "WARNING",
                 "-n",
                 "worker1@%h"
             ],
