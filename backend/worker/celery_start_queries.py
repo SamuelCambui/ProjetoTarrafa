@@ -14,11 +14,17 @@ print(f"BROKER = {broker}")
 app_celery_queries = Celery('queries', 
                broker=broker,
                backend=backend,
-               include=['backend.worker.queries'])
+               include=[
+                   'backend.worker.tasks_ppg.task_bancas',
+                   'backend.worker.tasks_ppg.task_docentes',
+                   'backend.worker.tasks_ppg.task_egressos',
+                   'backend.worker.tasks_ppg.task_indicadores',
+                   'backend.worker.tasks_ppg.task_projetos',
+                   ])
 
 app_celery_queries.conf.update(
     task_routes={
-        'backend.worker.queries.*': {'queue': 'fila_queries'}
+        'backend.worker.tasks_ppg.*': {'queue': 'fila_queries'}
     },
     worker_prefetch_multiplier=1,
 )

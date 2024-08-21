@@ -101,10 +101,10 @@ def ppg():
 @controller_ppg.get("graficos/indicadores-paralelo-tab/<id>/<anoi>/<anof>")
 @login_required
 def indicadores(id, anoi, anof):
-    print('Iniciando comunicacao com grpc...')
+    print('Iniciando comunicacao com grpc indicadores...')
     retorno = {}
     with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
-            stub = ppg_pb2_grpc.IndicadoresStub(channel)
+            stub = ppg_pb2_grpc.PPGStub(channel)
             if stub:
                 response = stub.ObtemIndicadores(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
                 print('ok')
@@ -114,24 +114,64 @@ def indicadores(id, anoi, anof):
 @controller_ppg.get("graficos/docentes-paralelo-tab/<id>/<anoi>/<anof>")
 @login_required
 def docentes(id, anoi, anof):
-   return ""
+    print('Iniciando comunicacao com grpc docentes...')
+    retorno = {}
+    with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
+            stub = ppg_pb2_grpc.PPGStub(channel)
+            if stub:
+                response = stub.ObtemDocentes(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
+                print('ok')
+                retorno = processa_retorno(response)
+    return retorno
 
 @controller_ppg.get("graficos/bancas-paralelo-tab/<id>/<anoi>/<anof>")
 @login_required
 def bancas(id, anoi, anof):
-    return ""
+    print('Iniciando comunicacao com grpc bancas...')
+    retorno = {}
+    with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
+            stub = ppg_pb2_grpc.PPGStub(channel)
+            if stub:
+                response = stub.ObtemBancas(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
+                print('ok')
+                retorno = processa_retorno(response)
+    return retorno
 
 @controller_ppg.get("graficos/egressos-paralelo-tab/<id>/<anoi>/<anof>")
 @login_required
 def egressos(id, anoi, anof):
-    return ""
+    print('Iniciando comunicacao com grpc egressos...')
+    retorno = {}
+    with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
+            stub = ppg_pb2_grpc.PPGStub(channel)
+            if stub:
+                response = stub.ObtemEgressos(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
+                print('ok')
+                retorno = processa_retorno(response)
+    return retorno
 
 @controller_ppg.get("graficos/projetos-paralelo-tab/<id>/<anoi>/<anof>")
 @login_required
 def projetos(id, anoi, anof):
-    return ""
+    print('Iniciando comunicacao com grpc projetos...')
+    retorno = {}
+    with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
+            stub = ppg_pb2_grpc.PPGStub(channel)
+            if stub:
+                response = stub.ObtemProjetos(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
+                print('ok')
+                retorno = processa_retorno(response)
+    return retorno
 
 @controller_ppg.get("graficos/geral-paralelo-tab/<id>/<anoi>/<anof>")
 @login_required
 def geral(id, anoi, anof):
-    return ""
+    print('Iniciando comunicacao com grpc geral ...')
+    retorno = {}
+    with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
+            stub = ppg_pb2_grpc.PPGStub(channel)
+            if stub:
+                response = stub.ObtemGeral(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
+                print('ok')
+                retorno = processa_retorno(response)
+    return retorno

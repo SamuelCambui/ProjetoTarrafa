@@ -181,3 +181,9 @@ def tratamento_excecao(func):
             print(f"Erro: {str(error)}")
             raise error
     return wrapper
+
+#* Fazer gerador stub -> Arquivo separado
+# def grpc_stub_dependency(classe):
+#     with grpc.insecure_channel(SERVER_ADDRESS) as channel:
+#         stub = UserServiceStub(channel)
+#         yield stub

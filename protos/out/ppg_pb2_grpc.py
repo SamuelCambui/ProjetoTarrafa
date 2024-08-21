@@ -5,10 +5,10 @@ import warnings
 
 from . import messages_pb2 as messages__pb2
 
-GRPC_GENERATED_VERSION = '1.64.1'
+GRPC_GENERATED_VERSION = '1.65.4'
 GRPC_VERSION = grpc.__version__
-EXPECTED_ERROR_RELEASE = '1.65.0'
-SCHEDULED_RELEASE_DATE = 'June 25, 2024'
+EXPECTED_ERROR_RELEASE = '1.66.0'
+SCHEDULED_RELEASE_DATE = 'August 6, 2024'
 _version_not_supported = False
 
 try:
@@ -30,7 +30,7 @@ if _version_not_supported:
     )
 
 
-class IndicadoresStub(object):
+class PPGStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -40,13 +40,43 @@ class IndicadoresStub(object):
             channel: A grpc.Channel.
         """
         self.ObtemIndicadores = channel.unary_unary(
-                '/protos.Indicadores/ObtemIndicadores',
+                '/protos.PPG/ObtemIndicadores',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
+        self.ObtemBancas = channel.unary_unary(
+                '/protos.PPG/ObtemBancas',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
+        self.ObtemDocentes = channel.unary_unary(
+                '/protos.PPG/ObtemDocentes',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
+        self.ObtemEgressos = channel.unary_unary(
+                '/protos.PPG/ObtemEgressos',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
+        self.ObtemGeral = channel.unary_unary(
+                '/protos.PPG/ObtemGeral',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
+        self.ObtemProjetos = channel.unary_unary(
+                '/protos.PPG/ObtemProjetos',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
+        self.ObtemTarefas = channel.unary_unary(
+                '/protos.PPG/ObtemTarefas',
                 request_serializer=messages__pb2.PpgRequest.SerializeToString,
                 response_deserializer=messages__pb2.PpgResponse.FromString,
                 _registered_method=True)
 
 
-class IndicadoresServicer(object):
+class PPGServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def ObtemIndicadores(self, request, context):
@@ -55,23 +85,89 @@ class IndicadoresServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ObtemBancas(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
-def add_IndicadoresServicer_to_server(servicer, server):
+    def ObtemDocentes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemEgressos(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemGeral(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemProjetos(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemTarefas(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_PPGServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'ObtemIndicadores': grpc.unary_unary_rpc_method_handler(
                     servicer.ObtemIndicadores,
                     request_deserializer=messages__pb2.PpgRequest.FromString,
                     response_serializer=messages__pb2.PpgResponse.SerializeToString,
             ),
+            'ObtemBancas': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemBancas,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
+            'ObtemDocentes': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemDocentes,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
+            'ObtemEgressos': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemEgressos,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
+            'ObtemGeral': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemGeral,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
+            'ObtemProjetos': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemProjetos,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
+            'ObtemTarefas': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemTarefas,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'protos.Indicadores', rpc_method_handlers)
+            'protos.PPG', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('protos.Indicadores', rpc_method_handlers)
+    server.add_registered_method_handlers('protos.PPG', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class Indicadores(object):
+class PPG(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -88,7 +184,241 @@ class Indicadores(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Indicadores/ObtemIndicadores',
+            '/protos.PPG/ObtemIndicadores',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemBancas(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.PPG/ObtemBancas',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemDocentes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.PPG/ObtemDocentes',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemEgressos(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.PPG/ObtemEgressos',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemGeral(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.PPG/ObtemGeral',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemProjetos(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.PPG/ObtemProjetos',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemTarefas(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.PPG/ObtemTarefas',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+
+class HomeStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.ObtemHome = channel.unary_unary(
+                '/protos.Home/ObtemHome',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
+
+
+class HomeServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def ObtemHome(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_HomeServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'ObtemHome': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemHome,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'protos.Home', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('protos.Home', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class Home(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def ObtemHome(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.Home/ObtemHome',
             messages__pb2.PpgRequest.SerializeToString,
             messages__pb2.PpgResponse.FromString,
             options,

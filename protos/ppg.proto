@@ -4,30 +4,16 @@ package protos;
 
 import "messages.proto";
 
-service Indicadores {
+service PPG{
   rpc ObtemIndicadores (PpgRequest) returns (PpgResponse);
-}
-
-service Bancas {
   rpc ObtemBancas (PpgRequest) returns (PpgResponse);
-}
-
-service Docentes {
   rpc ObtemDocentes (PpgRequest) returns (PpgResponse);
-}
-
-service Egressos {
   rpc ObtemEgressos (PpgRequest) returns (PpgResponse);
-}
-
-service Geral {
   rpc ObtemGeral (PpgRequest) returns (PpgResponse);
-}
-
-service Projetos {
   rpc ObtemProjetos (PpgRequest) returns (PpgResponse);
+  rpc ObtemTarefas (PpgRequest) returns (PpgResponse);
 }
 
-service Tarefas {
-  rpc ObtemTarefas (PpgRequest) returns (PpgResponse);
+service Home{
+  rpc ObtemHome (PpgRequest) returns (PpgResponse);
 }

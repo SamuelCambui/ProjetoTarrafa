@@ -61,10 +61,10 @@
             "envFile": "${workspaceFolder}/.env.desenvolvimento"
         },
         {
-            "name": "Python: INDICADORES gRPC SERVER",
+            "name": "Python: gRPC SERVER",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/backend/app/api/api.py",  
+            "program": "${workspaceFolder}/backend/app/api/api.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "envFile": "${workspaceFolder}/.env.desenvolvimento",

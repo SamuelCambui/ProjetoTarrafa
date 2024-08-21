@@ -9,13 +9,13 @@ import grpc
 diretorio_raiz = Path(__name__).resolve().parent
 sys.path.append(str(diretorio_raiz))
 from protos.out import ppg_pb2_grpc, ppg_pb2, usuarios_pb2_grpc, usuarios_pb2
-from backend.app.api.grpc_v1.indicadores_grpc import Indicadores
+from backend.app.api.grpc_v1.ppg_grpc import PPG
 from backend.app.api.grpc_v1.login_grpc import Usuario
 from backend.core.config import settings
 
 async def serve():
     server = grpc.aio.server()
-    ppg_pb2_grpc.add_IndicadoresServicer_to_server(Indicadores(), server)
+    ppg_pb2_grpc.add_PPGServicer_to_server(PPG(), server)
     usuarios_pb2_grpc.add_UsuarioServicer_to_server(Usuario(), server)
 
     server.add_insecure_port('[::]:50052')
