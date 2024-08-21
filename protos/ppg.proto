@@ -4,16 +4,31 @@ package protos;
 
 import "messages.proto";
 
+/*
+  Serviço PPG
+  Este serviço oferece uma API para interagir com os dados de PPG.
+  Ele permite obter indicadores, bancas, docentes, egressos,
+  informações gerais, projetos e tarefas relacionadas ao PPG.
+*/
 service PPG{
+  // Retorna os indicadores de desempenho do PPG.
   rpc ObtemIndicadores (PpgRequest) returns (PpgResponse);
+  // Retorna as informações sobre as bancas do PPG.
   rpc ObtemBancas (PpgRequest) returns (PpgResponse);
+  // Retorna os dados sobre os docentes do PPG.
   rpc ObtemDocentes (PpgRequest) returns (PpgResponse);
+  // Retorna informações sobre os egressos do PPG.
   rpc ObtemEgressos (PpgRequest) returns (PpgResponse);
-  rpc ObtemGeral (PpgRequest) returns (PpgResponse);
+  // Retorna informações sobre projetos do PPG.
   rpc ObtemProjetos (PpgRequest) returns (PpgResponse);
-  rpc ObtemTarefas (PpgRequest) returns (PpgResponse);
 }
 
+/*
+  Serviço Home
+  Este serviço fornece a interface para obter as informações
+  gerais da página inicial da aplicação.
+*/
 service Home{
+  // Retorna as informações gerais para exibição na home.
   rpc ObtemHome (PpgRequest) returns (PpgResponse);
 }

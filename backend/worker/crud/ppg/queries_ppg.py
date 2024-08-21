@@ -5,9 +5,11 @@ from backend.core.utils import tratamento_excecao_com_db, tratamento_excecao
 from datetime import datetime, timedelta
 from typing import List
 import time
+from itertools import combinations
 
 class QueriesPPG():
 
+    #* Indicadores
     @tratamento_excecao_com_db
     def retorna_id_ies(self, id: str, db: DBConnector = None):
         query = "select id_ies from programas where codigo_programa = %(id)s"
@@ -1947,6 +1949,12 @@ class QueriesPPG():
     
     #* Docentes
     
+    @staticmethod
+    def generates_combinations(artigos: list):
+        combinations_list = combinations(artigos, 2)
+
+        return combinations_list
+    
     @tratamento_excecao_com_db
     def retorna_professores_por_categoria(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
@@ -2196,11 +2204,11 @@ class QueriesPPG():
         for p in professors:
             if 'nome' in p:
                 id_professor = p['num_identificador']
-                datalattes[id_professor] = await self.retorna_tempo_de_atualizacao_do_lattes_do_professor(id_professor, )
+                datalattes[id_professor] = await self.retorna_tempo_de_atualizacao_do_lattes_do_professor(id_professor)
                 # FONTE: lattes
-                producoes[id_professor] = await self.retorna_producoes_do_professor(id_professor, anoi, anof, )
+                producoes[id_professor] = self.retorna_producoes_do_professor(id_professor, anoi, anof)
                 # FONTE: sucupira
-                orientados[id_professor] = await self.retorna_orientandos_do_professor(id, p['id_sucupira'], anoi, anof, )
+                orientados[id_professor] = await self.retorna_orientandos_do_professor(id, p['id_sucupira'], anoi, anof)
                 # FONTE: sucupira
                 status[id_professor] = await self.getStatusOfProfessor(id, p['id_sucupira'], anoi, anof)
                 status[id_professor] = list(set(status[id_professor].replace(' ','').split(',')))
@@ -2238,7 +2246,7 @@ class QueriesPPG():
     
     
     @tratamento_excecao_com_db
-    def retorna_grafo_de_coautores_do_ppg(self, id: str, anoi: int, anof: int, db: DBConnector):
+    def retorna_grafo_de_coautores_do_ppg(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna um grafo de coautoria do PPG
 
@@ -2363,7 +2371,7 @@ class QueriesPPG():
         return grafo
     
     @tratamento_excecao_com_db
-    async def retorna_producoes_do_professor(self, id: str, anoi: int, anof: int, db: DBConnector):
+    def retorna_producoes_do_professor(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna todas as produções do professor por anos
         
@@ -2418,7 +2426,7 @@ class QueriesPPG():
         return prods
     
     @tratamento_excecao_com_db
-    def retorna_dados_de_projetos(self, id: str, anoi: int, anof: int, db: DBConnector):
+    def retorna_dados_de_projetos(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         query = """with qprojetos as (select ano_inicio, nm_projeto as nome, situacao,  num_doutorado, num_mestrado, num_graduacao,
                         CASE WHEN producoes IS NULL OR jsonb_typeof(producoes) = 'null' OR (producoes = '[]') THEN 0 ELSE 1 END as producao from lattes_projetos as lp
                     inner join lattes_docentes as ld on (ld.num_identificador = lp.num_identificador)
@@ -2504,7 +2512,7 @@ class QueriesPPG():
         return {'nodes': nos, 'links':links}
     
     @tratamento_excecao_com_db
-    def retorna_dados_de_linhas_de_pesquisa(self, id: str, anoi: int, anof: int, db: DBConnector):
+    def retorna_dados_de_linhas_de_pesquisa(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         query1 = """select ctp.tipo as source, cstp.sub_tipo as target, count(*) as value from coleta_producoes as cp
 			inner join coleta_sub_tipo_producao as cstp on (cstp.id = cp.id_sub_tipo_producao)
 			inner join coleta_tipo_producao as ctp on (ctp.id = cp.id_tipo_producao)
@@ -2553,11 +2561,285 @@ class QueriesPPG():
 
         return {'nodes': nodes, 'links':links}
 
-
     #* Bancas
     
-    @tratamento_excecao
-    def retorna_dados_de_tccs_por_linhas_de_pesquisa(self, id: str, anoi: int, anof: int, db: DBConnector):
+    @tratamento_excecao_com_db
+    def retorna_levantemento_externos_em_bancas(self, id: str, anoi: int, anof: int, db: DBConnector = None):
+        query = """with qqext as (select distinct cdpt.dados->>'id' as id, d."idPessoa" as idpessoa, 
+			   d."categoria", d."nomePessoa" as nome, qq.ano
+                    FROM coleta_detalhamento_producao_tcc as cdpt
+                    INNER JOIN (select id_producao, ano from coleta_producoes where 
+                    id_programa = (select id_programa from programas where codigo_programa = %(id)s)
+                    and id_tipo_producao = 2 and ano >= %(anoi)s and ano <= %(anof)s
+                    order by ano) as qq ON qq.id_producao = cdpt.id_producao
+                    join lateral jsonb_to_recordset(cdpt.dados->'banca') as d("idPessoa" text, "categoria" text, "nomePessoa" text) on true
+                    where d."categoria" = 'Participante externo')
+
+                    select qqext.ano, p.id_pessoa, qqext.nome, p.nome_pais_pessoa, p.pais_ies_titulacao, p.grau_academico, trim(p.nome_area_titulacao) as nome_area_titulacao, STRING_AGG (cd.id_programa, ',') as ppgs, STRING_AGG (cast(cd.tipo_categoria as text), ',') as categorias from qqext
+                    inner join pessoas as p on p.id_pessoa = qqext.idpessoa
+                    left join coleta_docentes as cd on cd.id_pessoa = p.id_pessoa and qqext.ano = cd.ano
+                    group by qqext.ano, p.id_pessoa, qqext.nome, p.nome_pais_pessoa, p.pais_ies_titulacao, p.grau_academico, p.nome_area_titulacao
+                    order by qqext.ano"""
+        row = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
+        bancas = [dict(r) for r in row]
+
+        pais_origem = {}
+        pais_titulacao = {}
+        grau_academico = {}
+        area_titulacao = {}
+        participa_ppg = {'Sim':0, 'Não':0}
+        tipo_participacao_ppg = {'Permanente':0, 'Colaborador':0, 'Visitante':0, 'Nenhum':0}
+        for b in bancas:
+            if b['nome_pais_pessoa'] not in pais_origem:
+                pais_origem[b['nome_pais_pessoa']] = 1
+            else:
+                pais_origem[b['nome_pais_pessoa']] += 1
+            
+            if b['pais_ies_titulacao'] not in pais_titulacao:
+                pais_titulacao[b['pais_ies_titulacao']] = 1
+            else:
+                pais_titulacao[b['pais_ies_titulacao']] += 1
+
+            if b['grau_academico'] not in grau_academico:
+                grau_academico[b['grau_academico']] = 1
+            else:
+                grau_academico[b['grau_academico']] += 1
+
+            if b['nome_area_titulacao'] == '':
+                b['nome_area_titulacao'] = 'Não informado'
+
+            if b['nome_area_titulacao'] not in area_titulacao:
+                area_titulacao[b['nome_area_titulacao']] = 1
+            else:
+                area_titulacao[b['nome_area_titulacao']] += 1
+
+            if b['ppgs'] == None or b['ppgs'] == 'null' or b['ppgs'] == '':
+                participa_ppg['Não'] += 1
+            else:
+                participa_ppg['Sim'] += 1
+
+            if b['categorias']:
+                if '3' in b['categorias']:
+                    tipo_participacao_ppg['Permanente'] += 1
+                elif '2' in b['categorias']:
+                    tipo_participacao_ppg['Visitante'] += 1
+                elif '1' in b['categorias']:
+                    tipo_participacao_ppg['Colaborador'] += 1
+            else:
+                tipo_participacao_ppg['Nenhum'] += 1
+
+        query = """select cdpt.dados->>'id' as id, string_agg(d."categoria",',') as banca, qq.ano
+                    FROM coleta_detalhamento_producao_tcc as cdpt
+                    INNER JOIN (select id_producao, ano from coleta_producoes where 
+                    id_programa = (select id_programa from programas where codigo_programa = %(id)s)
+                    and id_tipo_producao = 2 and ano >= %(anoi)s and ano <= %(anof)s
+                    order by ano) as qq ON qq.id_producao = cdpt.id_producao
+                    join lateral jsonb_to_recordset(cdpt.dados->'banca') as d("idPessoa" text, "categoria" text, "nomePessoa" text) on true
+                    group by cdpt.dados->>'id', qq.ano"""
+
+        row = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
+        bancas = [dict(r) for r in row]
+
+        contagem_externos = 0
+        contagem_internos = 0
+
+        for b in bancas:
+            contagem_externos += b['banca'].count('Participante externo')
+            contagem_internos += b['banca'].count('Docente')
+
+        return {'pais_origem': dict(sorted(pais_origem.items(), key=lambda item: item[1], reverse=True)) , 'pais_titulacao': dict(sorted(pais_titulacao.items(), key=lambda item: item[1], reverse=True)) , 
+                'grau_academico': grau_academico, 'area_titulacao': dict(sorted(area_titulacao.items(), key=lambda item: item[1], reverse=True)), 'participa_ppg': participa_ppg,
+                'tipo_participacao_ppg': tipo_participacao_ppg, 'quantidade_externos':contagem_externos, 'quantidade_internos': contagem_internos, 'quantidade_bancas': len(bancas)}
+
+    @tratamento_excecao_com_db
+    def retorna_media_dados_de_produtos_por_tcc_nacional(self, id: str, anoi: int, anof: int, db: DBConnector = None):
+        # query1 = """
+        #     select tp_producao as source, subtipo as target, count(*) as value from producoes 
+        #     where id_programa = %(id)s and ano_publicacao >= %(anoi)s and ano_publicacao <= %(anof)s
+        #     group by tp_producao, subtipo"""
+        query1 = """with qppgs as (select id_producao, cp.ano, p.codigo_programa from coleta_producoes as cp
+                    inner join programas as p on 
+                            p.id_programa = cp.id_programa
+                    where id_sub_tipo_producao = 12 and
+                        cp.id_programa != %(id)s and
+                        p.programa_em_rede != 1 and
+                        p.situacao ilike '%%FUNCIONAMENTO%%' and p.modalidade = (select modalidade from programas where codigo_programa = %(id)s) and
+                        p.conceito = (select conceito from programas where codigo_programa = %(id)s) and
+                        p.nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
+                        and ano >= %(anoi)s and ano <= %(anof)s
+                    group by id_producao, cp.ano, p.codigo_programa
+                    order by ano)
+
+                    select qppgs.ano, qppgs.codigo_programa, qppgs.id_producao, dados->'producoesAssociadas' as producoes from coleta_detalhamento_producao_tcc as cdptcc
+                    inner join qppgs on qppgs.id_producao = cdptcc.id_producao
+                    group by qppgs.ano, qppgs.codigo_programa, qppgs.id_producao, producoes
+                    order by qppgs.ano"""
+        
+        row = db.fetch_all(query1, id=id, anof=anof, anoi=anoi)
+        producoes = [dict(r) for r in row]
+
+        produtos = {}
+        for ano in range(anoi, anof+1):
+            for prod in producoes:
+                if prod['ano'] == ano:
+                    if ano not in produtos:
+                        produtos[ano] = {}
+                    if prod['codigo_programa'] not in produtos[ano]:
+                        produtos[ano][prod['codigo_programa']] = {'Nenhum':0, 'Apenas bibliográficos': 0, 'Apenas técnicos': 0, 'Técnicos + bibliograficos':0}
+                    if prod['producoes']:
+                        bibliograficas = False
+                        tecnicas = False
+                        for produto in prod['producoes']:
+                            if produto:
+                                if produto['nomeTipoProducao'] == 'BIBLIOGRÁFICA':
+                                    bibliograficas = True
+                                elif produto['nomeTipoProducao'] == 'TÉCNICA':
+                                    tecnicas = True
+                                
+                        if bibliograficas and not tecnicas:
+                            produtos[ano][prod['codigo_programa']]['Apenas bibliográficos'] += 1
+                        elif tecnicas and not bibliograficas:
+                            produtos[ano][prod['codigo_programa']]['Apenas técnicos'] += 1
+                        elif tecnicas and bibliograficas:
+                            produtos[ano][prod['codigo_programa']]['Técnicos + bibliograficos'] += 1
+                    else:
+                        produtos[ano][prod['codigo_programa']]['Nenhum'] += 1
+
+        #return produtos
+                
+        # tccs_com_livros = {}
+
+        # for ano, prod in produtos.items():
+        #     if 'LIVRO' in prod:
+        #         if ano not in tccs_com_livros:
+        #             tccs_com_livros[ano] = 0
+        #         tccs_com_livros[ano] += 1
+        medias_producoes = {} 
+        for ano, dados in produtos.items():
+            if ano not in medias_producoes:
+                medias_producoes[ano] = {'Nenhum (média)':0, 'Apenas bibliográficos (média)': 0, 'Apenas técnicos (média)': 0, 'Técnicos + bibliograficos (média)':0}
+            cont = 0
+            for prog, items in dados.items():
+                medias_producoes[ano]['Nenhum (média)'] += items['Nenhum']
+                medias_producoes[ano]['Apenas bibliográficos (média)'] += items['Apenas bibliográficos']
+                medias_producoes[ano]['Apenas técnicos (média)'] += items['Apenas técnicos']
+                medias_producoes[ano]['Técnicos + bibliograficos (média)'] += items['Técnicos + bibliograficos']
+                cont += 1
+            medias_producoes[ano]['Nenhum (média)'] /= cont
+            medias_producoes[ano]['Apenas bibliográficos (média)'] /= cont
+            medias_producoes[ano]['Apenas técnicos (média)'] /= cont
+            medias_producoes[ano]['Técnicos + bibliograficos (média)'] /= cont
+
+
+        return medias_producoes#, 'tccs_com_producoes': tccs_com_producoes, 'tccs_com_livros': tccs_com_livros}
+   
+    
+    @tratamento_excecao_com_db
+    def retorna_dados_de_produtos_por_tcc(self, id: str, anoi: int, anof: int, db: DBConnector = None):
+        # query1 = """
+        #     select tp_producao as source, subtipo as target, count(*) as value from producoes 
+        #     where id_programa = %(id)s and ano_publicacao >= %(anoi)s and ano_publicacao <= %(anof)s
+        #     group by tp_producao, subtipo"""
+        query1 = """with qppgs as (select id_producao, ano from coleta_producoes 
+                    where id_sub_tipo_producao = 12 
+                        and id_programa = (select id_programa from programas where codigo_programa = %(id)s)
+                        and ano >= %(anoi)s and ano <= %(anof)s
+                    group by id_producao, ano
+                    order by ano)
+
+                    select qppgs.ano, qppgs.id_producao, dados->'producoesAssociadas' as producoes from coleta_detalhamento_producao_tcc as cdptcc
+                    inner join qppgs on qppgs.id_producao = cdptcc.id_producao
+                    group by qppgs.ano, qppgs.id_producao, producoes
+                    order by qppgs.ano"""
+        
+        row = db.fetch_all(query1, id=id, anof=anof, anoi=anoi)
+        producoes = [dict(r) for r in row]
+
+        query2 = """
+            WITH qtotal AS (
+                SELECT substring(cdp.valor, 2, 9) AS issn, p.nome_area_avaliacao
+                FROM coleta_detalhamento_producao AS cdp
+                INNER JOIN programas AS p ON p.codigo_programa = %(id)s
+                WHERE item ILIKE '%%ISSN%%' AND cdp.id_producao IN %(ids)s
+                GROUP BY issn, p.nome_area_avaliacao
+            )
+
+            SELECT qtotal.issn, nome_area_avaliacao, qualis 
+            FROM capes_qualis_periodicos AS cqp
+            INNER JOIN qtotal ON (qtotal.issn = cqp.issn AND trim(cqp.area) = trim(nome_area_avaliacao))
+            GROUP BY qtotal.issn, nome_area_avaliacao, qualis
+            ORDER BY qualis ASC;
+            """
+
+        produtos = {}
+        tccs_com_producoes = {}
+        for ano in range(anoi, anof+1):
+            for prod in producoes:
+                if prod['ano'] == ano:
+                    if ano not in produtos:
+                        produtos[ano] = {'total': 0}
+                    if ano not in tccs_com_producoes:
+                        tccs_com_producoes[ano] = {'Nenhum':0, 'Apenas bibliográficos': 0, 'Apenas técnicos': 0, 'Técnicos + bibliograficos':0, 'Periódicos':[]}
+                    if prod['producoes']:
+                        bibliograficas = False
+                        tecnicas = False
+                        for produto in prod['producoes']:
+                            if produto:
+                                if produto['nomeSubTipoProducao'] not in produtos[ano]:
+                                    produtos[ano][produto['nomeSubTipoProducao']] = 0
+                                produtos[ano][produto['nomeSubTipoProducao']] += 1
+                                if produto['nomeSubTipoProducao'] == 'ARTIGO EM PERIÓDICO':
+                                    tccs_com_producoes[ano]['Periódicos'].append(f"{produto['idProducao']}")
+                                if produto['nomeTipoProducao'] not in produtos[ano]:
+                                    produtos[ano][produto['nomeTipoProducao']] = 0
+                                produtos[ano][produto['nomeTipoProducao']] += 1
+
+                                if produto['nomeTipoProducao'] == 'BIBLIOGRÁFICA':
+                                    bibliograficas = True
+                                elif produto['nomeTipoProducao'] == 'TÉCNICA':
+                                    tecnicas = True
+                                
+                            produtos[ano]['total'] += 1
+                        if bibliograficas and not tecnicas:
+                            tccs_com_producoes[ano]['Apenas bibliográficos'] += 1
+                        elif tecnicas and not bibliograficas:
+                            tccs_com_producoes[ano]['Apenas técnicos'] += 1
+                        elif tecnicas and bibliograficas:
+                            tccs_com_producoes[ano]['Técnicos + bibliograficos'] += 1
+                    else:
+                        tccs_com_producoes[ano]['Nenhum'] += 1
+                
+        tccs_com_qualis = {}
+        tccs_com_livros = {}
+
+        anos_validos = []
+
+        for ano, prods in tccs_com_producoes.items():
+            anos_validos.append(ano)
+            if len(prods['Periódicos']) > 0:
+                row = db.fetch_all(query2, id=id, ids=tuple(prods['Periódicos']))
+                qualis = [dict(r) for r in row]
+                if ano not in tccs_com_qualis:
+                    tccs_com_qualis[ano] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
+                for q in qualis:
+                    tccs_com_qualis[ano][q['qualis']] += 1
+
+        for ano, prod in produtos.items():
+            if 'LIVRO' in prod:
+                if ano not in tccs_com_livros:
+                    tccs_com_livros[ano] = 0
+                tccs_com_livros[ano] += 1
+
+        anos_validos.sort()
+        anos_validos = list(set(anos_validos))
+
+        medias = self.retorna_media_dados_de_produtos_por_tcc_nacional(id, anos_validos[0], anos_validos[-1])
+
+        return {'medias': medias, 'produtos': produtos, 'tccs_com_producoes': tccs_com_producoes, 'tccs_com_qualis': tccs_com_qualis, 'tccs_com_livros': tccs_com_livros}
+  
+    
+    @tratamento_excecao_com_db
+    def retorna_dados_de_tccs_por_linhas_de_pesquisa(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         query1 = """select ctp.tipo as source, cstp.sub_tipo as target, count(*) as value from coleta_producoes as cp
 			inner join coleta_sub_tipo_producao as cstp on (cstp.id = cp.id_sub_tipo_producao)
 			inner join coleta_tipo_producao as ctp on (ctp.id = cp.id_tipo_producao)
@@ -2603,8 +2885,8 @@ class QueriesPPG():
 
         return {'nodes': nodes, 'links':links}
     
-    @tratamento_excecao
-    def retorna_dados_de_projetos_e_linhas_de_pesquisa(self, id: str, anoi: int, anof: int, db: DBConnector):
+    @tratamento_excecao_com_db
+    def retorna_dados_de_projetos_e_linhas_de_pesquisa(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         query1 = """select CASE WHEN nome_projeto_pesquisa IS NULL OR nome_projeto_pesquisa = 'null' OR (nome_projeto_pesquisa = '') THEN 'NÃO INFORMADO' ELSE nome_projeto_pesquisa END as source, CASE WHEN nome_linha_pesquisa IS NULL OR nome_linha_pesquisa = 'null' OR (nome_linha_pesquisa = '') THEN 'NÃO INFORMADO' ELSE nome_linha_pesquisa END as target, count(*) as value from coleta_producoes as cp 
             where id_programa = (select id_programa from programas where codigo_programa = %(id)s) and cp.ano >= %(anoi)s and cp.ano <= %(anof)s
             group by nome_projeto_pesquisa, nome_linha_pesquisa"""
@@ -2638,5 +2920,229 @@ class QueriesPPG():
 
         return {'nodes': nodes, 'links':links}
 
+    #* Projetos
+    
+    #* Egressos
+    
+    @tratamento_excecao_com_db
+    def retorna_tempo_de_atualizacao_do_lattes_do_egresso(self, id: str, db: DBConnector = None):
+        """
+        Retorna a quantidade de tempo que o Perfi Lattes está desatualizado
+        
+        Paramêtros:
+            id(str): Id Lattes do professor
+            db(class): DataBase
+        """
+        query = """select dt_atualizacao from lattes_egressos
+                    where idlattes = %(id)s"""
+        row = db.fetch_one(query, id=id)
+
+        tres_meses_atras = datetime.now() - timedelta(days=3 * 30)
+        seis_meses_atras = datetime.now() - timedelta(days=6 * 30)
+        oito_meses_atras = datetime.now() - timedelta(days=8 * 30)
+        doze_meses_atras = datetime.now() - timedelta(days=12 * 30)
+
+        if row:
+            data = row[0]
+            dt = data[0:2]+'-'+data[2:4]+'-'+data[4:]
+            dt_format = '%d-%m-%Y'
+            data = datetime.strptime(dt, dt_format)
+
+            if data < doze_meses_atras:
+                return '+12 meses'
+            elif data < oito_meses_atras and data >= doze_meses_atras:
+                return 'entre 8 e 12 meses'
+            elif data < seis_meses_atras and data >= oito_meses_atras:
+                return 'entre 6 e 8 meses'
+            elif data < tres_meses_atras and data >= seis_meses_atras:
+                return 'entre 3 e 6 meses'
+            else:
+                return 'menos de 2 meses'
+
+        return ''
+    
+    
+    @tratamento_excecao_com_db
+    def retorna_dados_egressos(self, id_ppg, ano_inicial, ano_final, db: DBConnector = None):
+        query = f"""
+                WITH idlattes_egressos AS (
+                SELECT DISTINCT p.lattes
+                FROM coleta_egressos AS ce
+                INNER JOIN pessoas AS p ON (p.id_pessoa = ce.id_pessoa)
+                INNER JOIN programas AS prog ON (prog.id_programa = ce.id_programa)
+                WHERE ce.ano_egresso BETWEEN {ano_inicial}
+                AND {ano_final}
+                AND prog.codigo_programa = '{id_ppg}'
+                )
+                SELECT le.*
+                FROM lattes_egressos as le where le.idlattes in (select * from idlattes_egressos) order by le.nome
+        """
+        # ultimo_ano = self.retorna_ultimo_ano_coleta(db) + 1
+        rows = db.fetch_all(query)
+        egressos = [dict(r) for r in rows]
+        
+        datalattes = {}
+        
+        dados_egressos = []
+        try:
+            for egresso in egressos:
+                id_professor = egresso['idlattes']
+                
+                
+                
+                egresso_titulacao = egresso.pop('modalidade').replace(" ", "-")
+                atuacao_antes = egresso.pop('atuacao_antes')
+                atuacao_depois = egresso.pop('atuacao_depois')
+                ano_egresso = egresso.pop('ano_egresso')
+                
+                
+                if id_professor in datalattes:
+                    datalattes[id_professor]['modalidades'][egresso_titulacao] = {'atuacao_antes':atuacao_antes, 'atuacao_depois':atuacao_depois, 'ano_egresso':ano_egresso}
+                else:
+                    # egresso['modalidades'] = {}
+                    datalattes[id_professor] = {'modalidades':{} }
+                    datalattes[id_professor]['modalidades'][egresso_titulacao] = {'atuacao_antes':atuacao_antes, 'atuacao_depois':atuacao_depois, 'ano_egresso':ano_egresso}
+                    if atuacao_depois['local_trabalho'] == 'Não encontrado':
+                        egresso['mudanca'] = "Sem mudança"
+                    else:
+                        egresso['mudanca'] = "Com mudança"
+                    
+                    dados_egressos.append(egresso)
+                    
+                datalattes[id_professor]['atualizacao_lattes'] = self.retorna_tempo_de_atualizacao_do_lattes_do_egresso(id_professor)
+                
+            # Ordenar os dados pela chave 'mudanca'
+            dados_egressos_ordenado = sorted(dados_egressos, key=lambda egresso: egresso['mudanca'])
+
+            
+            return {'dados': dados_egressos_ordenado, 'lattes': datalattes}
+        except Exception as error:
+            print(error)
+            
+    @tratamento_excecao_com_db
+    def retorna_tempo_de_atualizacao_do_lattes_egressos(self, id: str, anoi: int, anof: int, db: DBConnector = None):
+        """
+        Retorna a quantidade de Perfis Lattes desatualizados por PPG
+        
+        Paramêtros:
+            id(str): Id do PPG
+            db(class): DataBase
+        """
+        query = """select dt_atualizacao, le.idlattes, nome from lattes_egressos as le
+                    inner join (select ce.id_pessoa, p.lattes as lattes from coleta_egressos as ce
+								inner join pessoas as p on (ce.id_pessoa = p.id_pessoa) where ce.id_programa = (select id_programa from programas where codigo_programa = %(id)s)
+                    and ano_titulacao BETWEEN %(anoi)s and %(anof)s) as ids
+                    on (le.idlattes = ids.lattes)
+                    group by dt_atualizacao, le.idlattes, nome
+					"""
+        row = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
+        datas = [dict(r) for r in row]
+        
+        tres_meses_atras = datetime.now() - timedelta(days=3 * 30)
+        seis_meses_atras = datetime.now() - timedelta(days=6 * 30)
+        oito_meses_atras = datetime.now() - timedelta(days=8 * 30)
+        doze_meses_atras = datetime.now() - timedelta(days=12 * 30)
+
+        datas_lattes = {'até 2 meses': 0, '3 e 6 meses': 0,
+                        '6 e 8 meses': 0, '8 e 12 meses': 0, '+12 meses': 0}
+
+        for data in datas:
+            dt = data['dt_atualizacao'][0:2]+'-' + \
+                data['dt_atualizacao'][2:4]+'-'+data['dt_atualizacao'][4:]
+            dt_format = '%d-%m-%Y'
+            data['dt_atualizacao'] = datetime.strptime(dt, dt_format)
+
+            if data['dt_atualizacao'] < doze_meses_atras:
+                datas_lattes['+12 meses'] += 1
+            elif data['dt_atualizacao'] < oito_meses_atras and data['dt_atualizacao'] >= doze_meses_atras:
+                datas_lattes['8 e 12 meses'] += 1
+            elif data['dt_atualizacao'] < seis_meses_atras and data['dt_atualizacao'] >= oito_meses_atras:
+                datas_lattes['6 e 8 meses'] += 1
+            elif data['dt_atualizacao'] < tres_meses_atras and data['dt_atualizacao'] >= seis_meses_atras:
+                datas_lattes['3 e 6 meses'] += 1
+            else:
+                datas_lattes['até 2 meses'] += 1
+
+            dicionario = [{'quantidade': datas_lattes['+12 meses'], 'legenda':'+12 meses'},
+                          {'quantidade': datas_lattes['8 e 12 meses'],
+                              'legenda':'8 e 12 meses'},
+                          {'quantidade': datas_lattes['6 e 8 meses'],
+                              'legenda':'6 e 8 meses'},
+                          {'quantidade': datas_lattes['3 e 6 meses'],
+                              'legenda':'3 e 6 meses'},
+                          {'quantidade': datas_lattes['até 2 meses'], 'legenda':'até 2 meses'}]
+
+        return dicionario
+
+    @tratamento_excecao_com_db
+    def retorna_quantidade_egressos_titulados_por_ano(self, id: str, anoi: int, anof: int, db: DBConnector = None):
+        # query = """select count(le.idlattes) as quantidade, ids.ano_titulacao from lattes_egressos as le
+        # inner join (select ce.id_pessoa, p.lattes as lattes, p.ano_titulacao from coleta_egressos as ce
+        # inner join pessoas as p on (ce.id_pessoa = p.id_pessoa) where ce.id_programa = (select id_programa from programas where codigo_programa = %(id)s)
+        # and ano_titulacao >= %(anoi)s and ano_titulacao <= %(anof)s) as ids
+        # on (le.idlattes = ids.lattes)
+        # group by ids.ano_titulacao
+        # """
+        
+        titulacao_grau = {}
+        
+        query_graus_academicos = """
+        select distinct grau_academico from coleta_egressos where id_programa = (select id_programa from programas where codigo_programa = %(id)s)
+        and ano_egresso BETWEEN %(anoi)s and %(anof)s
+        """
+        
+        row_grau_academico = db.fetch_all(query_graus_academicos, id=id, anoi=anoi, anof=anof)
+        
+        grau_academico = [dict(r) for r in row_grau_academico]
+        
+        for grau in grau_academico:
+            titulacao_grau[grau['grau_academico']] = []
+        
+        
+        query = """select ano_egresso, count(id_pessoa) as quantidade, grau_academico from coleta_egressos where id_programa = (select id_programa from programas where codigo_programa = %(id)s)
+        and ano_egresso BETWEEN %(anoi)s and %(anof)s
+        group by ano_egresso, grau_academico order by ano_egresso"""
+        
+        row = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
+        datas = [dict(r) for r in row]
+        
+        for d in datas:
+            titulacao_grau[d['grau_academico']].append({'ano_egresso' : d['ano_egresso'], 'quantidade': d['quantidade']})
+        
+        return titulacao_grau    
+
+    @tratamento_excecao_com_db
+    def retorna_producoes_egresso(self, id: str, anoi:int, anof:int, db:DBConnector = None):
+        query = """with t as (select p.lattes, ce.ano from coleta_egressos as ce inner join pessoas as p on (p.id_pessoa = ce.id_pessoa)
+        inner join programas as prog on (prog.id_programa = ce.id_programa) 
+        and ce.ano BETWEEN %(ano_inicial)s and %(ano_final)s where prog.codigo_programa = %(id_ppg)s)
+        select distinct lattes_egressos.idlattes, t.ano from lattes_egressos inner join t on (t.lattes = lattes_egressos.idlattes)"""
+        rows = db.fetch_all(query, id_ppg=id, ano_final=anof, ano_inicial=anoi)
+        idlattes_egressos = [dict(r) for r in rows]
+        datas = {}
+        for row in idlattes_egressos:
+            idlattes = row['idlattes']
+            ano_titulacao = row['ano']
+            datas[idlattes] = self.retorna_producoes_do_professor(idlattes, anoi, ano_titulacao)
+        
+        return datas
+    
+    # @tratamento_excecao_com_db
+    # async def retorna_resumo_lattes(self, id:str, anoi:int, anof:int, db:DBConnector = None):
+    #     query="""
+    #     with t as (select p.lattes, ce.ano from coleta_egressos as ce inner join pessoas as p on (p.id_pessoa = ce.id_pessoa)
+    #     inner join programas as prog on (prog.id_programa = ce.id_programa) 
+    #     and ce.ano BETWEEN %(ano_inicial)s and %(ano_final)s where prog.codigo_programa = %(id_ppg)s)
+    #     select distinct lattes_egressos.idlattes from lattes_egressos inner join t on (t.lattes = lattes_egressos.idlattes)
+    #     """
+    #     rows = db.fetch_all(query, id_ppg=id, ano_final=anof, ano_inicial=anoi)
+    #     idlattes_egressos = [dict(r) for r in rows]
+    #     datas = {}
+    #     for row in idlattes_egressos:
+    #         idlattes = row['idlattes']
+    #         datas[idlattes] = await filtragem_lattes.json_formatado_llama3(idlattes)
+        
+    #     return datas
+    
 
 queries_ppg = QueriesPPG()

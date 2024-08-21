@@ -56,9 +56,9 @@ def tarefa_retorna_grafo_de_coautores_do_programa(id_ies, id, anoi, anof, autor)
         return MessageToDict(messages_pb2.PpgJson())
     
 @app_celery_queries.task
-def tarefa_retorna_producoes_do_professor(id, anoi, anof):
+def tarefa_retorna_producoes_do_professor(idlattes, anoi, anof):
     try:
-        respostaDict = crud.queries_ppg.retorna_producoes_do_professor(id, anoi, anof)
+        respostaDict = crud.queries_ppg.retorna_producoes_do_professor(idlattes, anoi, anof)
         retorno = messages_pb2.PpgJson(nome='producoesprofessor', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
@@ -72,5 +72,5 @@ def agrupar_tarefas_docentes(id, anoi, anof):
     tarefas.append(tarefa_retorna_quantidade_de_discentes_titulados.s(id, anoi, anof))
     tarefas.append(tarefa_retorna_tempo_de_atualizacao_do_lattes.s(id, anoi, anof))
     tarefas.append(tarefa_retorna_grafo_de_coautores_do_ppg.s(id, anoi, anof))
-    tarefas.append(tarefa_retorna_producoes_do_professor.s(id, anoi, anof))
+    # tarefas.append(tarefa_retorna_producoes_do_professor.s(id, anoi, anof))
     return tarefas

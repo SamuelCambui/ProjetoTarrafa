@@ -15,7 +15,7 @@ _sym_db = _symbol_database.Default()
 from . import messages_pb2 as messages__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tppg.proto\x12\x06protos\x1a\x0emessages.proto2\x98\x03\n\x03PPG\x12;\n\x10ObtemIndicadores\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x36\n\x0bObtemBancas\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x38\n\rObtemDocentes\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x38\n\rObtemEgressos\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x35\n\nObtemGeral\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x38\n\rObtemProjetos\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x37\n\x0cObtemTarefas\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse2<\n\x04Home\x12\x34\n\tObtemHome\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tppg.proto\x12\x06protos\x1a\x0emessages.proto2\xa8\x02\n\x03PPG\x12;\n\x10ObtemIndicadores\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x36\n\x0bObtemBancas\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x38\n\rObtemDocentes\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x38\n\rObtemEgressos\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x38\n\rObtemProjetos\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse2<\n\x04Home\x12\x34\n\tObtemHome\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -23,7 +23,7 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'ppg_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_PPG']._serialized_start=38
-  _globals['_PPG']._serialized_end=446
-  _globals['_HOME']._serialized_start=448
-  _globals['_HOME']._serialized_end=508
+  _globals['_PPG']._serialized_end=334
+  _globals['_HOME']._serialized_start=336
+  _globals['_HOME']._serialized_end=396
 # @@protoc_insertion_point(module_scope)

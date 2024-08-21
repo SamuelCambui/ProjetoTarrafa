@@ -31,7 +31,12 @@ if _version_not_supported:
 
 
 class PPGStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """
+    Serviço PPG
+    Este serviço oferece uma API para interagir com os dados de PPG.
+    Ele permite obter indicadores, bancas, docentes, egressos,
+    informações gerais, projetos e tarefas relacionadas ao PPG.
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -59,64 +64,52 @@ class PPGStub(object):
                 request_serializer=messages__pb2.PpgRequest.SerializeToString,
                 response_deserializer=messages__pb2.PpgResponse.FromString,
                 _registered_method=True)
-        self.ObtemGeral = channel.unary_unary(
-                '/protos.PPG/ObtemGeral',
-                request_serializer=messages__pb2.PpgRequest.SerializeToString,
-                response_deserializer=messages__pb2.PpgResponse.FromString,
-                _registered_method=True)
         self.ObtemProjetos = channel.unary_unary(
                 '/protos.PPG/ObtemProjetos',
-                request_serializer=messages__pb2.PpgRequest.SerializeToString,
-                response_deserializer=messages__pb2.PpgResponse.FromString,
-                _registered_method=True)
-        self.ObtemTarefas = channel.unary_unary(
-                '/protos.PPG/ObtemTarefas',
                 request_serializer=messages__pb2.PpgRequest.SerializeToString,
                 response_deserializer=messages__pb2.PpgResponse.FromString,
                 _registered_method=True)
 
 
 class PPGServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """
+    Serviço PPG
+    Este serviço oferece uma API para interagir com os dados de PPG.
+    Ele permite obter indicadores, bancas, docentes, egressos,
+    informações gerais, projetos e tarefas relacionadas ao PPG.
+    """
 
     def ObtemIndicadores(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Retorna os indicadores de desempenho do PPG.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ObtemBancas(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Retorna as informações sobre as bancas do PPG.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ObtemDocentes(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Retorna os dados sobre os docentes do PPG.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ObtemEgressos(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def ObtemGeral(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Retorna informações sobre os egressos do PPG.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ObtemProjetos(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def ObtemTarefas(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Retorna informações sobre projetos do PPG.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -144,18 +137,8 @@ def add_PPGServicer_to_server(servicer, server):
                     request_deserializer=messages__pb2.PpgRequest.FromString,
                     response_serializer=messages__pb2.PpgResponse.SerializeToString,
             ),
-            'ObtemGeral': grpc.unary_unary_rpc_method_handler(
-                    servicer.ObtemGeral,
-                    request_deserializer=messages__pb2.PpgRequest.FromString,
-                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
-            ),
             'ObtemProjetos': grpc.unary_unary_rpc_method_handler(
                     servicer.ObtemProjetos,
-                    request_deserializer=messages__pb2.PpgRequest.FromString,
-                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
-            ),
-            'ObtemTarefas': grpc.unary_unary_rpc_method_handler(
-                    servicer.ObtemTarefas,
                     request_deserializer=messages__pb2.PpgRequest.FromString,
                     response_serializer=messages__pb2.PpgResponse.SerializeToString,
             ),
@@ -168,7 +151,12 @@ def add_PPGServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class PPG(object):
-    """Missing associated documentation comment in .proto file."""
+    """
+    Serviço PPG
+    Este serviço oferece uma API para interagir com os dados de PPG.
+    Ele permite obter indicadores, bancas, docentes, egressos,
+    informações gerais, projetos e tarefas relacionadas ao PPG.
+    """
 
     @staticmethod
     def ObtemIndicadores(request,
@@ -279,33 +267,6 @@ class PPG(object):
             _registered_method=True)
 
     @staticmethod
-    def ObtemGeral(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/protos.PPG/ObtemGeral',
-            messages__pb2.PpgRequest.SerializeToString,
-            messages__pb2.PpgResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
     def ObtemProjetos(request,
             target,
             options=(),
@@ -332,36 +293,13 @@ class PPG(object):
             metadata,
             _registered_method=True)
 
-    @staticmethod
-    def ObtemTarefas(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/protos.PPG/ObtemTarefas',
-            messages__pb2.PpgRequest.SerializeToString,
-            messages__pb2.PpgResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
 
 class HomeStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """
+    Serviço Home
+    Este serviço fornece a interface para obter as informações
+    gerais da página inicial da aplicação.
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -377,10 +315,15 @@ class HomeStub(object):
 
 
 class HomeServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """
+    Serviço Home
+    Este serviço fornece a interface para obter as informações
+    gerais da página inicial da aplicação.
+    """
 
     def ObtemHome(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Retorna as informações gerais para exibição na home.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -402,7 +345,11 @@ def add_HomeServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Home(object):
-    """Missing associated documentation comment in .proto file."""
+    """
+    Serviço Home
+    Este serviço fornece a interface para obter as informações
+    gerais da página inicial da aplicação.
+    """
 
     @staticmethod
     def ObtemHome(request,

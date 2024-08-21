@@ -30,7 +30,7 @@ def tarefa_retorna_dados_de_linhas_de_pesquisa(id, anoi, anof):
 def tarefa_retorna_dados_de_projetos_e_linhas_de_pesquisa(id, anoi, anof):
     try:
         respostaDict = crud.queries_ppg.retorna_dados_de_projetos_e_linhas_de_pesquisa(id, anoi, anof)
-        retorno = messages_pb2.PpgJson(nome='dadosdelinhasdepesquisa', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='dadosdeprojetoselinhasdepesquisa', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)

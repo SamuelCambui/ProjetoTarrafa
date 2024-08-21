@@ -162,16 +162,3 @@ def projetos(id, anoi, anof):
                 print('ok')
                 retorno = processa_retorno(response)
     return retorno
-
-@controller_ppg.get("graficos/geral-paralelo-tab/<id>/<anoi>/<anof>")
-@login_required
-def geral(id, anoi, anof):
-    print('Iniciando comunicacao com grpc geral ...')
-    retorno = {}
-    with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
-            stub = ppg_pb2_grpc.PPGStub(channel)
-            if stub:
-                response = stub.ObtemGeral(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
-                print('ok')
-                retorno = processa_retorno(response)
-    return retorno

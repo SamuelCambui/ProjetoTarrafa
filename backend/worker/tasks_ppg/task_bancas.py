@@ -38,7 +38,7 @@ def tarefa_retorna_levantemento_externos_em_bancas(id, anoi, anof):
 def agrupar_tarefas_bancas(id, anoi, anof):
     tarefas = []
     print('Acumulando unica tarefas bancas...')
-    tarefas.append(tarefa_retorna_dados_de_tccs_por_linhas_de_pesquisa.s(id, anoi, anof, None))
-    tarefas.append(tarefa_retorna_dados_de_produtos_por_tcc.s(id, anoi, anof, None))
+    tarefas.append(tarefa_retorna_dados_de_tccs_por_linhas_de_pesquisa.s(id, anoi, anof))
+    tarefas.append(tarefa_retorna_dados_de_produtos_por_tcc.s(id, anoi, anof))
     tarefas.append(tarefa_retorna_levantemento_externos_em_bancas.s(id, anoi, anof))
     return tarefas
