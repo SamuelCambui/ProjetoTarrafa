@@ -14,7 +14,7 @@ def tarefa_retorna_contagem_de_indprodart_com_listanegra(id, anoi, anof, lista_n
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='dadosindprods', json=None))
 
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_qualis_com_listanegra(id, anoi, anof, lista_negra):
@@ -24,7 +24,7 @@ def tarefa_retorna_contagem_de_qualis_com_listanegra(id, anoi, anof, lista_negra
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='dadosqualis', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_qualis_do_lattes(id, anoi, anof):
@@ -34,7 +34,7 @@ def tarefa_retorna_contagem_de_qualis_do_lattes(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='contagemqualislattes', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_qualis_discentes(id, anoi, anof):
@@ -44,7 +44,7 @@ def tarefa_retorna_contagem_de_qualis_discentes(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='contagemqualisdiscentes', json=None))
 
 @app_celery_queries.task
 def tarefa_retorna_estatisticas_de_artigos(id, anoi, anof):
@@ -54,7 +54,7 @@ def tarefa_retorna_estatisticas_de_artigos(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='estatisticaartigos', json=None))
 
 @app_celery_queries.task
 def tarefa_retorna_estatisticas_de_artigos_ppgs_correlatos(id, anoi, anof):
@@ -64,17 +64,17 @@ def tarefa_retorna_estatisticas_de_artigos_ppgs_correlatos(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='estatisticaartigoscorrelatos', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_indprodart_absoluto(id, anoi, anof):
     try:
         respostaDict = crud.queries_ppg.retorna_contagem_de_indprodart_absoluto(id, anoi, anof)
-        retorno = messages_pb2.PpgJson(nome='inprodart_absoluto', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='inprodartabsoluto', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='inprodartabsoluto', json=None))
 
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_indprodart_extrato_superior_com_listanegra(id, anoi, anof):
@@ -84,7 +84,7 @@ def tarefa_retorna_contagem_de_indprodart_extrato_superior_com_listanegra(id, an
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='indprodartextratosuperior', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_indori(id, anoi, anof):
@@ -94,7 +94,7 @@ def tarefa_retorna_indori(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='indori', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_inddistori(id, anoi, anof):
@@ -104,7 +104,7 @@ def tarefa_retorna_inddistori(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='inddistori', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_indaut(id, anoi, anof):
@@ -114,7 +114,7 @@ def tarefa_retorna_indaut(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='indaut', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_inddis(id, anoi, anof):
@@ -124,7 +124,7 @@ def tarefa_retorna_inddis(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='inddis', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_partdis(id, anoi, anof):
@@ -134,7 +134,7 @@ def tarefa_retorna_partdis(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='partdis', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_indcoautoria(id, anoi, anof):
@@ -144,7 +144,7 @@ def tarefa_retorna_indcoautoria(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='indcoautoria', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_indori_medio(id, anoi, anof):
@@ -154,7 +154,7 @@ def tarefa_retorna_indori_medio(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='indorimedio', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_inddistori_medio(id, anoi, anof):
@@ -164,7 +164,7 @@ def tarefa_retorna_inddistori_medio(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='inddistorimedio', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_indaut_medio(id, anoi, anof):
@@ -174,7 +174,7 @@ def tarefa_retorna_indaut_medio(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='indautmedio', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_inddis_medio(id, anoi, anof):
@@ -184,7 +184,7 @@ def tarefa_retorna_inddis_medio(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='inddismedio', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_partdis_medio(id, anoi, anof):
@@ -194,7 +194,7 @@ def tarefa_retorna_partdis_medio(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='partdismedio', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_indcoautoria_medio(id, anoi, anof):
@@ -204,7 +204,7 @@ def tarefa_retorna_indcoautoria_medio(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='indcoautoriamedio', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_tempos_de_conclusao(id, anoi, anof):
@@ -214,7 +214,7 @@ def tarefa_retorna_tempos_de_conclusao(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='tempoconclusao', json=None))
 
 def agrupar_tarefas_indicadores(id, anoi, anof):
     tarefas = []

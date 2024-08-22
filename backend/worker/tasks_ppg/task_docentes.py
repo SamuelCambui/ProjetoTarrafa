@@ -13,7 +13,7 @@ def tarefa_retorna_professores_por_categoria(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='professorporcategoria', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_quantidade_de_discentes_titulados(id, anoi, anof):
@@ -23,7 +23,7 @@ def tarefa_retorna_quantidade_de_discentes_titulados(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='discentestitulados', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_tempo_de_atualizacao_do_lattes(id, anoi, anof):
@@ -33,7 +33,7 @@ def tarefa_retorna_tempo_de_atualizacao_do_lattes(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='atualizacaolattes', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_grafo_de_coautores_do_ppg(id, anoi, anof):
@@ -43,7 +43,7 @@ def tarefa_retorna_grafo_de_coautores_do_ppg(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='grafocoautoresdoppg', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_grafo_de_coautores_do_programa(id_ies, id, anoi, anof, autor):
@@ -53,7 +53,7 @@ def tarefa_retorna_grafo_de_coautores_do_programa(id_ies, id, anoi, anof, autor)
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='grafocoautoresdoprograma', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_producoes_do_professor(idlattes, anoi, anof):
@@ -63,7 +63,7 @@ def tarefa_retorna_producoes_do_professor(idlattes, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='producoesprofessor', json=None))
 
 def agrupar_tarefas_docentes(id, anoi, anof):
     tarefas = []

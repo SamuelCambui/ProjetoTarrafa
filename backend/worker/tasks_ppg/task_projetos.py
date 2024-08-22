@@ -14,7 +14,7 @@ def tarefa_retorna_dados_de_projetos(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='dadosdeprojetos', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_dados_de_linhas_de_pesquisa(id, anoi, anof):
@@ -24,7 +24,7 @@ def tarefa_retorna_dados_de_linhas_de_pesquisa(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='dadosdelinhasdepesquisa', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_dados_de_projetos_e_linhas_de_pesquisa(id, anoi, anof):
@@ -34,7 +34,7 @@ def tarefa_retorna_dados_de_projetos_e_linhas_de_pesquisa(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='dadosdeprojetoselinhasdepesquisa', json=None))
     
 def agrupar_tarefas_projetos(id, anoi, anof):
     tarefas = []

@@ -13,7 +13,7 @@ def tarefa_retorna_dados_de_tccs_por_linhas_de_pesquisa(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='dadosdetccsporlinhasdepesquisa', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_dados_de_produtos_por_tcc(id, anoi, anof):
@@ -23,7 +23,7 @@ def tarefa_retorna_dados_de_produtos_por_tcc(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='dadosdeprodutosportcc', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_levantemento_externos_em_bancas(id, anoi, anof):
@@ -33,7 +33,7 @@ def tarefa_retorna_levantemento_externos_em_bancas(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='levantamentoexternosembancas', json=None))
     
 def agrupar_tarefas_bancas(id, anoi, anof):
     tarefas = []

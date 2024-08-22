@@ -13,7 +13,7 @@ def tarefa_retorna_dados_egressos(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='dadosegressos', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_tempo_de_atualizacao_do_lattes_egressos(id, anoi, anof):
@@ -23,7 +23,7 @@ def tarefa_retorna_tempo_de_atualizacao_do_lattes_egressos(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='tempoatualizacaolattesegressos', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_quantidade_egressos_titulados_por_ano(id, anoi, anof):
@@ -33,7 +33,7 @@ def tarefa_retorna_quantidade_egressos_titulados_por_ano(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='egressostituladosporano', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_producoes_egresso(id, anoi, anof):
@@ -43,7 +43,7 @@ def tarefa_retorna_producoes_egresso(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='producoesegressos', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_resumo_lattes(id, anoi, anof):
@@ -53,7 +53,7 @@ def tarefa_retorna_resumo_lattes(id, anoi, anof):
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson())
+        return MessageToDict(messages_pb2.PpgJson(nome='levantamentoexternosembancas', json=None))
     
 def agrupar_tarefas_egressos(id, anoi, anof):
     tarefas = []
