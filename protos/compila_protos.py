@@ -11,6 +11,7 @@ def compile_protos(proto_dir, proto_out):
                     '-I{}'.format(proto_dir),
                     '--python_out={}'.format(proto_out),
                     '--grpc_python_out={}'.format(proto_out),
+                    '--pyi_out={}'.format(proto_out),
                     proto_path,
                 ))
 

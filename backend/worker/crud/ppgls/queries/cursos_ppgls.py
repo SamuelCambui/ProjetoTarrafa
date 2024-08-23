@@ -6,7 +6,7 @@ class QueriesCursos():
     @tratamento_excecao_com_db(tipo_banco='grad')
     def lista_cursos(self, db: DBConnectorGRAD = None):
         """
-        Retorna todos os cursos de pós graduação a partir de 10 anos atrás.
+        Retorna todos os cursos de pós graduação latu sensu a partir de 10 anos atrás.
         """
         query= """
             SELECT cursos.id, nome, modalidade, habilita.descricao as habilita FROM cursos
@@ -48,6 +48,7 @@ class QueriesCursos():
         Parâmetros:
             id(str): Código do curso.
             ano(int): Ano inicial.
+            anof(int): Ano final.
         """
         query = """
             SELECT foo.ano_letivo, foo.semestre, COUNT(foo.ano_letivo) AS quantidade FROM ( 
@@ -103,25 +104,25 @@ class QueriesCursos():
         """
         query = """
      
-            SELECT historico."ano_letivo" AS ANO, historico."semestre" AS SEMESTRE, alunos."sexo" AS SEXO, 
-            COUNT(DISTINCT alunos."matricula") AS QUANTIDADE
+            SELECT 
+                historico."ano_letivo" AS ANO, 
+                CASE 
+                    WHEN historico."semestre" = 0 THEN 1 
+                    ELSE historico."semestre" 
+                END AS SEMESTRE, 
+                alunos."sexo" AS SEXO, 
+                COUNT(DISTINCT alunos."matricula") AS QUANTIDADE
             FROM 
                 alunos
-            INNER JOIN 
-                aluno_curso ON alunos."matricula" = aluno_curso."matricula_aluno"
-            INNER JOIN 
-                cursos ON cursos."id" = aluno_curso."id_curso"
-            INNER JOIN 
-                disciplinas ON cursos."id" = disciplinas."cod_curso"
-            INNER JOIN 
-                historico ON historico."cod_disc" = disciplinas."cod_disc"
+            INNER JOIN aluno_curso ON alunos."matricula" = aluno_curso."matricula_aluno"
+            INNER JOIN cursos ON cursos."id" = aluno_curso."id_curso"
+            INNER JOIN disciplinas ON cursos."id" = disciplinas."cod_curso"
+            INNER JOIN historico ON historico."cod_disc" = disciplinas."cod_disc"
             WHERE 
                 cursos."id" LIKE %(id)s
                 AND historico."ano_letivo" BETWEEN %(anoi)s AND %(anof)s
-            GROUP BY 
-                historico."ano_letivo", historico."semestre", alunos."sexo"
-            ORDER BY 
-                historico."ano_letivo", historico."semestre";
+            GROUP BY historico."ano_letivo", historico."semestre", alunos."sexo"
+            ORDER BY historico."ano_letivo", historico."semestre";
         """
 
         ret = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
@@ -138,29 +139,40 @@ class QueriesCursos():
             anof(int): Ano final.
         """
         query = """
-            SELECT historico.ano_letivo, historico.semestre, round(AVG(nota), 2) as media FROM historico
-            INNER JOIN disciplinas ON disciplinas."cod_disc" = historico."cod_disc"
-            INNER JOIN cursos ON cursos."id" = disciplinas."cod_curso"
-            WHERE disciplinas.cod_curso = %(id)s AND CAST(historico.ano_letivo AS integer) BETWEEN %(anoi)s AND %(anof)s
+
+            SELECT historico.ano_letivo, 
+            CASE 
+                WHEN historico.semestre = 0 THEN 1 
+                ELSE historico.semestre 
+            END AS semestre, 
+            round(AVG(nota), 2) AS media 
+            FROM historico
+            INNER JOIN disciplinas ON disciplinas.cod_disc = historico.cod_disc
+            INNER JOIN cursos ON cursos.id = disciplinas.cod_curso
+            WHERE 
+                disciplinas.cod_curso = %(id)s
+                AND CAST(historico.ano_letivo AS integer) BETWEEN %(anoi)s AND %(anof)s
             GROUP BY historico.ano_letivo, historico.semestre
-            HAVING AVG(nota) IS NOT null
-            ORDER BY historico.ano_letivo, historico.semestre
+            HAVING AVG(nota) IS NOT NULL
+            ORDER BY historico.ano_letivo, semestre;
+
+
         """
         ret = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
         return ret
     
     @tratamento_excecao_com_db(tipo_banco='grad')
-    def nota_media_por_curso_por_semestre_por_turma(self, id: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
+    def nota_media_por_curso_por_semestre(self, id: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
 
         """
-        Retorna a média das notas de das turmas de um semestre por ano de um curso de pós-graduação latu sensu em um determinado período.
+        Retorna a média das notas de um semestre por ano de um curso de pós-graduação latu sensu em um determinado período.
         Parâmetros:
             id(str): Código do curso.
             anoi(int): Ano inicial.
             anof(int): Ano final.
         """
         query = """
-            SELECT historico.ano_letivo, historico.semestre, historico.turma, ROUND(AVG(nota), 2) AS media
+            SELECT historico.ano_letivo, historico.semestre, ROUND(AVG(nota), 2) AS media
             FROM historico
             INNER JOIN disciplinas ON disciplinas."cod_disc" = historico."cod_disc"
             INNER JOIN cursos ON cursos."id" = disciplinas."cod_curso"
@@ -168,35 +180,6 @@ class QueriesCursos():
             GROUP BY historico.ano_letivo, historico.semestre, historico.turma
             HAVING AVG(nota) IS NOT NULL
             ORDER BY historico.ano_letivo, historico.semestre, historico.turma;
-        """
-        ret = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
-        return ret
-    
-
-    
-    @tratamento_excecao_com_db(tipo_banco='grad')
-    def quantidade_alunos_por_sexo_por_semestre(self, id: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
-        """
-        Retorna a quantidade de alunos do sexo feminino e masculino, por semestre, de um curso.\n
-
-        Parâmetros:\n
-            id(str): Código do curso.
-            anoi(int): Ano inicial.
-            anof(int): Ano final.
-        """
-        query = """
-            select foo.sexo, foo.ano_letivo, foo.semestre, count(foo.sexo) as quantidade from (
-                select distinct h.matricula_aluno, al.sexo, h.ano_letivo, h.semestre
-                from historico as h
-                inner join alunos as al on al.matricula = h.matricula_aluno
-                inner join aluno_curso as ac on ac.matricula_aluno = al.matricula
-                where ac.id_curso = %(id)s
-                and cast(h.ano_letivo as integer) between %(anoi)s and %(anof)s
-                group by h.matricula_aluno, al.sexo, h.ano_letivo, h.semestre
-                order by h.ano_letivo
-            ) as foo
-            group by sexo, foo.semestre, foo.ano_letivo
-            order by foo.ano_letivo;
         """
         ret = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
         return ret
@@ -297,8 +280,10 @@ class QueriesCursos():
     @tratamento_excecao_com_db(tipo_banco='grad')
     def quant_alunos_vieram_gradu_por_curso(self, id: str, db: DBConnectorGRAD = None):
         """
-        Retorna a quantidade de alunos que vieram de cada curso da graduação em um determinado curso de pós graduação latu sensu
+        Retorna a quantidade de alunos que vieram de cada curso da graduação em um determinado curso de pós graduação latu sensu em um determinado curso
         
+        Parâmetros:
+            id(str): Código do curso.
         """
         query = """
 
@@ -371,7 +356,7 @@ class QueriesCursos():
     @tratamento_excecao_com_db(tipo_banco='grad')
     def temp_med_conclu_por_curso(self, id: str, db: DBConnectorGRAD = None):
         """
-        Retorna o tempo medio de conclusao determinado curso de pós graduação latu sensu
+        Retorna o tempo medio de conclusao determinado curso de pós graduação latu sensu em meses
         Parâmetros:
             id(str): Código do curso.
         """
@@ -379,7 +364,10 @@ class QueriesCursos():
 
         WITH subquery AS (
             SELECT DISTINCT
-                historico."ano_letivo" AS ANO, historico."semestre" AS SEMESTRE, alunos."matricula" AS MATRI, alunos."anoingresso" AS ANOINGRESSO
+                historico."ano_letivo" AS ANO, 
+                historico."semestre" AS SEMESTRE, 
+                alunos."matricula" AS MATRI, 
+                alunos."anoingresso" AS ANOINGRESSO
             FROM alunos
             INNER JOIN aluno_curso ON alunos."matricula" = aluno_curso."matricula_aluno"
             INNER JOIN cursos ON cursos."id" = aluno_curso."id_curso"
@@ -391,12 +379,12 @@ class QueriesCursos():
         , quantidade_por_matricula AS (
             SELECT 
                 MATRI, 
-                ROUND(COUNT(*) / 2.0, 2) AS QUANTIDADE
+                ROUND(COUNT(*) * 6.0, 2) AS QUANTIDADE -- multiplicando por 6 para obter em meses
             FROM subquery
             GROUP BY MATRI
         )
         SELECT 
-            ROUND(AVG(QUANTIDADE), 2) AS MEDIA_QUANTIDADE
+            ROUND(AVG(QUANTIDADE), 2) AS MEDIA_QUANTIDADE_MESES -- Média em meses
         FROM quantidade_por_matricula;
         """
 
@@ -414,7 +402,7 @@ class QueriesCursos():
             anof(int): Ano final.
         """
         query = """
-            select fi.id, fi.descricao, count(al.id_forma_ing) from aluno_curso as al
+            select fi.descricao, count(al.id_forma_ing) from aluno_curso as al
             inner join forma_ingresso as fi on fi.id = al.id_forma_ing
             where al.id_curso = %(id)s
             and cast(al.ano_admissao as integer) between %(anoi)s and %(anof)s 
@@ -451,9 +439,9 @@ class QueriesCursos():
         return ret
     
     @tratamento_excecao_com_db(tipo_banco='grad')
-    def nacio_alunos_por_ano(self, id: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
+    def natu_alunos_por_ano(self, id: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
         """
-        Retorna a nacionalidade dos alunos dos cursos e das residências de pós-graduação latu sensu em um determinado periodo
+        Retorna a naturalidade dos alunos dos cursos e das residências de pós-graduação latu sensu em um determinado periodo
         Parâmetros:
             id(str): Código do curso.
             anoi(int): Ano inicial.
@@ -461,15 +449,15 @@ class QueriesCursos():
         """
         query = """
 
-            SELECT municipios."nome" AS NACIONALIDADE, cursos."nome" AS NOMEESPECIALIZACAO, historico."ano_letivo" AS ANO,COUNT(DISTINCT alunos."matricula") AS QUANTIDADE_ALUNOS
+            SELECT municipios."nome" AS NATURALIDADE, historico."ano_letivo" AS ANO,COUNT(DISTINCT alunos."matricula") AS QUANTIDADE_ALUNOS
             FROM alunos
             INNER JOIN aluno_curso ON alunos."matricula" = aluno_curso."matricula_aluno"
             INNER JOIN municipios ON municipios."codigo" = alunos."cod_munnasc"
             INNER JOIN cursos ON cursos."id" = aluno_curso."id_curso"
             INNER JOIN disciplinas ON cursos."id" = disciplinas."cod_curso"
             INNER JOIN historico ON historico."cod_disc" = disciplinas."cod_disc"
-            WHERE cursos."nome" LIKE %(id)s
-            AND historico."ano_letivo" BETWEEN '%(anoi)s' AND '%(anof)s'
+            WHERE cursos."id" LIKE %(id)s
+            AND historico."ano_letivo" between %(anoi)s and %(anof)s
             GROUP BY municipios."nome", cursos."nome", historico."ano_letivo"
             ORDER BY historico."ano_letivo", municipios."nome", cursos."nome";
 
@@ -495,9 +483,9 @@ class QueriesCursos():
             INNER JOIN aluno_curso ON alunos."matricula" = aluno_curso."matricula_aluno"
             INNER JOIN cursos ON cursos."id" = aluno_curso."id_curso"
             INNER JOIN historico ON historico."matricula_aluno" = alunos."matricula"
-            WHERE cursos."nome" LIKE %(id)s
-            AND historico."ano_letivo" BETWEEN '%(anoi)s' AND '%(anof)s'
-            AND alunos."cor" IS NOT NULL AND alunos."cor" != 'N'
+            WHERE cursos."id" LIKE %(id)s
+            AND historico."ano_letivo" between %(anoi)s and %(anof)s
+            AND alunos."cor" IS NOT NULL AND alunos."cor" != 'N' AND alunos."cor" != '0'
             GROUP BY alunos."cor", historico."ano_letivo"
             ORDER BY historico."ano_letivo", alunos."cor";
 
@@ -531,6 +519,13 @@ class QueriesCursos():
 
     @tratamento_excecao_com_db(tipo_banco='grad')
     def professores(self, id: str, db: DBConnectorGRAD = None):
+
+        """
+        Retorna todos os professores de cursos de pós-graduação latu
+
+        Parâmetros:
+            id(str): Código do curso.
+        """
         query = """
             select * from professores where cod_prof in (
                 select cod_prof from professor_curso where cod_curso = %(id)s

@@ -50,3 +50,32 @@ message UsuarioResponse {
   bool is_admin = 5;
   string id_ies = 6;
 }
+
+message PPGLSRequest{
+  optional string id = 1;
+  optional int32 anoi = 2;
+  optional int32 anof = 3;
+}
+
+message PPGLSJson{
+  optional string nome = 1;
+  optional string json = 2;
+}
+
+message PPGLSResponse{
+  repeated PPGLSJson item = 1;
+}
+
+message FormularioPPGLSRequest{
+  string nome = 1;
+  string data_inicio = 2;
+}
+
+message FormularioPPGLSJson{
+  optional string nome = 1;
+  optional string json = 2;
+}
+
+message FormularioPPGLSResponse{
+  repeated FormularioPPGLSJson item = 1;
+}

@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package protos;
+
+import "messages.proto";
+
+service IndicadoresPosGraduacaoLS {
+    /*  
+        Retorna dados para compor os indicadores da aba curso.\n
+        Parâmetros:
+            id(string) - Código do curso.\n
+            anoi(int) - Ano Inicial.\n
+            anof(int) - Ano Final.\n
+    */
+    rpc GetAbaIndicadoresCurso (PPGLSRequest) returns (PPGLSResponse);
+
+    /*  
+        Retorna dados para compor os indicadores da aba de disciplinas.\n
+        Parâmetros:
+            id(string) - Código do curso.\n
+            anoi(int) - Ano Inicial.\n
+            anof(int) - Ano Final.\n
+    */
+    rpc GetAbaDisciplinas (PPGLSRequest) returns (PPGLSResponse);
+
+    /*  
+        Retorna dados para compor os indicadores da aba de egressos.\n
+        Parâmetros:
+            id(string) - Código do curso.\n
+            anoi(int) - Ano Inicial.\n
+            anof(int) - Ano Final.\n
+    */
+    rpc GetAbaEgressos (PPGLSRequest) returns (PPGLSResponse);
+
+    /*  
+        Retorna dados para compor os indicadores da aba de professores.\n
+        Parâmetros:
+            id(string) - Código do curso.n
+            anoi(int) - Ano Inicial.\n
+            anof(int) - Ano Final.\n
+    */
+    rpc GetAbaProfessores (PPGLSRequest) returns (PPGLSResponse);
+
+    /*
+        Retorna os indicadores da disciplina selecionada.\n
+        Parâmetros:\n
+            id(string) - Código do curso.\n
+            anoi(int) - Ano Inicial.\n
+            anof(int) - Ano Final.\n
+    */
+    rpc GetIndicadoresDisciplina (PPGLSRequest) returns (PPGLSResponse);
+
+
+    /*
+        Retorna o dados do formuálario da pos graduação latu sensu.\n
+        Parâmetros:\n
+            nome(string) - Nome do formulario.\n
+            data_inicio(string) - Data de inicio.\n
+    */
+    rpc GetIndicadoresFormulario (FormularioPPGLSRequest) returns (FormularioPPGLSResponse);
+}
+
+service DadosPosGraduacaoLS {
+
+    // Retorna todos os cursos cadastrados.
+    rpc GetCursos (PPGLSRequest) returns (PPGLSResponse);
+
+    /*  
+        Retorna um curso em específico.\n
+        Parâmetros:\n
+            id(string) - Código do curso.
+    */
+    rpc GetCurso (PPGLSRequest) returns (PPGLSResponse);
+
+    /*
+        Retorna todas as diciplinas de um curso.\n
+        Parâmetros:\n
+            id(string) - Código do curso.
+    */
+    rpc GetDisciplinas (PPGLSRequest) returns (PPGLSResponse);
+
+    /*
+        Retorna uma diciplina em específico.\n
+        Parâmetros:\n
+            id(int) - Código da disciplina.\n
+    */
+    rpc GetDisciplina (PPGLSRequest) returns (PPGLSResponse);
+}

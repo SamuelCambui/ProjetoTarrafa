@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from backend.db.db import DBConnector
+from backend.db.db import DBConnector,DBConnectorGRAD 
 from backend.db.db import DBConnectorPPG
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
