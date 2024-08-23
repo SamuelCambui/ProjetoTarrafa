@@ -3144,5 +3144,262 @@ class QueriesPPG():
         
     #     return datas
     
+    @tratamento_excecao_com_db
+    def retorna_producoes_do_professor(self, id: str, anoi: int, anof: int, db: DBConnector = None):
+        """
+        Retorna todas as produções do professor por anos
+        
+        Paramêtros:
+            Id(str): IdLattes do Professor
+            anoi(str): Ano de início
+            anof(str): Ano Final
+            db(class): DataBase
+        """
+        query = """SELECT
+                        tipo,
+                        dados
+                    FROM lattes_producao_bibliografica
+                    WHERE num_identificador = %(id)s
+                    UNION ALL
+                    SELECT
+                        tipo,
+                        dados
+                    FROM lattes_producao_tecnica
+                    WHERE num_identificador = %(id)s
+                    UNION ALL
+                    SELECT
+                        tipo,
+                        dados
+                    FROM lattes_outra_producao
+                    WHERE num_identificador = %(id)s"""
+        row = db.fetch_all(query, id=id)
+        prods = [dict(r) for r in row]
+
+        contagens = {}
+
+
+        for prod in prods:
+            if prod['tipo'] not in contagens and 'ORIENTACOES' not in prod['tipo'] and 'APRESENTACAO-DE-TRABALHO' not in prod['tipo']:
+                contagens[prod['tipo']] = 0
+                for dado in prod['dados']:
+                    dado_key = [k for k in dado.keys() if 'DADOS' in k][0]
+                    ano_key = [a for a in dado[dado_key].keys() if 'ANO' in a][0]
+                    try:
+                        if dado[dado_key][ano_key] != '' and anoi <= int(dado[dado_key][ano_key]) <= anof:
+                            contagens[prod['tipo']] += 1
+                    except:
+                        pass
+        
+
+        prods = []
+        for k, v in contagens.items():
+            p = {'subtipo': k, 'qdade': v}
+            if v > 0:
+                prods.append(p)
+
+        return prods
+    
+    
+    @tratamento_excecao_com_db
+    def retorna_lista_programas(self, id_ies: str, db: DBConnector = None):
+        """   
+        Retorna todos os PPG de uma instituição
+        
+        Paramêtros:
+            id_ies: Id da instituição
+            db(class): DataBase
+        """
+        query = """select t3.codigo_programa as id, UPPER(t3.nome) as nome, t3.nome_area_avaliacao as area, t3.conceito as nota, t1.nome as nome_ies, t1.sigla as sigla_ies from instituicoes as t1 
+                    inner join programas as t3 on t3.id_ies=t1.id_ies
+					where t1.id_ies=%(id)s and t3.programa_em_rede != 1
+					order by t3.nome"""
+        row = db.fetch_all(query, id=id_ies)
+        programas = [dict(r) for r in row]
+        return programas
+    
+    @tratamento_excecao_com_db
+    def retorna_lista_docentes_do_ppg_do_ultimo_ano(self, id: str, db: DBConnector = None):
+        """
+        Retorna a lista de todos os docentes do ultimo ano de coleta
+        """
+
+        ano =  self.retorna_ultimo_ano_coleta()
+
+        query = """select p.lattes as num_identificador, p.nome_pessoa as nome, ctv.vinculo as vinculo_ies, d.tipo_vinculo_ies, ldg.dados->'ENDERECO'->'ENDERECO-PROFISSIONAL'->>'@NOME-INSTITUICAO-EMPRESA' as ies from coleta_docentes as d
+                    inner join pessoas as p on p.id_pessoa = d.id_pessoa
+                    inner join coleta_tipo_vinculo_ies as ctv on ctv.id = d.tipo_vinculo_ies
+                    inner join lattes_dados_gerais as ldg on ldg.num_identificador = p.lattes
+                    where d.id_programa = (select id_programa from programas where codigo_programa = %(id)s) and d.ano = %(ano)s"""
+        
+        row = db.fetch_all(query, id=id, ano=ano)
+        professores = [dict(r) for r in row]
+        return professores
+
+    @tratamento_excecao_com_db
+    def retorna_tempo_de_atualizacao_do_lattes_do_professor(self, id: str, db: DBConnector = None):
+        """
+        Retorna a quantidade de tempo que o Perfi Lattes está desatualizado
+        
+        Paramêtros:
+            id(str): Id Lattes do professor
+            db(class): DataBase
+        """
+        query = """select dt_atualizacao from lattes_docentes
+                    where num_identificador = %(id)s"""
+        row = db.fetch_one(query, id=id)
+
+        um_mes_atras = datetime.now() - timedelta(days=1 * 30)
+        tres_meses_atras = datetime.now() - timedelta(days=3 * 30)
+        seis_meses_atras = datetime.now() - timedelta(days=6 * 30)
+        oito_meses_atras = datetime.now() - timedelta(days=8 * 30)
+        doze_meses_atras = datetime.now() - timedelta(days=12 * 30)
+
+        if row:
+            data = row[0]
+            dt = data[0:2]+'-'+data[2:4]+'-'+data[4:]
+            dt_format = '%d-%m-%Y'
+            data = datetime.strptime(dt, dt_format)
+
+            if data < doze_meses_atras:
+                return '+12 meses'
+            elif data < oito_meses_atras and data >= doze_meses_atras:
+                return 'entre 8 e 12 meses'
+            elif data < seis_meses_atras and data >= oito_meses_atras:
+                return 'entre 6 e 8 meses'
+            elif data < tres_meses_atras and data >= seis_meses_atras:
+                return 'entre 3 e 6 meses'
+            else:
+                return 'menos de 2 meses'
+
+        return ''
+    
+    @tratamento_excecao_com_db
+    def retorna_producoes_do_professor_totais(self, id: str, db: DBConnector = None):
+        """
+        Retorna todas as produções do professor por anos
+        
+        Paramêtros:
+            Id(str): IdLattes do Professor
+            anoi(str): Ano de início
+            anof(str): Ano Final
+            db(class): DataBase
+        """
+        query = """SELECT
+                        tipo,
+                        dados
+                    FROM lattes_producao_bibliografica
+                    WHERE num_identificador = %(id)s
+                    UNION ALL
+                    SELECT
+                        tipo,
+                        dados
+                    FROM lattes_producao_tecnica
+                    WHERE num_identificador = %(id)s
+                    UNION ALL
+                    SELECT
+                        tipo,
+                        dados
+                    FROM lattes_outra_producao
+                    WHERE num_identificador = %(id)s"""
+        row = db.fetch_all(query, id=id)
+        prods = [dict(r) for r in row]
+
+        contagens = {}
+
+
+        for prod in prods:
+            if prod['tipo'] not in contagens and 'ORIENTACOES' not in prod['tipo'] and 'APRESENTACAO-DE-TRABALHO' not in prod['tipo']:
+                contagens[prod['tipo']] = 0
+                for dado in prod['dados']:
+                    dado_key = [k for k in dado.keys() if 'DADOS' in k][0]
+                    ano_key = [a for a in dado[dado_key].keys()
+                            if 'ANO' in a][0]
+                    contagens[prod['tipo']] += 1
+        
+
+        prods = []
+        for k, v in contagens.items():
+            p = {'subtipo': k, 'qdade': v}
+            prods.append(p)
+
+        return prods
+    
+    @tratamento_excecao_com_db
+    def retorna_lista_de_professores_atuais_para_ranking(self, id: str, db: DBConnector = None):
+        """
+        Retorna lista de professores por ano
+
+        Paramêtros:
+            Id(str): Id do PPG
+            anoi(int): Ano de início
+            anof(int): Ano final
+            db(class): DataBase
+        """
+
+        professores = self.retorna_lista_docentes_do_ppg_do_ultimo_ano(id)
+
+        producoes = {}
+        avatares = {}
+        datalattes = {}
+       
+        for p in professores:
+            if 'nome' in p:
+                id_professor = p['num_identificador']
+                datalattes[id_professor] = self.retorna_tempo_de_atualizacao_do_lattes_do_professor(id_professor)
+                producoes[id_professor] = self.retorna_producoes_do_professor_totais(id_professor)
+                
+                if id_professor:
+                    avatares[id_professor] = self.retorna_link_avatar_lattes(id_professor, True)
+
+        return {'professores': professores,'produtos': producoes, 'avatares': avatares, 'datalattes': datalattes}
+  
+    
+    @tratamento_excecao_com_db
+    def retorna_dados_home(self, id_ies: str, db: DBConnector = None):
+        """   
+        Retorna todos os PPG de uma instituição
+        
+        Paramêtros:
+            id_ies: Id da instituição
+            db(class): DataBase
+        """
+        programs = self.retorna_lista_programas(id_ies)
+        
+        lista = []
+        for prog in programs:
+            try:
+                lista.append(self.retorna_lista_de_professores_atuais_para_ranking(prog['id']))
+            except:
+                print('Erro ao tentar recuperar a lista de professores atuais.')
+                pass
+
+        professores = {}
+        for l in lista:
+            for prof in l['professores']:
+                professores[prof['num_identificador']] = {'nome': prof['nome'], 
+                                                          'ies': prof['ies'] if prof['ies']!='' and prof['ies']!=None else programs[0]['nome_ies'] if prof['tipo_vinculo_ies'] == 1 else 'Informação não encontrada', 
+                                                          'vinculo_ies': prof['vinculo_ies'],
+                                                          'sigla_ies_vinculo': programs[0]['sigla_ies']}
+
+        for l in lista:
+            for prof in l['avatares'].keys():
+                professores[prof]['avatar'] = l['avatares'][prof]
+        
+        for l in lista:
+            for prof in l['produtos'].keys():
+                if 'produtos' not in professores[prof]:
+                    professores[prof]['produtos'] = {}
+                for subtipo in l['produtos'][prof]:
+                    professores[prof]['produtos'][subtipo['subtipo']] = subtipo['qdade']
+
+        
+        dicionario_ordenado = dict(sorted(professores.items(), 
+                                          key=lambda item: (item[1]['produtos']['ARTIGO-PUBLICADO'] if 'ARTIGO-PUBLICADO' in item[1]['produtos'] else 0, 
+                                                            item[1]['produtos']['TRABALHO-EM-EVENTOS'] if 'TRABALHO-EM-EVENTOS' in item[1]['produtos'] else 0,
+                                                            item[1]['produtos']['LIVROS-PUBLICADOS-OU-ORGANIZADOS'] if 'LIVROS-PUBLICADOS-OU-ORGANIZADOS' in item[1]['produtos'] else 0,
+                                                            item[1]['produtos']['CAPITULOS-DE-LIVROS-PUBLICADOS'] if 'CAPITULOS-DE-LIVROS-PUBLICADOS' in item[1]['produtos'] else 0), reverse=True))
+
+        return {'programas': programs, 'time':str(time.time()), 'ranking': dicionario_ordenado}
+
 
 queries_ppg = QueriesPPG()
