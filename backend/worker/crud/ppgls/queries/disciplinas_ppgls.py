@@ -28,26 +28,7 @@ class QueriesDisciplinas():
         ret = db.fetch_all(query, id=id)
         return ret
     
-    @tratamento_excecao_com_db(tipo_banco='grad')
-    def retorna_series(self, id: str, db: DBConnectorGRAD = None):
-        """
-        Retorna todas as series de um curso.
 
-        Parâmetros:
-            id(str): Código do curso. 
-        """
-        query = """
-        SELECT DISTINCT historico."serie" AS SERIE 
-        FROM historico
-        INNER JOIN alunos ON alunos."matricula" = historico."matricula_aluno"
-        INNER JOIN disciplinas ON disciplinas."cod_disc" = historico."cod_disc"
-        INNER JOIN cursos ON cursos."id" = disciplinas."cod_curso"
-        WHERE cursos."id" = '%(id)s' 
-        AND historico."nota" IS NOT NULL
-        """
-        ret = db.fetch_all(query, id=id)
-        return ret
-    
     @tratamento_excecao_com_db(tipo_banco='grad')
     def quant_alunos_por_semestre(self, id: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
         """

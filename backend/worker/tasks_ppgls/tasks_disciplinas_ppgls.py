@@ -41,23 +41,6 @@ def tarefa_lista_disciplinas_por_curso(id: str):
         return MessageToDict(messages_pb2.PPGLSJason())
 
 @app_celery_queries.task
-def tarefa_lista_series_por_curso(id: str):
-    """
-    Retorna todas as series de um curso.
-
-        Parâmetros:
-            id(str): Código do curso. 
-    """
-    try:
-        respostaDict = queries_disciplinas.retorna_series(id)
-        retorno = messages_pb2.PPGLSJason(nome='lista_series_por_curso', json=json.dumps(respostaDict))
-        return MessageToDict(retorno)
-    except Exception as e:
-        print(e)
-        return MessageToDict(messages_pb2.PPGLSJason())
-
-
-@app_celery_queries.task
 def tarefa_quant_alunos_por_semestre(id: str, anoi: int, anof: int):
     """
     Retorna a quantidade de alunos por semestre de um curso de pós-graduação latu sensu ao longo do tempo a partir de um ano inicial.
@@ -202,7 +185,7 @@ def tarefa_nota_media_por_semestre(id: str, anoi: int, anof: int):
         return MessageToDict(messages_pb2.PPGLSJason())
 
 @app_celery_queries.task
-def tarefa_reprovacoes_por_serie(id: str, anoi: int, anof: int):
+def tarefa_reprovacoes_por_serie(id: str, anoi: int, anof: int, serie: int):
     """
     Retorna a média de todas as disciplinas de uma serie em determinado período.\n
         Ex: Retorna a média de reprovações de todas as disciplinas do 1º período do curso entre 2022 e 2024.\n
@@ -213,7 +196,7 @@ def tarefa_reprovacoes_por_serie(id: str, anoi: int, anof: int):
             serie(int): Série desejada.
     """
     try:
-        respostaDict = queries_disciplinas.reprovacoes_por_serie(id, anoi, anof)
+        respostaDict = queries_disciplinas.reprovacoes_por_serie(id, anoi, anof, serie)
         retorno = messages_pb2.PPGLSJason(nome='reprovacoes_por_serie', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
@@ -221,7 +204,7 @@ def tarefa_reprovacoes_por_serie(id: str, anoi: int, anof: int):
         return MessageToDict(messages_pb2.PPGLSJason())
 
 @app_celery_queries.task
-def tarefa_media_disciplinas_por_serie(id: str, anoi: int, anof: int):
+def tarefa_media_disciplinas_por_serie(id: str, anoi: int, anof: int, serie: int):
     """
     Retorna a média de todas as disciplinas de uma serie.\n
         Ex: Retorna a média de todas as disciplinas do 1º período do curso.\n
@@ -232,7 +215,7 @@ def tarefa_media_disciplinas_por_serie(id: str, anoi: int, anof: int):
             serie(int): Série desejada.
     """
     try:
-        respostaDict = queries_disciplinas.media_disciplinas_por_serie(id, anoi, anof)
+        respostaDict = queries_disciplinas.media_disciplinas_por_serie(id, anoi, anof, serie)
         retorno = messages_pb2.PPGLSJason(nome='media_disciplinas_por_serie', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:

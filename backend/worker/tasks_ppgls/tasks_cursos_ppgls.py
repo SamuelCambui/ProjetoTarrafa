@@ -48,7 +48,19 @@ def tarefa_quantidade_alunos_por_semestre(id: str, anoi: int, anof: int):
         anof(int): Ano final.
     """
     try:
+        dataset = DataSet()
+        dados_grafico = DadosGrafico()
+        dataset.label = 'Quantidade de Alunos'
+
         respostaDict = queries_cursos.quantidade_alunos_por_semestre(id, anoi, anof)
+        dataset.data = ([item['quantidade'] for item in respostaDict])
+        dados_grafico.labels = ['/'.join([str(item['ano_letivo']), str(item['semestre'])]) for item in respostaDict]
+
+        dados_grafico.datasets.append(dataset)
+
+        grafico = Grafico()
+        grafico.data = dados_grafico
+
         retorno = messages_pb2.PPGLSJason(nome='quant_alunos_por_semestre', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
@@ -67,7 +79,19 @@ def tarefa_media_idades_por_ano(id: str, anoi: int, anof: int):
             anof(int): Ano final.
     """
     try:
+        dataset = DataSet()
+        dados_grafico = DadosGrafico()
+        dataset.label = 'Media das Idades dos Alunos'
+
         respostaDict = queries_cursos.media_idades_por_ano(id, anoi, anof)
+        dataset.data = ([item['media_idade'] for item in respostaDict])
+        dados_grafico.labels = ['/'.join([str(item['ano_letivo']), str(item['semestre'])]) for item in respostaDict]
+
+        dados_grafico.datasets.append(dataset)
+
+        grafico = Grafico()
+        grafico.data = dados_grafico
+
         retorno = messages_pb2.PPGLSJason(nome='media_idade_por_ano', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
@@ -294,23 +318,6 @@ def tarefa_quant_alunos_por_cor(id: str, anoi: int, anof :int):
     try:
         respostaDict = queries_cursos.quant_alunos_por_cor_por_ano(id, anoi, anof)
         retorno = messages_pb2.PPGLSJason(nome='quant_alunos_por_cor', json=json.dumps(respostaDict))
-        return MessageToDict(retorno)
-    except Exception as e:
-        print(e)
-        return MessageToDict(messages_pb2.PPGLSJason())
-
-@app_celery_queries.task
-def tarefa_quant_cursos_ofertados_por_ano(anoi: int, anof :int):
-    """
-       Retorna a quantidade de cursos e residências de pós-graduação latu sensu ofertados em um determinado periodo
-
-        Parâmetros:
-            anoi(int): Ano inicial.
-            anof(int): Ano final.
-    """
-    try:
-        respostaDict = queries_cursos.quant_cursos_ofertados_por_ano(anoi, anof)
-        retorno = messages_pb2.PPGLSJason(nome='quant_cursos_ofertados_por_ano', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)

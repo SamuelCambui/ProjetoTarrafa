@@ -24,13 +24,13 @@ service IndicadoresPosGraduacaoLS {
     rpc GetAbaDisciplinas (PPGLSRequest) returns (PPGLSResponse);
 
     /*  
-        Retorna dados para compor os indicadores da aba de egressos.\n
+        Retorna dados para compor os indicadores da aba de regressos.\n
         Parâmetros:
             id(string) - Código do curso.\n
             anoi(int) - Ano Inicial.\n
             anof(int) - Ano Final.\n
     */
-    rpc GetAbaEgressos (PPGLSRequest) returns (PPGLSResponse);
+    rpc GetAbaRegressos (PPGLSRequest) returns (PPGLSResponse);
 
     /*  
         Retorna dados para compor os indicadores da aba de professores.\n
@@ -50,14 +50,41 @@ service IndicadoresPosGraduacaoLS {
     */
     rpc GetIndicadoresDisciplina (PPGLSRequest) returns (PPGLSResponse);
 
+}
 
+service DadosFormularioPosGraduacaoLS {
     /*
-        Retorna o dados do formuálario da pos graduação latu sensu.\n
-        Parâmetros:\n
-            nome(string) - Nome do formulario.\n
-            data_inicio(string) - Data de inicio.\n
+        Retorna os dados do formulário da pós-graduação latu sensu.
+        Parâmetros:
+            nome(string) - Nome do formulário.
+            data_inicio(string) - Data de início.
     */
     rpc GetIndicadoresFormulario (FormularioPPGLSRequest) returns (FormularioPPGLSResponse);
+    
+    /*
+        Insere um novo formulário da pós-graduação latu sensu.
+        Parâmetros:
+            nome(string) - Nome do formulário.
+            data_inicio(string) - Data de início.
+    */
+    rpc InsertFormulario (FormularioPPGLSRequest) returns (FormularioPPGLSResponse);
+    
+    /*
+        Atualiza os dados de um formulário existente.
+        Parâmetros:
+            id(int) - ID do formulário.
+            nome(string) - Nome do formulário.
+            data_inicio(string) - Data de início.
+    */
+    rpc UpdateFormulario (FormularioPPGLSRequest) returns (FormularioPPGLSResponse);
+    
+    /*
+        Exclui um formulário da pós-graduação latu sensu.
+        Parâmetros:
+            id(int) - ID do formulário.
+            data_inicio(string) - Data de início.
+    */
+    rpc DeleteFormulario (FormularioPPGLSRequest) returns (FormularioPPGLSResponse);
 }
 
 service DadosPosGraduacaoLS {

@@ -14,7 +14,7 @@ class Grafico():
     data: Optional[DadosGrafico] = []
 
 
-"""
+""" -----------GRAFICO DE BARRAS---------------
 class DataSet():
     label: Optional[str] = ''     #Titulo                   
     data: Optional[list[float]] = []  #dados media  

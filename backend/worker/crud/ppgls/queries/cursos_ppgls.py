@@ -74,8 +74,8 @@ class QueriesCursos():
             anof(int): Ano final.
         """
         query = """
-            SELECT historico."ano_letivo" AS ANO, historico."semestre" AS SEMESTRE,
-            ROUND(AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, alunos."data_nascimento")))::numeric, 2) AS MEDIA_IDADE
+            SELECT historico."ano_letivo" AS ano, historico."semestre" AS semestre,
+            ROUND(AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, alunos."data_nascimento")))::numeric, 2) AS media_idade
             FROM alunos
             INNER JOIN aluno_curso ON alunos."matricula" = aluno_curso."matricula_aluno"
             INNER JOIN cursos ON cursos."id" = aluno_curso."id_curso"
@@ -494,29 +494,7 @@ class QueriesCursos():
         ret = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
         return ret
     
-    @tratamento_excecao_com_db(tipo_banco='grad')
-    def quant_cursos_ofertados_por_ano(self, anoi: int, anof: int, db: DBConnectorGRAD = None):
-        """
-        Retorna a quantidade de cursos e residências de pós-graduação latu sensu ofertados em um determinado periodo
-
-        Parâmetros:
-            anoi(int): Ano inicial.
-            anof(int): Ano final.
-        """
-        query = """
-
-            SELECT historico."ano_letivo" AS ANO, COUNT(DISTINCT cursos."id") AS NUMERO_DE_CURSOS
-            FROM cursos
-            INNER JOIN disciplinas ON cursos."id" = disciplinas."cod_curso"
-            INNER JOIN historico ON historico."cod_disc" = disciplinas."cod_disc"
-            AND historico."ano_letivo" BETWEEN '%(anoi)s' AND '%(anof)s'
-            GROUP BY historico."ano_letivo"
-            ORDER BY historico."ano_letivo";
-        """
-
-        ret = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
-        return ret
-
+  
     @tratamento_excecao_com_db(tipo_banco='grad')
     def professores(self, id: str, db: DBConnectorGRAD = None):
 

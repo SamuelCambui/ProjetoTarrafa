@@ -35,7 +35,7 @@ def tarefa_inserir_formulario_ppgls(kwargs: dict):
         
         # Cria a mensagem de resposta com o JSON gerado.
       
-        retorno = messages_pb2.FormularioPPGLSJason(nome='inserir_formulario_ppgls', json=json.dumps(resposta))
+        retorno = messages_pb2.FormularioPPGLSJson(nome='inserir_formulario_ppgls', json=json.dumps(resposta))
         return MessageToDict(retorno)
     
     except Exception as e:
@@ -45,7 +45,7 @@ def tarefa_inserir_formulario_ppgls(kwargs: dict):
             "status": False,
             "mensagem": f"Erro ao inserir o formulário: {str(e)}"
         }
-        retorno = messages_pb2.FormularioPPGLSJason(nome='inserir_formulario_ppgls', json=json.dumps(resposta))
+        retorno = messages_pb2.FormularioPPGLSJson(nome='inserir_formulario_ppgls', json=json.dumps(resposta))
         return MessageToDict(retorno)
 
 @app_celery_queries.task
@@ -73,7 +73,7 @@ def tarefa_excluir_formulario_ppgls(kwargs: dict):
             }
         
         # Cria a mensagem de resposta com o JSON gerado.
-        retorno = messages_pb2.FormularioPPGLSJason(nome='excluir_formulario_ppgls', json=json.dumps(resposta))
+        retorno = messages_pb2.FormularioPPGLSJson(nome='excluir_formulario_ppgls', json=json.dumps(resposta))
         return MessageToDict(retorno)
     
     except Exception as e:
@@ -83,7 +83,7 @@ def tarefa_excluir_formulario_ppgls(kwargs: dict):
             "status": False,
             "mensagem": f"Erro ao excluir o formulário: {str(e)}"
         }
-        retorno = messages_pb2.FormularioPPGLSJason(nome='excluir_formulario_ppgls', json=json.dumps(resposta))
+        retorno = messages_pb2.FormularioPPGLSJson(nome='excluir_formulario_ppgls', json=json.dumps(resposta))
         return MessageToDict(retorno)
 
 @app_celery_queries.task
@@ -111,7 +111,7 @@ def tarefa_alterar_formulario_ppgls(kwargs: dict):
             }
         
         # Cria a mensagem de resposta com o JSON gerado.
-        retorno = messages_pb2.FormularioPPGLSJason(nome='alterar_formulario_ppgls', json=json.dumps(resposta))
+        retorno = messages_pb2.FormularioPPGLSJson(nome='alterar_formulario_ppgls', json=json.dumps(resposta))
         return MessageToDict(retorno)
     
     except Exception as e:
@@ -121,7 +121,7 @@ def tarefa_alterar_formulario_ppgls(kwargs: dict):
             "status": False,
             "mensagem": f"Erro ao alterar o formulário: {str(e)}"
         }
-        retorno = messages_pb2.FormularioPPGLSJason(nome='alterar_formulario_ppgls', json=json.dumps(resposta))
+        retorno = messages_pb2.FormularioPPGLSJson(nome='alterar_formulario_ppgls', json=json.dumps(resposta))
         return MessageToDict(retorno)
     
 
@@ -145,7 +145,7 @@ def tarefa_buscar_formulario_ppgls(kwargs: dict):
         }
         
         # Cria a mensagem de resposta com o JSON gerado.
-        retorno = messages_pb2.FormularioPPGLSJason(nome='buscar_formulario_ppgls', json=json.dumps(resposta))
+        retorno = messages_pb2.FormularioPPGLSJson(nome='buscar_formulario_ppgls', json=json.dumps(resposta))
         return MessageToDict(retorno)
     
     except Exception as e:
@@ -156,7 +156,7 @@ def tarefa_buscar_formulario_ppgls(kwargs: dict):
             "mensagem": f"Erro ao buscar o formulário: {str(e)}",
             "dados": None
         }
-        retorno = messages_pb2.FormularioPPGLSJason(nome='buscar_formulario_ppgls', json=json.dumps(resposta))
+        retorno = messages_pb2.FormularioPPGLSJson(nome='buscar_formulario_ppgls', json=json.dumps(resposta))
         return MessageToDict(retorno)
 
 
