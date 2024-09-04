@@ -1,9 +1,9 @@
 import json
 import requests
 import os
-from flask import (Blueprint, flash, redirect, render_template, request, session)
+from flask import (Blueprint, redirect, render_template, request, session)
 from flask.helpers import url_for
-from flask_login import utils, login_user, logout_user, login_required, current_user
+from flask_login import login_user, logout_user, login_required
 from google.protobuf.json_format import MessageToDict
 import grpc
 import sys
@@ -15,7 +15,9 @@ sys.path.append(str(diretorio_raiz))
 from frontend.flaskmiddle.core.models.User import Usuario
 from frontend.flaskmiddle.core import login_control
 from frontend.flaskmiddle.config import config
-from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2, usuarios_pb2_grpc
+from protos.out import messages_pb2, usuarios_pb2_grpc, ppg_pb2_grpc
+from protos.out.ppg_pb2_grpc import PPGStub, HomeStub
+from frontend.flaskmiddle.core.utils import Utils
 
 controller_ppg = Blueprint('controller_ppg', __name__, url_prefix='/ppg')
 
@@ -99,66 +101,61 @@ def ppg():
     return render_template("ppg/ppg.html")
 
 @controller_ppg.get("graficos/indicadores-paralelo-tab/<id>/<anoi>/<anof>")
+@Utils.ppg_stub()
 @login_required
-def indicadores(id, anoi, anof):
+def indicadores(id, anoi, anof, stub: PPGStub):
     print('Iniciando comunicacao com grpc indicadores...')
     retorno = {}
-    with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
-            stub = ppg_pb2_grpc.PPGStub(channel)
-            if stub:
-                response = stub.ObtemIndicadores(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
-                print('ok')
-                retorno = processa_retorno(response)
+    if stub:
+        response = stub.ObtemIndicadores(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
+        print('ok')
+        retorno = processa_retorno(response)
     return retorno
 
 @controller_ppg.get("graficos/docentes-paralelo-tab/<id>/<anoi>/<anof>")
+@Utils.ppg_stub()
 @login_required
-def docentes(id, anoi, anof):
+def docentes(id, anoi, anof, stub: PPGStub):
     print('Iniciando comunicacao com grpc docentes...')
     retorno = {}
-    with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
-            stub = ppg_pb2_grpc.PPGStub(channel)
-            if stub:
-                response = stub.ObtemDocentes(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
-                print('ok')
-                retorno = processa_retorno(response)
+    if stub:
+        response = stub.ObtemDocentes(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
+        print('ok')
+        retorno = processa_retorno(response)
     return retorno
 
 @controller_ppg.get("graficos/bancas-paralelo-tab/<id>/<anoi>/<anof>")
+@Utils.ppg_stub()
 @login_required
-def bancas(id, anoi, anof):
+def bancas(id, anoi, anof, stub: PPGStub):
     print('Iniciando comunicacao com grpc bancas...')
     retorno = {}
-    with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
-            stub = ppg_pb2_grpc.PPGStub(channel)
-            if stub:
-                response = stub.ObtemBancas(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
-                print('ok')
-                retorno = processa_retorno(response)
+    if stub:
+        response = stub.ObtemBancas(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
+        print('ok')
+        retorno = processa_retorno(response)
     return retorno
 
 @controller_ppg.get("graficos/egressos-paralelo-tab/<id>/<anoi>/<anof>")
+@Utils.ppg_stub()
 @login_required
-def egressos(id, anoi, anof):
+def egressos(id, anoi, anof, stub: PPGStub):
     print('Iniciando comunicacao com grpc egressos...')
     retorno = {}
-    with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
-            stub = ppg_pb2_grpc.PPGStub(channel)
-            if stub:
-                response = stub.ObtemEgressos(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
-                print('ok')
-                retorno = processa_retorno(response)
+    if stub:
+        response = stub.ObtemEgressos(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
+        print('ok')
+        retorno = processa_retorno(response)
     return retorno
 
 @controller_ppg.get("graficos/projetos-paralelo-tab/<id>/<anoi>/<anof>")
+@Utils.ppg_stub()
 @login_required
-def projetos(id, anoi, anof):
+def projetos(id, anoi, anof, stub: PPGStub):
     print('Iniciando comunicacao com grpc projetos...')
     retorno = {}
-    with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
-            stub = ppg_pb2_grpc.PPGStub(channel)
-            if stub:
-                response = stub.ObtemProjetos(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
-                print('ok')
-                retorno = processa_retorno(response)
+    if stub:
+        response = stub.ObtemProjetos(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
+        print('ok')
+        retorno = processa_retorno(response)
     return retorno

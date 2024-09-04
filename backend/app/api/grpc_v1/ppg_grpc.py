@@ -11,7 +11,7 @@ from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2
 
 # Implementação do serviço gRPC
 class PPG(ppg_pb2_grpc.PPGServicer):
-    # @cache_grpc
+    @cache_grpc
     def ObtemIndicadores(self, request, context):
         print('ObtemIndicadores chamada...')
         try:
@@ -41,7 +41,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
             print(e)
             return None
     
-    # @cache_grpc
+    @cache_grpc
     def ObtemBancas(self, request, context):
         print('ObtemBancas chamada...')
         try:
@@ -71,7 +71,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
             print(e)
             return None
         
-    # @cache_grpc
+    @cache_grpc
     def ObtemDocentes(self, request, context):
         print('ObtemDocentes chamada...')
         try:
@@ -101,7 +101,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
             print(e)
             return None
         
-    # @cache_grpc
+    @cache_grpc
     def ObtemEgressos(self, request, context):
         print('ObtemEgressos chamada...')
         try:
@@ -131,7 +131,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
             print(e)
             return None
     
-    # @cache_grpc
+    @cache_grpc
     def ObtemProjetos(self, request, context):
         print('ObtemProjetos chamada...')
         try:
