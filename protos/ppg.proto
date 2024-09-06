@@ -11,6 +11,8 @@ import "messages.proto";
   informações gerais, projetos e tarefas relacionadas ao PPG.
 */
 service PPG{
+  // Retorna os indicadores do PPG.
+  rpc ObtemInformacaoPPG(PpgRequest)returns (PpgResponse);
   // Retorna os indicadores de desempenho do PPG.
   rpc ObtemIndicadores (PpgRequest) returns (PpgResponse);
   // Retorna as informações sobre as bancas do PPG.

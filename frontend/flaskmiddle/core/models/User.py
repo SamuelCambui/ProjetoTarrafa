@@ -26,7 +26,7 @@ class Usuario(UserMixin):
                 stub = usuarios_pb2_grpc.UsuarioStub(channel)
                 user = None
                 if stub:
-                    response = stub.ObtemUsuario (messages_pb2.UsuarioRequest(username=id))
+                    response = stub.ObtemUsuario(messages_pb2.UsuarioRequest(username=id))
                     print('ok')
                     user = Usuario(response.idlattes, response.email, response.full_name, response.is_superuser, response.is_admin, response.id_ies)
             return user

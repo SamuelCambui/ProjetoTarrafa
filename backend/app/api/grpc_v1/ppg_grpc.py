@@ -4,13 +4,42 @@ from pathlib import Path
 from celery import group
 from google.protobuf.json_format import Parse, MessageToJson, ParseDict
 
-from backend.worker.tasks_ppg import task_indicadores, task_bancas, task_docentes, task_egressos, task_projetos
+from backend.worker.tasks_ppg import task_indicadores, task_bancas, task_docentes, task_egressos, task_projetos, task_ppg
 from backend.db.cache import cache_grpc
 from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2
 
 
 # Implementação do serviço gRPC
 class PPG(ppg_pb2_grpc.PPGServicer):
+    # @cache_grpc
+    def ObtemInformacaoPPG(self, request, context):
+        print('ObtemInformacaoPPG chamada...')
+        try:
+            id = request.id
+            # anoi = request.anoi
+            # anof = request.anof
+            print("Parametros: ", id)
+            
+            tarefas = task_ppg.agrupar_tarefas_ppg(id)
+
+            print('Agrupando e disparando tarefas...')
+            
+            job = group(tarefas)
+            result = job.apply_async()
+            ret_values = result.get()
+            print('Coletando resultados das tarefas...')
+            
+            ppg_response = messages_pb2.PpgResponse()
+            for result in ret_values:
+                ppg_json = ParseDict(result, messages_pb2.PpgJson())
+                ppg_response.item.append(ppg_json)
+
+            print('Retornando resultados.')
+
+            return ppg_response
+        except Exception as e:
+            print(e)
+            return None
     @cache_grpc
     def ObtemIndicadores(self, request, context):
         print('ObtemIndicadores chamada...')

@@ -33,7 +33,38 @@ def unauthorized():
     session.clear()
     return redirect(url_for('principal.controller_ppg.login_get'))
 
+@controller_ppg.get("/")
+@login_required
+def index():
+    imagens = []
+    path = os.path.dirname(os.path.realpath(__file__))
+    for arquivo in os.listdir(path+'/../html/assets/img/usuarios'):
+        imagens.append(arquivo)
+    
+    return render_template("index.html", imagens = imagens, login_link='/ppg/login')
+
+@controller_ppg.get("/usuarios")
+def usuarios():
+    return "Usuarios"
+
+@controller_ppg.get("/rede_colaboracao")
+def rede_colaboracao():
+    return "Rede colaboracao"
+
+@controller_ppg.get("/ranking_docentes")
+def ranking_docentes():
+    return "ranking_docentes"
+
+@controller_ppg.get("/artigos_docentes")
+def artigos_docentes():
+    return "artigos_docentes"
+
+@controller_ppg.get("/setup")
+def setup():
+    return "setup"
+
 @controller_ppg.post("/login")
+# @Utils.home_stub()
 def login_post():
     try:
         email = request.form.get("username").strip()
@@ -51,10 +82,11 @@ def login_post():
             if user:
                 login_user(user)
                 session['user'] = MessageToDict(response)
+                session['user']['id_ies'] = user.id_ies
                 session['user']['site'] = 'principal.controller_ppg.ppg'
                 session['requestssession'] = requests.Session()
 
-                return redirect(url_for('principal.controller_ppg.ppg'))
+                return redirect(url_for('principal.controller_ppg.home'))
         
         #flash(json.loads(ret.content)['detail'], 'erro')
         return redirect(url_for('principal.controller_ppg.login_get'))
@@ -65,15 +97,15 @@ def login_post():
 @controller_ppg.get("/login")
 def login_get():
     try:
-        if 'user' in session:
-            return redirect(url_for('principal.controller_ppg.ppg'))
+        # if 'user' in session:
+        #     return redirect(url_for('principal.controller_ppg.ppg'))
 
-        imagens = []
-        path = os.path.dirname(os.path.realpath(__file__))
-        for arquivo in os.listdir(path+'/../html/assets/img/usuarios'):
-            imagens.append(arquivo)
+        # imagens = []
+        # path = os.path.dirname(os.path.realpath(__file__))
+        # for arquivo in os.listdir(path+'/../html/assets/img/usuarios'):
+        #     imagens.append(arquivo)
         
-        return render_template('ppg/login_ppg.html', imagens=imagens, dominios=None, login_link='/ppg/login')
+        return render_template('ppg/login_ppg.html')
     except Exception as error:
         print(error)
         return render_template('ppg/erro.html', erro=error, url=config.FASTAPI_URL)
@@ -99,6 +131,51 @@ def processa_retorno(response):
 @login_required
 def ppg():
     return render_template("ppg/ppg.html")
+
+@controller_ppg.get("/home")
+@login_required
+@Utils.home_stub()
+def home(stub : HomeStub):
+    try:
+        if stub:
+            response = stub.ObtemHome(messages_pb2.PpgRequest(id=session['user']['id_ies']))
+            print('Home ok')
+            retorno = processa_retorno(response)
+            avatar = session['user']['avatar']
+            listaProgramas = retorno['listaprogramas']
+            nome = retorno['listaprogramas'][0]['nome_ies']
+            # print("A")
+            # return "HOME"
+            return render_template('ppg/home.html', avatar = avatar, listaProgramas = listaProgramas, nome = nome)
+        # return ret.json()['detail'], 400
+    except Exception as error:
+        print(error)
+        return render_template('ppg/erro.html')
+
+@controller_ppg.get("/graficos/<id_ppg>")
+@Utils.home_stub()
+@login_required
+def ppgs(stub : HomeStub, id_ppg=None):
+    try:
+        ret = Utils.acessa_endpoint(f"{config.FASTAPI_URL}{config.API_STR}/ppg/geral/info/{id_ppg}")
+        if ret.status_code == 200:
+            nome = ret.json()['nome']
+            sigla_ies = ret.json()['sigla_ies']
+            info = ret.json()['info']
+            nota = ret.json()['nota']
+            siglas = ret.json()['siglas']
+            url = ret.json()['url']
+            email = ret.json()['email']
+            avatar = session['user']['avatar']
+
+            session['id_ppg'] = id_ppg
+            session['nota_ppg'] = nota
+
+            
+            return render_template('ppg/ppg.html',avatar=avatar, nome=nome, sigla_ies=sigla_ies, id_ppg=id_ppg, info=info,nota=nota,siglas=siglas,url=url,email=email)
+        return ret.json()['detail'], 400
+    except Exception as e:
+        return render_template('ppg/erro.html')
 
 @controller_ppg.get("graficos/indicadores-paralelo-tab/<id>/<anoi>/<anof>")
 @Utils.ppg_stub()

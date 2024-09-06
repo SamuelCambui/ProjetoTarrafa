@@ -21,6 +21,7 @@ app_celery_queries = Celery('queries',
                    'backend.worker.tasks_ppg.task_indicadores',
                    'backend.worker.tasks_ppg.task_projetos',
                    'backend.worker.tasks_ppg.task_home',
+                   'backend.worker.tasks_ppg.task_ppg',
                    ])
 
 app_celery_queries.conf.update(

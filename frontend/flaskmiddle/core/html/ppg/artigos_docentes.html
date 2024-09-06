@@ -1,0 +1,53 @@
+{% extends 'ppg/base.html' %} {% block title %}Rede de colaboração{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-screen-2xl px-4 py-6 lg:px-16">
+  <div class="pb-8">
+    <h1 class="text-2xl font-extrabold text-indigo-500">Artigos dos PPGs</h1>
+    <p class="text-sm text-zinc-700">Fonte: Lattes</p>
+  </div>
+
+  <div>
+    <label class="sr-only" for="inputAno">Ano</label>
+    <input
+      class="form-control mr-2 w-20"
+      id="inputAno"
+      type="text"
+      placeholder="Ano"
+    />
+    <button
+      class="ml-auto rounded-lg border bg-indigo-400 px-6 py-3 text-sm font-bold text-zinc-50 hover:bg-indigo-500"
+      id="btn-listar-artigos"
+      type="button"
+      aria-label="Listar artigos"
+    >
+      Listar artigos
+    </button>
+  </div>
+
+  <div id="info_carregamento_artigos">&nbsp;</div>
+
+  <div class="mt-8 overflow-x-auto text-zinc-700">
+    <table class="w-full table-auto">
+      <thead>
+        <tr class="border-y-2 border-y-gray-300">
+          <th class="px-3 py-3.5 text-left font-semibold" scope="col">#</th>
+          <th class="px-3 py-3.5 text-left font-semibold" scope="col">
+            Título
+          </th>
+          <th class="px-3 py-3.5 text-left font-semibold" scope="col">
+            Duplicado
+          </th>
+          <th class="px-3 py-3.5 text-left font-semibold" scope="col">PPGs</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-lista-artigos"></tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %} {% block scripts %}
+<script
+  src="{{ url_for('static', filename='ppg/js/artigosDocentes.js') | hash_url}}"
+  type="module"
+></script>
+{% endblock %}

@@ -44,6 +44,11 @@ class PPGStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.ObtemInformacaoPPG = channel.unary_unary(
+                '/protos.PPG/ObtemInformacaoPPG',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
         self.ObtemIndicadores = channel.unary_unary(
                 '/protos.PPG/ObtemIndicadores',
                 request_serializer=messages__pb2.PpgRequest.SerializeToString,
@@ -78,6 +83,13 @@ class PPGServicer(object):
     Ele permite obter indicadores, bancas, docentes, egressos,
     informações gerais, projetos e tarefas relacionadas ao PPG.
     """
+
+    def ObtemInformacaoPPG(self, request, context):
+        """Retorna os indicadores do PPG.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def ObtemIndicadores(self, request, context):
         """Retorna os indicadores de desempenho do PPG.
@@ -117,6 +129,11 @@ class PPGServicer(object):
 
 def add_PPGServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'ObtemInformacaoPPG': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemInformacaoPPG,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
             'ObtemIndicadores': grpc.unary_unary_rpc_method_handler(
                     servicer.ObtemIndicadores,
                     request_deserializer=messages__pb2.PpgRequest.FromString,
@@ -157,6 +174,33 @@ class PPG(object):
     Ele permite obter indicadores, bancas, docentes, egressos,
     informações gerais, projetos e tarefas relacionadas ao PPG.
     """
+
+    @staticmethod
+    def ObtemInformacaoPPG(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.PPG/ObtemInformacaoPPG',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
     def ObtemIndicadores(request,

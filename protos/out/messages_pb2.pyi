@@ -5,6 +5,12 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class HomeRequest(_message.Message):
+    __slots__ = ("id_ies",)
+    ID_IES_FIELD_NUMBER: _ClassVar[int]
+    id_ies: str
+    def __init__(self, id_ies: _Optional[str] = ...) -> None: ...
+
 class PpgRequest(_message.Message):
     __slots__ = ("id", "anoi", "anof")
     ID_FIELD_NUMBER: _ClassVar[int]

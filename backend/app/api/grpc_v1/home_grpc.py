@@ -9,14 +9,14 @@ from protos.out import ppg_pb2_grpc, messages_pb2
 
 # Implementação do serviço gRPC
 class Home(ppg_pb2_grpc.HomeServicer):
-    # @cache_grpc
+    @cache_grpc
     def ObtemHome(self, request, context):
         print('ObtemHome chamada...')
         try:
-            id = request.id
-            print("Parametros: ", id)
+            id_ies = request.id
+            print("Parametros: ", id_ies)
             
-            tarefas = task_home.agrupar_tarefas_home(id)
+            tarefas = task_home.agrupar_tarefas_home(id_ies)
 
             print('Agrupando e disparando tarefas...')
             

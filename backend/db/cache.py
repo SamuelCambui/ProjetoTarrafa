@@ -19,8 +19,10 @@ def cache_grpc(func):
       cache_key = f"{func.__name__}_{request.id}_{request.anoi}_{request.anof}"
 
       print(cache_key)
-      universidade = None
-      if request.id:
+      universidade = None if request.anoi != 0 else request.id
+      # if request.id_ies:
+      #    universidade = request.id_ies
+      if request.id and not universidade:
          universidade = crud.queries_ppg.retorna_id_ies(request.id)
       
       try:

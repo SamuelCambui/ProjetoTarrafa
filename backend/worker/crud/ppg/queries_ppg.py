@@ -3401,5 +3401,30 @@ class QueriesPPG():
 
         return {'programas': programs, 'time':str(time.time()), 'ranking': dicionario_ordenado}
 
+    @tratamento_excecao_com_db
+    def retorna_informacao_ppg(self, id: str, db: DBConnector = None):
+        """        
+        Retorna as informações do PPG
+        
+        Paramêtros:
+            id(str): Id do PPG
+            db(class): DataBase
+        
+        Retorno:
+            dict: Contendo todas as informações do PPG
+        """
+        
+        query = """select * from programas where codigo_programa = %(id)s"""
+        row = db.fetch_one(query, id=id)
+        #ret = [dict(r) for r in row]
+
+        texto = ''
+        if row:
+            texto = f"""O programa de pós-graduação em {row['nome']} possui curso(s) de nível {row['grau']}, na modalidade {row['modalidade']}. 
+                        O PPG foi criado em {row['ano_inicio']} e atualmente é coordenado por {row['nome_coordenador']}, é avaliado pela área {row['nome_area_avaliacao']}, 
+                        área de conhecimento {row['nome_area_conhecimento']} e recebeu nota {row['conceito']} na última avaliação."""
+
+            return {'info': texto, 'sigla_ies':row['sigla_ies'], 'nome':row['nome'], 'nota': row['conceito'], 'siglas': row['sigla_curso'], 'url': row['contato_url'], 'email':row['contato_email']}
+        return None
 
 queries_ppg = QueriesPPG()

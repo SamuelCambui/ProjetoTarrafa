@@ -1,0 +1,446 @@
+{% extends 'ppg/base.html' %} {% block title %}Rede de colaboração{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-screen-2xl px-4 py-6 lg:px-16">
+  <div class="pb-8">
+    <h1 class="text-2xl font-extrabold text-indigo-500">
+      Rede de Colaboração dos PPGs
+    </h1>
+    <p class="text-zinc-700">
+      Apresenta os relacionamentos entre coautores da universidade. Este grafo
+      evidencia comunidades de parcerias entre todos os PPGs e o grau de
+      importância de cada docente (quanto maior o círculo, mais artigos com
+      coautorias).
+    </p>
+  </div>
+
+  <div>
+    <div class="relative flex w-full items-start gap-4">
+      <div class="relative max-w-full flex-1 md:max-w-lg">
+        <div class="relative">
+          <div
+            class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-zinc-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </svg>
+          </div>
+          <input
+            class="w-full pl-12"
+            id="input-busca-docente"
+            type="text"
+            placeholder="Procure um docente..."
+          />
+          <button
+            class="absolute right-4 top-1/2 hidden -translate-y-1/2 transform px-0"
+            id="btn-limpar"
+          >
+            <svg
+              class="cursor-pointer"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="grey"
+              height="20"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <div
+          class="absolute mt-1 hidden max-h-52 w-full overflow-y-auto rounded-b-lg border border-gray-300 bg-white py-2 capitalize shadow-md md:w-[32rem]"
+          id="resultados-busca"
+        ></div>
+      </div>
+
+      <!-- <div id="graph-index-button"> </div> -->
+
+      <button
+        class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 text-base font-bold text-zinc-600 hover:bg-zinc-200"
+        id="btn-dropdown-filtros-colaboracao"
+        type="button"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="21" x2="14" y1="4" y2="4"></line>
+          <line x1="10" x2="3" y1="4" y2="4"></line>
+          <line x1="21" x2="12" y1="12" y2="12"></line>
+          <line x1="8" x2="3" y1="12" y2="12"></line>
+          <line x1="21" x2="16" y1="20" y2="20"></line>
+          <line x1="12" x2="3" y1="20" y2="20"></line>
+          <line x1="14" x2="14" y1="2" y2="6"></line>
+          <line x1="8" x2="8" y1="10" y2="14"></line>
+          <line x1="16" x2="16" y1="18" y2="22"></line>
+        </svg>
+        Filtros
+      </button>
+    </div>
+
+    <div
+      class="absolute right-1/3 mt-2 hidden w-fit gap-4 rounded-lg border border-gray-300 bg-white px-6 py-4 shadow-md"
+      id="filtros-colaboracao"
+    >
+      <form>
+        <div class="input-group" id="select-ppgs">
+          <div class="flex flex-col gap-2">
+            <label for="select-type-product">Produto </label>
+            <div class="relative w-fit">
+              <select class="pr-10" id="select-type-product">
+                <option value="APRESENTAÇÃO DE TRABALHO">
+                  Apresentação de Trabalho
+                </option>
+                <option value="ARTES VISUAIS">Artes Visuais</option>
+                <option value="ARTIGO EM JORNAL OU REVISTA">
+                  Artigo em Jornal ou em Revista
+                </option>
+                <option value="ARTIGO EM PERIÓDICO" selected>
+                  Artigo em Periódico
+                </option>
+                <option value="CARTAS, MAPAS OU SIMILARES">
+                  Cartas, mapas ou similares
+                </option>
+                <option value="CURSO DE CURTA DURAÇÃO">
+                  Curso de curta duração
+                </option>
+                <option value="DESENVOLVIMENTO DE APLICATIVO">
+                  Desenvolvimento de aplicativo
+                </option>
+                <option
+                  value="DESENVOLVIMENTO DE MATERIAL DIDÁTICO E INSTRUCIONAL"
+                >
+                  Desenvolvimento de material didático e instrucional
+                </option>
+                <option value="DESENVOLVIMENTO DE PRODUTO">
+                  Desenvolvimento de produto
+                </option>
+                <option value="DESENVOLVIMENTO DE TÉCNICA E SERVIÇOS TÉCNICOS">
+                  Desenvolvimento de técnica e serviços técnicos
+                </option>
+                <option value="EDITORIA">Editoria</option>
+                <option value="LIVRO">Livro</option>
+                <option value="MÚSICA">Música</option>
+                <option value="ORGANIZAÇÃO DE EVENTO">
+                  Organização de Evento
+                </option>
+                <option value="OUTRA PRODUÇÃO CULTURAL">
+                  Outra Produção Cultural
+                </option>
+                <option value="PATENTE">Patente</option>
+                <option value="PROGRAMA DE RÁDIO OU TV">
+                  Programa de rádio ou TV
+                </option>
+                <option value="RELATÓRIO DE PESQUISA">
+                  Relatório de Pesquisa
+                </option>
+                <option value="TRABALHO EM ANAIS">
+                  Trabalho em Anais de Eventos
+                </option>
+              </select>
+              <div
+                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-zinc-500"
+              >
+                <svg
+                  class="lucide lucide-chevrons-up-down"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m7 15 5 5 5-5"></path>
+                  <path d="m7 9 5-5 5 5"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="flex flex-col gap-2">
+        <label for="filtro-conexoes">Número de conexões: </label>
+        <div id="filtro-conexoes"></div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label>Filtre por período </label>
+        <div class="flex gap-2">
+          <div class="relative w-24">
+            <div class="relative mt-1">
+              <select
+                class="w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 pr-8 text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                id="ano-inicio"
+              >
+                <option selected value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+              </select>
+              <div
+                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+              >
+                <svg
+                  class="lucide lucide-chevrons-up-down"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m7 15 5 5 5-5"></path>
+                  <path d="m7 9 5-5 5 5"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <p class="mt-auto pb-1 text-zinc-700">até</p>
+
+          <div class="relative w-24">
+            <div class="relative mt-1">
+              <select
+                class="w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 pr-8 text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                id="ano-fim"
+              >
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option selected value="2023">2023</option>
+                <option value="2024">2024</option>
+              </select>
+              <div
+                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+              >
+                <svg
+                  class="lucide lucide-chevrons-up-down"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m7 15 5 5 5-5"></path>
+                  <path d="m7 9 5-5 5 5"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="text-zinc-700">Fonte </label>
+        <div class="flex gap-2">
+          <div>
+            <!-- <input class="" class="" type="radio" name="fonteRadioOptions"
+              id="fonteRadioSucupira" value="sucupira" checked>
+            <label class="" for="fonteRadioSucupira">Sucupira</label> -->
+            <input
+              class="peer hidden"
+              id="fonteRadioSucupira"
+              name="fonteRadioOptions"
+              type="radio"
+              value="sucupira"
+              checked
+            />
+            <label
+              class="flex cursor-pointer items-center justify-center rounded-full border border-zinc-300 bg-white px-4 py-2 text-zinc-700 transition-colors duration-200 hover:border-indigo-500 peer-checked:bg-indigo-400 peer-checked:text-white"
+              for="fonteRadioSucupira"
+            >
+              Sucupira
+            </label>
+          </div>
+          <div class="">
+            <input
+              class="peer hidden"
+              id="fonteRadioLattes"
+              name="fonteRadioOptions"
+              type="radio"
+              value="lattes"
+              disabled
+            />
+            <label
+              class="flex cursor-not-allowed items-center justify-center rounded-full border border-zinc-300 bg-white px-4 py-2 text-zinc-700 transition-colors duration-200 peer-checked:bg-indigo-400 peer-checked:text-white peer-disabled:bg-zinc-100 peer-disabled:text-zinc-400"
+              for="fonteRadioLattes"
+            >
+              Lattes
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="text-zinc-700">Tipo das arestas: </label>
+        <div class="flex gap-2">
+          <div class="">
+            <input
+              class="peer hidden"
+              id="tipoRadioPPG"
+              name="tipoRadioOptions"
+              type="radio"
+              value="ppgs"
+            />
+            <label
+              class="flex cursor-pointer items-center justify-center rounded-full border border-zinc-300 bg-white px-4 py-2 text-zinc-700 transition-colors duration-200 hover:border-indigo-500 peer-checked:bg-indigo-400 peer-checked:text-white"
+              for="tipoRadioPPG"
+            >
+              PPGs
+            </label>
+          </div>
+          <div class="">
+            <input
+              class="peer hidden"
+              id="tipoRadioDocentes"
+              name="tipoRadioOptions"
+              type="radio"
+              value="docentes"
+              checked
+            />
+            <label
+              class="flex cursor-pointer items-center justify-center rounded-full border border-zinc-300 bg-white px-4 py-2 text-zinc-700 transition-colors duration-200 hover:border-indigo-500 peer-checked:bg-indigo-400 peer-checked:text-white"
+              for="tipoRadioDocentes"
+            >
+              Docentes
+            </label>
+          </div>
+        </div>
+      </div>
+      <button
+        class="rounded-lg bg-indigo-400 px-6 py-3 text-sm font-bold text-zinc-50 hover:bg-indigo-500"
+        id="btn-aplicar-filtros"
+        type="button"
+      >
+        Aplicar
+      </button>
+    </div>
+  </div>
+
+  <!-- Visualização do grafo -->
+  <div class="flex py-8" id="row-graph-ppgs">
+    <div>
+      <p class="pb-2 text-sm text-amber-700">
+        Clique em um PPG para mostrar as conexões desse PPG específico
+      </p>
+      <div id="legend-graph"></div>
+    </div>
+    <div class="flex-1 overflow-hidden">
+      <div class="flex items-center justify-end pb-2">
+        <p class="text-sm text-amber-700">
+          Utilize o scroll do mouse (botão do meio) para dar zoom no grafo
+        </p>
+        <div class="ml-4 flex h-fit divide-x rounded-md border border-zinc-300">
+          <button class="rounded-none p-1 hover:bg-zinc-200" id="zoom-in">
+            <svg
+              class="text-zinc-500"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+              <line x1="11" x2="11" y1="8" y2="14"></line>
+              <line x1="8" x2="14" y1="11" y2="11"></line>
+            </svg>
+          </button>
+          <button class="rounded-none p-1 hover:bg-zinc-200" id="zoom-out">
+            <svg
+              class="text-zinc-500"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+              <line x1="8" x2="14" y1="11" y2="11"></line>
+            </svg>
+          </button>
+          <button class="rounded-none p-1 hover:bg-zinc-200" id="tela-cheia">
+            <svg
+              class="text-zinc-500"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <polyline points="9 21 3 21 3 15"></polyline>
+              <line x1="21" x2="14" y1="3" y2="10"></line>
+              <line x1="3" x2="10" y1="21" y2="14"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="cursor-all-scroll" id="links-graph"></div>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block scripts %}
+<script>
+  const listaProgramas = {{ listaProgramas| tojson | safe}};
+</script>
+<!-- <script type="module" src="{{ url_for('static', filename='ppg/js/scriptshome.js') | hash_url}}"></script> -->
+<script
+  src="{{ url_for('static', filename='ppg/js/filtrosRedeColaboracao.js') | hash_url}}"
+  type="module"
+></script>
+<script
+  src="{{ url_for('static', filename='ppg/js/grafoColaboracao.js') | hash_url}}"
+  type="module"
+></script>
+{% endblock %}
