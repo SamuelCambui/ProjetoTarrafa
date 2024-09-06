@@ -29,8 +29,10 @@ login_control.init_app(app)
 
 from frontend.flaskmiddle.core.controller.routes import controller_principal as controller_principal_module
 from frontend.flaskmiddle.core.controller.routes_ppg import controller_ppg as controller_ppg_module
+from frontend.flaskmiddle.core.controller.routes_graficos import controller_ppg_graficos as controller_ppg_graficos_module
 
 controller_principal_module.register_blueprint(controller_ppg_module)
+controller_principal_module.register_blueprint(controller_ppg_graficos_module)
 
 app.register_blueprint(controller_principal_module)
 
