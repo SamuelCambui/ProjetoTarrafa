@@ -1566,7 +1566,7 @@ class QueriesPPG():
             anof(int): Ano Final
             db(class): DataBase
         """
-        query = """select * from metricas_indicadores_areas_avaliacao
+        query = """select mbom, bom, regular, fraco from metricas_indicadores_areas_avaliacao
                     where nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
                         and metrica = 'indori'"""
         row = db.fetch_one(query, id=id, anof=anof, anoi=anoi)
@@ -1605,7 +1605,7 @@ class QueriesPPG():
             anof(int): Ano Final
             db(class): DataBase
         """
-        query = """select * from metricas_indicadores_areas_avaliacao
+        query = """select mbom, bom, regular, fraco from metricas_indicadores_areas_avaliacao
                     where nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
                         and metrica = 'inddistori'"""
         row = db.fetch_one(query, id=id, anof=anof, anoi=anoi)
@@ -1643,7 +1643,7 @@ class QueriesPPG():
             anof(int): Ano Final
             db(class): DataBase
         """
-        query = """select * from metricas_indicadores_areas_avaliacao
+        query = """select mbom, bom, regular, fraco from metricas_indicadores_areas_avaliacao
                     where nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
                         and metrica = 'indaut'"""
         row = db.fetch_one(query, id=id, anof=anof, anoi=anoi)
@@ -1681,7 +1681,7 @@ class QueriesPPG():
             anof(int): Ano Final
             db(class): DataBase
         """
-        query = """select * from metricas_indicadores_areas_avaliacao
+        query = """select mbom, bom, regular, fraco from metricas_indicadores_areas_avaliacao
                     where nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
                         and metrica = 'indproddis'"""
         row = db.fetch_one(query, id=id, anof=anof, anoi=anoi)
@@ -1719,7 +1719,7 @@ class QueriesPPG():
             anof(int): Ano Final
             db(class): DataBase
         """
-        query = """select * from metricas_indicadores_areas_avaliacao
+        query = """select mbom, bom, regular, fraco from metricas_indicadores_areas_avaliacao
                     where nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
                         and metrica = 'partdis'"""
         row = db.fetch_one(query, id=id, anof=anof, anoi=anoi)
@@ -1757,7 +1757,7 @@ class QueriesPPG():
             anof(int): Ano Final
             db(class): DataBase
         """
-        query = """select * from metricas_indicadores_areas_avaliacao
+        query = """select mbom, bom, regular, fraco from metricas_indicadores_areas_avaliacao
                     where nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
                         and metrica = 'indcoaut'"""
         row = db.fetch_one(query, id=id, anof=anof, anoi=anoi)
