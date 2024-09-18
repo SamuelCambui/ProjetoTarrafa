@@ -36,9 +36,9 @@ body {
 }
 
 .acoes {
-    margin-left: 5px; 
-    margin-right: 5px; 
-    color:#95a4d3;
+    margin-left: 5px;
+    margin-right: 5px;
+    color: #95a4d3;
 }
 
 .acoes:hover {
@@ -138,4 +138,117 @@ body {
     transform: rotate(-0deg);
     transform-origin: 0 0;
     /* Set the transform origin to the top-left corner */
+}
+
+
+.autocomplete-container,
+.autocomplete-docentes {
+    position: relative;
+    width: 350px;
+}
+
+.input-busca {
+    width: 100%;
+    padding: 10px;
+}
+
+.resultados-busca {
+    position: absolute;
+    width: 100%;
+    background-color: white;
+    z-index: 20;
+    border: 1px solid #dfdfe2;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.result-item,
+.resultado-nome {
+    padding: 5px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.result-item:hover,
+.resultado-nome:hover {
+    background-color: #f0f0f0;
+}
+
+
+.slider {
+    --c: #95a4d3;
+    /* active color */
+    --g: 8px;
+    /* the gap */
+    --l: 5px;
+    /* line thickness */
+    --s: 20px;
+    /* thumb size */
+    padding-block: 2rem 1rem;
+    width: 100%;
+    height: var(--s);
+    /* needed for Firefox */
+    --_c: color-mix(in srgb, var(--c), #000 var(--p, 0%));
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: none;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.slider:focus-visible,
+.slider:hover {
+    --p: 25%;
+}
+
+.slider:active,
+.slider:focus-visible {
+    --_b: var(--s);
+}
+
+/* Chromium */
+.slider[type="range" i]::-webkit-slider-thumb {
+    height: var(--s);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    box-shadow: 0 0 0 var(--_b, var(--l)) inset var(--_c);
+    border-image: linear-gradient(90deg, var(--_c) 50%, #ababab 0) 0 1/calc(50% - var(--l)/2) 100vw/0 calc(100vw + var(--g));
+    -webkit-appearance: none;
+    appearance: none;
+    transition: .3s;
+}
+
+/* Firefox */
+.slider[type="range"]::-moz-range-thumb {
+    height: var(--s);
+    width: var(--s);
+    background: none;
+    border-radius: 50%;
+    box-shadow: 0 0 0 var(--_b, var(--l)) inset var(--_c);
+    border-image: linear-gradient(90deg, var(--_c) 50%, #ababab 0) 0 1/calc(50% - var(--l)/2) 100vw/0 calc(100vw + var(--g));
+    -moz-appearance: none;
+    appearance: none;
+    transition: .3s;
+}
+
+#filtro-docentes {
+    display: none;
+}
+
+.form-select {
+    max-width: 350px;
+    text-transform: uppercase;
+}
+
+.form-select > option, .input-busca  {
+    text-transform: uppercase;
+}
+
+.wrapper-filtro {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    row-gap: 0.8rem;
 }

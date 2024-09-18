@@ -1,9 +1,6 @@
 from flask_login import UserMixin
 from flask import jsonify
-import requests
-from requests import ConnectionError
-from frontend.flaskmiddle.config import config
-from flask import abort
+from config import config
 
 from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2, usuarios_pb2_grpc
 from google.protobuf.json_format import MessageToDict

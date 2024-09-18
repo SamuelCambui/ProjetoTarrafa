@@ -1,6 +1,9 @@
 import requests
 from flask import session
-from frontend.flaskmiddle.config import config
+from config import config
+from functools import wraps, update_wrapper
+import grpc
+
 
 class Utils:
     @staticmethod
@@ -44,3 +47,24 @@ class Utils:
         if ret.status_code == 200:
             return ret.json()
         return None
+
+    @staticmethod
+    def grpc_stub(stub, url):
+        def decorator(func):
+            @wraps(func)
+            def wrapper(*args, **kwargs):
+                try: 
+                    channel = grpc.insecure_channel(url)
+                    _stub = stub(channel)
+                    kwargs['stub'] = _stub
+                    return func(*args, **kwargs)
+                except Exception as error:
+                    print(f'Erro ao conectar com stub {stub}')
+                    print(f'Erro: {error}')
+                    raise error
+            return wrapper
+        return decorator
+    
+ 
+
+    

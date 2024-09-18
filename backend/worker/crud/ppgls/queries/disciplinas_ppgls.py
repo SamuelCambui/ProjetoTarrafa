@@ -35,14 +35,16 @@ class QueriesDisciplinas():
         Retorna a quantidade de alunos por semestre de um curso de pós-graduação latu sensu ao longo do tempo a partir de um ano inicial.
 
         Parâmetros:
-            id(str): Código do curso.
-            ano(int): Ano inicial.
+            id(str): Código da disciplina.
+            anoi(int): Ano inicial.
+            anof(int): Ano final.
+
         """
         query = """
             SELECT foo.ano_letivo, foo.semestre, COUNT(foo.ano_letivo) AS quantidade FROM ( 
                 SELECT historico.ano_letivo, historico.semestre FROM historico 
                 INNER JOIN disciplinas ON disciplinas.cod_disc = historico.cod_disc	
-                WHERE disciplinas.cod_curso= %(id)s AND CAST(historico.ano_letivo AS integer) BETWEEN %(anoi)s AND %(anof)s
+                WHERE disciplinas.cod_disc= %(id)s AND CAST(historico.ano_letivo AS integer) BETWEEN %(anoi)s AND %(anof)s
                 GROUP BY matricula_aluno, historico.ano_letivo, historico.semestre
                 ORDER BY historico.ano_letivo, historico.semestre
             ) AS foo
@@ -51,29 +53,7 @@ class QueriesDisciplinas():
         ret = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
         return ret
     
-    @tratamento_excecao_com_db(tipo_banco='grad')    
-    def reprovacoes_por_semestre_curso(self, id: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
-        """
-        Retorna reprovações das disciplinas de um curso por semestre de um determinado período.
-
-        Parâmetros:
-            id(str): Código do curso.
-            anoi(int): Ano inicial.
-            anof(int): Ano Final.
-        """
-        query = """
-            SELECT disciplinas.cod_disc, disciplinas.disciplina as DISCIPLINA, COUNT(disciplinas.disciplina) as Alunos_Reprovados, ano_letivo,
-            historico.semestre FROM historico
-            INNER JOIN disciplinas ON disciplinas.cod_disc = historico.cod_disc
-            INNER JOIN cursos ON cursos.id = disciplinas.cod_curso
-            WHERE nota < 70.0
-            AND disciplinas.cod_curso = %(id)s
-            AND CAST(historico.ano_letivo AS integer) BETWEEN %(anoi)s AND %(anof)s 
-            GROUP BY disciplinas.cod_disc, ano_letivo, disciplinas.disciplina, cursos.nome, historico.semestre
-            ORDER BY ano_letivo, disciplinas.disciplina;    
-        """
-        ret = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
-        return ret
+   
     
     @tratamento_excecao_com_db(tipo_banco='grad')    
     def reprovacoes_por_falta_por_semestre_curso(self, id: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
@@ -81,12 +61,12 @@ class QueriesDisciplinas():
         Retorna reprovações das disciplinas de um curso por falta por semestre de um determinado período.
 
         Parâmetros:
-            id(str): Código do curso.
+            id(str): Código da disciplina.
             anoi(int): Ano inicial.
             anof(int): Ano Final.
         """
         query = """
-            SELECT COUNT(disciplinas.disciplina) as Alunos_Aprovados, ano_letivo,
+            SELECT COUNT(disciplinas.disciplina) as alunos_reprovados, ano_letivo,
             historico.semestre FROM historico
             INNER JOIN disciplinas ON disciplinas.cod_disc = historico.cod_disc
             INNER JOIN cursos ON cursos.id = disciplinas.cod_curso
@@ -99,29 +79,6 @@ class QueriesDisciplinas():
         ret = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
         return ret
     
-    @tratamento_excecao_com_db(tipo_banco='grad')    
-    def aprovacoes_por_semestre_curso(self, id: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
-        """
-        Retorna aprovações das disciplinas de um curso por semestre de um determinado período.
-
-        Parâmetros:
-            id(str): Código do curso.
-            anoi(int): Ano inicial.
-            anof(int): Ano Final.
-        """
-        query = """
-            SELECT disciplinas.cod_disc, disciplinas.disciplina as DISCIPLINA, COUNT(disciplinas.disciplina) as Alunos_Aprovados, ano_letivo,
-            historico.semestre FROM historico
-            INNER JOIN disciplinas ON disciplinas.cod_disc = historico.cod_disc
-            INNER JOIN cursos ON cursos.id = disciplinas.cod_curso
-            WHERE nota >= 70.0
-            AND disciplinas.cod_curso = %(id)s
-            AND CAST(historico.ano_letivo AS integer) BETWEEN %(anoi)s AND %(anof)s 
-            GROUP BY disciplinas.cod_disc, ano_letivo, disciplinas.disciplina, cursos.nome, historico.semestre
-            ORDER BY ano_letivo, disciplinas.disciplina;    
-        """
-        ret = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
-        return ret
     
 
     @tratamento_excecao_com_db(tipo_banco='grad')    
@@ -178,7 +135,7 @@ class QueriesDisciplinas():
         Retorna aprovações de uma disciplina por semestre de um determinado período.
 
         Parâmetros:
-            id(str): Código da disciplina.
+            id(int): Código da disciplina.
             anoi(int): Ano inicial.
             anof(int): Ano Final.
         """
@@ -255,12 +212,12 @@ class QueriesDisciplinas():
         return ret
 
     @tratamento_excecao_com_db(tipo_banco='grad')
-    def media_disciplinas_por_serie(self, id: str, anoi: int, anof: int, serie: int, db: DBConnectorGRAD = None):
+    def media_disciplinas_por_serie(self, id: str, anoi: int, anof: int, serie:int, db: DBConnectorGRAD = None):
         """
         Retorna a média de todas as disciplinas de uma serie.\n
         Ex: Retorna a média de todas as disciplinas do 1º período do curso.\n
         Parâmetros:\n
-            id(str): Código do curso.
+            id(int): Código do curso.
             anoi(int): Ano inicial.
             anof(int): Ano Final.
             serie(int): Série desejada.

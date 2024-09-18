@@ -16,4 +16,3 @@ pip install jaro-winkler
 pip install beautifulsoup4
 pip install gunicorn
 pip install gevent
-

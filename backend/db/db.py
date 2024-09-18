@@ -50,11 +50,14 @@ class DBConnector:
     """
     cursor = self.getCursor()
     try:
+      print("Executando query:", query)
+      print("Com parâmetros:", kwargs)
       if kwargs:
         cursor.execute(query, kwargs)
       else:
           cursor.execute(query)
       rows = cursor.fetchall()
+      print("Resultados:", rows)
       self.commit()
       return rows
     except Exception as err:

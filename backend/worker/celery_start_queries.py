@@ -12,11 +12,16 @@ broker = 'amqp://'+settings.RABBITMQ_DEFAULT_USER+':'+ settings.RABBITMQ_DEFAULT
 app_celery_queries = Celery('queries',
                broker=broker,
                backend=backend,
-               include=['backend.worker.queries'])
+               include=['backend.worker.queries', 'backend.worker.tasks_ppgls.tasks_cursos_ppgls', 'backend.worker.tasks_ppgls.tasks_disciplinas_ppgls', 
+                        'backend.worker.tasks_ppgls.tasks_formulario_ppgls'])
 
 app_celery_queries.conf.update(
     task_routes={
-        'backend.worker.queries.*': {'queue': 'fila_queries'}
+        'backend.worker.queries.*': {'queue': 'fila_queries'},
+        'backend.worker.tasks_ppgls.tasks_cursos_ppgls.*': {'queue': 'fila_queries'},
+        'backend.worker.tasks_ppgls.tasks_disciplinas_ppgls.*': {'queue': 'fila_queries'},
+        'backend.worker.tasks_ppgls.tasks_formulario_ppgls.*': {'queue': 'fila_queries'},
+
     },
     worker_prefetch_multiplier=1,
 )

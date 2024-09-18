@@ -4,6 +4,7 @@
     // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "Python: Flask",
             "type": "debugpy",
@@ -61,10 +62,20 @@
             "envFile": "${workspaceFolder}/.env.desenvolvimento"
         },
         {
-            "name": "Python: INDICADORES gRPC SERVER",
+            "name": "Python: INDICADORES gRPC SERVERPPG",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/backend/app/api/api.py",  
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento",
+            "args": []
+        },
+        {
+            "name": "Python: INDICADORES gRPC SERVERPPGLS",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/app/api/api_ppgls.py",  
             "console": "integratedTerminal",
             "justMyCode": true,
             "envFile": "${workspaceFolder}/.env.desenvolvimento",

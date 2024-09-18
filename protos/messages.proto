@@ -52,9 +52,10 @@ message UsuarioResponse {
 }
 
 message PPGLSRequest{
-  optional string id = 1;
-  optional int32 anoi = 2;
-  optional int32 anof = 3;
+  optional string id_ies = 1;
+  string id = 2;
+  optional int32 anoi = 3;
+  optional int32 anof = 4;
 }
 
 message PPGLSJson{
@@ -66,9 +67,18 @@ message PPGLSResponse{
   repeated PPGLSJson item = 1;
 }
 
-message FormularioPPGLSRequest{
-  string nome = 1;
+message FormularioSerchPPGLSRequest{
+  int32 masp = 1;
+  int32 tipo = 2;
+}
+
+message FormularioIndicadoresRequest{
+  string nome_formulario = 1;
   string data_inicio = 2;
+}
+
+message FormularioPPGLSRequest{
+  repeated FormularioPPGLSJson item = 1;
 }
 
 message FormularioPPGLSJson{

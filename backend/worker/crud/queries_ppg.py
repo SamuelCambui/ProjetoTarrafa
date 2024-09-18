@@ -8,7 +8,7 @@ import time
 
 class QueriesPPG():
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_com_db()
     def retorna_id_ies(self, id: str, db: DBConnector = None):
         query = "select id_ies from programas where codigo_programa = %(id)s"
         row = db.fetch_one(query, id=id)

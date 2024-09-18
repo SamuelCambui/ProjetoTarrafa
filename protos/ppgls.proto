@@ -59,8 +59,16 @@ service DadosFormularioPosGraduacaoLS {
             nome(string) - Nome do formulário.
             data_inicio(string) - Data de início.
     */
-    rpc GetIndicadoresFormulario (FormularioPPGLSRequest) returns (FormularioPPGLSResponse);
+    rpc GetIndicadoresFormulario (FormularioIndicadoresRequest) returns (FormularioPPGLSResponse);
     
+    /*
+        Retorna o dados de professor ou de coordenador da pós-graduação latu sensu.
+        Parâmetros:
+            masp(int) - Código MASP do professor
+            tipo(int) - Professor ou coordenador
+    */
+    rpc SearchRegistrosFormualario (FormularioSerchPPGLSRequest) returns (FormularioPPGLSResponse);
+
     /*
         Insere um novo formulário da pós-graduação latu sensu.
         Parâmetros:
@@ -84,7 +92,7 @@ service DadosFormularioPosGraduacaoLS {
             id(int) - ID do formulário.
             data_inicio(string) - Data de início.
     */
-    rpc DeleteFormulario (FormularioPPGLSRequest) returns (FormularioPPGLSResponse);
+    rpc DeleteFormulario (FormularioIndicadoresRequest) returns (FormularioPPGLSResponse);
 }
 
 service DadosPosGraduacaoLS {

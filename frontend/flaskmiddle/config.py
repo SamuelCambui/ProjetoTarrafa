@@ -7,10 +7,10 @@ class Config(object):
     
     #FASTAPI_URL = os.getenv('BACKEND_HOST')
     GRPC_SERVER_HOST = os.getenv('GRPC_SERVER_HOST')
+    GRPC_SERVER_GRAD = os.getenv('GRPC_SERVER_GRAD')
     FRONTEND_HOST = os.getenv('FRONTEND_HOST')
     FRONTEND = os.getenv('FRONTEND')
     FRONTEND_PORT = os.getenv('FRONTEND_PORT')
-
     SECRET_KEY =  '$2b$12$J3xn6CTEmH7ht8ZEjBuze.'
     SESSION_PERMANENT = False
     SESSION_TYPE = 'filesystem'

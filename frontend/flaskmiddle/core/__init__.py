@@ -3,11 +3,7 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_session import Session
-
 from flask_cors import CORS
-
-from itsdangerous import URLSafeSerializer
-
 from frontend.flaskmiddle.config import config
 
 
@@ -30,10 +26,11 @@ login_control.init_app(app)
 from frontend.flaskmiddle.core.controller.routes import controller_principal as controller_principal_module
 from frontend.flaskmiddle.core.controller.routes_ppg import controller_ppg as controller_ppg_module
 
+
 controller_principal_module.register_blueprint(controller_ppg_module)
 
-app.register_blueprint(controller_principal_module)
 
+app.register_blueprint(controller_principal_module)
 
 @app.errorhandler(404)
 def page_not_found(error):

@@ -1,7 +1,7 @@
 from redis import Redis
 from functools import wraps
 from google.protobuf.json_format import ParseDict, MessageToJson, MessageToDict
-from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2
+from protos.out import ppg_pb2, ppg_pb2_grpc, ppgls_pb2_grpc, messages_pb2
 import json
 import pickle
 from grpc import ServicerContext
@@ -10,42 +10,49 @@ from backend.core import utils
 from backend.worker import crud
 from backend.core.config import settings
 
-def cache_grpc(func):
-   @wraps(func)
-   def wrapper(self, request, context: ServicerContext):
-      redis = RedisConnector()
 
-      # Criar uma chave única para o cache
-      cache_key = f"{func.__name__}_{request.id}_{request.anoi}_{request.anof}"
+def cache_grpc(response_type):
+   def decorator(func):
+      @wraps(func)
+      def wrapper(self, request, context: ServicerContext):
+         redis = RedisConnector()
 
-      print(cache_key)
-      universidade = None
-      if request.id:
-         universidade = crud.queries_ppg.retorna_id_ies(request.id)
-      
-      try:
-         # Tentar obter o resultado do cache
-         cached_result = redis.existsField(universidade, cache_key)
-         if cached_result:
-            print('Cache hit')
-            res = redis.getField(universidade, cache_key)
-            return ParseDict(res, messages_pb2.PpgResponse())#(cached_result)
-      except Exception as e:
-         print(f"Error retrieving from cache: {e}")
+         # Criar uma chave única para o cache
+         cache_key = f"{func.__name__}_{request.id}_{request.anoi}_{request.anof}"
 
-      # Chamar a função original
-      result = func(self, request, context)
+         print(cache_key)
+         universidade = request.id_ies
+        
+         
+         try:
+            # Tentar obter o resultado do cache
+            cached_result = redis.existsField(universidade, cache_key)
+            if cached_result:
+               print('Cache hit')
+               res = redis.getField(universidade, cache_key)
+               return ParseDict(res, response_type())#(cached_result)
+         except Exception as e:
+            print(f"Error retrieving from cache: {e}")
 
-      try:
-         # Salvar o resultado no cache
-         redis.setField(universidade, cache_key, MessageToDict(result))
-         print('Cache set')
-      except Exception as e:
-         print(f"Error setting cache: {e}")
+         # Chamar a função original
+         result = func(self, request, context)
 
-      return result
-   return wrapper
+         try:
+            # Salvar o resultado no cache
+            redis.setField(universidade, cache_key, MessageToDict(result))
+            print('Cache set')
+         except Exception as e:
+            print(f"Error setting cache: {e}")
 
+         return result
+      return wrapper
+   return decorator
+
+
+def cache_grpc_ppgls(*args):
+   return cache_grpc(messages_pb2.PPGLSResponse)
+   
+   
 
 def cache_redis_sync(func):
    @wraps(func)

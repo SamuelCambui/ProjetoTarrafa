@@ -32,7 +32,7 @@ def fix_imports_in_file(file_path):
         file.write(new_content)
 
 if __name__ == '__main__':
-    diretorio_entrada = '.'  # Diretório onde estão os arquivos .proto
-    diretorio_saida = 'out'
+    diretorio_entrada = 'protos'  # Diretório onde estão os arquivos .proto
+    diretorio_saida = 'protos/out'
     compile_protos(diretorio_entrada, diretorio_saida)
     fix_imports(diretorio_saida)
