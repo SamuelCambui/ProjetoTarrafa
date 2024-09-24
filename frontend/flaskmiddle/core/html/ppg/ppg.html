@@ -1,6 +1,6 @@
 {% extends 'ppg/base.html' %} {% block title %}PPG{% endblock %} {% block
 content %}
-<div class="mx-auto max-w-screen-2xl px-4 py-6 lg:px-16">
+<div class="mx-auto max-w-screen-2xl">
   <!-- 
   <div>
     <h2 id="nome-sigla">Quadriênios</h2>
@@ -129,7 +129,7 @@ content %}
     </ul>
   </div>
 
-  <div class="relative flex justify-end gap-4 py-4">
+  <div class="relative ml-auto flex w-fit gap-4 py-4">
     <button
       class="flex items-center gap-2 rounded-lg bg-indigo-400 px-6 py-3 text-sm font-bold text-zinc-50 hover:bg-indigo-500"
       id="btn-drop-filtrar"
@@ -162,7 +162,7 @@ content %}
     </button>
 
     <div
-      class="absolute top-20 z-10 mt-2 hidden w-fit rounded-lg border border-gray-300 bg-white px-6 py-4 shadow-md"
+      class="absolute left-0 top-20 z-10 mt-2 hidden w-fit rounded-lg border border-gray-300 bg-white px-6 py-4 shadow-md"
       id="container-filtro-periodo"
     >
       <div class="flex flex-col gap-2">
@@ -180,7 +180,6 @@ content %}
               <option value="2021">2021</option>
               <option value="2022">2022</option>
               <option value="2023">2023</option>
-              <option value="2024">2024</option>
             </select>
             <div
               class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
@@ -216,7 +215,6 @@ content %}
                 <option value="2021">2021</option>
                 <option value="2022">2022</option>
                 <option selected value="2023">2023</option>
-                <option value="2024">2024</option>
               </select>
               <div
                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
@@ -277,14 +275,7 @@ content %}
 
   <div id="conteudo-abas">
     <div id="indicadores" role="tabpanel" aria-labelledby="indicadores-tab">
-      <!-- ? Indicadores prod academica -->
-      <!-- 
-        IndProd Artigos: Indicador geral de produção de artigos.
-        IndProdExtSup Artigos: Produção de artigos com participação externa (superior).
-        Produção Docente com Qualis: Produção dos docentes com classificação Qualis.
-        Produção Discente com Qualis: Produção dos discentes com classificação Qualis. 
-      -->
-      <div class="grid grid-cols-2 gap-8">
+      <div class="mt-8 space-y-8">
         <div class="rounded-lg bg-white px-6 py-4 shadow">
           <div class="relative flex items-center justify-between">
             <h3
@@ -294,8 +285,8 @@ content %}
               IndProd Artigos
             </h3>
             <button
-              class="bg-white p-2 text-zinc-700 hover:bg-zinc-100"
-              id="btn-drop-opcoes"
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu"
               data-value="chartindprodsproductions"
               aria-expanded="false"
               aria-label="Opções"
@@ -318,12 +309,12 @@ content %}
               </svg>
             </button>
             <div
-              class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
               id="dropdown-menu"
             >
               <button
                 class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
-                onclick="SaveChart('chartindprodsproductions')"
+                onclick="salvarGrafico('chartindprodsproductions')"
               >
                 <svg
                   class="stroke-current"
@@ -381,7 +372,7 @@ content %}
             40*B2 + 30*B3 + 10*B4)/DP
           </p>
           <div class="h-96">
-            <canvas id="chartindprodsproductions"></canvas>
+            <canvas class="text-xs" id="chartindprodsproductions"></canvas>
           </div>
         </div>
 
@@ -398,8 +389,8 @@ content %}
               IndProdExtSup Artigos
             </h3>
             <button
-              class="bg-white p-2 text-zinc-700 hover:bg-zinc-100"
-              id="saveGraph-3"
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-1"
               data-value="chartindprodextsupsproductions"
               aria-expanded="false"
               aria-label="Opções"
@@ -422,12 +413,12 @@ content %}
               </svg>
             </button>
             <div
-              class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
-              id="dropdown-menu-2"
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-1"
             >
               <button
                 class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
-                onclick="SaveChart('chartindprodextsupsproductions')"
+                onclick="salvarGrafico('chartindprodextsupsproductions')"
               >
                 <svg
                   class="stroke-current"
@@ -495,8 +486,8 @@ content %}
               Produção Docente com Qualis
             </h3>
             <button
-              class="bg-white p-2 text-zinc-700 hover:bg-zinc-100"
-              id="saveGraph-4"
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-3"
               data-value="chartqualisproductions"
               aria-expanded="false"
               aria-label="Opções"
@@ -519,12 +510,12 @@ content %}
               </svg>
             </button>
             <div
-              class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
               id="dropdown-menu-3"
             >
               <button
                 class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
-                onclick="SaveChart('chartqualisproductions')"
+                onclick="salvarGrafico('chartqualisproductions')"
               >
                 <svg
                   class="stroke-current"
@@ -596,8 +587,8 @@ content %}
               Produção Discente com Qualis
             </h3>
             <button
-              class="bg-white p-2 text-zinc-700 hover:bg-zinc-100"
-              id="saveGraph-5"
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-4"
               data-value="chartqualisdiscenteproductions"
               aria-expanded="false"
               aria-label="Opções"
@@ -620,12 +611,12 @@ content %}
               </svg>
             </button>
             <div
-              class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
-              id="dropdown-menu"
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-4"
             >
               <button
                 class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
-                onclick="SaveChart('chartqualisdiscenteproductions')"
+                onclick="salvarGrafico('chartqualisdiscenteproductions')"
               >
                 <svg
                   class="stroke-current"
@@ -682,515 +673,532 @@ content %}
             <canvas id="chartqualisdiscenteproductions"></canvas>
           </div>
         </div>
-      </div>
 
-      <div class="mt-8 grid grid-cols-3 gap-8">
-        <div
-          class="grid rounded-lg bg-white px-8 py-6 text-center shadow"
-          id="col-percent-qualis-discente"
-        >
-          <p
-            class="place-self-center text-base text-zinc-700"
-            id="titlechartpercentqualisdiscente"
+        <div class="mt-8 grid grid-cols-1 gap-8 md:grid-cols-3">
+          <div
+            class="rounded-lg bg-white px-8 py-6 text-center text-base text-zinc-700 shadow"
           >
-            <span class="text-2xl font-extrabold text-blue-700">0% </span>
+            <span
+              id="porcentagem-producao"
+              class="text-2xl font-extrabold text-blue-700"
+              >0%
+            </span>
             <br />
             da produção de artigos qualificados possui participação discente
-            <svg class id="chartpercentqualisdiscente"></svg>
+            <svg class="mx-auto" id="chartpercentqualisdiscente"></svg>
+          </div>
+
+          <!-- 1: Artigos do PPG -->
+          <div class="space-y-4 rounded-lg bg-white p-6 shadow">
+            <h3 class="text-lg font-semibold text-amber-700">Artigos do PPG</h3>
+
+            <div class="space-y-4">
+              <!-- Artigos Qualis A4 ou superior com discentes-matriculados -->
+              <div>
+                <h4
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos Qualis A4 ou superior com discentes-matriculados
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-indicador1-desc"
+                    >0%</span
+                  >
+                </h4>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-cyan-500"
+                      id="qualis-percent-indicador1"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos Qualis B4 ou superior com discentes-matriculados -->
+              <div>
+                <h4
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos Qualis B4 ou superior com discentes-matriculados
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-indicador2-desc"
+                    >0%</span
+                  >
+                </h4>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-sky-500"
+                      id="qualis-percent-indicador2"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos Qualis A4 ou superior com egressos -->
+              <div>
+                <h4
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos Qualis A4 ou superior com egressos
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-indicador3-desc"
+                    >0%</span
+                  >
+                </h4>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-blue-500"
+                      id="qualis-percent-indicador3"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos Qualis B4 ou superior com egressos -->
+              <div>
+                <h4
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos Qualis B4 ou superior com egressos
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-indicador4-desc"
+                    >0%</span
+                  >
+                </h4>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-[#6366f1]"
+                      id="qualis-percent-indicador4"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos de docentes sem coautoria -->
+              <div>
+                <h4
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos de docentes sem coautoria (docentes e discentes)
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-indicador5-desc"
+                    >0%</span
+                  >
+                </h4>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-violet-500"
+                      id="qualis-percent-indicador5"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos de docentes com coautoria de outros docentes -->
+              <div>
+                <h4
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos de docentes com coautoria de outros docentes
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-indicador6-desc"
+                    >0%</span
+                  >
+                </h4>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-purple-500"
+                      id="qualis-percent-indicador6"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos de docentes não-permanentes -->
+              <div>
+                <h4
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos de docentes não-permanentes
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-indicador7-desc"
+                    >0%</span
+                  >
+                </h4>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-fuchsia-400"
+                      id="qualis-percent-indicador7"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos com membros externos -->
+              <div>
+                <h4
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos com membros externos
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-indicador8-desc"
+                    >0%</span
+                  >
+                </h4>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-pink-500"
+                      id="qualis-percent-indicador8"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos com participação de Pós-Doc -->
+              <div>
+                <h4
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos com participação de Pós-Doc
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-indicador9-desc"
+                    >0%</span
+                  >
+                </h4>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-rose-500"
+                      id="qualis-percent-indicador9"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2: Artigos Correlatos -->
+          <div class="space-y-4 rounded-lg bg-white p-6 shadow">
+            <h4 class="text-lg font-semibold text-amber-700">
+              Artigos de PPGs correlatos (médias)
+            </h4>
+
+            <div class="space-y-4">
+              <!-- Artigos Qualis A4 ou superior com discentes-matriculados -->
+              <div>
+                <h3
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos Qualis A4 ou superior com discentes-matriculados
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-correlatos-indicador1-desc"
+                    >0%</span
+                  >
+                </h3>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-cyan-500"
+                      id="qualis-percent-correlatos-indicador1"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos Qualis B4 ou superior com discentes-matriculados -->
+              <div>
+                <h3
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos Qualis B4 ou superior com discentes-matriculados
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-correlatos-indicador2-desc"
+                    >0%</span
+                  >
+                </h3>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-sky-500"
+                      id="qualis-percent-correlatos-indicador2"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos Qualis A4 ou superior com egressos -->
+              <div>
+                <h3
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos Qualis A4 ou superior com egressos
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-correlatos-indicador3-desc"
+                    >0%</span
+                  >
+                </h3>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-blue-500"
+                      id="qualis-percent-correlatos-indicador3"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos Qualis B4 ou superior com egressos -->
+              <div>
+                <h3
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos Qualis B4 ou superior com egressos
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-correlatos-indicador4-desc"
+                    >0%</span
+                  >
+                </h3>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-[#6366f1]"
+                      id="qualis-percent-correlatos-indicador4"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos de docentes sem coautoria -->
+              <div>
+                <h3
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos de docentes sem coautoria (docentes e discentes)
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-correlatos-indicador5-desc"
+                    >0%</span
+                  >
+                </h3>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-violet-500"
+                      id="qualis-percent-correlatos-indicador5"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos de docentes com coautoria de outros docentes -->
+              <div>
+                <h3
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos de docentes com coautoria de outros docentes
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-correlatos-indicador6-desc"
+                    >0%</span
+                  >
+                </h3>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-purple-500"
+                      id="qualis-percent-correlatos-indicador6"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos de docentes não-permanentes -->
+              <div>
+                <h3
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos de docentes não-permanentes
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-correlatos-indicador7-desc"
+                    >0%</span
+                  >
+                </h3>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-fuchsia-500"
+                      id="qualis-percent-correlatos-indicador7"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos com membros externos -->
+              <div>
+                <h3
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos com membros externos
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-correlatos-indicador8-desc"
+                    >0%</span
+                  >
+                </h3>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-pink-500"
+                      id="qualis-percent-correlatos-indicador8"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Artigos com participação de Pós-Doc -->
+              <div>
+                <h3
+                  class="flex items-center justify-between text-base font-medium text-zinc-700"
+                >
+                  Artigos com participação de Pós-Doc
+                  <span
+                    class="text-gray-500"
+                    id="qualis-percent-correlatos-indicador9-desc"
+                    >0%</span
+                  >
+                </h3>
+                <div class="relative pt-1">
+                  <div
+                    class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
+                  ></div>
+                  <div class="h-2.5 w-full rounded-full bg-gray-200">
+                    <div
+                      class="h-2.5 w-0 rounded-full bg-rose-500"
+                      id="qualis-percent-correlatos-indicador9"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 rounded-lg bg-white px-8 py-6 shadow">
+          <h2
+            class="text-lg font-semibold text-amber-700"
+            id="titulo-chartpositionindprod"
+          >
+            Posicionamento do PPG em relação a outros da mesma área de avaliação
+          </h2>
+          <p class="text-sm text-zinc-700" id="texto-chartpositionindprod">
+            Comparação do indicador Média ponderada de artigos (IndArtigo) por
+            DPs e por ano do PPG com os programas nota 6 no período de 2021 -
+            2022
           </p>
-        </div>
-
-        <!-- 1: Artigos do PPG -->
-        <div class="space-y-4 rounded-lg bg-white p-6 shadow">
-          <h3 class="text-lg font-semibold text-amber-700">Artigos do PPG</h3>
-
-          <div class="space-y-4">
-            <!-- Artigos Qualis A4 ou superior com discentes-matriculados -->
-            <div>
-              <h4
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos Qualis A4 ou superior com discentes-matriculados
-                <span class="text-gray-500" id="qualis-percent-indicador1-desc"
-                  >0%</span
-                >
-              </h4>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 w-0 rounded-full bg-cyan-500"
-                    id="qualis-percent-indicador1"
-                  ></div>
+          <div
+            class="mt-4 grid grid-cols-1 overflow-hidden md:grid-cols-[auto_400px]"
+          >
+            <div class="flex flex-1 flex-col">
+              <div class="flex space-x-4 text-zinc-700">
+                <div class="flex items-center">
+                  <div class="h-4 w-4 rounded-full bg-stone-400"></div>
+                  <span class="ml-1 text-xs" id="sigla_ies">--</span>
+                </div>
+                <div class="flex items-center">
+                  <div class="h-4 w-4 rounded-full bg-cyan-400"></div>
+                  <span class="ml-1 text-xs">IES Estadual</span>
+                </div>
+                <div class="flex items-center">
+                  <div class="h-4 w-4 rounded-full bg-purple-400"></div>
+                  <span class="ml-1 text-xs">IES Federal</span>
+                </div>
+                <div class="flex items-center">
+                  <div class="h-4 w-4 rounded-full bg-amber-400"></div>
+                  <span class="ml-1 text-xs">IES Particular</span>
                 </div>
               </div>
+              <canvas
+                class="mt-2 max-h-[400px] flex-1"
+                id="chartpositionindprods"
+              ></canvas>
             </div>
-
-            <!-- Artigos Qualis B4 ou superior com discentes-matriculados -->
-            <div>
-              <h4
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos Qualis B4 ou superior com discentes-matriculados
-                <span class="text-gray-500" id="qualis-percent-indicador2-desc"
-                  >0%</span
-                >
-              </h4>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 w-0 rounded-full bg-sky-500"
-                    id="qualis-percent-indicador2"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos Qualis A4 ou superior com egressos -->
-            <div>
-              <h4
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos Qualis A4 ou superior com egressos
-                <span class="text-gray-500" id="qualis-percent-indicador3-desc"
-                  >0%</span
-                >
-              </h4>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 w-0 rounded-full bg-blue-500"
-                    id="qualis-percent-indicador3"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos Qualis B4 ou superior com egressos -->
-            <div>
-              <h4
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos Qualis B4 ou superior com egressos
-                <span class="text-gray-500" id="qualis-percent-indicador4-desc"
-                  >0%</span
-                >
-              </h4>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 w-0 rounded-full bg-[#6366f1]"
-                    id="qualis-percent-indicador4"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos de docentes sem coautoria -->
-            <div>
-              <h4
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos de docentes sem coautoria (docentes e discentes)
-                <span class="text-gray-500" id="qualis-percent-indicador5-desc"
-                  >0%</span
-                >
-              </h4>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-violet-500 w-0"
-                    id="qualis-percent-indicador5"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos de docentes com coautoria de outros docentes -->
-            <div>
-              <h4
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos de docentes com coautoria de outros docentes
-                <span class="text-gray-500" id="qualis-percent-indicador6-desc"
-                  >0%</span
-                >
-              </h4>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-purple-500 w-0"
-                    id="qualis-percent-indicador6"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos de docentes não-permanentes -->
-            <div>
-              <h4
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos de docentes não-permanentes
-                <span class="text-gray-500" id="qualis-percent-indicador7-desc"
-                  >0%</span
-                >
-              </h4>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-fuchsia-400 w-0"
-                    id="qualis-percent-indicador7"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos com membros externos -->
-            <div>
-              <h4
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos com membros externos
-                <span class="text-gray-500" id="qualis-percent-indicador8-desc"
-                  >0%</span
-                >
-              </h4>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-pink-500 w-0" 
-                    id="qualis-percent-indicador8"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos com participação de Pós-Doc -->
-            <div>
-              <h4
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos com participação de Pós-Doc
-                <span class="text-gray-500" id="qualis-percent-indicador9-desc"
-                  >0%</span
-                >
-              </h4>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-rose-500 w-0"
-                    id="qualis-percent-indicador9"
-                  ></div>
-                </div>
-              </div>
-            </div>
+            <svg id="mapa-brasil"></svg>
           </div>
         </div>
 
-        <!-- 2: Artigos Correlatos -->
-        <div class="space-y-4 rounded-lg bg-white p-6 shadow">
-          <h4 class="text-lg font-semibold text-amber-700">
-            Artigos de PPGs correlatos (médias)
-          </h4>
-
-          <div class="space-y-4">
-            <!-- Artigos Qualis A4 ou superior com discentes-matriculados -->
-            <div>
-              <h3
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos Qualis A4 ou superior com discentes-matriculados
-                <span
-                  class="text-gray-500"
-                  id="qualis-percent-correlatos-indicador1-desc"
-                  >0%</span
-                >
-              </h3>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-cyan-500 w-0"
-                    id="qualis-percent-correlatos-indicador1"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos Qualis B4 ou superior com discentes-matriculados -->
-            <div>
-              <h3
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos Qualis B4 ou superior com discentes-matriculados
-                <span
-                  class="text-gray-500"
-                  id="qualis-percent-correlatos-indicador2-desc"
-                  >0%</span
-                >
-              </h3>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-sky-500 w-0"
-                    id="qualis-percent-correlatos-indicador2"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos Qualis A4 ou superior com egressos -->
-            <div>
-              <h3
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos Qualis A4 ou superior com egressos
-                <span
-                  class="text-gray-500"
-                  id="qualis-percent-correlatos-indicador3-desc"
-                  >0%</span
-                >
-              </h3>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-blue-500 w-0"
-                    id="qualis-percent-correlatos-indicador3"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos Qualis B4 ou superior com egressos -->
-            <div>
-              <h3
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos Qualis B4 ou superior com egressos
-                <span
-                  class="text-gray-500"
-                  id="qualis-percent-correlatos-indicador4-desc"
-                  >0%</span
-                >
-              </h3>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-[#6366f1] w-0"
-                    id="qualis-percent-correlatos-indicador4"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos de docentes sem coautoria -->
-            <div>
-              <h3
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos de docentes sem coautoria (docentes e discentes)
-                <span
-                  class="text-gray-500"
-                  id="qualis-percent-correlatos-indicador5-desc"
-                  >0%</span
-                >
-              </h3>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-violet-500 w-0"
-                    id="qualis-percent-correlatos-indicador5"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos de docentes com coautoria de outros docentes -->
-            <div>
-              <h3
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos de docentes com coautoria de outros docentes
-                <span
-                  class="text-gray-500"
-                  id="qualis-percent-correlatos-indicador6-desc"
-                  >0%</span
-                >
-              </h3>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-purple-500 w-0"
-                    id="qualis-percent-correlatos-indicador6"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos de docentes não-permanentes -->
-            <div>
-              <h3
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos de docentes não-permanentes
-                <span
-                  class="text-gray-500"
-                  id="qualis-percent-correlatos-indicador7-desc"
-                  >0%</span
-                >
-              </h3>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-fuchsia-500 w-0"
-                    id="qualis-percent-correlatos-indicador7"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos com membros externos -->
-            <div>
-              <h3
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos com membros externos
-                <span
-                  class="text-gray-500"
-                  id="qualis-percent-correlatos-indicador8-desc"
-                  >0%</span
-                >
-              </h3>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-pink-500 w-0"
-                    id="qualis-percent-correlatos-indicador8"
-                  ></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Artigos com participação de Pós-Doc -->
-            <div>
-              <h3
-                class="flex items-center justify-between text-base font-medium text-zinc-700"
-              >
-                Artigos com participação de Pós-Doc
-                <span
-                  class="text-gray-500"
-                  id="qualis-percent-correlatos-indicador9-desc"
-                  >0%</span
-                >
-              </h3>
-              <div class="relative pt-1">
-                <div
-                  class="mb-1 flex items-center justify-between text-xs font-semibold text-gray-600"
-                ></div>
-                <div class="h-2.5 w-full rounded-full bg-gray-200">
-                  <div
-                    class="h-2.5 rounded-full bg-rose-500 w-0"
-                    id="qualis-percent-correlatos-indicador9"
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="mt-8 rounded-lg bg-white px-8 py-6 shadow"
-        id="row-positionindprods"
-      >
-        <h2 class="text-lg font-semibold text-amber-700">
-          Posicionamento do PPG em relação a outros da mesma área de avaliação
-        </h2>
-        <p class="text-sm text-zinc-700" id="text-chartpositionindprod">
-          Comparação do indicador Média ponderada de artigos (IndArtigo) por DPs
-          e por ano do PPG com os programas nota 6 no período de 2021 - 2022
-        </p>
-        <div class="mt-4 grid grid-cols-[auto_auto]">
-          <div class="">
-            <div class="flex space-x-4 text-zinc-700">
-              <div class="flex items-center">
-                <div class="h-4 w-4 rounded-full bg-stone-400"></div>
-                <span class="ml-1 text-xs" id="sigla_ies">--</span>
-              </div>
-              <div class="flex items-center">
-                <div class="h-4 w-4 rounded-full bg-cyan-400"></div>
-                <span class="ml-1 text-xs">IES Estadual</span>
-              </div>
-              <div class="flex items-center">
-                <div class="h-4 w-4 rounded-full bg-purple-400"></div>
-                <span class="ml-1 text-xs">IES Federal</span>
-              </div>
-              <div class="flex items-center">
-                <div class="h-4 w-4 rounded-full bg-amber-400"></div>
-                <span class="ml-1 text-xs">IES Particular</span>
-              </div>
-            </div>
-            <canvas
-              class="mt-2 max-h-[400px]"
-              id="chartpositionindprods"
-            ></canvas>
-          </div>
-          <svg class id="mapa-brasil"></svg>
-        </div>
-      </div>
-
-      <div class="mt-8 grid grid-cols-2 gap-8">
-        <div class="rounded-lg bg-white px-8 py-6 shadow" id="row-tempodefesa">
+        <div class="relative rounded-lg bg-white px-8 py-6 shadow">
           <div class="flex justify-between">
             <h2
               class="text-lg font-semibold text-amber-700"
@@ -1199,8 +1207,8 @@ content %}
               Tempo de Defesa (em meses)
             </h2>
             <button
-              class="bg-white p-2 text-zinc-700 hover:bg-zinc-100"
-              id="saveGraph-3"
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-5"
               data-value="chartindprodextsupsproductions"
               aria-expanded="false"
               aria-label="Opções"
@@ -1223,12 +1231,12 @@ content %}
               </svg>
             </button>
             <div
-              class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
-              id="dropdown-menu-2"
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-5"
             >
               <button
                 class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
-                onclick="SaveChart('chartindprodextsupsproductions')"
+                onclick="salvarGrafico('chartindprodextsupsproductions')"
               >
                 <svg
                   class="stroke-current"
@@ -1278,12 +1286,12 @@ content %}
               </button>
             </div>
           </div>
-          <div class="max-h-64">
+          <div class="h-96">
             <canvas id="carttempodefesa"></canvas>
           </div>
         </div>
 
-        <div class="rounded-lg bg-white px-8 py-6 shadow">
+        <div class="relative rounded-lg bg-white px-8 py-6 shadow">
           <div class="flex justify-between">
             <h2
               class="text-lg font-semibold text-amber-700"
@@ -1292,8 +1300,8 @@ content %}
               Quantidade de Discentes Titulados
             </h2>
             <button
-              class="bg-white p-2 text-zinc-700 hover:bg-zinc-100"
-              id="saveGraph-3"
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-6"
               data-value="chartindprodextsupsproductions"
               aria-expanded="false"
               aria-label="Opções"
@@ -1316,12 +1324,12 @@ content %}
               </svg>
             </button>
             <div
-              class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
-              id="dropdown-menu-2"
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-6"
             >
               <button
                 class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
-                onclick="SaveChart('chartindprodextsupsproductions')"
+                onclick="salvarGrafico('chartindprodextsupsproductions')"
               >
                 <svg
                   class="stroke-current"
@@ -1371,12 +1379,12 @@ content %}
               </button>
             </div>
           </div>
-          <div class="max-h-64">
+          <div class="h-96">
             <canvas id="chartstudentsgraduated"></canvas>
           </div>
         </div>
 
-        <div class="rounded-lg bg-white px-8 py-6 shadow" id="col-partdiss">
+        <div class="relative rounded-lg bg-white px-8 py-6 shadow">
           <div class="flex justify-between">
             <h2
               class="text-lg font-semibold text-amber-700"
@@ -1385,8 +1393,8 @@ content %}
               PartDis (comparado com outros PPGs)
             </h2>
             <button
-              class="bg-white p-2 text-zinc-700 hover:bg-zinc-100"
-              id="saveGraph-3"
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-7"
               data-value="chartindprodextsupsproductions"
               aria-expanded="false"
               aria-label="Opções"
@@ -1409,12 +1417,12 @@ content %}
               </svg>
             </button>
             <div
-              class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
-              id="dropdown-menu-2"
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-7"
             >
               <button
                 class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
-                onclick="SaveChart('chartindprodextsupsproductions')"
+                onclick="salvarGrafico('chartindprodextsupsproductions')"
               >
                 <svg
                   class="stroke-current"
@@ -1468,15 +1476,12 @@ content %}
             IndProdDis/IndProd<br />Avalia a participação da produção discente
             na produção de artigos do programa.
           </p>
-          <div class="max-h-64">
+          <div class="h-96">
             <canvas id="chartpartdis"></canvas>
           </div>
         </div>
 
-        <div
-          class="rounded-lg bg-white px-8 py-6 shadow"
-          id="col-indcoautorias"
-        >
+        <div class="relative rounded-lg bg-white px-8 py-6 shadow">
           <div class="flex justify-between">
             <h2
               class="text-lg font-semibold text-amber-700"
@@ -1485,8 +1490,8 @@ content %}
               Coautoria (comparado com outros PPGs)
             </h2>
             <button
-              class="bg-white p-2 text-zinc-700 hover:bg-zinc-100"
-              id="saveGraph-3"
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-8"
               data-value="chartindprodextsupsproductions"
               aria-expanded="false"
               aria-label="Opções"
@@ -1509,12 +1514,12 @@ content %}
               </svg>
             </button>
             <div
-              class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
-              id="dropdown-menu-2"
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-8"
             >
               <button
                 class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
-                onclick="SaveChart('chartindprodextsupsproductions')"
+                onclick="salvarGrafico('chartindprodextsupsproductions')"
               >
                 <svg
                   class="stroke-current"
@@ -1569,12 +1574,12 @@ content %}
             IndProdCoautor/IndProd<br />Avalia a coautoria de artigos com dois
             ou mais docentes e pelo menos um docente permanente.
           </div>
-          <div class="max-h-64">
+          <div class="h-96">
             <canvas id="chartindcoautoria"></canvas>
           </div>
         </div>
 
-        <div class="rounded-lg bg-white px-8 py-6 shadow" id="col-indori">
+        <div class="relative rounded-lg bg-white px-8 py-6 shadow">
           <div class="flex justify-between">
             <h2
               class="text-lg font-semibold text-amber-700"
@@ -1583,8 +1588,8 @@ content %}
               IndOri (comparado com outros PPGs)
             </h2>
             <button
-              class="bg-white p-2 text-zinc-700 hover:bg-zinc-100"
-              id="saveGraph-3"
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-9"
               data-value="chartindprodextsupsproductions"
               aria-expanded="false"
               aria-label="Opções"
@@ -1607,12 +1612,12 @@ content %}
               </svg>
             </button>
             <div
-              class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
-              id="dropdown-menu-2"
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-9"
             >
               <button
                 class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
-                onclick="SaveChart('chartindprodextsupsproductions')"
+                onclick="salvarGrafico('chartindprodextsupsproductions')"
               >
                 <svg
                   class="stroke-current"
@@ -1667,12 +1672,15 @@ content %}
             meses<br />Avalia as defesas com orientação de docentes permanentes
             (DP) do programa
           </p>
-          <div class="max-h-64">
+          <div class="h-96">
             <canvas id="chartindori"></canvas>
           </div>
         </div>
 
-        <div class="rounded-lg bg-white px-8 py-6 shadow" id="col-inddistori">
+        <div
+          class="relative rounded-lg bg-white px-8 py-6 shadow"
+          id="col-inddistori"
+        >
           <div class="flex justify-between">
             <h2
               class="text-lg font-semibold text-amber-700"
@@ -1681,8 +1689,8 @@ content %}
               IndDistOri (comparado com outros PPGs)
             </h2>
             <button
-              class="bg-white p-2 text-zinc-700 hover:bg-zinc-100"
-              id="saveGraph-3"
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-10"
               data-value="chartindprodextsupsproductions"
               aria-expanded="false"
               aria-label="Opções"
@@ -1705,12 +1713,12 @@ content %}
               </svg>
             </button>
             <div
-              class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
-              id="dropdown-menu-2"
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-10"
             >
               <button
                 class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
-                onclick="SaveChart('chartindprodextsupsproductions')"
+                onclick="salvarGrafico('chartindprodextsupsproductions')"
               >
                 <svg
                   class="stroke-current"
@@ -1764,12 +1772,15 @@ content %}
             DP que concluíram orientações no ano /DP<br />Avalia a distribuição
             das orientações concluídas em relação ao corpo docente permanente.
           </p>
-          <div class="max-h-96">
+          <div class="h-96">
             <canvas id="chartinddistori"></canvas>
           </div>
         </div>
 
-        <div class="rounded-lg bg-white px-8 py-6 shadow" id="col-indaut">
+        <div
+          class="relative rounded-lg bg-white px-8 py-6 shadow"
+          id="col-indaut"
+        >
           <div class="flex justify-between">
             <h2
               class="text-lg font-semibold text-amber-700"
@@ -1778,8 +1789,8 @@ content %}
               IndAut (comparado com outros PPGs)
             </h2>
             <button
-              class="bg-white p-2 text-zinc-700 hover:bg-zinc-100"
-              id="saveGraph-3"
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-11"
               data-value="chartindprodextsupsproductions"
               aria-expanded="false"
               aria-label="Opções"
@@ -1802,12 +1813,12 @@ content %}
               </svg>
             </button>
             <div
-              class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
-              id="dropdown-menu-2"
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-11"
             >
               <button
                 class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
-                onclick="SaveChart('chartindprodextsupsproductions')"
+                onclick="salvarGrafico('chartindprodextsupsproductions')"
               >
                 <svg
                   class="stroke-current"
@@ -1862,12 +1873,12 @@ content %}
             anos<br />Índice de discentes autores. Considera todos os produtos
             menos apresentação de trabalhos.
           </p>
-          <div class="max-h-64">
+          <div class="h-96">
             <canvas id="chartindaut"></canvas>
           </div>
         </div>
 
-        <div class="rounded-lg bg-white px-8 py-6 shadow" id="col-inddis">
+        <div class="relative rounded-lg bg-white px-8 py-6 shadow">
           <div class="flex justify-between">
             <h2
               class="text-lg font-semibold text-amber-700"
@@ -1876,8 +1887,8 @@ content %}
               IndDis (comparado com outros PPGs)
             </h2>
             <button
-              class="bg-white p-2 text-zinc-700 hover:bg-zinc-100"
-              id="saveGraph-3"
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-12"
               data-value="chartindprodextsupsproductions"
               aria-expanded="false"
               aria-label="Opções"
@@ -1900,12 +1911,12 @@ content %}
               </svg>
             </button>
             <div
-              class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
-              id="dropdown-menu-2"
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-12"
             >
               <button
                 class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
-                onclick="SaveChart('chartindprodextsupsproductions')"
+                onclick="salvarGrafico('chartindprodextsupsproductions')"
               >
                 <svg
                   class="stroke-current"
@@ -1960,58 +1971,216 @@ content %}
             5 anos&nbsp;<br />Índice de produtos com autoria discente. Todos os
             produtos menos apresentação de trabalhos.
           </p>
-          <div class="max-h-96">
+          <div class="h-96">
             <canvas id="chartinddis"></canvas>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div
-      class="hidden"
-      id="docentes"
-      role="tabpanel"
-      aria-labelledby="docentes-tab"
-    >
-      <div class="mb-8">
-        <h1
-          class="text-2xl font-extrabold text-indigo-500"
-          id="titulo-docentes"
-        >
-          Professores
-        </h1>
-        <p class="text-sm font-medium text-zinc-700">
-          Fonte: Lattes e Sucupira
-        </p>
-      </div>
+  <div
+    class="hidden"
+    id="docentes"
+    role="tabpanel"
+    aria-labelledby="docentes-tab"
+  >
+    <div class="mb-8">
+      <h1 class="text-2xl font-extrabold text-indigo-500" id="titulo-docentes">
+        Professores
+      </h1>
+      <p class="text-sm font-medium text-zinc-700">Fonte: Lattes e Sucupira</p>
+    </div>
 
-      <div class="mb-8 flex gap-x-8">
-        <div class="flex-1 rounded-lg bg-white px-6 py-4 shadow">
-          <h2
-            class="text-lg font-semibold text-amber-700"
-            id="modaltitlechartprofessorsbycategory"
-          >
-            Quantidade de Docentes por Categoria
-          </h2>
-          <div class="max-h-96">
+    <div class="space-y-8">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div class="rounded-lg bg-white px-6 py-4 shadow">
+          <div class="relative flex items-center justify-between">
+            <h3
+              class="text-lg font-semibold text-amber-700"
+              id="modaltitlechartprofessorsbycategory"
+            >
+              Quantidade de docentes por categoria
+            </h3>
+            <button
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-13"
+              data-value="chartindprodsproductions"
+              aria-expanded="false"
+              aria-label="Opções"
+            >
+              <svg
+                class="stroke-zinc-700"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="12" cy="5" r="1"></circle>
+                <circle cx="12" cy="19" r="1"></circle>
+              </svg>
+            </button>
+            <div
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-13"
+            >
+              <button
+                class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+                onclick="salvarGrafico('chartindprodsproductions')"
+              >
+                <svg
+                  class="stroke-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                  ></path>
+                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                  <path d="M12 18v-6"></path>
+                  <path d="m9 15 3 3 3-3"></path>
+                </svg>
+                Fazer download do gráfico
+              </button>
+              <button
+                class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+                onclick="exportarParaExcel('/api/dados/ppg/indicadores/indprodart', 'chartindprodsproductions')"
+              >
+                <svg
+                  class="stroke-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                  ></path>
+                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                  <path d="M8 13h2"></path>
+                  <path d="M14 13h2"></path>
+                  <path d="M8 17h2"></path>
+                  <path d="M14 17h2"></path>
+                </svg>
+                Exportar para .xlsx
+              </button>
+            </div>
+          </div>
+          <div class="mx-auto h-96">
             <canvas id="chartprofessorsbycategory"></canvas>
           </div>
         </div>
-
         <div class="rounded-lg bg-white px-6 py-4 shadow">
-          <h2
-            class="text-lg font-semibold text-amber-700"
-            id="modaltitlechartlattesupdate"
-          >
-            Quantidade de currículos Lattes desatualizados
-          </h2>
-          <div class="max-h-96">
+          <div class="relative flex items-center justify-between">
+            <h3
+              class="text-lg font-semibold text-amber-700"
+              id="modaltitlechartlattesupdate"
+            >
+              Quantidade de currículos Lattes desatualizados
+            </h3>
+            <button
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-14"
+              data-value="chartindprodsproductions"
+              aria-expanded="false"
+              aria-label="Opções"
+            >
+              <svg
+                class="stroke-zinc-700"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="12" cy="5" r="1"></circle>
+                <circle cx="12" cy="19" r="1"></circle>
+              </svg>
+            </button>
+            <div
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-14"
+            >
+              <button
+                class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+                onclick="salvarGrafico('chartindprodsproductions')"
+              >
+                <svg
+                  class="stroke-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                  ></path>
+                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                  <path d="M12 18v-6"></path>
+                  <path d="m9 15 3 3 3-3"></path>
+                </svg>
+                Fazer download do gráfico
+              </button>
+              <button
+                class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+                onclick="exportarParaExcel('/api/dados/ppg/indicadores/indprodart', 'chartindprodsproductions')"
+              >
+                <svg
+                  class="stroke-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                  ></path>
+                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                  <path d="M8 13h2"></path>
+                  <path d="M14 13h2"></path>
+                  <path d="M8 17h2"></path>
+                  <path d="M14 17h2"></path>
+                </svg>
+                Exportar para .xlsx
+              </button>
+            </div>
+          </div>
+          <div class="mx-auto h-96">
             <canvas id="chartlattesupdate"></canvas>
           </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="flex flex-wrap justify-between gap-y-4">
         <div class="text-zinc-700">
           <h3 class="font-semibold text-amber-700">Atualização do Lattes</h3>
           <div class="mt-2 flex items-center space-x-2">
@@ -2036,19 +2205,21 @@ content %}
           </div>
         </div>
 
-        <div class="text-zinc-700">
-          <h3 class="font-semibold text-amber-700">Status no período</h3>
-          <p class="text-sm">P = Permanente, C = Colaborador</p>
-          <h3 class="mt-4 font-semibold text-amber-700">
-            Fórmula para IndProdArt
-          </h3>
-          <p class="text-sm" id="formula_indprod_docente"></p>
+        <div>
+          <div class="text-zinc-700">
+            <h3 class="font-semibold text-amber-700">Status no período</h3>
+            <p class="text-sm">P = Permanente, C = Colaborador</p>
+            <h3 class="mt-4 font-semibold text-amber-700">
+              Fórmula para IndProdArt
+            </h3>
+            <p class="text-sm" id="formula_indprod_docente"></p>
+          </div>
         </div>
       </div>
 
-      <div class="mb-8 mt-4 flex max-h-[60rem] gap-8">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div
-          class="flex-1 overflow-auto rounded-lg bg-white px-6 py-4 text-zinc-700 shadow"
+          class="max-h-[66.5rem] overflow-auto rounded-lg bg-white px-6 py-4 text-zinc-700 shadow"
         >
           <table class="w-full table-auto">
             <thead>
@@ -2070,7 +2241,7 @@ content %}
 
         <div
           id="conatiner-info-docente"
-          class="divide-y-2 divide-gray-300 rounded-lg border-gray-300 bg-white px-8 py-6 shadow-md"
+          class="max-h-fit divide-y-2 divide-gray-300 rounded-lg border-gray-300 bg-white px-8 py-6 shadow-md"
         >
           <h3
             class="py-2 text-xl font-semibold capitalize text-amber-700"
@@ -2108,7 +2279,7 @@ content %}
                   <div class="relative pt-1">
                     <div class="h-2.5 w-full rounded-full bg-gray-200">
                       <div
-                        class="h-2.5 rounded-full bg-blue-500 w-0 transition-colors"
+                        class="h-2.5 w-0 rounded-full bg-blue-500 transition-colors"
                         id="pb-mestrado-dentro"
                       >
                         <span class="sr-only">0%</span>
@@ -2129,7 +2300,7 @@ content %}
                   <div class="relative pt-1">
                     <div class="h-2.5 w-full rounded-full bg-gray-200">
                       <div
-                        class="h-2.5 rounded-full w-0 bg-red-600 transition-colors"
+                        class="h-2.5 w-0 rounded-full bg-red-600 transition-colors"
                         id="pb-mestrado-fora"
                       >
                         <span class="sr-only">0%</span>
@@ -2150,7 +2321,7 @@ content %}
                   <div class="relative pt-1">
                     <div class="h-2.5 w-full rounded-full bg-gray-200">
                       <div
-                        class="h-2.5 rounded-full bg-yellow-500 w-0 transition-colors"
+                        class="h-2.5 w-0 rounded-full bg-yellow-500 transition-colors"
                         id="pb-mestrado-desligado"
                       >
                         <span class="sr-only">0%</span>
@@ -2184,7 +2355,7 @@ content %}
                   <div class="relative pt-1">
                     <div class="h-2.5 w-full rounded-full bg-gray-200">
                       <div
-                        class="bg-primary h-2.5 rounded-full w-0"
+                        class="bg-primary h-2.5 w-0 rounded-full"
                         id="pb-doutorado-dentro"
                       >
                         <span class="sr-only">0%</span>
@@ -2205,7 +2376,7 @@ content %}
                   <div class="relative pt-1">
                     <div class="h-2.5 w-full rounded-full bg-gray-200">
                       <div
-                        class="h-2.5 rounded-full bg-red-600 w-0"
+                        class="h-2.5 w-0 rounded-full bg-red-600"
                         id="pb-doutorado-fora"
                       >
                         <span class="sr-only">0%</span>
@@ -2226,7 +2397,7 @@ content %}
                   <div class="relative pt-1">
                     <div class="h-2.5 w-full rounded-full bg-gray-200">
                       <div
-                        class="h-2.5 rounded-full bg-yellow-500 w-0"
+                        class="h-2.5 w-0 rounded-full bg-yellow-500"
                         id="pb-doutorado-desligado"
                       >
                         <span class="sr-only">0%</span>
@@ -2241,13 +2412,13 @@ content %}
           <div class="py-4">
             <h4 class="text-lg font-medium text-indigo-950">Produtos</h4>
             <p class="text-sm text-zinc-700">Fonte: Lattes</p>
-            <div>
+            <div class="mx-auto h-96">
               <canvas id="chartprofessorsproductions"></canvas>
             </div>
             <div class="mt-8 text-center" id="text-qualis">
               <button
                 class="inline-flex items-center font-medium text-blue-600 hover:underline"
-                id="bt_verlattes"
+                id="btn-lattes-docente"
                 type="button"
               >
                 Currículo Lattes
@@ -2275,10 +2446,10 @@ content %}
 
       <div class="rounded-lg bg-white px-6 py-4 shadow">
         <h2 class="text-lg font-semibold text-amber-700">Mapa de Coautorias</h2>
-        <div id="links-graph"></div>
+        <div class="h-[800px]" id="links-graph"></div>
       </div>
 
-      <div class="mt-8 rounded-lg bg-white px-6 py-4 shadow">
+      <div class="rounded-lg bg-white px-6 py-4 shadow">
         <h2 class="text-xl font-semibold text-amber-700">
           Rede de Colaboração
         </h2>
@@ -2288,7 +2459,7 @@ content %}
         </p>
 
         <div class="relative w-fit">
-          <select id="select-prof" onChange="fetchGraph(this)"></select>
+          <select id="select-prof"></select>
           <div
             class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-zinc-500"
           >
@@ -2310,20 +2481,22 @@ content %}
           </div>
         </div>
 
-        <div class="flex py-8">
+        <div class="flex flex-wrap py-8">
           <div id="legend-graph"></div>
-          <div class="flex-1" id="graph"></div>
+          <div class="w-full flex-1 overflow-hidden" id="graph"></div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div
-      class="hidden"
-      id="projetos"
-      role="tabpanel"
-      aria-labelledby="projetos-tab"
-    >
-      <div class="mt-8 rounded-lg bg-white px-6 py-4 shadow">
+  <div
+    class="hidden"
+    id="projetos"
+    role="tabpanel"
+    aria-labelledby="projetos-tab"
+  >
+    <div class="mt-8 space-y-8">
+      <div class="rounded-lg bg-white px-6 py-4 shadow">
         <h2 class="text-lg font-semibold text-amber-700">
           Produção por Linha de Pesquisa
         </h2>
@@ -2338,7 +2511,7 @@ content %}
         </div>
       </div>
 
-      <div class="mt-8 rounded-lg bg-white px-6 py-4 text-zinc-700 shadow">
+      <div class="rounded-lg bg-white px-6 py-4 text-zinc-700 shadow">
         <h2 class="text-lg font-semibold text-amber-700">
           Produção dos Projetos por Linha de Pesquisa
         </h2>
@@ -2353,7 +2526,7 @@ content %}
         </div>
       </div>
 
-      <div class="mt-8 rounded-lg bg-white px-6 py-4 shadow">
+      <div class="rounded-lg bg-white px-6 py-4 shadow">
         <h2 class="text-lg font-semibold text-amber-700">
           Projetos dos Docentes do PPG
         </h2>
@@ -2363,24 +2536,28 @@ content %}
           participante, se houve produção realizada e o status do projeto no
           período indicado.
         </p>
-        <div class="flex font-bold text-zinc-700">
+        <div
+          class="mx-auto flex items-center justify-center font-bold text-zinc-700"
+        >
           <p>Projetos</p>
           <div id="chartprojectsdata"></div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div
-      class="hidden"
-      id="bancas-e-tccs"
-      role="tabpanel"
-      aria-labelledby="bancas-tab"
-    >
-      <div class="mx-auto my-8 grid max-w-4xl grid-cols-3 gap-8">
+  <div
+    class="hidden"
+    id="bancas-e-tccs"
+    role="tabpanel"
+    aria-labelledby="bancas-tab"
+  >
+    <div class="mt-8 space-y-8">
+      <div class="mx-auto grid max-w-4xl gap-4 md:grid-cols-3">
         <div
-          class="flex items-center justify-center rounded-lg bg-orange-100 px-8 py-6 text-center shadow"
+          class="flex items-center justify-center rounded-lg bg-pink-200 px-8 py-6 text-center shadow"
         >
-          <p class="text-indigo-950">
+          <p class="text-zinc-700">
             <span
               class="text-3xl font-medium text-indigo-950"
               id="quantidade-bancas"
@@ -2391,9 +2568,9 @@ content %}
           </p>
         </div>
         <div
-          class="flex items-center justify-center rounded-lg bg-indigo-100 px-8 py-6 text-center shadow"
+          class="flex items-center justify-center rounded-lg bg-indigo-200 px-8 py-6 text-center shadow"
         >
-          <p class="text-indigo-950">
+          <p class="text-zinc-700">
             <span
               class="text-3xl font-medium text-indigo-950"
               id="quantidade-internos"
@@ -2403,11 +2580,10 @@ content %}
             Docentes internos por banca em média
           </p>
         </div>
-
         <div
-          class="flex items-center justify-center rounded-lg bg-sky-100 px-8 py-6 text-center shadow"
+          class="flex items-center justify-center rounded-lg bg-sky-200 px-8 py-6 text-center shadow"
         >
-          <p class="text-indigo-950">
+          <p class="text-zinc-700">
             <span
               class="text-3xl font-medium text-indigo-950"
               id="quantidade-externos"
@@ -2419,126 +2595,866 @@ content %}
         </div>
       </div>
 
-      <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <div class="rounded-lg bg-white px-6 py-4 shadow">
-          <h2
+      <div class="rounded-lg bg-white px-6 py-4 shadow">
+        <div class="relative flex items-center justify-between">
+          <h3
             class="text-lg font-semibold text-amber-700"
             id="modaltitlecharttccsproductions"
           >
             Produtos vinculados aos TCCs
-          </h2>
-          <p class="pb-4 text-sm font-medium text-zinc-700">
-            Este gráfico apresenta quantidade de produtos do PPG vinculados aos
-            TCCs defendidos
-          </p>
-          <div>
-            <canvas id="charttccsproductions"></canvas>
+          </h3>
+          <button
+            class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+            data-target="dropdown-menu-18"
+            data-value="charttccsproductions"
+            aria-expanded="false"
+            aria-label="Opções"
+          >
+            <svg
+              class="stroke-zinc-700"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="1"></circle>
+              <circle cx="12" cy="5" r="1"></circle>
+              <circle cx="12" cy="19" r="1"></circle>
+            </svg>
+          </button>
+          <div
+            class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+            id="dropdown-menu-18"
+          >
+            <button
+              class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+              onclick="salvarGrafico('charttccsproductions')"
+            >
+              <svg
+                class="stroke-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                ></path>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                <path d="M12 18v-6"></path>
+                <path d="m9 15 3 3 3-3"></path>
+              </svg>
+              Fazer download do gráfico
+            </button>
+            <button
+              class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+              onclick="exportarParaExcel('/api/dados/ppg/indicadores/indprodart', 'chartindprodsproductions')"
+            >
+              <svg
+                class="stroke-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                ></path>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                <path d="M8 13h2"></path>
+                <path d="M14 13h2"></path>
+                <path d="M8 17h2"></path>
+                <path d="M14 17h2"></path>
+              </svg>
+              Exportar para .xlsx
+            </button>
           </div>
         </div>
-        <div class="rounded-lg bg-white px-6 py-4 shadow">
-          <h2
+        <p class="pb-4 text-sm font-medium text-zinc-700">
+          Este gráfico apresenta quantidade de produtos do PPG vinculados aos
+          TCCs defendidos
+        </p>
+        <div class="mx-auto max-h-96">
+          <canvas id="charttccsproductions"></canvas>
+        </div>
+      </div>
+
+      <div class="rounded-lg bg-white px-6 py-4 shadow">
+        <div class="relative flex items-center justify-between">
+          <h3
             class="text-lg font-semibold text-amber-700"
             id="modaltitlechartartigostccs"
           >
             Artigos com qualis vinculados aos TCCs
-          </h2>
-          <p class="pb-4 text-sm font-medium text-zinc-700">
-            Este gráfico apresenta quantidade de artigos com qualis vinculados
-            aos TCCs defendidos.
-          </p>
-          <div>
-            <canvas id="chartartigostccs"></canvas>
+          </h3>
+          <button
+            class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+            data-target="dropdown-menu-19"
+            data-value="chartartigostccs"
+            aria-expanded="false"
+            aria-label="Opções"
+          >
+            <svg
+              class="stroke-zinc-700"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="1"></circle>
+              <circle cx="12" cy="5" r="1"></circle>
+              <circle cx="12" cy="19" r="1"></circle>
+            </svg>
+          </button>
+          <div
+            class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+            id="dropdown-menu-19"
+          >
+            <button
+              class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+              onclick="salvarGrafico('chartartigostccs')"
+            >
+              <svg
+                class="stroke-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                ></path>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                <path d="M12 18v-6"></path>
+                <path d="m9 15 3 3 3-3"></path>
+              </svg>
+              Fazer download do gráfico
+            </button>
+            <button
+              class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+              onclick="exportarParaExcel('/api/dados/ppg/indicadores/indprodart', 'chartindprodsproductions')"
+            >
+              <svg
+                class="stroke-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                ></path>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                <path d="M8 13h2"></path>
+                <path d="M14 13h2"></path>
+                <path d="M8 17h2"></path>
+                <path d="M14 17h2"></path>
+              </svg>
+              Exportar para .xlsx
+            </button>
           </div>
         </div>
+        <p class="pb-4 text-sm font-medium text-zinc-700">
+          Este gráfico apresenta quantidade de artigos com qualis vinculados aos
+          TCCs defendidos.
+        </p>
+        <div class="mx-auto h-96">
+          <canvas id="chartartigostccs"></canvas>
+        </div>
+      </div>
 
-        <div class="rounded-lg bg-white px-6 py-4 shadow">
-          <h2
+      <div class="rounded-lg bg-white px-6 py-4 shadow">
+        <div class="relative flex items-center justify-between">
+          <h3
             class="text-lg font-semibold text-amber-700"
             id="modaltitlecharttccsproductions-tipos"
           >
             Quantidade de Produtos por TCC
-          </h2>
-          <p class="pb-4 text-sm font-medium text-zinc-700">
-            Quantidade de TCCs geradores dos produtos em cada ano. Comparado com
-            médias dos PPGs de mesma nota.
-          </p>
-          <div style="height: 397px">
-            <canvas class id="charttccsproductions-tipos"></canvas>
+          </h3>
+          <button
+            class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+            data-target="dropdown-menu-20"
+            aria-expanded="false"
+            aria-label="Opções"
+          >
+            <svg
+              class="stroke-zinc-700"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="1"></circle>
+              <circle cx="12" cy="5" r="1"></circle>
+              <circle cx="12" cy="19" r="1"></circle>
+            </svg>
+          </button>
+          <div
+            class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+            id="dropdown-menu-20"
+          >
+            <button
+              class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+              onclick="salvarGrafico('charttccsproductions-tipos')"
+            >
+              <svg
+                class="stroke-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                ></path>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                <path d="M12 18v-6"></path>
+                <path d="m9 15 3 3 3-3"></path>
+              </svg>
+              Fazer download do gráfico
+            </button>
+            <button
+              class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+              onclick="exportarParaExcel('/api/dados/ppg/indicadores/indprodart', 'chartindprodsproductions')"
+            >
+              <svg
+                class="stroke-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                ></path>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                <path d="M8 13h2"></path>
+                <path d="M14 13h2"></path>
+                <path d="M8 17h2"></path>
+                <path d="M14 17h2"></path>
+              </svg>
+              Exportar para .xlsx
+            </button>
           </div>
         </div>
+        <p class="pb-4 text-sm font-medium text-zinc-700">
+          Quantidade de TCCs geradores dos produtos em cada ano. Comparado com
+          médias dos PPGs de mesma nota.
+        </p>
+        <div class="mx-auto h-96">
+          <canvas id="charttccsproductions-tipos"></canvas>
+        </div>
+      </div>
 
-        <div class="rounded-lg bg-white px-6 py-4 shadow">
-          <h2
+      <div class="rounded-lg bg-white px-6 py-4 shadow">
+        <div class="relative flex items-center justify-between">
+          <h3
             class="text-lg font-semibold text-amber-700"
             id="modaltitlechartlivrostccs"
           >
             Quantidade de Livros por TCC
-          </h2>
-          <p class="pb-4 text-sm font-medium text-zinc-700">
-            Quantidade de TCCs geradores de livros e capítulos de livros em cada
-            ano.
-          </p>
-          <div id="container-grafico-livros">
-            <canvas class id="chartlivrostccs"></canvas>
+          </h3>
+          <button
+            class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+            data-target="dropdown-menu-21"
+            aria-expanded="false"
+            aria-label="Opções"
+          >
+            <svg
+              class="stroke-zinc-700"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="1"></circle>
+              <circle cx="12" cy="5" r="1"></circle>
+              <circle cx="12" cy="19" r="1"></circle>
+            </svg>
+          </button>
+          <div
+            class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+            id="dropdown-menu-21"
+          >
+            <button
+              class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+              onclick="salvarGrafico('chartlivrostccs')"
+            >
+              <svg
+                class="stroke-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                ></path>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                <path d="M12 18v-6"></path>
+                <path d="m9 15 3 3 3-3"></path>
+              </svg>
+              Fazer download do gráfico
+            </button>
+            <button
+              class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+              onclick="exportarParaExcel('/api/dados/ppg/indicadores/indprodart', 'chartindprodsproductions')"
+            >
+              <svg
+                class="stroke-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                ></path>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                <path d="M8 13h2"></path>
+                <path d="M14 13h2"></path>
+                <path d="M8 17h2"></path>
+                <path d="M14 17h2"></path>
+              </svg>
+              Exportar para .xlsx
+            </button>
           </div>
         </div>
+        <p class="pb-4 text-sm font-medium text-zinc-700">
+          Quantidade de TCCs geradores de livros e capítulos de livros em cada
+          ano.
+        </p>
+        <div
+          class="mx-auto h-96 text-center font-medium text-zinc-700"
+          id="container-grafico-livros"
+        >
+          <canvas id="chartlivrostccs"></canvas>
+        </div>
+      </div>
 
-        <div class="col-span-2 rounded-lg bg-white px-6 py-4 shadow">
-          <h2 class="text-lg font-semibold text-amber-700">
+      <div class="rounded-lg bg-white px-6 py-4 shadow">
+        <div class="relative flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-amber-700">
             TCCs por Linha de Pesquisa
-          </h2>
-          <p class="pb-4 text-sm font-medium text-zinc-700">
-            Fonte: Sucupira <br />
-            Sumariza a produção do PPG por linha de pesquisa no período indicado
-          </p>
-          <div class="flex items-center justify-center gap-4">
-            <span>TCC</span>
-            <div id="charttccsresearchlinesdata"></div>
-            <span>Linhas de pesquisa</span>
+          </h3>
+          <button
+            class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+            data-target="dropdown-menu-21"
+            aria-expanded="false"
+            aria-label="Opções"
+          >
+            <svg
+              class="stroke-zinc-700"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="1"></circle>
+              <circle cx="12" cy="5" r="1"></circle>
+              <circle cx="12" cy="19" r="1"></circle>
+            </svg>
+          </button>
+          <div
+            class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+            id="dropdown-menu-21"
+          >
+            <button
+              class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+              onclick="salvarGrafico('charttccsresearchlinesdata')"
+            >
+              <svg
+                class="stroke-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                ></path>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                <path d="M12 18v-6"></path>
+                <path d="m9 15 3 3 3-3"></path>
+              </svg>
+              Fazer download do gráfico
+            </button>
+            <button
+              class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+              onclick="exportarParaExcel('/api/dados/ppg/indicadores/indprodart', 'chartindprodsproductions')"
+            >
+              <svg
+                class="stroke-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                ></path>
+                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                <path d="M8 13h2"></path>
+                <path d="M14 13h2"></path>
+                <path d="M8 17h2"></path>
+                <path d="M14 17h2"></path>
+              </svg>
+              Exportar para .xlsx
+            </button>
+          </div>
+        </div>
+        <p class="pb-4 text-sm font-medium text-zinc-700">
+          Fonte: Sucupira <br />
+          Sumariza a produção do PPG por linha de pesquisa no período indicado
+        </p>
+        <div class="flex items-center justify-center gap-4">
+          <span>TCC</span>
+          <div id="charttccsresearchlinesdata"></div>
+          <span>Linhas de pesquisa</span>
+        </div>
+      </div>
+
+      <div class="rounded-lg bg-white px-6 py-4 shadow">
+        <div class="relative flex items-center justify-between">
+          <h3
+            class="text-lg font-semibold text-amber-700"
+            id="modaltitlecharttccsproductions-tipos"
+          >
+            Participantes Externos
+          </h3>
+        </div>
+        <div class="" id="grafico-categoria"></div>
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div class="max-h-96">
+            <canvas class="" id="grafico-grau-academico"></canvas>
+          </div>
+          <div class="max-h-96">
+            <canvas class="" id="grafico-pais-origem"></canvas>
+          </div>
+          <div class="max-h-96">
+            <canvas class="" id="grafico-pais-titulacao"></canvas>
+          </div>
+          <div class="max-h-96">
+            <canvas class="" id="grafico-area-titulacao"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="egressos" role="tabpanel" aria-labelledby="egressos-tab">
+    <div class="mb-8">
+      <h1 class="text-2xl font-extrabold text-indigo-500" id="titulo-egressos">
+        Egressos
+      </h1>
+      <p class="text-sm font-medium text-zinc-700">Fonte: Lattes e Sucupira</p>
+    </div>
+
+    <div class="mx-auto mb-8 max-w-72">
+      <div class="relative flex items-center justify-center">
+        <svg class="h-32 w-32" viewBox="0 0 36 36">
+          <path
+            class="text-neutral-300"
+            stroke-width="4"
+            stroke="currentColor"
+            fill="none"
+            d="M18 2 A16 16 0 1 1 18 34 A16 16 0 1 1 18 2"
+          />
+          <path
+            id="circulo-progresso"
+            class="text-sky-500"
+            stroke-width="4"
+            stroke-dasharray="100, 100"
+            stroke-dashoffset="100"
+            stroke="currentColor"
+            stroke-linecap="round"
+            fill="none"
+            d="M18 2 A16 16 0 1 1 18 34 A16 16 0 1 1 18 2"
+          />
+        </svg>
+        <div
+          class="absolute text-xl font-bold text-zinc-700"
+          id="porcentagem-egressos"
+        >
+          0%
+        </div>
+      </div>
+      <div class="mt-2 text-center text-zinc-700">
+        de egressos com mudança de emprego
+      </div>
+    </div>
+
+    <div class="space-y-8">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div class="rounded-lg bg-white px-6 py-4 shadow">
+          <div class="relative flex items-center justify-between">
+            <h3
+              class="text-lg font-semibold text-amber-700"
+              id="modaltitlechartegressostituladosporano"
+            >
+              Quantidade de Egressos Titulados por Ano
+            </h3>
+            <button
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-23"
+              aria-expanded="false"
+              aria-label="Opções"
+            >
+              <svg
+                class="stroke-zinc-700"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="12" cy="5" r="1"></circle>
+                <circle cx="12" cy="19" r="1"></circle>
+              </svg>
+            </button>
+            <div
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-23"
+            >
+              <button
+                class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+                onclick="salvarGrafico('chartegressostituladosporano')"
+              >
+                <svg
+                  class="stroke-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                  ></path>
+                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                  <path d="M12 18v-6"></path>
+                  <path d="m9 15 3 3 3-3"></path>
+                </svg>
+                Fazer download do gráfico
+              </button>
+              <button
+                class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+                onclick="exportarParaExcel('/api/dados/ppg/indicadores/indprodart', 'chartegressostituladosporano')"
+              >
+                <svg
+                  class="stroke-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                  ></path>
+                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                  <path d="M8 13h2"></path>
+                  <path d="M14 13h2"></path>
+                  <path d="M8 17h2"></path>
+                  <path d="M14 17h2"></path>
+                </svg>
+                Exportar para .xlsx
+              </button>
+            </div>
+          </div>
+          <div class="mx-auto h-96">
+            <canvas id="chartegressostituladosporano"></canvas>
           </div>
         </div>
 
-        <div class="col-span-2 rounded-lg bg-white px-6 py-4 shadow">
-          <h2 class="text-lg font-semibold text-amber-700">
-            Participantes Externos
-          </h2>
-          <div class="grid grid-cols-4">
-            <div class="col-span-4" id="grafico-categoria"></div>
-            <canvas
-              class="max-h-72 max-w-72"
-              id="grafico-grau-academico"
-            ></canvas>
-            <canvas class="max-h-72 max-w-72" id="grafico-pais-origem"></canvas>
-            <canvas
-              class="max-h-72 max-w-72"
-              id="grafico-pais-titulacao"
-            ></canvas>
-            <canvas
-              class="max-h-72 max-w-72"
-              id="grafico-area-titulacao"
-            ></canvas>
+        <div class="rounded-lg bg-white px-6 py-4 shadow">
+          <div class="relative flex items-center justify-between">
+            <h3
+              class="text-lg font-semibold text-amber-700"
+              id="modaltitlecharttccsproductions-tipos"
+            >
+              Quantidade de currículos Lattes desatualizados
+            </h3>
+            <button
+              class="drop-btn rounded-md bg-white p-2 text-zinc-700 hover:bg-zinc-100"
+              data-target="dropdown-menu-24"
+              aria-expanded="false"
+              aria-label="Opções"
+            >
+              <svg
+                class="stroke-zinc-700"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="12" cy="5" r="1"></circle>
+                <circle cx="12" cy="19" r="1"></circle>
+              </svg>
+            </button>
+            <div
+              class="dropdown absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+              id="dropdown-menu-24"
+            >
+              <button
+                class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+                onclick="salvarGrafico('chartlattesupdateegresso')"
+              >
+                <svg
+                  class="stroke-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                  ></path>
+                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                  <path d="M12 18v-6"></path>
+                  <path d="m9 15 3 3 3-3"></path>
+                </svg>
+                Fazer download do gráfico
+              </button>
+              <button
+                class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+                onclick="exportarParaExcel('/api/dados/ppg/indicadores/indprodart', 'chartlattesupdateegresso')"
+              >
+                <svg
+                  class="stroke-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                  ></path>
+                  <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                  <path d="M8 13h2"></path>
+                  <path d="M14 13h2"></path>
+                  <path d="M8 17h2"></path>
+                  <path d="M14 17h2"></path>
+                </svg>
+                Exportar para .xlsx
+              </button>
+            </div>
+          </div>
+          <div class="mx-auto h-96">
+            <canvas id="chartlattesupdateegresso"></canvas>
           </div>
         </div>
       </div>
 
-      {% endblock %} {% block modais %}
+      <div>
+        <div class="text-zinc-700">
+          <h3 class="font-semibold text-amber-700">Atualização do Lattes</h3>
+          <div class="mt-2 flex items-center space-x-2">
+            <i class="fas fa-exclamation-circle text-red-500"></i>
+            <span class="text-sm">+12 meses</span>
+          </div>
+          <div class="mt-2 flex items-center space-x-2">
+            <i class="fas fa-exclamation-circle text-red-400"></i>
+            <span class="text-sm">entre 8 e 12 meses</span>
+          </div>
+          <div class="mt-2 flex items-center space-x-2">
+            <i class="fas fa-exclamation-circle text-yellow-300"></i>
+            <span class="text-sm">entre 6 e 8 meses</span>
+          </div>
+          <div class="mt-2 flex items-center space-x-2">
+            <i class="fas fa-exclamation-circle text-blue-800"></i>
+            <span class="text-sm">entre 3 e 6 meses</span>
+          </div>
+          <div class="mt-2 flex items-center space-x-2">
+            <i class="fas fa-exclamation-circle text-blue-400"></i>
+            <span class="text-sm">menos de 2 meses</span>
+          </div>
+        </div>
+      </div>
 
-      <table id="chartTable" hidden>
-        <thead id="chartTableHead"></thead>
-        <tbody id="chartTableBody"></tbody>
-      </table>
+      <div class="grid max-h-fit grid-cols-1 gap-8 md:grid-cols-2">
+        <div
+          class="max-h-[68.5rem] overflow-auto rounded-lg bg-white px-6 py-4 text-zinc-700 shadow-md"
+        >
+          <table class="w-full table-auto">
+            <thead>
+              <tr class="pointer-events-none border-b-2 border-b-gray-300">
+                <th class="px-3 py-3.5 text-left font-semibold" scope="col">
+                  Egresso
+                </th>
+                <th class="px-3 py-3.5 text-left font-semibold" scope="col">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody id="tbody-lista-egressos"></tbody>
+          </table>
+        </div>
 
-      {% endblock %} {% block scripts %}
-      <script src="{{ url_for('static', filename='ppg/js/graficos/charts.js') | hash_url }}"></script>
-      <!-- <script
-        src="{{ url_for('static', filename='ppg/js/scriptsppg.js') | hash_url }}"
-        type="module"
-      ></script> -->
-      <script
-        src="{{ url_for('static', filename='ppg/js/graficos/gerenciaAbas.js') | hash_url }}"
-        type="module"
-      ></script>
-      {% endblock %}
+        <div
+          class="h-full divide-y-2 divide-gray-300 rounded-lg border-gray-300 bg-white px-8 py-6 shadow-md"
+        >
+          <h2
+            class="py-2 text-xl font-semibold capitalize text-amber-700"
+            id="nome-egresso"
+          >
+            Informações do egresso
+          </h2>
+
+          <div class="py-4">
+            <h3 class="text-lg font-medium text-indigo-950">
+              Atuações Profissionais
+            </h3>
+            <p class="text-sm text-zinc-700">Fonte: Lattes</p>
+            <div class="mb-4 border-b border-gray-200">
+              <ul
+                id="tab-info-egresso"
+                role="tablist"
+                class="-mb-px flex flex-wrap text-center font-medium"
+              ></ul>
+            </div>
+            <div id="informacoes-egressos"></div>
+          </div>
+
+          <div class="py-4">
+            <h4 class="text-lg font-medium text-indigo-950">Produtos</h4>
+            <p class="text-sm text-zinc-700">Fonte: Lattes</p>
+            <div id="container-producoes-egressos" class="mx-auto h-96 grid place-items-center">
+              <p id="mensagem-produtos" class="text-center text-zinc-700 hidden">
+                Nenhuma produção foi encontrada.
+              </p>
+              <canvas id="chartproducoesegressos"></canvas>
+            </div>
+            <div class="mt-8 text-center" id="text-qualis">
+              <button
+                class="inline-flex items-center font-medium text-blue-600 hover:underline"
+                id="btn-lattes-egresso"
+                type="button"
+              >
+                Currículo Lattes
+                <svg
+                  class="ms-2.5 h-3 w-3 rtl:rotate-[270deg]"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 18 18"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 11v4.833A1.166 1.166 0 0 1 13.833 17H2.167A1.167 1.167 0 0 1 1 15.833V4.167A1.166 1.166 0 0 1 2.167 3h4.618m4.447-2H17v5.768M9.111 8.889l7.778-7.778"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<table id="chartTable" hidden>
+  <thead id="chartTableHead"></thead>
+  <tbody id="chartTableBody"></tbody>
+</table>
+
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='ppg/js/graficos/charts.js') | hash_url }}"></script>
+<script
+  src="{{ url_for('static', filename='ppg/js/graficos/gerenciaAbas.js') | hash_url }}"
+  type="module"
+></script>
+{% endblock %}

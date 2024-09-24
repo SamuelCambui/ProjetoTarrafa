@@ -37,8 +37,6 @@ $('#firstAcessRegisterForm').on("submit", function (event) {
                 })
                 .then(response => {
                     const user = response.data;
-                    // Save the token to use in subsequent requests
-                    console.log(user);
 
                     window.alert("Um e-mail foi enviado para validação do seu cadastro. Certifique sua caixa de spam.");
 

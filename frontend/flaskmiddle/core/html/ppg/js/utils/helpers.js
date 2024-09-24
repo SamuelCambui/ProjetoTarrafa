@@ -105,7 +105,23 @@ const baseColors = [
   "hsla(180, 70%, 50%, 0.7)",
 ];
 
-// Função que exporta tabela HTML para arquivo excel
+const salvarGrafico = (idChart) => {
+  const canvas = document.getElementById(idChart);
+
+  const contexto = canvas.getContext('2d');
+  contexto.save();
+  contexto.globalCompositeOperation = 'destination-over';
+  contexto.fillStyle = "white";
+  contexto.fillRect(0, 0, canvas.width, canvas.height);
+  contexto.restore();
+
+  const image = canvas.toDataURL("image/png", 1.0); 
+  const link = document.createElement("a");
+  link.href = image;
+  link.download = idChart;
+  link.click();
+}
+
 const ExportTableHTMLToExcel = (type, fileName) => {
   var elt = document.getElementById("chartTable");
   var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
@@ -113,23 +129,11 @@ const ExportTableHTMLToExcel = (type, fileName) => {
   return XLSX.writeFile(wb, fileName + "." + type);
 }
 
-// Salvar chart como imagem
-const SaveChart = (idChart) => {
-  const canvas = document.getElementById(idChart);
-  const image = canvas.toDataURL("image/png");
-  const link = document.createElement("a");
-
-  link.href = image;
-  link.download = idChart;
-  link.click();
-}
-
 // Essa função gera uma tabela html a partir do Array retornado pela requisição e depois a converte para .xlsx (Salva como arquivo excel)
 const exportarParaExcel = (url, fileName, dataSeek) => {
   const token = Cookies.get("token");
 
   if (!dataSeek)
-    // Seguir padrão da página ppg (url + /id_ppg + /year1 + /year2)
     url += `/${sessionStorage.getItem("id_ppg")}/${sessionStorage.getItem("year1")}/${sessionStorage.getItem("year2")}`;
 
   axios
@@ -213,6 +217,8 @@ const countOccurrences = (arr) => {
   return counts;
 }
 
+const telaEMd = () => window.matchMedia("(min-width: 768px)").matches;
+
 const btnSidebar = document.getElementById("btn-sidebar");
 const sidebar = document.getElementById("sidebar"); 
 const conteudo = document.getElementById("conteudo")
@@ -220,10 +226,17 @@ const nav = document.getElementById("nav-container");
 const fecharSidebar = document.getElementById("fechar-sidebar");
 
 const alteraVisibilidadeSidebar = () => {
+  if (telaEMd()) {
+    const estaEscondido = sidebar.classList.toggle("sm:translate-x-0"); 
+    sidebar.classList.toggle("sm:-translate-x-full"); 
+    nav.classList.toggle("sm:ml-64");
+    conteudo.classList.toggle("sm:ml-64");
+    btnSidebar.setAttribute("aria-expanded", !estaEscondido);
+    sidebar.setAttribute("aria-hidden", estaEscondido);  
+    return;
+  }
+
   const estaEscondido = sidebar.classList.toggle("-translate-x-full"); 
-  sidebar.classList.toggle("translate-x-0"); 
-  nav.classList.toggle("sm:ml-64")
-  conteudo.classList.toggle("sm:ml-64")
   btnSidebar.setAttribute("aria-expanded", !estaEscondido);
   sidebar.setAttribute("aria-hidden", estaEscondido);
 }
@@ -233,7 +246,13 @@ btnSidebar.addEventListener("click", () => {
 });
 
 fecharSidebar.addEventListener("click", () => {
-  console.log("oi")
   alteraVisibilidadeSidebar()
 });
 
+//limpar todos os campos antes
+window.onload = () => {
+  const inputs = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
+  inputs.forEach(input => {
+      input.value = "";
+  });
+};

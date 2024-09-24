@@ -6,7 +6,6 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
     />
-
     <title>{% block title %}{% endblock %} - Sistema Tarrafa</title>
     <link
       type="image/x-icon"
@@ -15,14 +14,6 @@
     />
     <link
       href="{{ url_for('static', filename='assets/fonts/fontawesome-all.min.css') | hash_url }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='assets/css/legend.css') | hash_url }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='assets/css/waitMe.css') | hash_url }}"
       rel="stylesheet"
     />
     <link href="https://rsms.me/inter/inter.css" rel="stylesheet" />
@@ -63,7 +54,7 @@
               <line x1="4" x2="20" y1="18" y2="18"></line>
             </svg>
           </button>
-          <p class="text-center text-lg font-semibold capitalize md:text-xl">
+          <p class="text-center text-[1rem] font-semibold capitalize md:text-xl">
             {{nome | capitalize}}
           </p>
           <div
@@ -91,12 +82,12 @@
       </nav>
 
       <aside
-        class="fixed left-0 top-0 z-50 h-screen w-64 translate-x-0 transition-transform"
-        id="sidebar"
+        class="fixed left-0 top-0 z-50 h-screen w-64 -translate-x-full sm:translate-x-0 transition-transform"
+        id="sidebar"  
         aria-hidden="false"
         aria-label="Sidebar"
       >
-        <div class="h-full overflow-y-auto bg-indigo-500 px-3 pb-4">
+        <div class="h-full overflow-y-auto bg-indigo-500 px-3 pb-4 flex flex-col">
           <div class="mt-4">
             <button
               class="ml-auto block rounded-md p-2 text-zinc-50 hover:bg-gray-200 hover:bg-zinc-50/40 sm:hidden"
@@ -262,7 +253,7 @@
           </ul>
 
           {% if current_user.is_superuser %}
-          <ul class="space-y-2 border-y border-gray-300 py-4 font-medium">
+          <ul class="space-y-2 border-t border-gray-300 py-4 font-medium ">
             <li>
               <a
                 class="group flex items-center rounded-lg p-2 text-zinc-50 hover:bg-zinc-50/40"
@@ -342,9 +333,8 @@
           </ul>
           {% endif %}
 
-          <div class="py-4">
             <a
-              class="group flex items-center rounded-lg p-2 text-zinc-50 hover:bg-zinc-50/40"
+              class="mt-auto flex items-center rounded-lg p-2 text-zinc-50 hover:bg-zinc-50/40 cursor-pointer"
               href="{{url_for('principal.controller_ppg.logout')}}"
             >
               <svg
@@ -353,6 +343,7 @@
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
+                
                 stroke="currentColor"
                 stroke-width="2"
                 stroke-linecap="round"
@@ -364,11 +355,21 @@
               </svg>
               <span class="ms-3 flex-1 whitespace-nowrap">Sair</span>
             </a>
-          </div>
         </div>
       </aside>
+ 
+      <div id="carregamento" class="hidden z-40 bg-white flex-col justify-center fixed bg-opacity-75 items-center h-screen w-screen">
+        <div class="flex gap-2">
+          <div class="w-4 h-4 rounded-full bg-indigo-500 animate-bounce "></div>
+          <div class="w-5 h-5 rounded-full bg-indigo-500 animate-bounce [animation-delay:-.2s]"></div>
+          <div class="w-6 h-6 rounded-full bg-indigo-500 animate-bounce [animation-delay:-.4s]"></div>
+        </div>
+        <p class="mt-1 text-lg text-zinc-700 font-medium">Carregando...</p>
+      </div>  
+    
+      
 
-      <main class="mt-24 flex-1 p-4 sm:ml-64" id="conteudo">
+      <main class="mt-24 p-4 sm:ml-64 w-full" id="conteudo">
         {% block content %} {% endblock %}
       </main>
     </div>

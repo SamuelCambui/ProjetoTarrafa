@@ -98,57 +98,78 @@ function SaveChart(idChart) {
 }
 
 // Essa função gera uma tabela html a partir do Array retornado pela requisição e depois a converte para .xlsx (Salva como arquivo excel)
-function ExportToExcel(url, fileName, dataSeek) {
-  const token = Cookies.get('token');
+function ExportToExcel(url, fileName, dataSeek, headRows, tipo = 'programa') {
+  const anos = (document.getElementById('slider-ppg-geral').value).split(',').map(Number);
 
-  if(!dataSeek) // Seguir padrão da página ppg (url + /id_ppg + /year1 + /year2)
-    url += `/${sessionStorage.getItem('id_ppg')}/${sessionStorage.getItem('year1')}/${sessionStorage.getItem('year2')}`;
+	year1 = anos[0];
+	year2 = anos[1];
 
-  axios.get(url, {
+	if (year1 > year2) year1 = year2;
+  // //debugger
+  if(tipo === 'programa'){
+    url += `/id_ppg/${year1}/${year2}`;
+  }
+  else{
+    url += `/${year1}/${year2}`;
+  }
+
+  axios.get("ppg/exportar_grafico", {
     headers: {
       'accept': 'application/json',
-      'Authorization': `Bearer ${token}`
+    },
+    params : {
+      'url': url
     }
   })
     .then(response => {
       var data;
-
-      switch(dataSeek){ // O parâmetro dataSeek foi criado com o intuito de saber onde o Array está localizado no retorno
-        case 'producoes':
-          data = response.data.producoes;
-          break;
-
-        case 'discentes':
-          data = response.data.discentes;
-          break;
-
-        default:
-          data = response.data;
-          break;
-      }
+      data = response.data
+      dataSeek.forEach(
+        elemento => {
+          data = data[elemento]
+        }
+      )
 
       var thead = document.getElementById('chartTableHead');
       thead.innerHTML = '';
       // Insere cabeçalho da tabela a partir do atributos presentes em cada elemento do Array
       var headRow = '';
-      for (var key in data[0]) {
-        headRow += `<th>${key}</th>`;
-      }
-      headRow = '<tr>' + headRow + '</tr>';
+      headRows.forEach(
+        h => {
+          headRow += `<th>${h}</th>`;
+        }
+      )
+
       thead.innerHTML = headRow;
 
       var tbody = document.getElementById('chartTableBody');
       tbody.innerHTML = '';
-      // Insere dados na tabela
-      for (var i = 0; i < data.length; i++) {
-        var row = '';
-        for (var key in data[i]) {
-            row += `<td>${data[i][key]}</td>`
-        }
-        tbody.innerHTML += row;
+
+      if(typeof data === "object"){
+        for (let key in data) {
+            var row = '';
+            if(typeof data[key] != "object"){
+              row += `<td>${key}</td>`
+              row += `<td>${data[key]}</td>`
+            }
+            else if(typeof data[key] === "object" && !Array.isArray(data[key]) == true){
+              if(parseInt(key, 10) >= year1){
+                row += `<td>${key}</td>`
+              }
+              for (v in data[key]){
+                row += `<td>${data[key][v]}</td>`
+              }
+            }
+            else{
+              for (v in data[key]){
+                row += `<td>${v}</td>`
+              }
+            }
+            tbody.innerHTML += "<tr>" + row + "</tr>";
+          }
       }
 
-      ExportTableHTMLToExcel('xlsx', 'table_' + fileName);
+      ExportTableHTMLToExcel('xlsx', 'dados_' + fileName);
     })
     .catch(error => {
       console.error('Table error: ', error);
@@ -187,7 +208,7 @@ function countOccurrences(arr) {
   return counts;
 }
 
-function GeraToast(msg){
+function GeraToast(msg, complemento = 'danger'){
 	document.getElementById('toasts').innerHTML += 
 	`
 		<div class="toast fase show" role="alert" aria-live="assertive" aria-atomic="true">
@@ -197,19 +218,18 @@ function GeraToast(msg){
 			<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
 			</div>
 			<div class="toast-body">
-				<p class="text-danger">${msg}</p>
+				<p class="text-${complemento}">${msg}</p>
 			</div>
 		</div>
-	`
-	;
-  }
+	`;
+}
 
 // function testToken() {
 //   const url = new URL(window.location.href);
 //   const token = Cookies.get('token');
 //   //const token = decodeURIComponent(url.searchParams.get('token'));
 
-//   axios.get('http://localhost:8000/api/dados/login/test-token', {
+//   axios.get('http://localhost:8000/api/v1/login/test-token', {
 //     headers: {
 //       'accept': 'application/json',
 //       'Authorization': `Bearer ${token}`
@@ -249,7 +269,7 @@ function GeraToast(msg){
 //   const url = new URL(window.location.href);
 //   const token = decodeURIComponent(url.searchParams.get('token'));
 
-//   axios.get('http://localhost:8000/api/dados/logout/access-token', {
+//   axios.get('http://localhost:8000/api/v1/logout/access-token', {
 //     headers: {
 //       'accept': 'application/json',
 //       'Authorization': `Bearer ${token}`
@@ -268,7 +288,7 @@ function GeraToast(msg){
 // $(document).ready(function(){
 //   const token = Cookies.get('token');
 
-//   axios.get('/api/dados/users/me', {
+//   axios.get('/api/v1/users/me', {
 //     headers: {
 //       'accept': 'application/json',
 //       'Authorization': `Bearer ${token}`
@@ -315,7 +335,7 @@ function GeraToast(msg){
 //     const url = new URL(window.location.href);
 //     const token = Cookies.get('token');//decodeURIComponent(url.searchParams.get('token'));
 
-//     axios.get('/api/dados/logout/access-token', {
+//     axios.get('/api/v1/logout/access-token', {
 //       headers: {
 //         'accept': 'application/json',
 //         'Authorization': `Bearer ${token}`
@@ -339,7 +359,7 @@ function GeraToast(msg){
   const url = new URL(window.location.href);
   const token = Cookies.get('token');//decodeURIComponent(url.searchParams.get('token'));
 
-  axios.get('/api/dados/users/me', {
+  axios.get('/api/v1/users/me', {
     headers: {
       'accept': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -355,4 +375,5 @@ function GeraToast(msg){
     });
 
 });*/
+
 

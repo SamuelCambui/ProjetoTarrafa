@@ -1,29 +1,90 @@
-{% extends 'ppg/base.html' %} {% block title %}Programas{% endblock %} {% block
-content %}
+{% extends 'ppg/base.html' %}
+
+{% block title %}Programas{% endblock %}
+
+{% block content %}
 <div class="mx-auto max-w-screen-2xl">
   <h1 class="pb-6 text-2xl font-extrabold text-indigo-500">Programas</h1>
 
-  <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3" id="row-programas">
-    {% for prog in listaProgramas %}
-    <div
-      class="grid rounded-xl border border-t-8 border-zinc-200 border-t-indigo-400 bg-white/70 px-8 py-6 shadow-shape backdrop-blur-xl"
-    >
-      <span class="text-sm font-bold text-amber-700">{{ prog.area }}</span>
-      <h2 class="text-lg font-bold text-indigo-500">{{ prog.nome }}</h2>
-      <p class="pt-2 text-zinc-700">Nota: {{ prog.nota }}</p>
-      <button
-        class="ml-auto block rounded-lg border border-indigo-500 px-6 py-3 text-sm font-bold text-indigo-500 hover:bg-indigo-500 hover:text-zinc-50"
+<div class="flex flex-wrap items-end gap-4 pb-5">
+  <div class="relative max-w-full flex-1 md:max-w-lg">
+    <div class="relative">
+      <div
+        class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-zinc-500"
       >
-        <a
-          href="{{ url_for('principal.controller_ppg_graficos.ppgs', id_ppg=prog.id) }}"
-          class="block h-full w-full text-center"
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
         >
-          Gráficos
-        </a>
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </svg>
+      </div>
+      <input
+        class="w-full pl-12"
+        id="input-busca-programa"
+        type="text"
+        placeholder="Procure por um programa..."
+      />
+      <button
+        class="absolute right-4 top-1/2 hidden -translate-y-1/2 transform px-0"
+        id="btn-limpar-programa"
+      >
+        <svg
+          class="cursor-pointer"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="grey"
+          height="20"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+          ></path>
+        </svg>
       </button>
+    </div>
+    <div
+      class="absolute z-50 mt-1 hidden max-h-52 w-full overflow-y-auto rounded-b-lg border border-gray-300 bg-white py-2 capitalize shadow-md md:w-[32rem]"
+      id="resultados-programas"
+    ></div>
+  </div>
+  <button class="rounded-lg h-full bg-indigo-400 px-6 py-3.5 text-sm font-bold text-zinc-50 hover:bg-indigo-500" id="btn-pesquisar-programa" type="button">
+    Buscar programa
+  </button>
+</div>
+
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" id="row-programas">
+    {% for prog in listaProgramas %}
+    <div class="flex flex-col rounded-xl border border-t-8 border-zinc-200 border-t-indigo-400 bg-white/70 px-8 py-6 shadow-shape backdrop-blur-xl">
+      <div class="flex-grow">
+        <span class="text-sm font-bold text-amber-700">{{ prog.area }}</span>
+        <h2 class="text-lg font-bold text-indigo-500">{{ prog.nome }}</h2>
+        <p class="pt-2 text-zinc-700">Nota: {{ prog.nota }}</p>
+      </div>
+      <a
+        href="{{ url_for('principal.controller_ppg.ppgs', id_ppg=prog.id) }}"
+        class="mt-1 self-end inline-block rounded-lg border border-indigo-500 px-6 py-3 text-sm font-bold text-indigo-500 hover:bg-indigo-500 hover:text-zinc-50 text-center"
+      >
+        Gráficos
+      </a>
     </div>
     {% endfor %}
   </div>
 </div>
-{% endblock %} {% block modais %} {% endblock %} {% block scripts %} {% endblock
-%}
+{% endblock %}
+
+{% block modais %}{% endblock %}
+{% block scripts %}
+<script>
+  const listaProg = {{ listaProgramas | tojson | safe }}
+</script>
+<script src="{{ url_for('static', filename='ppg/js/programas.js') | hash_url }}" type="module">
+</script>
+{% endblock %}

@@ -7,15 +7,14 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app
-COPY . /app
 
 # Install requirements
-COPY setup.sh /app/setup.sh
+COPY setup.sh .
 RUN chmod +x setup.sh
 RUN ./setup.sh
 
-
+WORKDIR /app
+COPY . /app
 
 #RUN chmod +x /app/start-gunicorn-frontend.sh
 

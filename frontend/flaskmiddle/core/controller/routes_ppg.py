@@ -15,8 +15,8 @@ sys.path.append(str(diretorio_raiz))
 from frontend.flaskmiddle.core.models.User import Usuario
 from frontend.flaskmiddle.core import login_control
 from frontend.flaskmiddle.config import config
-from protos.out import messages_pb2, usuarios_pb2_grpc, ppg_pb2_grpc
-from protos.out.ppg_pb2_grpc import PPGStub, HomeStub
+from protos.out import messages_pb2, usuarios_pb2_grpc
+from protos.out.ppg_pb2_grpc import HomeStub, PPGStub
 from frontend.flaskmiddle.core.utils import Utils
 
 controller_ppg = Blueprint('controller_ppg', __name__, url_prefix='/ppg')
@@ -97,14 +97,6 @@ def login_post():
 @controller_ppg.get("/login")
 def login_get():
     try:
-        # if 'user' in session:
-        #     return redirect(url_for('principal.controller_ppg.ppg'))
-
-        # imagens = []
-        # path = os.path.dirname(os.path.realpath(__file__))
-        # for arquivo in os.listdir(path+'/../html/assets/img/usuarios'):
-        #     imagens.append(arquivo)
-        
         return render_template('ppg/login_ppg.html')
     except Exception as error:
         print(error)
@@ -152,87 +144,19 @@ def home(stub : HomeStub):
         print(error)
         return render_template('ppg/erro.html')
 
-# @controller_ppg.get("/graficos/<id_ppg>")
-# @Utils.home_stub()
-# @login_required
-# def ppgs(stub : HomeStub, id_ppg=None):
-#     try:
-#         ret = Utils.acessa_endpoint(f"{config.FASTAPI_URL}{config.API_STR}/ppg/geral/info/{id_ppg}")
-#         if ret.status_code == 200:
-#             nome = ret.json()['nome']
-#             sigla_ies = ret.json()['sigla_ies']
-#             info = ret.json()['info']
-#             nota = ret.json()['nota']
-#             siglas = ret.json()['siglas']
-#             url = ret.json()['url']
-#             email = ret.json()['email']
-#             avatar = session['user']['avatar']
-
-#             session['id_ppg'] = id_ppg
-#             session['nota_ppg'] = nota
-
-            
-#             return render_template('ppg/ppg.html',avatar=avatar, nome=nome, sigla_ies=sigla_ies, id_ppg=id_ppg, info=info,nota=nota,siglas=siglas,url=url,email=email)
-#         return ret.json()['detail'], 400
-#     except Exception as e:
-#         return render_template('ppg/erro.html')
-
-# @controller_ppg.get("graficos/indicadores-paralelo-tab/<id>/<anoi>/<anof>")
-# @Utils.ppg_stub()
-# @login_required
-# def indicadores(id, anoi, anof, stub: PPGStub):
-#     print('Iniciando comunicacao com grpc indicadores...')
-#     retorno = {}
-#     if stub:
-#         response = stub.ObtemIndicadores(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
-#         print('ok')
-#         retorno = processa_retorno(response)
-#     return retorno
-
-# @controller_ppg.get("graficos/docentes-paralelo-tab/<id>/<anoi>/<anof>")
-# @Utils.ppg_stub()
-# @login_required
-# def docentes(id, anoi, anof, stub: PPGStub):
-#     print('Iniciando comunicacao com grpc docentes...')
-#     retorno = {}
-#     if stub:
-#         response = stub.ObtemDocentes(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
-#         print('ok')
-#         retorno = processa_retorno(response)
-#     return retorno
-
-# @controller_ppg.get("graficos/bancas-paralelo-tab/<id>/<anoi>/<anof>")
-# @Utils.ppg_stub()
-# @login_required
-# def bancas(id, anoi, anof, stub: PPGStub):
-#     print('Iniciando comunicacao com grpc bancas...')
-#     retorno = {}
-#     if stub:
-#         response = stub.ObtemBancas(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
-#         print('ok')
-#         retorno = processa_retorno(response)
-#     return retorno
-
-# @controller_ppg.get("graficos/egressos-paralelo-tab/<id>/<anoi>/<anof>")
-# @Utils.ppg_stub()
-# @login_required
-# def egressos(id, anoi, anof, stub: PPGStub):
-#     print('Iniciando comunicacao com grpc egressos...')
-#     retorno = {}
-#     if stub:
-#         response = stub.ObtemEgressos(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
-#         print('ok')
-#         retorno = processa_retorno(response)
-#     return retorno
-
-# @controller_ppg.get("graficos/projetos-paralelo-tab/<id>/<anoi>/<anof>")
-# @Utils.ppg_stub()
-# @login_required
-# def projetos(id, anoi, anof, stub: PPGStub):
-#     print('Iniciando comunicacao com grpc projetos...')
-#     retorno = {}
-#     if stub:
-#         response = stub.ObtemProjetos(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
-#         print('ok')
-#         retorno = processa_retorno(response)
-#     return retorno
+@controller_ppg.get("<id_ppg>")
+@Utils.ppg_stub()
+@login_required
+def ppgs(stub : PPGStub, id_ppg=None):
+    try:
+        retorno = {}
+        if stub:
+            response = stub.ObtemInformacaoPPG(messages_pb2.PpgRequest(id=id_ppg))
+            print('ok')
+        retorno = processa_retorno(response)
+        avatar = session['user']['avatar']
+        session['id_ppg'] = id_ppg
+        session['nota_ppg'] = retorno['informacao_ppg']['nota']
+        return render_template('ppg/ppg.html', avatar = avatar, **(retorno['informacao_ppg']))
+    except Exception as e:
+        return render_template('ppg/erro.html')

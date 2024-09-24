@@ -1,5 +1,9 @@
 export const graficosBancasTCCs = () => {
   const gerarGraficos = async (anoInicio, anoFim) => {
+    const carregamento = document.getElementById("carregamento");
+    carregamento.classList.remove("hidden");
+    carregamento.classList.add("flex");
+
     try {
       const response = await axios.get(
         `/ppg/graficos/bancas-tab/${anoInicio}/${anoFim}`,
@@ -19,6 +23,9 @@ export const graficosBancasTCCs = () => {
       exibirParticipantesExternos(bancasExternos);
     } catch (error) {
       console.error("Erro ao buscar dados de bancas-tab: ", error);
+    } finally {
+      carregamento.classList.remove("flex");
+      carregamento.classList.add("hidden");
     }
   };
 
@@ -27,12 +34,24 @@ export const graficosBancasTCCs = () => {
     const quantidadeInternos = document.getElementById("quantidade-internos");
     const quantidadeExternos = document.getElementById("quantidade-externos");
 
+    const mediaInternos =
+      infoBancas.quantidade_bancas > 0
+        ? (
+            infoBancas.quantidade_internos / infoBancas.quantidade_bancas
+          ).toFixed(2)
+        : 0;
+
+    const mediaExternos =
+      infoBancas.quantidade_bancas > 0
+        ? (
+            infoBancas.quantidade_externos / infoBancas.quantidade_bancas
+          ).toFixed(2)
+        : 0;
+
     if (quantidadeBancas)
       quantidadeBancas.innerText = infoBancas.quantidade_bancas;
-    if (quantidadeInternos)
-      quantidadeInternos.innerText = infoBancas.quantidade_internos;
-    if (quantidadeExternos)
-      quantidadeExternos.innerText = infoBancas.quantidade_externos;
+    if (quantidadeInternos) quantidadeInternos.innerText = mediaInternos;
+    if (quantidadeExternos) quantidadeExternos.innerText = mediaExternos;
   };
 
   const exibirGraficoLinhasPesquisa = (data) => {
@@ -159,7 +178,7 @@ export const graficosBancasTCCs = () => {
     } catch {
       // GeraToast(dados.detail);
     }
-  }
+  };
 
   const exibirGraficosLivros = (idCanvas, dados) => {
     try {
@@ -168,7 +187,7 @@ export const graficosBancasTCCs = () => {
     } catch {
       // GeraToast(dados.detail);
     }
-  }
+  };
 
   const exibirGraficoProdutosVinculados = (idCanvas, dados) => {
     try {
@@ -177,11 +196,10 @@ export const graficosBancasTCCs = () => {
   };
 
   const exibirParticipantesExternos = (infoBancas) => {
-    // Remove o gráfico anterior, se existir
     d3.select("#grafico-categoria").select("svg").remove();
 
     let data = {
-      name: "Participações em PPGs",
+      name: "Participa de um PPG?",
       value: infoBancas.participa_ppg["Não"] + infoBancas.participa_ppg["Sim"],
       children: [
         {
@@ -293,12 +311,6 @@ export const graficosBancasTCCs = () => {
     const ctxAreaTitulacao = document
       .getElementById("grafico-area-titulacao")
       .getContext("2d");
-
-    // Destroi gráficos anteriores, se existirem
-    if (window.myGrauAcademicoChart) window.myGrauAcademicoChart.destroy();
-    if (window.myPaisOrigemChart) window.myPaisOrigemChart.destroy();
-    if (window.myPaisTitulacaoChart) window.myPaisTitulacaoChart.destroy();
-    if (window.myAreaTitulacaoChart) window.myAreaTitulacaoChart.destroy();
 
     // Cria novos gráficos
     window.myGrauAcademicoChart = criaGraficoPizza(

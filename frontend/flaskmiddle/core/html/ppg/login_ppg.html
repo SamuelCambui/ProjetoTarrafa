@@ -1,160 +1,306 @@
-<!DOCTYPE html>
+<!doctype html>
 <html data-bs-theme="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>LOGIN - Tarrafa</title>
+    <link
+      type="image/x-icon"
+      href="{{ url_for('static', filename='assets/img/favicon/favicon_tarrafa.ico')}}"
+      rel="shortcut icon"
+    />
+    <link href="/assets/css/output.css" rel="stylesheet" />
+    <link href="https://rsms.me/inter/inter.css" rel="stylesheet" />
+    <link href="/assets/css/Features-Small-Icons-icons.css" rel="stylesheet" />
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <title>LOGIN - Tarrafa</title>
-  <link type="image/x-icon" href="{{ url_for('static', filename='assets/img/favicon/favicon_tarrafa.ico')}}" rel="shortcut icon">
-  <link href="/assets/css/output.css" rel="stylesheet">
-  <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
-  <link href="/assets/css/Features-Small-Icons-icons.css" rel="stylesheet">
-</head>
+  <body>
+    <main class="flex min-h-screen">
+      <div class="hidden bg-pattern bg-cover sm:block md:w-2/4 lg:w-4/6"></div>
+      <div class="w-full bg-zinc-100 p-5 md:p-20 lg:w-2/5">
+        <img class="mt-14 w-56" src="/assets/img/tarrafa/indigo-400.svg" alt />
+        <h1 class="mt-8 text-2xl font-bold text-indigo-950">
+          Acesse o Tarrafa
+        </h1>
+        <p class="mb-12 text-zinc-700">
+          Insira seus detalhes para acessar sua conta
+        </p>
 
-<body>
-  <main class="flex">
-    <div class="bg-pattern bg-cover h-screen w-4/6"></div>
-    <div class="p-20 bg-zinc-100 w-2/5">
-      <img class="w-56 mt-14" src="/assets/img/tarrafa/indigo-400.svg" alt>
-      <h1 class="font-bold text-indigo-950 text-2xl mt-8">Acesse o Tarrafa</h1>
-      <p class="mb-12 text-zinc-700">Insira seus detalhes para acessar sua conta</p>
-
-      {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-      <div class="text-red-700 mb-8">
-        {% for category, message in messages %}
-        <div class="text-sm">{{ message }}</div>
-        {% endfor %}
-      </div>
-      {% endif %}
-      {% endwith %}
-
-
-      <form class="flex flex-col gap-6" method="post">
-        <div class="flex flex-col gap-2">
-          <label class="text-sm text-zinc-700 font-bold" for="username">E-mail do usuário</label>
-          <input name="username" type="email" placeholder="Seu e-mail" required>
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+        <div class="mb-8 text-red-700">
+          {% for category, message in messages %}
+          <div class="text-sm">{{ message }}</div>
+          {% endfor %}
         </div>
+        {% endif %} {% endwith %}
 
-        <div class="flex flex-col gap-2">
-          <label class="text-sm text-zinc-700 font-bold" for="password">Senha do usuário</label>
-          <div class="relative">
-            <input id="password" name="password" type="password" placeholder="Sua senha" required>
-            <button class="absolute inset-y-0 right-0 pr-3 flex items-center" id="mostrar-senha" onclick="mostrarSenha()">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="rgb(51 53 51)" width="25" height="25">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              </svg>
-            </button>
+        <form class="flex flex-col gap-6" method="post">
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-bold text-zinc-700" for="username"
+              >E-mail do usuário</label
+            >
+            <input
+              name="username"
+              type="email"
+              placeholder="Seu e-mail"
+              required
+            />
           </div>
-        </div>
-        <div class="text-start text-sm hover:underline text-indigo-800 pb-4">
-          <a id="esqueceu-senha" data-bs-target="#modalforgotpassword" data-bs-toggle="modal" href="#">
-            Esqueceu a senha?
-          </a>
-        </div>
-        <button class="rounded-lg 
-        text-sm px-6 py-3 mx-auto w-3/6 block bg-indigo-400 hover:bg-indigo-500 text-zinc-50 font-bold" type="submit">Entrar
-        </button>
-      </form>
-  </div></main>
 
-  <!--Modals-->
-  <div class="modal fade hidden" id="modalfirstlogin" role="dialog" tabindex="-1">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 class="text-primary fw-bold m-0">Primeiro acesso</h3>
-          <button class="btn-close" data-bs-dismiss="modal" type="button" aria-label="Close"></button>
-        </div>
-        <!--Conteúdo aqui-->
-        <div class="col-lg-6" style="width: 100%;">
-          <div class="p-5">
-            <form class="user" id="firstAcessForm" autocomplete="off">
-              <div class="input-group mb-2">
-                <input class="form-control" id="CPF" name="CPF" type="text" placeholder="CPF" autocomplete="off" minlength="11" maxlength="11" required>
-              </div>
-              <div class="mb-4">
-                <input class="form-control mb-2" id="IDlattes" name="IDlattes" type="text" placeholder="ID Lattes" autocomplete="off" minlength="16" maxlength="16" required>
-                <div class="input-invalidation" id="first-acess-invalidation"></div>
-                <small>
-                  <a data-toggle="collapse" href="#collapseIDlattes" role="button" aria-expanded="false">Onde
-                    encontrar
-                    o ID do
-                    Lattes?</a>
-                </small>
-              </div>
-              <div class="collapse mb-4" id="collapseIDlattes">
-                <div>
-                  <p>
-                    O ID do seu Lattes é uma sequência numérica encontrada na parte inicial
-                    do seu currículo. É essa sequência que você deve inserir no formulário.
-                  </p>
-                  <p>
-                    No caso da imagem mostrada, o ID Lattes do Professor Renê é: 5262545895128956
-                  </p>
-                </div>
-                <img src="/assets/img/utils/lattes.jpg" alt="exemplo">
-              </div>
-              <button class="btn btn-primary d-block w-100" type="submit">Verificar</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="fixed inset-0 z-50 bg-gray-500 bg-opacity-75 flex items-center justify-center invisible" id="modalEsqueceuSenha">
-    <div class="bg-zinc-100 rounded-lg shadow-lg w-full max-w-lg">
-      <div class="flex justify-between items-center bg-gray-100 p-6 rounded-t-lg">
-        <h2 class="text-xl font-bold text-indigo-900">Recuperar senha</h2>
-        <button class="rounded-full p-2 hover:bg-gray-300" type="button" onclick="fecharModal()">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-      <div class="w-full px-8 pb-8">
-        <div class="mb-4">
-          <p class="text-zinc-700">Informe o e-mail que foi utilizado no cadastro para que possamos enviar um link de
-            recuperação de senha:</p>
-        </div>
-        <form class="user" id="form-esqueceu-senha">
-          <div class="mb-4">
-            <input id="email" name="email" type="email" aria-describedby="emailHelp" placeholder="Seu e-mail" required>
-            <div class="border rounded-lg mt-4 mb-6 hidden" id="esqueceu-senha-resposta-container">
-              <p class="text-sm py-3 px-1 text-center" id="esqueceu-senha-resposta"></p>
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-bold text-zinc-700" for="password"
+              >Senha do usuário</label
+            >
+            <div class="relative">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Sua senha"
+                required
+              />
+              <button
+                type="button"
+                class="absolute inset-y-0 right-0 flex items-center pr-3"
+                id="mostrar-senha"
+                onclick="mostrarSenha()"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="rgb(51 53 51)"
+                  width="25"
+                  height="25"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                  ></path>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  ></path>
+                </svg>
+              </button>
             </div>
           </div>
-          <button class="mx-auto block bg-indigo-400 hover:bg-indigo-500 text-zinc-50 font-bold" id="btn_recuperar_senha" type="submit">Enviar</button>
-          <div class="hidden" id="img-carregamento" role="status">
-            <svg class="mx-auto w-8 h-8 animate-spin text-gray-400 fill-amber-600" aria-hidden="true" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"></path>
-              <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"></path>
-            </svg>
-            <span class="sr-only">Carregando...</span>
+          <div class="pb-4 text-start text-sm text-indigo-800 hover:underline">
+            <a
+              id="esqueceu-senha"
+              data-bs-target="#modalforgotpassword"
+              data-bs-toggle="modal"
+              href="#"
+            >
+              Esqueceu a senha?
+            </a>
           </div>
+          <button
+            class="mx-auto block w-3/5 rounded-lg bg-indigo-400 px-6 py-3 text-sm font-bold text-zinc-50 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0"
+            type="submit"
+          >
+            Entrar
+          </button>
         </form>
       </div>
+    </main>
+
+    <!--Modals-->
+    <div
+      class="modal hidden fade"
+      id="modalfirstlogin"
+      role="dialog"
+      tabindex="-1"
+      aria-modal="true"
+    >
+      <div class="hidden modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="text-primary fw-bold m-0">Primeiro acesso</h3>
+            <button
+              class="btn-close"
+              data-bs-dismiss="modal"
+              type="button"
+              aria-label="Close"
+            ></button>
+          </div>
+          <!--Conteúdo aqui-->
+          <div class="col-lg-6" style="width: 100%">
+            <div class="p-5">
+              <form class="user" id="firstAcessForm" autocomplete="off">
+                <div class="input-group mb-2">
+                  <input
+                    class="form-control"
+                    id="CPF"
+                    name="CPF"
+                    type="text"
+                    placeholder="CPF"
+                    autocomplete="off"
+                    minlength="11"
+                    maxlength="11"
+                    required
+                  />
+                </div>
+                <div class="mb-4">
+                  <input
+                    class="form-control mb-2"
+                    id="IDlattes"
+                    name="IDlattes"
+                    type="text"
+                    placeholder="ID Lattes"
+                    autocomplete="off"
+                    minlength="16"
+                    maxlength="16"
+                    required
+                  />
+                  <div
+                    class="input-invalidation"
+                    id="first-acess-invalidation"
+                  ></div>
+                  <small>
+                    <a
+                      data-toggle="collapse"
+                      href="#collapseIDlattes"
+                      role="button"
+                      aria-expanded="false"
+                      >Onde encontrar o ID do Lattes?</a
+                    >
+                  </small>
+                </div>
+                <div class="collapse mb-4" id="collapseIDlattes">
+                  <div>
+                    <p>
+                      O ID do seu Lattes é uma sequência numérica encontrada na
+                      parte inicial do seu currículo. É essa sequência que você
+                      deve inserir no formulário.
+                    </p>
+                    <p>
+                      No caso da imagem mostrada, o ID Lattes do Professor Renê
+                      é: 5262545895128956
+                    </p>
+                  </div>
+                  <img src="/assets/img/utils/lattes.jpg" alt="exemplo" />
+                </div>
+                <button class="btn btn-primary d-block w-100" type="submit">
+                  Verificar
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <script src="https://unpkg.com/default-passive-events"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <div
+      class="invisible fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75 p-2"
+      id="modal-esqueceu-senha"
+    >
+      <div class="w-full max-w-lg rounded-lg bg-white shadow-lg">
+        <div class="flex items-center justify-between rounded-t-lg p-6">
+          <h2 class="text-xl font-bold text-indigo-900">Recuperar senha</h2>
+          <button
+            class="rounded-full p-2 hover:bg-gray-300"
+            type="button"
+            onclick="fecharModal()"
+          >
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <div class="w-full px-8 pb-8">
+          <div class="mb-4">
+            <p class="text-zinc-700">
+              Informe o e-mail que foi utilizado no cadastro para que possamos
+              enviar um link de recuperação de senha:
+            </p>
+          </div>
+          <form class="user" id="form-esqueceu-senha">
+            <div class="mb-4">
+              <input
+                id="email"
+                name="email"
+                type="email"
+                aria-describedby="emailHelp"
+                placeholder="Seu e-mail"
+                required
+              />
+              <div
+                class="mb-6 mt-4 hidden rounded-lg border"
+                id="esqueceu-senha-resposta-container"
+              >
+                <p
+                  class="px-1 py-3 text-center text-sm"
+                  id="esqueceu-senha-resposta"
+                ></p>
+              </div>
+            </div>
+            <button
+              class="mx-auto block rounded-lg bg-indigo-400 px-6 py-3 font-bold text-zinc-50 hover:bg-indigo-500"
+              id="btn_recuperar_senha"
+              type="submit"
+            >
+              Enviar
+            </button>
+            <div class="hidden" id="img-carregamento" role="status">
+              <svg
+                class="mx-auto h-8 w-8 animate-spin fill-amber-600 text-gray-400"
+                aria-hidden="true"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="currentColor"
+                ></path>
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentFill"
+                ></path>
+              </svg>
+              <span class="sr-only">Carregando...</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
-  <script src="{{ url_for('static', filename='assets/js/theme.js') | hash_url}}"></script>
-  <script>
-    axios.defaults.baseURL = '/';
-  </script>
+    <script src="https://unpkg.com/default-passive-events"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 
-  <script src="{{ url_for('static', filename='assets/js/senha.js') | hash_url}}"></script>
-  <script src="{{ url_for('static', filename='assets/js/modals.js') | hash_url}}"></script>
-  <script src="{{ url_for('static', filename='ppg/js/handlerEsqueceuSenha.js') | hash_url}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/theme.js') | hash_url}}"></script>
+    <script>
+      axios.defaults.baseURL = "/";
+    </script>
 
-</body>
-
+    <script src="{{ url_for('static', filename='assets/js/senha.js') | hash_url}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/modals.js') | hash_url}}"></script>
+    <script src="{{ url_for('static', filename='ppg/js/handlerEsqueceuSenha.js') | hash_url}}"></script>
+  </body>
 </html>

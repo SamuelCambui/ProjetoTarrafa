@@ -1,12 +1,14 @@
+# import sys
+# import os
+
 from flask_login import UserMixin
 from flask import jsonify
-import requests
-from requests import ConnectionError
-from frontend.flaskmiddle.config import config
-from flask import abort
+from config import config
 
-from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2, usuarios_pb2_grpc
-from google.protobuf.json_format import MessageToDict
+# # Adiciona o diretório raiz do projeto ao sys.path
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../..')))
+
+from protos.out import messages_pb2, usuarios_pb2_grpc
 
 import grpc
 

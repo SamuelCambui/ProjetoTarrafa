@@ -1,6 +1,6 @@
 {% extends 'ppg/base.html' %} {% block title %}Usuários dos Sistema{% endblock
 %} {% block content %}
-<div class="mx-auto max-w-screen-2xl px-4 py-6 lg:px-16">
+<div class="mx-auto max-w-screen-2xl">
   <div>
     <h1 class="pb-8 text-2xl font-extrabold text-indigo-500">
       Lista de usuários do sistema
@@ -29,27 +29,31 @@
           <p class="font-bold">Aviso</p>
           <p class="text-sm">{{msg}}</p>
         </div>
-        <button class="ml-4 flex items-center" id="btn-fechar">
+        <button class="rounded-full p-2" type="button" id="btn-fechar-msg">
           <svg
-            class="h-6 w-6 fill-current text-gray-200"
-            role="button"
+            class="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
           >
-            <title>Fechar</title>
             <path
-              d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
             ></path>
           </svg>
+          <title>Fechar</title>
         </button>
       </div>
     </div>
     {% endfor -%} {% endif %} {% endwith %}
 
     <div>
-      <div class="flex justify-between">
+      <div class="flex flex-wrap justify-between gap-4">
         <form class="flex-1" id="editar">
-          <div class="relative max-w-full md:max-w-lg">
+          <div class="relative min-w-40 md:max-w-lg">
             <div
               class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-zinc-500"
             >
@@ -70,7 +74,7 @@
             </div>
             <input
               class="w-full pl-12"
-              id="search-users"
+              id="buscar-usuario"
               type="text"
               placeholder="Nome, ID Lattes ou E-mail"
             />
@@ -79,10 +83,27 @@
         {% if current_user.is_admin != false or current_user.is_superuser !=
         false %}
         <button
-          class="bg-indigo-400 text-zinc-50 shadow-sm hover:bg-indigo-500"
-          id="novoUsuario"
+          class="flex items-center gap-2 rounded-lg bg-indigo-400 px-6 py-3 text-sm font-bold text-zinc-50 hover:bg-indigo-500"
+          id="btn-novo-usuario"
         >
-          <i class="fas fa-user-plus fa-sm"></i> Novo usuário
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-user-round-plus"
+          >
+            <path d="M2 21a8 8 0 0 1 13.292-6" />
+            <circle cx="10" cy="8" r="5" />
+            <path d="M19 16v6" />
+            <path d="M22 19h-6" />
+          </svg>
+          Novo usuário
         </button>
         {% endif %}
       </div>
@@ -136,16 +157,16 @@
                 {{user.logado}}
               </td>
               <td>
-                <button
+                <a
                   class="acoes text-amber-700 hover:text-amber-800"
                   id="btn-alterar-senha"
-                  type="button"
+                  role="button"
                   title="Alterar senha"
                   aria-label="Alterar senha"
                   onclick="alterarSenha('{{user.idlattes}}', {{'true' if current_user.is_superuser else 'false'}}, {{'true' if current_user.is_admin else 'false'}})"
                 >
                   Alterar senha
-                </button>
+                </a>
               </td>
             </tr>
 
@@ -199,7 +220,7 @@
                   type="button"
                   title="Editar"
                   aria-label="Editar"
-                  onclick="getUser('{{user.idlattes}}', {{'true' if current_user.is_superuser else 'false'}}, {{'true' if current_user.is_admin else 'false'}})"
+                  onclick="obterUsuario('{{user.idlattes}}', {{'true' if current_user.is_superuser else 'false'}}, {{'true' if current_user.is_admin else 'false'}})"
                 >
                   <i class="fas fa-edit fa-beat" aria-hidden="true"></i>
                 </button>
@@ -224,9 +245,6 @@
                   <i class="fas fa-trash" aria-hidden="true"></i>
                 </button>
                 {% endif %}
-                <!-- <button type="button" class="acoes px-1 text-amber-700 hover:text-amber-800" title="Mais" aria-label="Mais">
-              <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
-            </button> -->
               </td>
             </tr>
             {% endif %} {% endfor %}
@@ -248,29 +266,29 @@
       </div>
     </div>
     {% endblock %} {% block modais %}
+
     <!-- Modal Novo Usuário -->
     <div
-      class="relative z-10"
+      class="relative z-50"
       role="dialog"
       aria-labelledby="modal-title"
       aria-modal="true"
     >
       <div
         class="fixed inset-0 hidden bg-gray-500 bg-opacity-75 transition-opacity"
-        id="modalNovoUsuario"
+        id="modal-novo-user"
         aria-hidden="true"
       ></div>
       <!-- Modal Container -->
       <div
         class="fixed inset-0 z-40 mx-auto hidden w-full max-w-md overflow-y-auto"
-        id="modalContainerNovoUsuario"
+        id="conteudo-novo-user"
       >
         <div
-          class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+          class="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0"
         >
           <div
-            class="relative translate-y-4 transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:translate-y-0"
-            id="modalPanelNovoUsuario"
+            class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:translate-y-0"
           >
             <!-- Modal Header -->
             <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
@@ -325,37 +343,76 @@
               <div id="superuserForm">
                 {% if current_user.is_superuser %}
                 <div class="mb-3 flex flex-col gap-2">
-                  <label for="selectPerfil">Tipo do perfil:</label>
-                  <select class="form-select" id="selectPerfil">
-                    <option>Dono</option>
-                    <option>Administrador</option>
-                    <option selected="">Usuário comum</option>
-                  </select>
+                  <label for="tipo-perfil">Tipo do perfil:</label>
+                  <div class="relative inline-block">
+                    <select
+                      id="tipo-perfil"
+                      class="block w-full appearance-none rounded-md border border-gray-300 py-2 pl-3 pr-10 focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
+                    >
+                      <option>Dono</option>
+                      <option>Administrador</option>
+                      <option selected="">Usuário comum</option>
+                    </select>
+                    <svg
+                      class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 transform"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="m7 15 5 5 5-5"></path>
+                      <path d="m7 9 5-5 5 5"></path>
+                    </svg>
+                  </div>
                 </div>
                 <div class="mb-3 flex flex-col gap-2">
-                  <label for="idIes">ID IES</label>
-                  <select class="form-select" id="idIes">
-                    {{html | safe}}
-                  </select>
+                  <label for="id-ies">ID IES</label>
+                  <div class="relative">
+                    <select
+                      id="id-ies"
+                      class="block w-full appearance-none rounded-md border border-gray-300 py-2 pl-3 pr-10 focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
+                    >
+                      {{html | safe}}
+                    </select>
+                    <svg
+                      class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 transform"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="m7 15 5 5 5-5"></path>
+                      <path d="m7 9 5-5 5 5"></path>
+                    </svg>
+                  </div>
                 </div>
+
                 {% endif %}
               </div>
             </form>
-            <div id="cadastrarAlert"></div>
-
             <!-- Modal Footer -->
             <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
               <button
-                class="inline-flex w-full justify-center bg-indigo-400 text-sm text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
-                id="cadastrarBtn"
+                class="inline-flex w-full justify-center rounded-lg bg-indigo-400 px-6 py-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
+                id="btn-cadastrar"
                 type="submit"
                 form="cadastrar"
               >
                 Cadastrar
               </button>
               <button
-                class="mt-3 inline-flex w-full justify-center border border-gray-300 bg-white text-sm text-zinc-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto"
-                id="cancelaNovoUser"
+                class="mt-3 inline-flex w-full justify-center rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-bold text-zinc-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto"
+                id="btn-cancela-novo-user"
                 type="button"
               >
                 Cancelar
@@ -368,88 +425,94 @@
 
     <!-- Modal confirma exclusão -->
     <div
-      class="fixed inset-0 hidden bg-gray-500 bg-opacity-75 opacity-0 transition-opacity"
-      id="modalConfirmacao"
-      aria-hidden="true"
-    ></div>
-    <div
-      class="fixed inset-0 z-40 mx-auto hidden w-full max-w-md overflow-y-auto opacity-0"
-      id="modalContainerExluirUsuario"
+      class="relative z-50"
+      role="dialog"
+      aria-labelledby="modal-title"
+      aria-modal="true"
     >
       <div
-        class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+        class="fixed inset-0 hidden translate-y-0 bg-gray-500 bg-opacity-75 opacity-100 transition-opacity"
+        id="modal-exclui-user"
+        aria-hidden="true"
+      ></div>
+
+      <div
+        class="fixed inset-0 z-40 mx-auto hidden w-full max-w-md overflow-y-auto opacity-100"
+        id="conteudo-exclui-user"
       >
         <div
-          class="relative translate-y-4 transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:translate-y-0"
+          class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:translate-y-0"
         >
-          <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-            <div class="sm:flex sm:items-start">
-              <div
-                class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
-              >
-                <svg
-                  class="h-6 w-6 text-red-700"
-                  aria-hidden="true"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
+          <div class="">
+            <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
+                <div
+                  class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                  ></path>
-                </svg>
-              </div>
-              <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                <h2
-                  class="text-lg font-semibold leading-6 text-zinc-900"
-                  id="modal-title"
-                >
-                  Alerta de Exclusão
-                </h2>
-                <div class="mt-2">
-                  <p class="text-zinc-700" id="msg-exclusao"></p>
+                  <svg
+                    class="h-6 w-6 text-red-700"
+                    aria-hidden="true"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                  <h2
+                    class="text-lg font-semibold leading-6 text-zinc-900"
+                    id="modal-title"
+                  >
+                    Alerta de Exclusão
+                  </h2>
+                  <div class="mt-2">
+                    <p class="text-zinc-700" id="msg-exclusao"></p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-            <button
-              class="inline-flex w-full justify-center bg-red-500 text-white hover:bg-red-700 sm:ml-3 sm:w-auto"
-              id="bt-excluir-usuario"
-              type="button"
-            >
-              Excluir
-            </button>
-            <button
-              class="mt-3 inline-flex w-full justify-center bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-              id="btn-cancela-exclusao"
-              type="button"
-            >
-              Cancelar
-            </button>
+            <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+              <button
+                class="inline-flex w-full justify-center rounded-lg bg-red-500 px-6 py-3 text-sm font-bold text-white hover:bg-red-700 sm:ml-3 sm:w-auto"
+                id="btn-excluir-user"
+                type="button"
+              >
+                Excluir
+              </button>
+              <button
+                class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-6 py-3 text-sm font-bold text-gray-900 ring-1 ring-inset sm:mt-0 sm:w-auto"
+                id="btn-cancela-exclusao-user"
+                type="button"
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modal alterar senha -->
+    <!-- Modal editar senha -->
     <div
-      class="relative z-10"
+      class="relative z-50"
       role="dialog"
       aria-labelledby="modal-title"
       aria-modal="true"
     >
       <div
         class="fixed inset-0 hidden bg-gray-500 bg-opacity-75 opacity-0 transition-opacity"
-        id="modalAlterarSenha"
+        id="modal-editar-senha-user"
         aria-hidden="true"
       ></div>
       <div
         class="fixed inset-0 z-40 mx-auto hidden w-full max-w-md overflow-y-auto opacity-0 transition-opacity duration-300 ease-out"
-        id="modalPanel"
+        id="conteudo-editar-senha-user"
       >
         <div
           class="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0"
@@ -479,7 +542,9 @@
                     <circle cx="10" cy="8" r="5"></circle>
                   </svg>
                 </div>
-                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                <div
+                  class="mt-3 w-full text-center sm:ml-4 sm:mt-0 sm:text-left"
+                >
                   <h2
                     class="text-lg font-semibold leading-6 text-zinc-900"
                     id="modal-title"
@@ -488,22 +553,9 @@
                   </h2>
                   <div class="mt-2">
                     <form id="alterarSenha">
-                      <input
-                        class="form-control"
-                        id="alterarSenhaIdLattes"
-                        type="hidden"
-                        disabled
-                      />
-                      <input
-                        class="form-control"
-                        id="alterarSenhaFullName"
-                        type="hidden"
-                      />
-                      <input
-                        class="form-control"
-                        id="alterarSenhaEmail"
-                        type="hidden"
-                      />
+                      <input id="alterarSenhaIdLattes" type="hidden" disabled />
+                      <input id="alterarSenhaFullName" type="hidden" />
+                      <input id="alterarSenhaEmail" type="hidden" />
                       <div class="mb-3 flex flex-col gap-3">
                         <label for="alterarSenhaPassword"
                           >Inserir nova senha:</label
@@ -513,14 +565,14 @@
                             id="alterarSenhaPassword"
                             name="password"
                             type="password"
-                            placeholder="Sua senha"
+                            placeholder="Nova senha"
                             required
                           />
                           <button
                             class="absolute inset-y-0 right-0 flex items-center pr-3"
-                            id="mostrar-senha"
+                            id="senha-usuario"
                             type="button"
-                            onclick="mostrarSenha()"
+                            onclick="mostrarSenhaId('alterarSenhaPassword')"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -544,7 +596,6 @@
                             </svg>
                           </button>
                         </div>
-                        <div id="alterarSenhaAlert"></div>
                       </div>
                     </form>
                   </div>
@@ -552,16 +603,16 @@
               </div>
               <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
-                  class="inline-flex w-full justify-center bg-indigo-400 text-zinc-50 hover:bg-indigo-500 sm:ml-3 sm:w-auto"
-                  id="btn-alteracao-senha"
+                  class="inline-flex w-full justify-center rounded-lg bg-indigo-400 px-6 py-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
+                  id="btn-edita-senha-user"
                   type="submit"
                   form="alterarSenha"
                 >
                   Salvar
                 </button>
                 <button
-                  class="mt-3 inline-flex w-full justify-center bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                  id="btn-cancela-alteracao"
+                  class="mt-3 inline-flex w-full justify-center rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-bold text-zinc-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto"
+                  id="btn-cancela-edicao-senha-user"
                   type="button"
                 >
                   Cancelar
@@ -575,25 +626,25 @@
 
     <!-- Modal Editar usuário -->
     <div
-      class="relative z-10"
+      class="relative z-50"
       role="dialog"
       aria-labelledby="modal-title"
       aria-modal="true"
     >
       <div
         class="fixed inset-0 hidden bg-gray-500 bg-opacity-75 transition-opacity"
-        id="modalEditarUsuario"
+        id="modal-editar-user"
         aria-hidden="true"
       ></div>
       <div
         class="fixed inset-0 z-40 mx-auto hidden w-full max-w-xl overflow-y-auto"
-        id="modalPanelEditar"
+        id="conteudo-editar-user"
       >
         <div
-          class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+          class="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0"
         >
           <div
-            class="relative translate-y-4 transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:translate-y-0"
+            class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:translate-y-0"
           >
             <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               <div class="sm:flex sm:items-start">
@@ -657,23 +708,22 @@
                         >
                         <input
                           class="peer sr-only"
-                          id="checkbox-password"
+                          id="checkbox-senha"
                           type="checkbox"
                           checked
                         />
                         <div
                           class="peer relative h-6 w-11 rounded-full bg-gray-300 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-indigo-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rtl:peer-checked:after:-translate-x-full"
-                          id="checkbox-password"
+                          id="checkbox-senha"
                         ></div>
                         <span class="ms-3 text-sm font-medium text-zinc-700"
                           >Sim</span
                         >
                       </label>
                     </div>
-
                     <div class="relative w-full">
                       <input
-                        id="password"
+                        id="editar-senha"
                         name="password"
                         type="password"
                         placeholder="Nova senha"
@@ -683,7 +733,7 @@
                         class="absolute inset-y-0 right-0 flex items-center pr-3"
                         id="mostrar-senha"
                         type="button"
-                        onclick="mostrarSenha()"
+                        onclick="mostrarSenhaId('editar-senha')"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -709,22 +759,61 @@
                     </div>
                   </div>
                   {% endif %}
-
                   <div id="superuserEditForm">
                     {% if current_user.is_superuser %}
-                    <div class="mb-3 flex flex-col gap-3">
-                      <label for="editarSelectPerfil">Tipo do perfil:</label>
-                      <select id="editarSelectPerfil">
-                        <option>Dono</option>
-                        <option>Administrador</option>
-                        <option>Usuário comum</option>
-                      </select>
+                    <div class="mb-3 flex flex-col gap-2">
+                      <label for="tipo-perfil">Tipo de Perfil</label>
+                      <div class="relative">
+                        <select
+                          id="editar-tipo-perfil"
+                          class="block w-full appearance-none rounded-md border border-gray-300 py-2 pl-3 pr-10 focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
+                        >
+                          <option>Dono</option>
+                          <option>Administrador</option>
+                          <option>Usuário comum</option>
+                        </select>
+                        <svg
+                          class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 transform"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="m7 15 5 5 5-5"></path>
+                          <path d="m7 9 5-5 5 5"></path>
+                        </svg>
+                      </div>
                     </div>
-                    <div class="mb-3 flex flex-col gap-3">
-                      <label for="editarIdIes">ID IES:</label>
-                      <select id="editarIdIes">
-                        {{html | safe}}
-                      </select>
+                    <div class="mb-3 flex flex-col gap-2">
+                      <label for="editar-id-ies">ID IES</label>
+                      <div class="relative">
+                        <select
+                          id="editar-id-ies"
+                          class="block w-full appearance-none rounded-md border border-gray-300 py-2 pl-3 pr-10 focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-500"
+                        >
+                          {{html | safe}}
+                        </select>
+                        <svg
+                          class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 transform"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="m7 15 5 5 5-5"></path>
+                          <path d="m7 9 5-5 5 5"></path>
+                        </svg>
+                      </div>
                     </div>
                     {% endif %}
                   </div>
@@ -734,7 +823,7 @@
             </div>
             <div class="px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
               <button
-                class="inline-flex w-full justify-center bg-indigo-400 text-zinc-50 hover:bg-indigo-500 sm:ml-3 sm:w-auto"
+                class="inline-flex w-full justify-center rounded-lg bg-indigo-400 px-6 py-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
                 id="btn-edita-user"
                 type="submit"
                 form="editar"
@@ -742,8 +831,8 @@
                 Salvar
               </button>
               <button
-                class="mt-3 inline-flex w-full justify-center bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                id="btn-cancela-user"
+                class="mt-3 inline-flex w-full justify-center rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-bold text-zinc-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto"
+                id="btn-cancela-edicao-user"
                 type="button"
               >
                 Cancelar
@@ -754,7 +843,7 @@
       </div>
     </div>
     {% endblock %} {% block scripts %}
-    <script src="{{ url_for('static', filename='ppg/js/scriptsusuarios.js') | hash_url}}"></script>
+    <script src="{{ url_for('static', filename='ppg/js/scriptsUsuarios.js') | hash_url}}"></script>
     <script src="{{ url_for('static', filename='assets/js/senha.js') | hash_url}}"></script>
     {% endblock %}
   </div>

@@ -1,207 +1,159 @@
 import trie from "./utils/trie.js";
 import { ordenaTabela } from "./utils/ordenaTabela.js";
-// import { filtrarResultadosPesquisa, renderizarItensPesquisa } from "./utils/autocomplete.js";
-// TODO: Limpar pesquisa toda vez que entra na página; Ajustar a busca específica
+import { filtrarResultadosPesquisa, renderizarItensPesquisa } from "./utils/autocomplete.js";
 
-const btnPesquisarDocente = document.getElementById("btn-pesquisar-docente");
-const selecionarIes = document.getElementById("select-docentes-ies");
+const inputDocente = document.querySelector("#input-busca-docente");
+const resultadosDocentes = document.querySelector("#resultados-busca");
+const btnPesquisarDocente = document.querySelector("#btn-pesquisar-docente");
+const selecionarIes = document.querySelector("#select-docentes-ies");
+const buttonLimparBusca = document.querySelector("#btn-limpar");
 
-console.log(selecionarIes)
-
+// Cria opções para o select de IES
 const criarOpcaoSIES = (ies) => {
   ies.forEach((iesItem) => {
-    const opcao = document.createElement('option');
+    const opcao = document.createElement("option");
     opcao.text = iesItem;
     opcao.value = iesItem;
     selecionarIes.appendChild(opcao);
   });
-}
+};
 
+// Inicializa a lista de IES e insere nomes no trie
 (() => {
-  let ies = new Set()
-
-  Object.values(listaRanking).forEach(dado => {
+  let ies = new Set();
+  Object.values(listaRanking).forEach((dado) => {
     trie.inserirPalavra(dado.nome.toLowerCase());
-    ies.add(dado.ies.toLowerCase())
+    ies.add(dado.ies.toLowerCase());
   });
 
-  criarOpcaoSIES(ies)
-})()
+  criarOpcaoSIES(ies);
+})();
 
+// Filtra docentes com base na seleção de IES e nomes buscados
 const filtrarDocentes = (ies, nomes) => {
-  // Check if ies is "Todas as universidades..." and nomes is defined
-  if (ies === "Todas as universidades..." && nomes && nomes.length > 0) {
-    return Object.values(listaRanking).filter(docente =>
-      nomes.includes(docente['nome'].toLowerCase())
+  if (ies === "Todas as universidades..." && nomes) {
+    return Object.values(listaRanking).filter((docente) =>
+      nomes.includes(docente.nome.toLowerCase())
     );
   }
 
-  // Check if ies is not "Todas as universidades..." and nomes is not defined
   if (ies !== "Todas as universidades..." && !nomes) {
-    return Object.values(listaRanking).filter(docente =>
-      docente['ies'].toLowerCase() === ies.toLowerCase() // Added .toLowerCase() for consistent case comparison
+    return Object.values(listaRanking).filter(
+      (docente) => docente.ies.toLowerCase() === ies
     );
   }
 
-  // Check if ies is not "Todas as universidades..." and nomes is defined
-  if (ies !== "Todas as universidades..." && nomes && nomes.length > 0) {
-    return Object.values(listaRanking).filter(docente =>
-      nomes.includes(docente['nome'].toLowerCase()) &&
-      docente['ies'].toLowerCase() === ies.toLowerCase() // Added .toLowerCase() for consistent case comparison
+  if (ies !== "Todas as universidades..." && nomes) {
+    return Object.values(listaRanking).filter(
+      (docente) =>
+        nomes.includes(docente.nome.toLowerCase()) &&
+        docente.ies.toLowerCase() === ies
     );
   }
 
-  // Default case: return all docentes
   return Object.values(listaRanking);
-}
+};
 
+// Exibe a tabela atualizada com os resultados filtrados
 const exibirTabelaResultadosAtualizados = (dados) => {
   const table = document.getElementById("tabela-docentes");
   table.innerHTML = "";
 
   let html = `
-  <table id="tabela-docentes" class="w-full table-auto">
-  <thead>
-    <tr class="border-y-2 border-y-gray-300">
-      <th class="font-semibold text-left py-3.5 px-3 cursor-pointer" scope="col" data-sort="id">
-        #
-        <button class="px-1"><span> &#9650; </span></button>
-      </th>
-      <th class="font-semibold text-left py-3.5 px-3 cursor-pointer" scope="col" data-sort="docente">
-        Docente
-        <button class="px-1"><span> </span></button>
-      </th>
-      <th class="font-semibold text-left py-3.5 px-3 cursor-pointer" scope="col" data-sort="artigos">
-        Art. Periódicos
-        <button class="px-1"><span> </span></button>
-      </th>
-      <th class="font-semibold text-left py-3.5 px-3" scope="col" data-sort="eventos">
-        Art. Eventos
-        <button class="px-1"><span> </span></button>
-      </th>
-      <th class="font-semibold text-left py-3.5 px-3" scope="col" data-sort="livros">
-        Livros
-        <button class="px-1"><span> </span></button>
-      </th>
-      <th class="font-semibold text-left py-3.5 px-3" scope="col" data-sort="capitulos">
-        Cap. Livros
-        <button class="px-1"><span> </span></button>
-      </th>
-    </tr>
-  </thead>
-        <tbody id="tbody-lista-profs">`;
+      <table class="table-auto w-full text-black table-hover text-sm">
+      <thead>
+        <tr class="border-y-2 border-y-gray-300">
+          <th class="cursor-pointer px-3 py-3.5 text-left font-semibold desc" data-sort="index">
+            #
+            <button class="px-1"><span> &#x25b4; </span></button> 
+          </th>
+          <th class="cursor-pointer px-3 py-3.5 text-left font-semibold" data-sort="nome">
+            Docente
+            <button class="px-1"><span> </span></button>
+          </th>
+          <th class="cursor-pointer px-3 py-3.5 text-left font-semibold" data-sort="artigos">
+            # Art. Periódicos
+            <button class="px-1"><span> </span></button>
+          </th>
+          <th class="cursor-pointer px-3 py-3.5 text-left font-semibold" data-sort="eventos">
+            # Art. Eventos
+            <button class="px-1"><span> </span></button>
+          </th>
+          <th class="cursor-pointer px-3 py-3.5 text-left font-semibold" data-sort="livros">
+            # Livros
+            <button class="px-1"><span> </span></button>
+          </th>
+          <th class="cursor-pointer px-3 py-3.5 text-left font-semibold" data-sort="capitulos">
+            # Cap. Livros
+            <button class="px-1"><span> </span></button>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="tbody-lista-profs">`;
 
   dados.forEach((prof, index) => {
     html += `
-      <tr class="border-b border-b-gray-300" onclick="">
-        <td class="py-3.5 px-3">
-          ${index + 1}
-        </td>
-        <td class="py-3.5 px-3">
-        <div class="flex items-center gap-4">
-          <div>
-            <img class="w-11 h-11 rounded-full"
-              id="avatar-usuario"
-              src="${prof.avatar}"
-              decoding="async"
-              loading="lazy" />
-          </div>
-                    <div >
-          <span class="capitalize font-medium"> ${prof.nome.toLowerCase()}</span>
-          <br>Tipo de vínculo com ${prof.sigla_ies_vinculo}:
-            ${prof.vinculo_ies}
-          <br>Nome da IES de Origem:
-          <span class="capitalize font-medium"> ${prof.ies.toLowerCase()}</span>
-                    </div>
-
+      <tr class="border-b border-gray-300 hover:bg-gray-100 cursor-pointer">
+        <td class="px-3 py-3.5 text-zinc-700">${index + 1}</td>
+        <td class="px-3 py-3.5 text-zinc-700">
+          <div class="flex items-center gap-4">
+            <img class="h-10 w-10 rounded-full" src="${prof.avatar}" alt="${prof.nome}" decoding="async" loading="lazy" />
+            <div>
+              <span class="font-medium capitalize">${prof.nome.toLowerCase()}</span>
+              <br />
+              Tipo de vínculo com ${prof.sigla_ies_vinculo}: ${prof.vinculo_ies}
+              <br />
+              <span class="font-medium capitalize"> Nome da IES de Origem:${prof.ies.toLowerCase()}</span>
+            </div>
           </div>
         </td>
-        <td class="text-zinc-700 py-3.5 px-3">
-          ${prof.produtos['ARTIGO-PUBLICADO'] || 0}
-        </td>
-        <td class="text-zinc-700 py-3.5 px-3">
-          ${prof.produtos['TRABALHO-EM-EVENTOS'] || 0}
-        </td>
-        <td class="text-zinc-700 py-3.5 px-3">
-          ${prof.produtos['LIVROS-PUBLICADOS-OU-ORGANIZADOS'] || 0}
-        </td>
-        <td class="text-zinc-700 py-3.5 px-3">
-          ${prof.produtos['CAPITULOS-DE-LIVROS-PUBLICADOS'] || 0}
-        </td>
+        <td class="px-3 py-3.5 text-zinc-700">${prof.produtos["ARTIGO-PUBLICADO"] || 0}</td>
+        <td class="px-3 py-3.5 text-zinc-700">${prof.produtos["TRABALHO-EM-EVENTOS"] || 0}</td>
+        <td class="px-3 py-3.5 text-zinc-700">${prof.produtos["LIVROS-PUBLICADOS-OU-ORGANIZADOS"] || 0}</td>
+        <td class="px-3 py-3.5 text-zinc-700">${prof.produtos["CAPITULOS-DE-LIVROS-PUBLICADOS"] || 0}</td>
       </tr>`;
   });
 
   html += `
         </tbody>
       </table>
-    </div>
-  </div>`;
+    </div>`;
 
   table.innerHTML = html;
   ordenaTabela();
-
 };
 
-// * Busca
-const inputBusca = document.getElementById("input-busca-docente");
-const resultadosBusca = document.getElementById("resultados-busca");
-
-const mostrarResultados = (nomes) => {
-  resultadosBusca.innerHTML = "";
-
-  nomes.forEach((nome) => {
-    const itemResultado = document.createElement("div");
-    itemResultado.classList.add(
-      "cursor-pointer",
-      "hover:bg-gray-300",
-      "text-zinc-700",
-      "px-8",
-      "py-2"
-    );
-    itemResultado.textContent = nome;
-
-    itemResultado.addEventListener("click", () => {
-      inputBusca.value = nome
-      resultadosBusca.style.display = "none";
-    });
-
-    resultadosBusca.appendChild(itemResultado);
-  });
-
-  resultadosBusca.style.display = nomes.length ? "block" : "none";
-
-};
-
-let nomesFiltrados = [];
-const buscarNome = () => {
-  const nome = inputBusca.value.trim().toLowerCase();
-
-  if (nome.length > 0) {
-    buttonLimparBusca.style.display = "block";
-    nomesFiltrados = trie.autocomplete(nome);
-    mostrarResultados(nomesFiltrados);
-    return;
+// Eventos
+inputDocente.addEventListener("input", () => {
+  if (inputDocente.value.length > 0) {
+    buttonLimparBusca.classList.remove("hidden");
+    const nomes = filtrarResultadosPesquisa(inputDocente, trie);
+    renderizarItensPesquisa(nomes, resultadosDocentes, inputDocente);
+  } else {
+    buttonLimparBusca.classList.add("hidden");
+    resultadosDocentes.classList.add("hidden");
   }
-  resultadosBusca.style.display = "none";
-  buttonLimparBusca.style.display = "none";
-};
-
-inputBusca.addEventListener("input", buscarNome);
-
-//* Btn limpar busca
-const buttonLimparBusca = document.getElementById("btn-limpar");
-buttonLimparBusca.addEventListener("click", () => {
-  inputBusca.value = "";
-  buttonLimparBusca.style.display = "none";
-  resultadosBusca.style.display = "none";
-  nomesFiltrados = [];
 });
 
-//* Btn busca docente
+document.addEventListener("click", (e) => {
+  if (e.target !== inputDocente) {
+    resultadosDocentes.classList.add("hidden");
+  }
+});
+
 btnPesquisarDocente.addEventListener("click", () => {
-  const dadosFiltrados = filtrarDocentes(selecionarIes.value, nomesFiltrados);
-  exibirTabelaResultadosAtualizados(dadosFiltrados);
-  resultadosBusca.style.display = "none";
+  const nomes = filtrarResultadosPesquisa(inputDocente, trie);
+  const listaDocentesFiltrada = filtrarDocentes(selecionarIes.value, nomes);
+  exibirTabelaResultadosAtualizados(listaDocentesFiltrada);
 });
 
+buttonLimparBusca.addEventListener("click", () => {
+  inputDocente.value = "";
+  buttonLimparBusca.classList.add("hidden");
+  const listaDocentesFiltrada = filtrarDocentes(selecionarIes.value);
+  exibirTabelaResultadosAtualizados(listaDocentesFiltrada);
+  debugger
+});
+
+// Inicializa a tabela
 ordenaTabela();

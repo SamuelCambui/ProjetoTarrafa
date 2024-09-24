@@ -43,9 +43,3 @@ const manipularEmail = () => {
     respostaEsqueceuSenha.textContent = "";
   });
 }
-
-document.addEventListener("click", (e) => {
-  if (!inputBusca.contains(e.target)) {
-    resultadosBusca.style.display = "none";
-  }
-});
