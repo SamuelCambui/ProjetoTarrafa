@@ -86,16 +86,20 @@ class UsuarioResponse(_message.Message):
     def __init__(self, idlattes: _Optional[str] = ..., email: _Optional[str] = ..., full_name: _Optional[str] = ..., is_superuser: bool = ..., is_admin: bool = ..., id_ies: _Optional[str] = ...) -> None: ...
 
 class PPGLSRequest(_message.Message):
-    __slots__ = ("id_ies", "id", "anoi", "anof")
+    __slots__ = ("id_disc", "id_ies", "id_curso", "id_grade", "anoi", "anof")
+    ID_DISC_FIELD_NUMBER: _ClassVar[int]
     ID_IES_FIELD_NUMBER: _ClassVar[int]
-    ID_FIELD_NUMBER: _ClassVar[int]
+    ID_CURSO_FIELD_NUMBER: _ClassVar[int]
+    ID_GRADE_FIELD_NUMBER: _ClassVar[int]
     ANOI_FIELD_NUMBER: _ClassVar[int]
     ANOF_FIELD_NUMBER: _ClassVar[int]
+    id_disc: str
     id_ies: str
-    id: str
+    id_curso: str
+    id_grade: str
     anoi: int
     anof: int
-    def __init__(self, id_ies: _Optional[str] = ..., id: _Optional[str] = ..., anoi: _Optional[int] = ..., anof: _Optional[int] = ...) -> None: ...
+    def __init__(self, id_disc: _Optional[str] = ..., id_ies: _Optional[str] = ..., id_curso: _Optional[str] = ..., id_grade: _Optional[str] = ..., anoi: _Optional[int] = ..., anof: _Optional[int] = ...) -> None: ...
 
 class PPGLSJson(_message.Message):
     __slots__ = ("nome", "json")

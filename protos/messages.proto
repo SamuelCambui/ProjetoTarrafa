@@ -52,10 +52,12 @@ message UsuarioResponse {
 }
 
 message PPGLSRequest{
-  optional string id_ies = 1;
-  string id = 2;
-  optional int32 anoi = 3;
-  optional int32 anof = 4;
+  optional string id_disc = 1;
+  optional string id_ies = 2;
+  optional string id_curso = 3;
+  optional string id_grade = 4;
+  optional int32 anoi = 5;
+  optional int32 anof = 6;
 }
 
 message PPGLSJson{

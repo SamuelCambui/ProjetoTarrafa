@@ -1,5 +1,6 @@
 import requests
 from flask import session
+from protos.out.ppgls_pb2_grpc import IndicadoresPosGraduacaoLSStub, DadosPosGraduacaoLSStub, DadosFormularioPosGraduacaoLSStub
 from config import config
 from functools import wraps, update_wrapper
 import grpc
@@ -65,6 +66,16 @@ class Utils:
             return wrapper
         return decorator
     
- 
+    @staticmethod
+    def dados_ppgls_stub(*args):
+        return Utils.grpc_stub(stub=DadosPosGraduacaoLSStub, url=config.GRPC_SERVER_PPGLS)
+    
+    @staticmethod
+    def indicadores_ppgls_stub(*args):
+        return Utils.grpc_stub(stub=IndicadoresPosGraduacaoLSStub, url=config.GRPC_SERVER_PPGLS)
+    
+    @staticmethod
+    def dados_formulario_ppgls_stub(*args):
+        return Utils.grpc_stub(stub=DadosFormularioPosGraduacaoLSStub, url=config.GRPC_SERVER_PPGLS)
 
     

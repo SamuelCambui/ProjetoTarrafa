@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0emessages.proto\x12\x06protos\"4\n\nPpgRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04\x61noi\x18\x02 \x01(\x05\x12\x0c\n\x04\x61nof\x18\x03 \x01(\x05\"%\n\x07PpgJson\x12\x0c\n\x04nome\x18\x01 \x01(\t\x12\x0c\n\x04json\x18\x02 \x01(\t\",\n\x0bPpgResponse\x12\x1d\n\x04item\x18\x01 \x03(\x0b\x32\x0f.protos.PpgJson\"!\n\rLogoutRequest\x12\x10\n\x08username\x18\x01 \x01(\t\" \n\x0eLogoutResponse\x12\x0e\n\x06logout\x18\x01 \x01(\x08\"2\n\x0cLoginRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\x9b\x01\n\rLoginResponse\x12\x13\n\x06\x61vatar\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x11\n\x04nome\x18\x02 \x01(\tH\x01\x88\x01\x01\x12\x12\n\x05\x65mail\x18\x03 \x01(\tH\x02\x88\x01\x01\x12\x15\n\x08idlattes\x18\x04 \x01(\tH\x03\x88\x01\x01\x12\x0c\n\x04\x65rro\x18\x05 \x01(\x08\x42\t\n\x07_avatarB\x07\n\x05_nomeB\x08\n\x06_emailB\x0b\n\t_idlattes\"\"\n\x0eUsuarioRequest\x12\x10\n\x08username\x18\x01 \x01(\t\"}\n\x0fUsuarioResponse\x12\x10\n\x08idlattes\x18\x01 \x01(\t\x12\r\n\x05\x65mail\x18\x02 \x01(\t\x12\x11\n\tfull_name\x18\x03 \x01(\t\x12\x14\n\x0cis_superuser\x18\x04 \x01(\x08\x12\x10\n\x08is_admin\x18\x05 \x01(\x08\x12\x0e\n\x06id_ies\x18\x06 \x01(\t\"r\n\x0cPPGLSRequest\x12\x13\n\x06id_ies\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\n\n\x02id\x18\x02 \x01(\t\x12\x11\n\x04\x61noi\x18\x03 \x01(\x05H\x01\x88\x01\x01\x12\x11\n\x04\x61nof\x18\x04 \x01(\x05H\x02\x88\x01\x01\x42\t\n\x07_id_iesB\x07\n\x05_anoiB\x07\n\x05_anof\"C\n\tPPGLSJson\x12\x11\n\x04nome\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x11\n\x04json\x18\x02 \x01(\tH\x01\x88\x01\x01\x42\x07\n\x05_nomeB\x07\n\x05_json\"0\n\rPPGLSResponse\x12\x1f\n\x04item\x18\x01 \x03(\x0b\x32\x11.protos.PPGLSJson\"9\n\x1b\x46ormularioSerchPPGLSRequest\x12\x0c\n\x04masp\x18\x01 \x01(\x05\x12\x0c\n\x04tipo\x18\x02 \x01(\x05\"L\n\x1c\x46ormularioIndicadoresRequest\x12\x17\n\x0fnome_formulario\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x61ta_inicio\x18\x02 \x01(\t\"C\n\x16\x46ormularioPPGLSRequest\x12)\n\x04item\x18\x01 \x03(\x0b\x32\x1b.protos.FormularioPPGLSJson\"M\n\x13\x46ormularioPPGLSJson\x12\x11\n\x04nome\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x11\n\x04json\x18\x02 \x01(\tH\x01\x88\x01\x01\x42\x07\n\x05_nomeB\x07\n\x05_json\"D\n\x17\x46ormularioPPGLSResponse\x12)\n\x04item\x18\x01 \x03(\x0b\x32\x1b.protos.FormularioPPGLSJsonb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0emessages.proto\x12\x06protos\"4\n\nPpgRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04\x61noi\x18\x02 \x01(\x05\x12\x0c\n\x04\x61nof\x18\x03 \x01(\x05\"%\n\x07PpgJson\x12\x0c\n\x04nome\x18\x01 \x01(\t\x12\x0c\n\x04json\x18\x02 \x01(\t\",\n\x0bPpgResponse\x12\x1d\n\x04item\x18\x01 \x03(\x0b\x32\x0f.protos.PpgJson\"!\n\rLogoutRequest\x12\x10\n\x08username\x18\x01 \x01(\t\" \n\x0eLogoutResponse\x12\x0e\n\x06logout\x18\x01 \x01(\x08\"2\n\x0cLoginRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\x9b\x01\n\rLoginResponse\x12\x13\n\x06\x61vatar\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x11\n\x04nome\x18\x02 \x01(\tH\x01\x88\x01\x01\x12\x12\n\x05\x65mail\x18\x03 \x01(\tH\x02\x88\x01\x01\x12\x15\n\x08idlattes\x18\x04 \x01(\tH\x03\x88\x01\x01\x12\x0c\n\x04\x65rro\x18\x05 \x01(\x08\x42\t\n\x07_avatarB\x07\n\x05_nomeB\x08\n\x06_emailB\x0b\n\t_idlattes\"\"\n\x0eUsuarioRequest\x12\x10\n\x08username\x18\x01 \x01(\t\"}\n\x0fUsuarioResponse\x12\x10\n\x08idlattes\x18\x01 \x01(\t\x12\r\n\x05\x65mail\x18\x02 \x01(\t\x12\x11\n\tfull_name\x18\x03 \x01(\t\x12\x14\n\x0cis_superuser\x18\x04 \x01(\x08\x12\x10\n\x08is_admin\x18\x05 \x01(\x08\x12\x0e\n\x06id_ies\x18\x06 \x01(\t\"\xd0\x01\n\x0cPPGLSRequest\x12\x14\n\x07id_disc\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x13\n\x06id_ies\x18\x02 \x01(\tH\x01\x88\x01\x01\x12\x15\n\x08id_curso\x18\x03 \x01(\tH\x02\x88\x01\x01\x12\x15\n\x08id_grade\x18\x04 \x01(\tH\x03\x88\x01\x01\x12\x11\n\x04\x61noi\x18\x05 \x01(\x05H\x04\x88\x01\x01\x12\x11\n\x04\x61nof\x18\x06 \x01(\x05H\x05\x88\x01\x01\x42\n\n\x08_id_discB\t\n\x07_id_iesB\x0b\n\t_id_cursoB\x0b\n\t_id_gradeB\x07\n\x05_anoiB\x07\n\x05_anof\"C\n\tPPGLSJson\x12\x11\n\x04nome\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x11\n\x04json\x18\x02 \x01(\tH\x01\x88\x01\x01\x42\x07\n\x05_nomeB\x07\n\x05_json\"0\n\rPPGLSResponse\x12\x1f\n\x04item\x18\x01 \x03(\x0b\x32\x11.protos.PPGLSJson\"9\n\x1b\x46ormularioSerchPPGLSRequest\x12\x0c\n\x04masp\x18\x01 \x01(\x05\x12\x0c\n\x04tipo\x18\x02 \x01(\x05\"L\n\x1c\x46ormularioIndicadoresRequest\x12\x17\n\x0fnome_formulario\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x61ta_inicio\x18\x02 \x01(\t\"C\n\x16\x46ormularioPPGLSRequest\x12)\n\x04item\x18\x01 \x03(\x0b\x32\x1b.protos.FormularioPPGLSJson\"M\n\x13\x46ormularioPPGLSJson\x12\x11\n\x04nome\x18\x01 \x01(\tH\x00\x88\x01\x01\x12\x11\n\x04json\x18\x02 \x01(\tH\x01\x88\x01\x01\x42\x07\n\x05_nomeB\x07\n\x05_json\"D\n\x17\x46ormularioPPGLSResponse\x12)\n\x04item\x18\x01 \x03(\x0b\x32\x1b.protos.FormularioPPGLSJsonb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -39,20 +39,20 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_USUARIOREQUEST']._serialized_end=478
   _globals['_USUARIORESPONSE']._serialized_start=480
   _globals['_USUARIORESPONSE']._serialized_end=605
-  _globals['_PPGLSREQUEST']._serialized_start=607
-  _globals['_PPGLSREQUEST']._serialized_end=721
-  _globals['_PPGLSJSON']._serialized_start=723
-  _globals['_PPGLSJSON']._serialized_end=790
-  _globals['_PPGLSRESPONSE']._serialized_start=792
-  _globals['_PPGLSRESPONSE']._serialized_end=840
-  _globals['_FORMULARIOSERCHPPGLSREQUEST']._serialized_start=842
-  _globals['_FORMULARIOSERCHPPGLSREQUEST']._serialized_end=899
-  _globals['_FORMULARIOINDICADORESREQUEST']._serialized_start=901
-  _globals['_FORMULARIOINDICADORESREQUEST']._serialized_end=977
-  _globals['_FORMULARIOPPGLSREQUEST']._serialized_start=979
-  _globals['_FORMULARIOPPGLSREQUEST']._serialized_end=1046
-  _globals['_FORMULARIOPPGLSJSON']._serialized_start=1048
-  _globals['_FORMULARIOPPGLSJSON']._serialized_end=1125
-  _globals['_FORMULARIOPPGLSRESPONSE']._serialized_start=1127
-  _globals['_FORMULARIOPPGLSRESPONSE']._serialized_end=1195
+  _globals['_PPGLSREQUEST']._serialized_start=608
+  _globals['_PPGLSREQUEST']._serialized_end=816
+  _globals['_PPGLSJSON']._serialized_start=818
+  _globals['_PPGLSJSON']._serialized_end=885
+  _globals['_PPGLSRESPONSE']._serialized_start=887
+  _globals['_PPGLSRESPONSE']._serialized_end=935
+  _globals['_FORMULARIOSERCHPPGLSREQUEST']._serialized_start=937
+  _globals['_FORMULARIOSERCHPPGLSREQUEST']._serialized_end=994
+  _globals['_FORMULARIOINDICADORESREQUEST']._serialized_start=996
+  _globals['_FORMULARIOINDICADORESREQUEST']._serialized_end=1072
+  _globals['_FORMULARIOPPGLSREQUEST']._serialized_start=1074
+  _globals['_FORMULARIOPPGLSREQUEST']._serialized_end=1141
+  _globals['_FORMULARIOPPGLSJSON']._serialized_start=1143
+  _globals['_FORMULARIOPPGLSJSON']._serialized_end=1220
+  _globals['_FORMULARIOPPGLSRESPONSE']._serialized_start=1222
+  _globals['_FORMULARIOPPGLSRESPONSE']._serialized_end=1290
 # @@protoc_insertion_point(module_scope)

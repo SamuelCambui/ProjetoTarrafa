@@ -1,4 +1,4 @@
-from backend.db.db import DBConnectorGRAD
+from backend.db.db import DBConnectorGRAD, DBConnectorGRADForm
 from backend.core.utils import tratamento_excecao_com_db
 import json
 import datetime
@@ -28,8 +28,8 @@ class QueriesPPGLS():
             return False
         return True
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
-    def busca_professor_coordenador_ppgls(self, masp: int, tipo: int, db: DBConnectorGRAD = None):
+    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
+    def busca_professor_coordenador_ppgls(self, masp: int, tipo: int, db: DBConnectorGRADForm = None):
         """
         Retorna os dados de um professor específico
 
@@ -65,8 +65,8 @@ class QueriesPPGLS():
             print(f"Erro ao executar busca_professor_coordenador_ppgls: {e}")
             raise
 
-    @tratamento_excecao_com_db(tipo_banco='grad')   
-    def inserir_formulario_ppgls(self, db: DBConnectorGRAD = None, **kwargs):
+    @tratamento_excecao_com_db(tipo_banco='grad_formularios')   
+    def inserir_formulario_ppgls(self, db: DBConnectorGRADForm = None, **kwargs):
         print("Conteúdo de kwargs da query:", kwargs)
 
         itens = kwargs.get('item', [])
@@ -267,8 +267,8 @@ class QueriesPPGLS():
     
 
     
-    @tratamento_excecao_com_db(tipo_banco='grad')
-    def alterar_formulario_ppgls(self, db: DBConnectorGRAD = None, **kwargs):
+    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
+    def alterar_formulario_ppgls(self, db: DBConnectorGRADForm = None, **kwargs):
        
         print("Conteúdo de kwargs da query:", kwargs)
 
@@ -417,8 +417,8 @@ class QueriesPPGLS():
 
         return True
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
-    def buscar_formulario_ppgls(self, nome_formulario:str , data_inicio:str, db: DBConnectorGRAD = None):
+    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
+    def buscar_formulario_ppgls(self, nome_formulario:str , data_inicio:str, db: DBConnectorGRADForm = None):
         
 
         if not nome_formulario or not data_inicio:
@@ -490,8 +490,8 @@ class QueriesPPGLS():
         return resultado
 
     
-    @tratamento_excecao_com_db(tipo_banco='grad')
-    def excluir_formulario_ppgls(self, nome_formulario:str , data_inicio:str, db: DBConnectorGRAD = None):    
+    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
+    def excluir_formulario_ppgls(self, nome_formulario:str , data_inicio:str, db: DBConnectorGRADForm = None):    
         if not nome_formulario or not data_inicio:
             raise ValueError("Os parâmetros 'nome_formulario' e 'data_inicio' são obrigatórios.")
 

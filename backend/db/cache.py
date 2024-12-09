@@ -17,8 +17,13 @@ def cache_grpc(response_type):
       def wrapper(self, request, context: ServicerContext):
          redis = RedisConnector()
 
+         if hasattr(request, 'id_disciplina') and request.id_disciplina:
+            cache_key = f"{func.__name__}_disciplina_{request.id_disciplina}_{request.anoi}_{request.anof}"
+         elif hasattr(request, 'id_curso') and request.id_curso:
+            cache_key = f"{func.__name__}_curso_{request.id_curso}_{request.anoi}_{request.anof}"
+         
          # Criar uma chave única para o cache
-         cache_key = f"{func.__name__}_{request.id}_{request.anoi}_{request.anof}"
+         # cache_key = f"{func.__name__}_{request.id}_{request.anoi}_{request.anof}"
 
          print(cache_key)
          universidade = request.id_ies

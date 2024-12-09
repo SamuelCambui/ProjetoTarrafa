@@ -30,6 +30,8 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str= os.getenv('POSTGRES_PASSWORD')
     POSTGRES_HOST_2: str= os.getenv('POSTGRES_HOST_2')
     POSTGRES_DB_2: str= os.getenv('POSTGRES_DB_2')
+    #POSTGRES_DB_GRAD: str = os.getenv('POSTGRES_DB_GRAD')
+    POSTGRES_DB_GRAD_FORM: str = os.getenv('POSTGRES_DB_GRAD_FORM')
     POSTGRES_DB_GRAD: str = os.getenv('POSTGRES_DB_GRAD')
     POSTGRES_PORT: str = os.getenv('POSTGRES_PORT')
     

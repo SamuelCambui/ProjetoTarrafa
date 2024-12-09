@@ -64,6 +64,11 @@ class IndicadoresPosGraduacaoLSStub(object):
                 request_serializer=messages__pb2.PPGLSRequest.SerializeToString,
                 response_deserializer=messages__pb2.PPGLSResponse.FromString,
                 _registered_method=True)
+        self.GetIndicadoresGlobais = channel.unary_unary(
+                '/protos.IndicadoresPosGraduacaoLS/GetIndicadoresGlobais',
+                request_serializer=messages__pb2.PPGLSRequest.SerializeToString,
+                response_deserializer=messages__pb2.PPGLSResponse.FromString,
+                _registered_method=True)
 
 
 class IndicadoresPosGraduacaoLSServicer(object):
@@ -85,7 +90,9 @@ class IndicadoresPosGraduacaoLSServicer(object):
         """
         Retorna dados para compor os indicadores da aba de disciplinas.\n
         Parâmetros:
-        id(string) - Código do curso.\n
+        id_ies(string) - Código da Instituição. \
+        id_disciplina(string) - Código do curso.\n
+        id_curso(string) - Código do curso.\n
         anoi(int) - Ano Inicial.\n
         anof(int) - Ano Final.\n
         """
@@ -97,7 +104,9 @@ class IndicadoresPosGraduacaoLSServicer(object):
         """
         Retorna dados para compor os indicadores da aba de regressos.\n
         Parâmetros:
-        id(string) - Código do curso.\n
+        id_ies(string) - Código da Instituição. \
+        id_disciplina(string) - Código do curso.\n
+        id_curso(string) - Código do curso.\n
         anoi(int) - Ano Inicial.\n
         anof(int) - Ano Final.\n
         """
@@ -129,6 +138,12 @@ class IndicadoresPosGraduacaoLSServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetIndicadoresGlobais(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_IndicadoresPosGraduacaoLSServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -154,6 +169,11 @@ def add_IndicadoresPosGraduacaoLSServicer_to_server(servicer, server):
             ),
             'GetIndicadoresDisciplina': grpc.unary_unary_rpc_method_handler(
                     servicer.GetIndicadoresDisciplina,
+                    request_deserializer=messages__pb2.PPGLSRequest.FromString,
+                    response_serializer=messages__pb2.PPGLSResponse.SerializeToString,
+            ),
+            'GetIndicadoresGlobais': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetIndicadoresGlobais,
                     request_deserializer=messages__pb2.PPGLSRequest.FromString,
                     response_serializer=messages__pb2.PPGLSResponse.SerializeToString,
             ),
@@ -291,6 +311,33 @@ class IndicadoresPosGraduacaoLS(object):
             request,
             target,
             '/protos.IndicadoresPosGraduacaoLS/GetIndicadoresDisciplina',
+            messages__pb2.PPGLSRequest.SerializeToString,
+            messages__pb2.PPGLSResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetIndicadoresGlobais(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.IndicadoresPosGraduacaoLS/GetIndicadoresGlobais',
             messages__pb2.PPGLSRequest.SerializeToString,
             messages__pb2.PPGLSResponse.FromString,
             options,

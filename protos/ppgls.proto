@@ -17,7 +17,9 @@ service IndicadoresPosGraduacaoLS {
     /*  
         Retorna dados para compor os indicadores da aba de disciplinas.\n
         Parâmetros:
-            id(string) - Código do curso.\n
+            id_ies(string) - Código da Instituição. \
+            id_disciplina(string) - Código do curso.\n
+            id_curso(string) - Código do curso.\n
             anoi(int) - Ano Inicial.\n
             anof(int) - Ano Final.\n
     */
@@ -26,7 +28,9 @@ service IndicadoresPosGraduacaoLS {
     /*  
         Retorna dados para compor os indicadores da aba de regressos.\n
         Parâmetros:
-            id(string) - Código do curso.\n
+            id_ies(string) - Código da Instituição. \
+            id_disciplina(string) - Código do curso.\n
+            id_curso(string) - Código do curso.\n
             anoi(int) - Ano Inicial.\n
             anof(int) - Ano Final.\n
     */
@@ -49,6 +53,8 @@ service IndicadoresPosGraduacaoLS {
             anof(int) - Ano Final.\n
     */
     rpc GetIndicadoresDisciplina (PPGLSRequest) returns (PPGLSResponse);
+
+    rpc GetIndicadoresGlobais (PPGLSRequest) returns (PPGLSResponse);
 
 }
 

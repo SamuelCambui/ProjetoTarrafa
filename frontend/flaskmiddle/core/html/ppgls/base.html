@@ -10,7 +10,7 @@
 
     <title>{% block title %}{% endblock %} - Sistema Tarrafa</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='assets/img/favicon/favicon_tarrafa.ico')}}" type="image/x-icon">
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/bootstrap/css/bootstrap.min.css') | hash_url }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/Nunito.css') | hash_url }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/fonts/fontawesome-all.min.css') | hash_url }}">
@@ -40,7 +40,11 @@
 </head>
 
 <body id="page-top">
-    <div id="wrapper" style="display: none;">
+
+    <!--div id="fixedDiv">
+        <span style="font-family: Nunito, sans-serif; padding-left: 50px;">Versão Beta</span>
+    </div-->
+    <div id="wrapper">
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
 
@@ -51,25 +55,23 @@
                         <h6 style="color:#93a3d2;padding-top: 7px;">{{nome | upper}}</h6>
                         <ul class="navbar-nav ml-auto">
                             <!--li class="nav-item m-auto">
-                                <select id="list-programs" class="form-select" onChange="selecionaPPG(this);"></select>
+                                <select id="list-programs" class="form-select" onChange="selectPPG(this);"></select>
                             </li-->
                             <div class="d-none d-sm-block topbar-divider"></div>
                             <li class="nav-item m-auto">
                                 <div class="dropdown no-arrow">
                                     <a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown"
                                         href="#">
-                                        <span class="d-none d-lg-inline me-2 text-gray-600 small"
-                                            id="nome-usuario">{{current_user.full_name}}</span>
-                                        <img class="border rounded-circle img-profile" id="avatar-usuario"
-                                            src="{{avatar}}" decoding="async" loading="lazy" />
+                                        <!-- <span class="d-none d-lg-inline me-2 text-gray-600 small"
+                                            id="nome-usuario">{{current_user.full_name}}</span> -->
+                                        <!-- <img class="border rounded-circle img-profile" id="avatar-usuario"
+                                            src="{{avatar}}" decoding="async" loading="lazy" /> -->
                                     </a>
                                     <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in">
                                         <div id="menu">
                                             <a class="dropdown-item" href="#" onclick="selectIndex(this)"><i
                                                     class="fa fa-home fa-sm fa-fw me-2 text-gray-400"></i> Início</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="{{url_for('principal.controller_ppg.usuarios')}}"><i
-                                                    class="fas fa-users-cog fa-sm fa-fw me-2 text-gray-400"></i>Usuários</a>
                                             {% if current_user.is_superuser %}
                                             <a class="dropdown-item" href="logs.html"><i
                                                     class="fas fa-clock fa-sm fa-fw me-2 text-gray-400"></i>Logs</a>
@@ -79,9 +81,6 @@
 
                                         </div>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="{{url_for('principal.controller_ppg.logout')}}"
-                                            id="logout"><i
-                                                class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i> Logout</a>
                                     </div>
                                 </div>
                             </li>
@@ -142,7 +141,7 @@
         axios.defaults.baseURL = '{{config.FRONTEND_HOST}}';
     </script>
 
-<script src="{{ url_for('static', filename='ppg/js/utils/helpers.js') | hash_url}}"></script>
+    <script src="{{ url_for('static', filename='assets/js/functions.js') | hash_url}}"></script>
 
     <!-- aqui ficam os scripts de cada página -->
     {% block scripts %}{% endblock %}

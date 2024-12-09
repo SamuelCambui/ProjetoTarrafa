@@ -14,7 +14,7 @@ def tarefa_tarefa_buscar_registros_formulario_ppgls(masp : int, tipo : int):
 
     Parâmetros:
         masp(int): Código MASP do professor.
-        tipo(int): 1 = coordenado, 2 = professor.
+        tipo(int): 2 = coordenador, 1 = professor.
     """
     # Log de entrada na função e parâmetros recebidos
     print(f"Entrando em tarefa_tarefa_buscar_registros_formulario_ppgls com masp={masp} e tipo={tipo}")

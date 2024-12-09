@@ -95,4 +95,3 @@ def aula_autentica():
         return {'resposta': 'erro', 'motivo': 'formato de requisicao incorreto'}
     except Exception as e:
         return {'resposta': 'falha', 'motivo': str(e)}
-    
