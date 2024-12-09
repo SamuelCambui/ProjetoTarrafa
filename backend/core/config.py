@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str= os.getenv('POSTGRES_PASSWORD')
     POSTGRES_HOST_2: str= os.getenv('POSTGRES_HOST_2')
     POSTGRES_DB_2: str= os.getenv('POSTGRES_DB_2')
+    #POSTGRES_DB_GRAD: str = os.getenv('POSTGRES_DB_GRAD')
+    POSTGRES_DB_GRAD_FORM: str = os.getenv('POSTGRES_DB_GRAD_FORM')
     POSTGRES_DB_GRAD: str = os.getenv('POSTGRES_DB_GRAD')
     POSTGRES_PORT: str = os.getenv('POSTGRES_PORT')
     
@@ -43,6 +45,7 @@ class Settings(BaseSettings):
     RABBITMQ_DEFAULT_PASS=os.getenv('RABBITMQ_DEFAULT_PASS', "guest")
 
     GRPC_SERVER_HOST=os.getenv('GRPC_SERVER_HOST', "localhost")
+    GRPC_SERVER_PPGLS = os.getenv('GRPC_SERVER_PPGLS', "localhost:50054")
     
     FILA_TAREFAS_CRITICAS = os.getenv('FILA_TAREFAS_CRITICAS', 'tarefas_criticas')
     FILA_TAREFAS_CURRICULOS = os.getenv('FILA_TAREFAS_CURRICULOS', 'tarefas_curriculos')

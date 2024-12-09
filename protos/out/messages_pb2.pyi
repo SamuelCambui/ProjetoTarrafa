@@ -94,3 +94,69 @@ class UsuarioResponse(_message.Message):
     is_admin: bool
     id_ies: str
     def __init__(self, idlattes: _Optional[str] = ..., email: _Optional[str] = ..., full_name: _Optional[str] = ..., is_superuser: bool = ..., is_admin: bool = ..., id_ies: _Optional[str] = ...) -> None: ...
+
+class PPGLSRequest(_message.Message):
+    __slots__ = ("id_disc", "id_ies", "id_curso", "id_grade", "anoi", "anof")
+    ID_DISC_FIELD_NUMBER: _ClassVar[int]
+    ID_IES_FIELD_NUMBER: _ClassVar[int]
+    ID_CURSO_FIELD_NUMBER: _ClassVar[int]
+    ID_GRADE_FIELD_NUMBER: _ClassVar[int]
+    ANOI_FIELD_NUMBER: _ClassVar[int]
+    ANOF_FIELD_NUMBER: _ClassVar[int]
+    id_disc: str
+    id_ies: str
+    id_curso: str
+    id_grade: str
+    anoi: int
+    anof: int
+    def __init__(self, id_disc: _Optional[str] = ..., id_ies: _Optional[str] = ..., id_curso: _Optional[str] = ..., id_grade: _Optional[str] = ..., anoi: _Optional[int] = ..., anof: _Optional[int] = ...) -> None: ...
+
+class PPGLSJson(_message.Message):
+    __slots__ = ("nome", "json")
+    NOME_FIELD_NUMBER: _ClassVar[int]
+    JSON_FIELD_NUMBER: _ClassVar[int]
+    nome: str
+    json: str
+    def __init__(self, nome: _Optional[str] = ..., json: _Optional[str] = ...) -> None: ...
+
+class PPGLSResponse(_message.Message):
+    __slots__ = ("item",)
+    ITEM_FIELD_NUMBER: _ClassVar[int]
+    item: _containers.RepeatedCompositeFieldContainer[PPGLSJson]
+    def __init__(self, item: _Optional[_Iterable[_Union[PPGLSJson, _Mapping]]] = ...) -> None: ...
+
+class FormularioSerchPPGLSRequest(_message.Message):
+    __slots__ = ("masp", "tipo")
+    MASP_FIELD_NUMBER: _ClassVar[int]
+    TIPO_FIELD_NUMBER: _ClassVar[int]
+    masp: int
+    tipo: int
+    def __init__(self, masp: _Optional[int] = ..., tipo: _Optional[int] = ...) -> None: ...
+
+class FormularioIndicadoresRequest(_message.Message):
+    __slots__ = ("nome_formulario", "data_inicio")
+    NOME_FORMULARIO_FIELD_NUMBER: _ClassVar[int]
+    DATA_INICIO_FIELD_NUMBER: _ClassVar[int]
+    nome_formulario: str
+    data_inicio: str
+    def __init__(self, nome_formulario: _Optional[str] = ..., data_inicio: _Optional[str] = ...) -> None: ...
+
+class FormularioPPGLSRequest(_message.Message):
+    __slots__ = ("item",)
+    ITEM_FIELD_NUMBER: _ClassVar[int]
+    item: _containers.RepeatedCompositeFieldContainer[FormularioPPGLSJson]
+    def __init__(self, item: _Optional[_Iterable[_Union[FormularioPPGLSJson, _Mapping]]] = ...) -> None: ...
+
+class FormularioPPGLSJson(_message.Message):
+    __slots__ = ("nome", "json")
+    NOME_FIELD_NUMBER: _ClassVar[int]
+    JSON_FIELD_NUMBER: _ClassVar[int]
+    nome: str
+    json: str
+    def __init__(self, nome: _Optional[str] = ..., json: _Optional[str] = ...) -> None: ...
+
+class FormularioPPGLSResponse(_message.Message):
+    __slots__ = ("item",)
+    ITEM_FIELD_NUMBER: _ClassVar[int]
+    item: _containers.RepeatedCompositeFieldContainer[FormularioPPGLSJson]
+    def __init__(self, item: _Optional[_Iterable[_Union[FormularioPPGLSJson, _Mapping]]] = ...) -> None: ...

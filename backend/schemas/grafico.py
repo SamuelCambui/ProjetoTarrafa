@@ -16,3 +16,15 @@ class Grafico(BaseModel):
     def to_dict(self) -> dict:
         return json.loads(json.dumps(self, default=lambda o: o.__dict__))
 
+""" -----------GRAFICO DE BARRAS---------------
+class DataSet():
+    label: Optional[str] = ''     #Titulo                   
+    data: Optional[list[float]] = []  #dados media  
+
+class DadosGrafico():
+    labels: Optional[list[str]] = [] #ano_semestre
+    datasets: Optional[list[DataSet]] = []
+
+class Grafico():
+    data: Optional[DadosGrafico] = []
+"""

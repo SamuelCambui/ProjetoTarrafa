@@ -10,40 +10,47 @@ from backend.core import utils
 from backend.worker import crud
 from backend.core.config import settings
 
-def cache_grpc(func):
-   @wraps(func)
-   def wrapper(self, request, context: ServicerContext):
-      redis = RedisConnector()
 
-      # Criar uma chave única para o cache
-      cache_key = f"{func.__name__}_" + "_".join(str(value) for _, value in request.ListFields())
+def cache_grpc(response_type):
+   def decorator(func):
+      @wraps(func)
+      def wrapper(self, request, context: ServicerContext):
+         redis = RedisConnector()
+         
+         cache_key = f"{func.__name__}_" + "_".join(str(value) for _, value in request.ListFields())
 
-      print(cache_key)
-      universidade = request.id_ies
+         print(cache_key)
+         universidade = request.id_ies
+        
+         
+         try:
+            cached_result = redis.existsField(universidade, cache_key)
+            if cached_result:
+               print('Cache hit')
+               res = redis.getField(universidade, cache_key)
+               return ParseDict(res, response_type())
+         except Exception as e:
+            print(f"Error retrieving from cache: {e}")
+
+         # Chamar a função original
+         result = func(self, request, context)
+
+         try:
+            # Salvar o resultado no cache
+            redis.setField(universidade, cache_key, MessageToDict(result))
+            print('Cache set')
+         except Exception as e:
+            print(f"Error setting cache: {e}")
+
+         return result
+      return wrapper
+   return decorator
+
+
+def cache_grpc_ppgls(*args):
+   return cache_grpc(messages_pb2.PPGLSResponse)
    
-      try:
-         # Tentar obter o resultado do cache
-         cached_result = redis.existsField(universidade, cache_key)
-         if cached_result:
-            print('Cache hit')
-            res = redis.getField(universidade, cache_key)
-            return ParseDict(res, messages_pb2.PpgResponse())
-      except Exception as e:
-         print(f"Error retrieving from cache: {e}")
-
-      # Chamar a função original
-      result = func(self, request, context)
-
-      try:
-         # Salvar o resultado no cache
-         redis.setField(universidade, cache_key, MessageToDict(result))
-         print('Cache set')
-      except Exception as e:
-         print(f"Error setting cache: {e}")
-
-      return result
-   return wrapper
-
+   
 
 def cache_redis_sync(func):
    @wraps(func)

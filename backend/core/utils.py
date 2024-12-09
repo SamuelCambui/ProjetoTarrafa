@@ -1,10 +1,11 @@
-from typing import Any, Dict
-from backend.db.db import DBConnector
+from typing import Any, Dict, Literal
+from backend.db.db import DBConnector,DBConnectorGRAD, DBConnectorGRADForm
 from backend.db.db import DBConnectorPPG
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 import smtplib
+from functools import wraps
 import os
 
 from backend.core.config import settings
@@ -153,24 +154,6 @@ async def get_grafo_name(path):
         list_grafo_name = split_path[7:9]
     return " ".join(list_grafo_name).title()
 
-def tratamento_excecao_com_db(func):
-    def wrapper(*args, **kwargs):
-        try:
-            if 'db' not in kwargs or kwargs['db'] is None:
-                db = DBConnectorPPG()
-                kwargs['db'] = db
-            else:
-                db = kwargs['db']
-            return func(*args, **kwargs)
-        except Exception as error:
-            nome_funcao = func.__name__
-            print(f"A exceção foi gerada na função: {nome_funcao}")
-            print(f"Erro: {str(error)}")
-            raise error
-        finally:
-            db.close()
-    return wrapper
-
 def tratamento_excecao(func):
     def wrapper(*args, **kwargs):
         try:
@@ -182,8 +165,28 @@ def tratamento_excecao(func):
             raise error
     return wrapper
 
-#* Fazer gerador stub -> Arquivo separado
-# def grpc_stub_dependency(classe):
-#     with grpc.insecure_channel(SERVER_ADDRESS) as channel:
-#         stub = UserServiceStub(channel)
-#         yield stub
+def tratamento_excecao_com_db(tipo_banco : Literal['ppg'] | Literal['grad']= 'ppg'):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                if 'db' not in kwargs:
+                    if tipo_banco == 'grad':
+                        db = DBConnectorGRAD()
+                    elif tipo_banco == 'grad_formularios':
+                        db = DBConnectorGRADForm()
+                    else:
+                        db = DBConnectorPPG()
+                    kwargs['db'] = db
+                else:
+                    db = kwargs['db']
+                return func(*args, **kwargs)
+            except Exception as error:
+                nome_funcao = func.__name__
+                print(f"A exceção foi gerada na função: {nome_funcao}")
+                print(f"Erro: {str(error)}")
+                raise error
+            finally:
+                db.close()
+        return wrapper
+    return decorator
