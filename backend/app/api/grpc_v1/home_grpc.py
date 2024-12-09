@@ -13,7 +13,7 @@ class Home(ppg_pb2_grpc.HomeServicer):
     def ObtemHome(self, request, context):
         print('ObtemHome chamada...')
         try:
-            id_ies = request.id
+            id_ies = request.id_ies
             print("Parametros: ", id_ies)
             
             tarefas = task_home.agrupar_tarefas_home(id_ies)

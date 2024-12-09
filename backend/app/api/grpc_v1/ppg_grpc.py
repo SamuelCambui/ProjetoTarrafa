@@ -15,7 +15,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
     def ObtemInformacaoPPG(self, request, context):
         print('ObtemInformacaoPPG chamada...')
         try:
-            id = request.id
+            id = request.id_ppg
             # anoi = request.anoi
             # anof = request.anof
             print("Parametros: ", id)
@@ -40,16 +40,17 @@ class PPG(ppg_pb2_grpc.PPGServicer):
         except Exception as e:
             print(e)
             return None
-    @cache_grpc
+    # @cache_grpc
     def ObtemIndicadores(self, request, context):
         print('ObtemIndicadores chamada...')
         try:
-            id = request.id
+            id = request.id_ppg
             anoi = request.anoi
             anof = request.anof
+            nota = request.nota
             print("Parametros: ", id, anoi, anof)
             
-            tarefas = task_indicadores.agrupar_tarefas_indicadores(id, anoi, anof)
+            tarefas = task_indicadores.agrupar_tarefas_indicadores(id, anoi, anof, nota)
 
             print('Agrupando e disparando tarefas...')
             
@@ -67,14 +68,14 @@ class PPG(ppg_pb2_grpc.PPGServicer):
 
             return ppg_response
         except Exception as e:
-            print(e)
+            print(str(e))
             return None
     
     @cache_grpc
     def ObtemBancas(self, request, context):
         print('ObtemBancas chamada...')
         try:
-            id = request.id
+            id = request.id_ppg
             anoi = request.anoi
             anof = request.anof
             print("Parametros: ", id, anoi, anof)
@@ -104,7 +105,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
     def ObtemDocentes(self, request, context):
         print('ObtemDocentes chamada...')
         try:
-            id = request.id
+            id = request.id_ppg
             anoi = request.anoi
             anof = request.anof
             print("Parametros: ", id, anoi, anof)
@@ -134,7 +135,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
     def ObtemEgressos(self, request, context):
         print('ObtemEgressos chamada...')
         try:
-            id = request.id
+            id = request.id_ppg
             anoi = request.anoi
             anof = request.anof
             print("Parametros: ", id, anoi, anof)
@@ -164,7 +165,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
     def ObtemProjetos(self, request, context):
         print('ObtemProjetos chamada...')
         try:
-            id = request.id
+            id = request.id_ppg
             anoi = request.anoi
             anof = request.anof
             print("Parametros: ", id, anoi, anof)

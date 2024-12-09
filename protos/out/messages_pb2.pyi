@@ -12,14 +12,18 @@ class HomeRequest(_message.Message):
     def __init__(self, id_ies: _Optional[str] = ...) -> None: ...
 
 class PpgRequest(_message.Message):
-    __slots__ = ("id", "anoi", "anof")
-    ID_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("id_ies", "id_ppg", "anoi", "anof", "nota")
+    ID_IES_FIELD_NUMBER: _ClassVar[int]
+    ID_PPG_FIELD_NUMBER: _ClassVar[int]
     ANOI_FIELD_NUMBER: _ClassVar[int]
     ANOF_FIELD_NUMBER: _ClassVar[int]
-    id: str
+    NOTA_FIELD_NUMBER: _ClassVar[int]
+    id_ies: str
+    id_ppg: str
     anoi: int
     anof: int
-    def __init__(self, id: _Optional[str] = ..., anoi: _Optional[int] = ..., anof: _Optional[int] = ...) -> None: ...
+    nota: str
+    def __init__(self, id_ies: _Optional[str] = ..., id_ppg: _Optional[str] = ..., anoi: _Optional[int] = ..., anof: _Optional[int] = ..., nota: _Optional[str] = ...) -> None: ...
 
 class PpgJson(_message.Message):
     __slots__ = ("nome", "json")

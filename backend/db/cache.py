@@ -16,22 +16,18 @@ def cache_grpc(func):
       redis = RedisConnector()
 
       # Criar uma chave única para o cache
-      cache_key = f"{func.__name__}_{request.id}_{request.anoi}_{request.anof}"
+      cache_key = f"{func.__name__}_" + "_".join(str(value) for _, value in request.ListFields())
 
       print(cache_key)
-      universidade = None if request.anoi != 0 else request.id
-      # if request.id_ies:
-      #    universidade = request.id_ies
-      if request.id and not universidade:
-         universidade = crud.queries_ppg.retorna_id_ies(request.id)
-      
+      universidade = request.id_ies
+   
       try:
          # Tentar obter o resultado do cache
          cached_result = redis.existsField(universidade, cache_key)
          if cached_result:
             print('Cache hit')
             res = redis.getField(universidade, cache_key)
-            return ParseDict(res, messages_pb2.PpgResponse())#(cached_result)
+            return ParseDict(res, messages_pb2.PpgResponse())
       except Exception as e:
          print(f"Error retrieving from cache: {e}")
 
@@ -101,28 +97,6 @@ def cache_redis_async(func):
             kwargs['redis'].setField(universidade, path, ret)
          
          return ret
-      except Exception as err:
-         raise err
-   return wrapper
-
-def log_users(func):
-   @wraps(func)
-   async def wrapper(*args, **kwargs):
-      """
-      Anotação responsável por inserir o log no banco de dados
-      """
-      path = kwargs['request'].url.path
-      current_user = kwargs['current_user']
-      db = kwargs['db']
-      try:
-         if 'coautores' in path:
-            if 'sucupira' in path:
-               await utils.log_grafos(db,'log_grafos', idlattes = current_user.idlattes, ppg_id = 'Home', anoi = kwargs['anoi'], anof = kwargs['anof'], grafo_name = kwargs['produto'])
-            else:
-               await utils.log_grafos(db,'log_grafos', idlattes = current_user.idlattes, ppg_id = kwargs['id'], anoi = kwargs['anoi'], anof = kwargs['anof'], grafo_name = kwargs['autor'])
-         else:
-            await utils.log_acessos(db,'log_acessos', idlattes = current_user.idlattes, ppg_id = kwargs['id'], anoi = kwargs['anoi'], anof = kwargs['anof'])  
-         return await func(*args, **kwargs)
       except Exception as err:
          raise err
    return wrapper
@@ -392,5 +366,3 @@ class RedisConnector:
          self.redisconn.close()
       except Exception as err:
          return err
-
-
