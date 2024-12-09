@@ -1,12 +1,9 @@
 from redis import Redis
 from functools import wraps
-from google.protobuf.json_format import ParseDict, MessageToJson, MessageToDict
-from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2
+from google.protobuf.json_format import ParseDict, MessageToDict
+from protos.out import messages_pb2
 import json
-import pickle
 from grpc import ServicerContext
-
-from backend.core import utils
 from backend.worker import crud
 from backend.core.config import settings
 
@@ -47,10 +44,14 @@ def cache_grpc(response_type):
    return decorator
 
 
-def cache_grpc_ppgls(*args):
+def cache_grpc_ppg():
+   return cache_grpc(messages_pb2.PpgResponse)
+
+def cache_grpc_ppgls():
    return cache_grpc(messages_pb2.PPGLSResponse)
    
-   
+def cache_grpc_grad():
+   return cache_grpc(messages_pb2.GradResponse)
 
 def cache_redis_sync(func):
    @wraps(func)

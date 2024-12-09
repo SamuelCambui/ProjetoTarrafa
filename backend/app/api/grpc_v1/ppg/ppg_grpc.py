@@ -5,13 +5,13 @@ from celery import group
 from google.protobuf.json_format import Parse, MessageToJson, ParseDict
 
 from backend.worker.tasks_ppg import task_indicadores, task_bancas, task_docentes, task_egressos, task_projetos, task_ppg
-from backend.db.cache import cache_grpc
+from backend.db.cache import cache_grpc_ppg
 from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2
 
 
 # Implementação do serviço gRPC
 class PPG(ppg_pb2_grpc.PPGServicer):
-    # @cache_grpc
+    @cache_grpc_ppg()
     def ObtemInformacaoPPG(self, request, context):
         print('ObtemInformacaoPPG chamada...')
         try:
@@ -40,7 +40,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
         except Exception as e:
             print(e)
             return None
-    # @cache_grpc
+    @cache_grpc_ppg()
     def ObtemIndicadores(self, request, context):
         print('ObtemIndicadores chamada...')
         try:
@@ -71,7 +71,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
             print(str(e))
             return None
     
-    @cache_grpc
+    @cache_grpc_ppg()
     def ObtemBancas(self, request, context):
         print('ObtemBancas chamada...')
         try:
@@ -101,7 +101,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
             print(e)
             return None
         
-    @cache_grpc
+    @cache_grpc_ppg()
     def ObtemDocentes(self, request, context):
         print('ObtemDocentes chamada...')
         try:
@@ -131,7 +131,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
             print(e)
             return None
         
-    @cache_grpc
+    @cache_grpc_ppg()
     def ObtemEgressos(self, request, context):
         print('ObtemEgressos chamada...')
         try:
@@ -161,7 +161,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
             print(e)
             return None
     
-    @cache_grpc
+    @cache_grpc_ppg()
     def ObtemProjetos(self, request, context):
         print('ObtemProjetos chamada...')
         try:

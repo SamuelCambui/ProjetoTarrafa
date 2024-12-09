@@ -8,25 +8,22 @@ import grpc
 # Necessário para que as importações a seguir sejam encontradas no path
 diretorio_raiz = Path(__name__).resolve().parent
 sys.path.append(str(diretorio_raiz))
-from protos.out import ppg_pb2_grpc, ppg_pb2, usuarios_pb2_grpc, usuarios_pb2
-from backend.app.api.grpc_v1.ppg.ppg_grpc import PPG
-from backend.app.api.grpc_v1.ppg.home_grpc import Home
-from backend.app.api.grpc_v1.login_grpc import Usuario
+from protos.out import grad_pb2_grpc
+from backend.app.api.grpc_v1.grad.dados_grad_grpc import DadosGraduacaoServicer
+from backend.app.api.grpc_v1.grad.indicadores_grad_grpc import IndicadoresGraduacaoServicer
 from backend.core.config import settings
 
 async def serve():
     server = grpc.aio.server()
-    ppg_pb2_grpc.add_PPGServicer_to_server(PPG(), server)
-    ppg_pb2_grpc.add_HomeServicer_to_server(Home(), server)
-    usuarios_pb2_grpc.add_UsuarioServicer_to_server(Usuario(), server)
+    grad_pb2_grpc.add_DadosGraduacaoServicer_to_server(DadosGraduacaoServicer(), server)
+    grad_pb2_grpc.add_IndicadoresGraduacaoServicer_to_server(IndicadoresGraduacaoServicer(), server)
 
-    server.add_insecure_port('[::]:50052')
-
+    server.add_insecure_port('[::]:50053')
+    
     await server.start()
     await server.wait_for_termination()
 
-
 if __name__ == '__main__':
-    print("Starting server in: %s" % (settings.GRPC_SERVER_HOST))
+    print("Starting server in: %s" % (settings.GRPC_SERVER_GRAD))
     # Inicia o servidor
     asyncio.run(serve())

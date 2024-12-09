@@ -97,3 +97,28 @@ message FormularioPPGLSJson{
 message FormularioPPGLSResponse{
   repeated FormularioPPGLSJson item = 1;
 }
+
+message GradRequest {
+  optional string id = 1;
+  optional int32 anoi = 2;
+  optional int32 anof = 3;
+  optional string id_ies = 4;
+}
+
+message GradDisciplinasRequest {
+  optional string id_disc = 1;
+  optional string id_ies = 2;
+  optional string id_curso = 3;
+  optional string id_grade = 4;
+  optional int32 anoi = 5;
+  optional int32 anof = 6;
+}
+
+message GradJson {
+  optional string nome = 1;
+  optional string json = 2;
+}
+
+message GradResponse {
+  repeated GradJson item = 1;
+}

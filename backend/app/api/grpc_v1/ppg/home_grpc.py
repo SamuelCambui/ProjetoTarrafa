@@ -3,13 +3,13 @@ from celery import group
 from google.protobuf.json_format import ParseDict
 
 from backend.worker.tasks_ppg import task_home
-from backend.db.cache import cache_grpc
+from backend.db.cache import cache_grpc_ppg
 from protos.out import ppg_pb2_grpc, messages_pb2
 
 
 # Implementação do serviço gRPC
 class Home(ppg_pb2_grpc.HomeServicer):
-    @cache_grpc
+    @cache_grpc_ppg()
     def ObtemHome(self, request, context):
         print('ObtemHome chamada...')
         try:

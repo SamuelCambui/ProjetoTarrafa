@@ -160,3 +160,45 @@ class FormularioPPGLSResponse(_message.Message):
     ITEM_FIELD_NUMBER: _ClassVar[int]
     item: _containers.RepeatedCompositeFieldContainer[FormularioPPGLSJson]
     def __init__(self, item: _Optional[_Iterable[_Union[FormularioPPGLSJson, _Mapping]]] = ...) -> None: ...
+
+class GradRequest(_message.Message):
+    __slots__ = ("id", "anoi", "anof", "id_ies")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    ANOI_FIELD_NUMBER: _ClassVar[int]
+    ANOF_FIELD_NUMBER: _ClassVar[int]
+    ID_IES_FIELD_NUMBER: _ClassVar[int]
+    id: str
+    anoi: int
+    anof: int
+    id_ies: str
+    def __init__(self, id: _Optional[str] = ..., anoi: _Optional[int] = ..., anof: _Optional[int] = ..., id_ies: _Optional[str] = ...) -> None: ...
+
+class GradDisciplinasRequest(_message.Message):
+    __slots__ = ("id_disc", "id_ies", "id_curso", "id_grade", "anoi", "anof")
+    ID_DISC_FIELD_NUMBER: _ClassVar[int]
+    ID_IES_FIELD_NUMBER: _ClassVar[int]
+    ID_CURSO_FIELD_NUMBER: _ClassVar[int]
+    ID_GRADE_FIELD_NUMBER: _ClassVar[int]
+    ANOI_FIELD_NUMBER: _ClassVar[int]
+    ANOF_FIELD_NUMBER: _ClassVar[int]
+    id_disc: str
+    id_ies: str
+    id_curso: str
+    id_grade: str
+    anoi: int
+    anof: int
+    def __init__(self, id_disc: _Optional[str] = ..., id_ies: _Optional[str] = ..., id_curso: _Optional[str] = ..., id_grade: _Optional[str] = ..., anoi: _Optional[int] = ..., anof: _Optional[int] = ...) -> None: ...
+
+class GradJson(_message.Message):
+    __slots__ = ("nome", "json")
+    NOME_FIELD_NUMBER: _ClassVar[int]
+    JSON_FIELD_NUMBER: _ClassVar[int]
+    nome: str
+    json: str
+    def __init__(self, nome: _Optional[str] = ..., json: _Optional[str] = ...) -> None: ...
+
+class GradResponse(_message.Message):
+    __slots__ = ("item",)
+    ITEM_FIELD_NUMBER: _ClassVar[int]
+    item: _containers.RepeatedCompositeFieldContainer[GradJson]
+    def __init__(self, item: _Optional[_Iterable[_Union[GradJson, _Mapping]]] = ...) -> None: ...

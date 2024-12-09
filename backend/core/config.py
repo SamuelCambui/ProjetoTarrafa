@@ -46,7 +46,7 @@ class Settings(BaseSettings):
 
     GRPC_SERVER_HOST=os.getenv('GRPC_SERVER_HOST', "localhost")
     GRPC_SERVER_PPGLS = os.getenv('GRPC_SERVER_PPGLS', "localhost:50054")
-    
+    GRPC_SERVER_GRAD = os.getenv('GRPC_SERVER_GRAD', "localhost")
     FILA_TAREFAS_CRITICAS = os.getenv('FILA_TAREFAS_CRITICAS', 'tarefas_criticas')
     FILA_TAREFAS_CURRICULOS = os.getenv('FILA_TAREFAS_CURRICULOS', 'tarefas_curriculos')
     FILA_PROGRESSOS = os.getenv('FILA_PROGRESSOS', 'progressos_tarefas')

@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package protos;
+
+import "messages.proto";
+
+service IndicadoresGraduacao {
+    /*  
+        Retorna dados para compor os indicadores da aba curso.\n
+        Parâmetros:
+            id(string) - Código do curso.\n
+            id_ies(str) - Código da Instituição.\n
+            anoi(int) - Ano Inicial.\n
+            anof(int) - Ano Final.\n
+    */
+    rpc GetAbaIndicadoresCurso (GradRequest) returns (GradResponse);
+
+    /*  
+        Retorna dados para compor os indicadores da aba de disciplinas.\n
+        Parâmetros:
+            id_disc(string) - Código da Disciplina.\n
+            id_ies(string) - Código da Instituição.\n
+            id_curso(string) - Código do Curso.\n
+            id_grade(string) - Código da Grade Curricular.\n
+            anoi(int) - Ano Inicial.\n
+            anof(int) - Ano Final.\n
+    */
+    rpc GetAbaDisciplinas (GradDisciplinasRequest) returns (GradResponse);
+
+    /*  
+        Retorna dados para compor os indicadores da aba de egressos.\n
+        Parâmetros:
+            id(string) - Código do curso.\n
+            id_ies(str) - Código da Instituição.\n
+            anoi(int) - Ano Inicial.\n
+            anof(int) - Ano Final.\n
+    */
+    rpc GetAbaEgressos (GradRequest) returns (GradResponse);
+
+    /*  
+        Retorna dados para compor os indicadores da aba de professores.\n
+        Parâmetros:
+            id(string) - Código do curso.\n
+            id_ies(str) - Código da Instituição.\n
+            anoi(int) - Ano Inicial.\n
+            anof(int) - Ano Final.\n
+    */
+    rpc GetAbaProfessores (GradRequest) returns (GradResponse);
+
+    /*
+        Retorna os indicadores da disciplina selecionada.\n
+        Parâmetros:\n
+            id_disc(string) - Código da Disciplina.\n
+            id_ies(string) - Código da Instituição.\n
+            id_curso(string) - Código do Curso.\n
+            id_grade(string) - Código da Grade Curricular.\n
+            anoi(int) - Ano Inicial.\n
+            anof(int) - Ano Final.\n
+    */
+    rpc GetIndicadoresDisciplina (GradDisciplinasRequest) returns (GradResponse);
+
+    /*
+        Retorna os indicadores globais de todos os cursos de graduação.\n
+        Parâmetros:\n
+            id_ies(str) - Código da Instituição.\n
+            anoi(int) - Ano Inicial.\n
+            anof(int) - Ano Final.\n
+    */
+    rpc GetIndicadoresGlobais (GradRequest) returns (GradResponse);
+}
+
+service DadosGraduacao {
+
+    /* 
+        Retorna todos os cursos cadastrados de uma instituição.
+        Parâmetros:\n
+            id_ies(string) - Código da Instituição.
+
+    */
+    rpc GetCursos (GradRequest) returns (GradResponse);
+
+    /*  
+        Retorna um curso em específico.\n
+        Parâmetros:\n
+            id(string) - Código do curso.\n
+            id_ies(str) - Código da Instituição.\n
+    */
+    rpc GetCurso (GradRequest) returns (GradResponse);
+
+    /*
+        Retorna todas as diciplinas de uma grade curricular de um curso.\n
+        Parâmetros:\n
+            id_curso(string) - Código do curso.\n
+            id_ies(str) - Código da Instituição.\n
+            id_grade(str) - Código da Grade Curricular.\n
+    */
+    rpc GetDisciplinas (GradDisciplinasRequest) returns (GradResponse);
+
+    /*
+        Retorna uma diciplina em específico.\n
+        Parâmetros:\n
+            id_disc(int) - Código da disciplina.\n
+            id_ies(str) - Código da Instituição.\n
+    */
+    rpc GetDisciplina (GradDisciplinasRequest) returns (GradResponse);
+}

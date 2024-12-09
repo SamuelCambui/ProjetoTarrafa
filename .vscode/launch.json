@@ -61,25 +61,34 @@
             "envFile": "${workspaceFolder}/.env.desenvolvimento"
         },
         {
-            "name": "Python: INDICADORES gRPC SERVERPPG",
+            "name": "Python: SERVER PPG",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/backend/app/api/api.py",  
+            "program": "${workspaceFolder}/backend/app/api/api.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "envFile": "${workspaceFolder}/.env.desenvolvimento",
             "args": []
         },
         {
-            "name": "Python: INDICADORES gRPC SERVERPPGLS",
+            "name": "Python: SERVER PPGLS",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/backend/app/api/api_ppgls.py",  
+            "program": "${workspaceFolder}/backend/app/api/api_ppgls.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "envFile": "${workspaceFolder}/.env.desenvolvimento",
             "args": []
         },
+        {
+            "name": "Python: SERVER GRAD",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/app/api/api_grad.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento",
+            "args": []
+        }
     ]
-
 }

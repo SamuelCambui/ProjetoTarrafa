@@ -1,5 +1,5 @@
 from typing import Any, Dict, Literal
-from backend.db.db import DBConnector,DBConnectorGRAD, DBConnectorGRADForm
+from backend.db.db import DBConnector, DBConnectorGRAD, DBConnectorGRADForm
 from backend.db.db import DBConnectorPPG
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -165,18 +165,13 @@ def tratamento_excecao(func):
             raise error
     return wrapper
 
-def tratamento_excecao_com_db(tipo_banco : Literal['ppg'] | Literal['grad']= 'ppg'):
+def tratamento_excecao_com_db(tipo_banco):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             try:
                 if 'db' not in kwargs:
-                    if tipo_banco == 'grad':
-                        db = DBConnectorGRAD()
-                    elif tipo_banco == 'grad_formularios':
-                        db = DBConnectorGRADForm()
-                    else:
-                        db = DBConnectorPPG()
+                    db = tipo_banco()
                     kwargs['db'] = db
                 else:
                     db = kwargs['db']
@@ -190,3 +185,12 @@ def tratamento_excecao_com_db(tipo_banco : Literal['ppg'] | Literal['grad']= 'pp
                 db.close()
         return wrapper
     return decorator
+
+def tratamento_excessao_db_ppg():
+    return tratamento_excecao_com_db(tipo_banco=DBConnectorPPG)
+
+def tratamento_excessao_db_grad_form():
+    return tratamento_excecao_com_db(tipo_banco=DBConnectorGRADForm)
+
+def tratamento_excessao_db_grad():
+    return tratamento_excecao_com_db(tipo_banco=DBConnectorGRAD)
