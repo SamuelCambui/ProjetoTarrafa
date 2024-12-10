@@ -51,6 +51,7 @@ service IndicadoresPosGraduacaoLS {
             id(string) - Código do curso.\n
             anoi(int) - Ano Inicial.\n
             anof(int) - Ano Final.\n
+            teste
     */
     rpc GetIndicadoresDisciplina (PPGLSRequest) returns (PPGLSResponse);
 

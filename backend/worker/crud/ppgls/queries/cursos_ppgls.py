@@ -28,7 +28,7 @@ class QueriesCursos():
         return ret
 
     @tratamento_excecao_com_db(tipo_banco='grad')
-    def retorna_curso(self, id: str, id_ies: str, db: DBConnectorGRAD = None):
+    def retorna_curso(self, id_curso: str, id_ies: str, db: DBConnectorGRAD = None):
         """
         Retorna dados de um curso em específico.
 
@@ -37,9 +37,9 @@ class QueriesCursos():
         """
         query = """
            select id, id_ies, nome, grau, serie_inicial, serie_final, cast(nota_min_aprovacao as float), cast(freq_min_aprovacao as float) 
-           from cursos where id = %(id)s and id_ies = %(id_ies)s
+           from cursos where id = %(id_curso)s and id_ies = %(id_ies)s
         """
-        ret = db.fetch_one(query, id=id, id_ies=id_ies)
+        ret = db.fetch_one(query, id_curso=id_curso, id_ies=id_ies)
         return ret
 
     @tratamento_excecao_com_db(tipo_banco='grad')
@@ -511,7 +511,7 @@ class QueriesCursos():
                 curso_tipo ct ON c.id = ct.id_curso
             WHERE 
                 EXTRACT(YEAR FROM ac.data_matricula) between %(anoi)s and %(anof)s  -- Ano de matrícula desejado
-                AND c.id = %(id_curso)s
+                AND c.id = %(id)s
                 AND c.id_ies = %(id_ies)s
         ),
         curso_graduacao AS (
@@ -542,7 +542,7 @@ class QueriesCursos():
         LEFT JOIN 
             curso_graduacao cg ON pc.matricula = cg.matricula
         GROUP BY 
-            pc.ano_matricula, COALESCE(cg.nome_curso_graduacao, 'Não Identificado')
+            pc.ano_matricula, COALESCE(cg.nome_curso_graduacao, 'Não Há')
         ORDER BY 
             pc.ano_matricula, quantidade_matriculas DESC;
         """

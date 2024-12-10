@@ -36,57 +36,27 @@ def get_disciplinas(
 
 
 @app_celery_queries.task
-def get_disciplina(id: int, id_ies: str):
+def get_disciplina(id_disc: str, id_ies: str):
     """
     Retorna uma disciplina em específico.
 
-    :param id(int): Código da Disciplina.
+    :param id_disc(int): Código da Disciplina.
     :param id_ies(int): Código da Instituição.
+
     """
+
+
     try:
-        disciplina = queries_disciplinas.retorna_disciplina(id=id, id_ies=id_ies)
-        message = PPGLSJson(nome="disciplinas", json=json.dumps(dict(disciplina)))
+        disciplina = queries_disciplinas.retorna_disciplina(id_disc=id_disc, id_ies=id_ies)
+        message = PPGLSJson(nome="disciplina", json=json.dumps(disciplina))
+        print("Task:")
+        print(message)
         return MessageToDict(message)
     except Exception as err:
-        message = PPGLSJson(nome="disciplinas", json=None)
+        print(err)
+        message = PPGLSJson(nome="disciplina", json=None)
         return MessageToDict(message)
 
-
-@app_celery_queries.task
-def get_quantidade_prova_final(id_disc: str, id_ies: str, anoi: int, anof: int):
-    """
-    Retorna a quantidade de provas finais feitas em uma disciplina por período.\n
-    Parâmetros:\n
-        id(str): Código da disciplina.
-        anoi(int): Ano inicial.
-        anof(int): Ano Final.
-    """
-    try:
-        quantidade = queries_disciplinas.quantidade_prova_final(
-            id_disc=id_disc,
-            id_ies=id_ies,
-            anoi=anoi,
-            anof=anof,
-        )
-        dataset = DataSet()
-        dados_grafico = DadosGrafico()
-        dataset.label = "Quantidade de Provas Finais"
-
-        dataset.data = [item["quantidade"] for item in quantidade]
-        dados_grafico.labels = [
-            "/".join([str(item["ano_letivo"]), str(item["semestre"])])
-            for item in quantidade
-        ]
-
-        dados_grafico.datasets.append(dataset)
-
-        grafico = Grafico()
-        grafico.data = dados_grafico
-        message = PPGLSJson(nome="graficoProvaFinal", json=json.dumps(grafico.to_dict()))
-        return MessageToDict(message)
-    except:
-        message = PPGLSJson(nome="graficoProvaFinal", json=None)
-        return MessageToDict(message)
 
 
 @app_celery_queries.task
