@@ -1,15 +1,10 @@
 from typing import Optional
-
 from backend.db.db import DBConnector
 from backend.core.utils import InsertQuery, UpdateQuery
 from backend.core.security import verify_password, get_password_hash
 from backend.schemas.user import User, UserInDB
 from backend.worker import crud
-from backend.db.db import DBConnectorPPG
-from backend.core.utils import tratamento_excecao_com_db, tratamento_excecao
-
-
-
+from backend.core.utils import tratamento_excecao_db_ppg
 
 class CRUDUser():
 
@@ -34,7 +29,7 @@ class CRUDUser():
                     return user,rowavatar
             return None, None
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def verify_in_db(self, db: DBConnector = None, **kwargs) -> Optional[User]:
         """
         Verificando se existe o usuário no banco de dados
@@ -73,7 +68,7 @@ class CRUDUser():
         update_query = UpdateQuery("usuarios",'idlattes', **obj_in)
         return db.update(update_query, **obj_in)
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def authenticate(self, db: DBConnector = None, *, password: str, **kwargs) -> Optional[User]:
         """
         Autenticando usuario no banco

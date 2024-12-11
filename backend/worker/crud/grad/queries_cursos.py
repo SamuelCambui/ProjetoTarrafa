@@ -1,9 +1,8 @@
 from backend.db.db import DBConnector
-from backend.core.utils import tratamento_excessao_db_grad
-
+from backend.core.utils import tratamento_excecao_db_grad
 
 class QueriesCursos:
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def lista_cursos(self, id_ies: str, db: DBConnector = None):
         """
         Retorna todos os cursos de graduação(Bacharelado, Licenciatura) a partir de 10 anos atrás.\n
@@ -27,7 +26,7 @@ class QueriesCursos:
         ret = db.fetch_all(query=query, id_ies=id_ies)
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def retorna_curso(self, id: str, id_ies: str, db: DBConnector = None):
         """
         Retorna dados de um curso em específico.
@@ -42,7 +41,7 @@ class QueriesCursos:
         ret = db.fetch_one(query, id=id, id_ies=id_ies)
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def quantidade_alunos_por_semestre(
         self,
         id: str,
@@ -73,7 +72,7 @@ class QueriesCursos:
         ret = db.fetch_all(query, id=id, anoi=anoi, anof=anof, id_ies=id_ies)
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def egressos(
         self,
         id_curso: str,
@@ -113,7 +112,7 @@ class QueriesCursos:
         )
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def quantidade_alunos_por_sexo(
         self,
         id_curso: str,
@@ -152,7 +151,7 @@ class QueriesCursos:
         )
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def forma_ingresso(
         self,
         id_curso: str,
@@ -187,7 +186,7 @@ class QueriesCursos:
         )
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def alunos_necessidade_especial(
         self,
         id_curso: str,
@@ -225,7 +224,7 @@ class QueriesCursos:
         )
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def professores(
         self,
         id_curso: str,
@@ -291,7 +290,7 @@ class QueriesCursos:
         )
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def tempo_formacao(
         self,
         id_curso: str,
@@ -333,7 +332,7 @@ class QueriesCursos:
         ret = db.fetch_all(query, id_curso=id_curso, anoi=anoi, id_ies=id_ies)
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def naturalidade_alunos(
         self,
         id_curso: str,
@@ -374,7 +373,7 @@ class QueriesCursos:
         return ret
 
     #   TESTE
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def boxplot_idade(
         self,
         id_curso: str,

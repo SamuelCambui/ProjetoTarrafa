@@ -1,5 +1,4 @@
 import json
-from backend.schemas.grafico import DadosGrafico, DataSet, Grafico
 from protos.out.messages_pb2 import GradJson
 from google.protobuf.json_format import MessageToDict
 from backend.worker.crud.grad.queries_grad import queries_grad

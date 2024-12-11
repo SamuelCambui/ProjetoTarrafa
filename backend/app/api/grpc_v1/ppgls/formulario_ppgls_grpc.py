@@ -3,7 +3,6 @@ from backend.worker.tasks_ppgls import tasks_formulario_ppgls
 from protos.out.messages_pb2 import FormularioPPGLSRequest, FormularioSerchPPGLSRequest, FormularioIndicadoresRequest,FormularioPPGLSResponse
 from celery import group
 from google.protobuf import json_format
-import json
 
 class FormularioPPGLSServicer(ppgls_pb2_grpc.DadosFormularioPosGraduacaoLSServicer):
     

@@ -1,7 +1,5 @@
-from __future__ import print_function
 from celery import group
 from google.protobuf.json_format import ParseDict
-
 from backend.worker.tasks_ppg import task_home
 from backend.db.cache import cache_grpc_ppg
 from protos.out import ppg_pb2_grpc, messages_pb2

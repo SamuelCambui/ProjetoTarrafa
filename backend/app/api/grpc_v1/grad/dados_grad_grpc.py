@@ -7,7 +7,8 @@ class DadosGraduacaoServicer(grad_pb2_grpc.DadosGraduacaoServicer):
     def GetCurso(self, request: GradRequest, context):
         curso = tasks_cursos.get_curso.delay(
             id_curso=request.id, id_ies=request.id_ies
-        ).get()
+        ).get()   
+        curso = tasks_cursos.get_curso(id_curso=request.id, id_ies=request.id_ies)
         return GradResponse(item=[curso])
 
     def GetCursos(self, request: GradRequest, context):

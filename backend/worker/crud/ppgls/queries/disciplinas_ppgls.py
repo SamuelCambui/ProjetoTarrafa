@@ -1,22 +1,35 @@
 from backend.db.db import DBConnectorGRAD
-from backend.core.utils import tratamento_excecao_com_db
+from backend.core.utils import tratamento_excecao_db_grad
 
 class QueriesDisciplinas():
     
-    @tratamento_excecao_com_db(tipo_banco='grad')
-    def retorna_disciplina(self, id_disc: int,id_ies: str, db: DBConnectorGRAD = None):
+    @tratamento_excecao_db_grad()
+    def retorna_disciplina(self, id_disc: str,id_ies: str, db: DBConnectorGRAD = None):
         """
         Retorna uma disciplina em específico.
 
         Parâmetros:
-            id(int): Código da disciplina.
+            id(str): Código da disciplina.
             id_ies(str): Código da Universidade. 
         """
-        query = "SELECT * FROM disciplinas WHERE cod_disc = %(id_disc)s and id_ies = %(id_ies)s"
+        query = """
+            SELECT 
+                cod_disc, 
+                dis.nome, 
+                dis.abreviacao, 
+                cast(carga_horaria as float),
+                dep.nome as departamento
+            FROM disciplinas AS dis 
+            INNER JOIN departamentos AS dep ON dep.id_dep = dis.id_dep AND dep.id_ies = dis.id_ies
+            WHERE cod_disc = %(id_disc)s and dis.id_ies = %(id_ies)s
+        """
+
         ret = db.fetch_one(query, id_disc=id_disc, id_ies=id_ies)
+        print("Query")
+        print(ret)
         return ret
     
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def disciplinas_grade(
         self,
         id_grade: str,
@@ -79,7 +92,7 @@ class QueriesDisciplinas():
     
 
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def disciplinas_departamento(
         self,
         id: str,
@@ -109,7 +122,7 @@ class QueriesDisciplinas():
 
 
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def quantidade_alunos_por_semestre(self, id_disc: str, anoi: int, anof: int, id_ies: str, db: DBConnectorGRAD = None):
         """
         Retorna a quantidade de alunos de uma disciplina por semestre em um período determinado.\n
@@ -136,7 +149,7 @@ class QueriesDisciplinas():
         return ret
 
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def aprovacoes_reprovacoes_por_semestre(
         self,
         id_disc: int,
@@ -183,7 +196,7 @@ class QueriesDisciplinas():
         return ret
 
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def boxplot_notas_disciplina(
         self,
         id_disc: int,
@@ -232,7 +245,7 @@ class QueriesDisciplinas():
 
 
     # TESTE
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def histograma_notas_disciplina( self, id_disc: int, anoi: str, anof: str, id_ies: str, db: DBConnectorGRAD = None):
         query = """
             WITH notas AS (
@@ -259,17 +272,13 @@ class QueriesDisciplinas():
         
         
 
-        ret = db.fetch_all(query=query, id_disc=id_disc, id_ies=id_ies, anoi=anoi, anof=anof)
+        ret = db.fetch_all(
+            query=query, id_disc=id_disc, id_ies=id_ies, anoi=anoi, anof=anof
+        )
+        return ret
 
-        if ret:
-            colunas = ["[0_10)", "[10_20)", "[20_30)", "[30_40)", "[40_50)", 
-                    "[50_60)", "[60_70)", "[70_80)", "[80_90)", "[90_100]"]
-            valores = ret[0]  # Pega a primeira linha do resultado
-            return dict(zip(colunas, valores))
-        else:
-            return {}
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def boxplot_notas_grade(
         self,
         id_curso: str,
@@ -385,7 +394,7 @@ class QueriesDisciplinas():
 
 
     
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def evasao_disciplina(
         self,
         id_disc: str,
@@ -434,7 +443,7 @@ class QueriesDisciplinas():
 
         return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def boxplot_notas_evasao(
         self,
         id_disc: str,
@@ -511,7 +520,7 @@ class QueriesDisciplinas():
 
         return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def boxplot_desempenho_alunos_professor(
         self,
         id_disc: str,
@@ -570,7 +579,7 @@ class QueriesDisciplinas():
 
         return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def taxa_aprovacao_reprovacao_serie(
         self,
         id_curso: str,
@@ -689,7 +698,7 @@ class QueriesDisciplinas():
 
         return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def boxplot_desempenho_cotistas(
         self,
         id_disc: str,
@@ -738,7 +747,7 @@ class QueriesDisciplinas():
 
         return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def histograma_desempenho_cotistas(
         self,
         id_disc: str,

@@ -1,12 +1,8 @@
-from __future__ import print_function
-import sys
-from pathlib import Path
 from celery import group
-from google.protobuf.json_format import Parse, MessageToJson, ParseDict
-
+from google.protobuf.json_format import ParseDict
 from backend.worker.tasks_ppg import task_indicadores, task_bancas, task_docentes, task_egressos, task_projetos, task_ppg
 from backend.db.cache import cache_grpc_ppg
-from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2
+from protos.out import ppg_pb2_grpc, messages_pb2
 
 
 # Implementação do serviço gRPC

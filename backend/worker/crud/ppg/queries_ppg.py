@@ -1,7 +1,7 @@
 from backend.db.db import DBConnector
 import jellyfish
 from backend.core import utils
-from backend.core.utils import tratamento_excecao_com_db, tratamento_excecao
+from backend.core.utils import tratamento_excecao_db_ppg
 from datetime import datetime, timedelta
 from typing import List
 import time
@@ -10,7 +10,7 @@ from itertools import combinations
 class QueriesPPG():
 
     #* Indicadores
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_id_ies(self, id: str, db: DBConnector = None):
         query = "select id_ies from programas where codigo_programa = %(id)s"
         row = db.fetch_one(query, id=id)
@@ -18,7 +18,7 @@ class QueriesPPG():
             return row[0]
         return None
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_link_avatar_lattes(self, ids: str, idlattes: bool, db: DBConnector = None):
         """
         Retorna o link do avatar do currículo Lattes
@@ -46,7 +46,7 @@ class QueriesPPG():
 
         return avatar
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_lista_de_permanentes_do_ppg(self, id: str, ano: int, db: DBConnector = None):
         """
         Retorna uma lista com os docentes permantes do ppg (id == codigo_do_programa)
@@ -58,7 +58,7 @@ class QueriesPPG():
             return row[0]
         return None
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_ultimo_ano_coleta(self, db:DBConnector = None):
         """
         Retorna o ultimo ano de coleta da tabela programa_históricos
@@ -70,7 +70,7 @@ class QueriesPPG():
             return row[0]
         return None
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_contagem_de_qualis_do_lattes(self, id: str, anof: int, anocoleta: int, db: DBConnector = None):
         """
         Retornar o quantitativo de artigos com qualis considerando a base de dados lattes
@@ -148,7 +148,7 @@ class QueriesPPG():
         products_atual = [dict(r) for r in row]
         return products_atual
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_contagem_de_qualis_do_lattes_anonimo(self, id: str, anof: int, ano_coleta: int, db: DBConnector = None):
         """
         Retornar o quantitativo de artigos com qualis considerando a base de dados lattes
@@ -285,7 +285,7 @@ class QueriesPPG():
 
         return products_atual, artigos
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_contagem_de_qualis_com_listanegra(self, id: str, anoi: int, anof: int, listanegra: List, db: DBConnector = None):
         """
         Retornar o quantitativo de artigos com qualis por docente (id_pessoa) para que o filtro do simulador de parâmetros da página funcione
@@ -448,7 +448,7 @@ class QueriesPPG():
         
         return {'produtos': artigos_total, 'artigos': artigos}
   
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_contagem_de_indprodart_com_listanegra(self, id: str, anoi: int, anof: int, listanegra: List, db: DBConnector = None):
         """
         Retornar o quantitativo de indprodart por docente (id_pessoa) para que o filtro do simulador de parâmetros da página funcione
@@ -643,7 +643,7 @@ class QueriesPPG():
 
         return {'indprod':retorno, 'indicadores':indicadores}
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_indprods_medios_extratificados(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         IndProds extratificados
@@ -773,7 +773,7 @@ class QueriesPPG():
         dictindprods['rotulos'] = rotulos
         return dictindprods
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_contagem_de_qualis_discentes(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retornar o quantitativo de artigos com qualis por discente (id_pessoa) para que o filtro do simulador de parâmetros da página funcione
@@ -839,7 +839,7 @@ class QueriesPPG():
         
         return {'produtos': artigos_total}
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_estatisticas_de_artigos(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retornar algumas estatísticas sobre autores dos artigos
@@ -947,7 +947,7 @@ class QueriesPPG():
         
         return conta
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_lista_de_programas_correlatos(self, id: str, db: DBConnector = None):
         # print("Id do ppg que está sendo consultado na função retorna_lista_de_programas_correlatos", id)
         query = """with ppg as (
@@ -966,7 +966,7 @@ class QueriesPPG():
         return [r[0] for r in rows]
 
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_estatisticas_de_artigos_ppgs_correlatos(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retornar estatísticas médias sobre autores dos artigos de programas de mesma area, nota e modalidade do ppg alvo
@@ -1025,7 +1025,7 @@ class QueriesPPG():
 
         return medias
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_indprods_medios_extratificados_sem_dps(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         IndProds extratificados. Se diferencia do retorna_indprods_medios_extratificados no retorno de cada consulta 
@@ -1149,7 +1149,7 @@ class QueriesPPG():
         return dictindprods
     
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_contagem_de_indprodart_absoluto(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retornar o quantitativo de indprodart abosulto
@@ -1264,7 +1264,7 @@ class QueriesPPG():
 
         return {'indprod':retorno}
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_indprods_extsup_medios_extratificados(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         IndProds ExtSup extratificados
@@ -1385,7 +1385,7 @@ class QueriesPPG():
         return dictindprods
 
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_contagem_de_indprodart_extrato_superior_com_listanegra(self, id: str, anoi: int, anof: int, listanegra: List, db: DBConnector = None):
         """
         Retornar o quantitativo de indprodart ExtSup por docente (id_pessoa) para que o filtro do simulador de parâmetros da página funcione
@@ -1555,7 +1555,7 @@ class QueriesPPG():
 
         return {'indprod':retorno, 'indicadores':indicadores}
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_indori(self, id: str, anoi: int, anof: int, db: DBConnector  = None):
         """
         Retorna o IndOri a partir do anoi até o anof do PPG
@@ -1594,7 +1594,7 @@ class QueriesPPG():
         indoris = sorted(indoris, key=lambda k: k['ano'])
         return {'indori': indoris, 'indicadores': indicadores}
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_inddistori(self, id: str, anoi: int, anof: int, db: DBConnector  = None):
         """
         Retorna o Inddistori a partir do anoi até o anof do PPG
@@ -1632,7 +1632,7 @@ class QueriesPPG():
         inddistoris = sorted(inddistoris, key=lambda k: k['ano'])
         return {'inddistori': inddistoris, 'indicadores': indicadores}
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_indaut(self, id: str, anoi: int, anof: int, db: DBConnector  = None):
         """
         Retorna o Indaut a partir do anoi até o anof do PPG
@@ -1670,7 +1670,7 @@ class QueriesPPG():
         indauts = sorted(indauts, key=lambda k: k['ano'])
         return {'indaut':indauts,'indicadores':indicadores}
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_inddis(self, id: str, anoi: int, anof: int, db: DBConnector  = None):
         """
         Retorna o Inddis a partir do anoi até o anof do PPG
@@ -1708,7 +1708,7 @@ class QueriesPPG():
         inddiss = sorted(inddiss, key=lambda k: k['ano'])
         return {'inddis':inddiss, 'indicadores':indicadores}
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_partdis(self, id: str, anoi: int, anof: int, db: DBConnector  = None):
         """
         Retorna o partdis a partir do anoi até o anof do PPG
@@ -1746,7 +1746,7 @@ class QueriesPPG():
         partdiss = sorted(partdiss, key=lambda k: k['ano'])
         return {'partdis':partdiss, 'indicadores':indicadores}
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_indcoautoria(self, id: str, anoi: int, anof: int, db: DBConnector  = None):
         """
         Retorna o Indcoautoria a partir do anoi até o anof do PPG
@@ -1784,7 +1784,7 @@ class QueriesPPG():
         coautorias = sorted(coautorias, key=lambda k: k['ano'])
         return {'indcoaut':coautorias,'indicadores':indicadores}
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_indori_medio(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna o IndOri médio a partir do anoi até o anof do PPG
@@ -1807,7 +1807,7 @@ class QueriesPPG():
         indOris = [dict(r) for r in row]
         return indOris
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_partdis_medio(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna o partdis médio a partir do anoi até o anof do PPG
@@ -1830,7 +1830,7 @@ class QueriesPPG():
         partDisc = [dict(r) for r in row]
         return partDisc
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_inddistori_medio(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna o inddistori médio a partir do anoi até o anof do PPG
@@ -1853,7 +1853,7 @@ class QueriesPPG():
         indDistOris = [dict(r) for r in row]
         return indDistOris
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_indaut_medio(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna o indaut médio a partir do anoi até o anof do PPG
@@ -1876,7 +1876,7 @@ class QueriesPPG():
         indAuts = [dict(r) for r in row]
         return indAuts
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_inddis_medio(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna o inddis médio a partir do anoi até o anof do PPG
@@ -1899,7 +1899,7 @@ class QueriesPPG():
         indDiss = [dict(r) for r in row]
         return indDiss
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_indcoautoria_medio(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna o indcouatoria médio a partir do anoi até o anof do PPG
@@ -1922,7 +1922,7 @@ class QueriesPPG():
         coautoria = [dict(r) for r in row]
         return coautoria
   
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_tempos_de_conclusao(self, id: str, anoi: int, anof: int, db: DBConnector):
         """
         Retorna tempo de conclusão dos professores do PPG
@@ -1955,7 +1955,7 @@ class QueriesPPG():
 
         return combinations_list
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_professores_por_categoria(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna a quatidade de professores por categoria
@@ -1975,7 +1975,7 @@ class QueriesPPG():
         profs = [dict(r) for r in row]
         return profs
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_quantidade_de_discentes_titulados(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna a quantidade de discentes titulos por ano do PPG
@@ -1993,7 +1993,7 @@ class QueriesPPG():
         profs = [dict(r) for r in row]
         return profs
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_tempo_de_atualizacao_do_lattes(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna a quantidade de Perfis Lattes desatualizados por PPG
@@ -2048,7 +2048,7 @@ class QueriesPPG():
 
         return dicionario
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     async def retorna_lista_de_professores_por_ano(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna lista de professores por ano
@@ -2245,7 +2245,7 @@ class QueriesPPG():
         return {'professores': professors, 'medias':medias, 'produtos': producoes, 'orientados': orientados, 'avatares': avatares, 'datalattes': datalattes, 'status':status, 'formula': formula}
     
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_grafo_de_coautores_do_ppg(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna um grafo de coautoria do PPG
@@ -2301,7 +2301,7 @@ class QueriesPPG():
 
         return grafo
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_grafo_de_coautores_do_programa(self, id_ies: str, id: str, anoi: int, anof: int, autor: str, db: DBConnector = None):
         """
         Retorna um grafo de coautoria de um autor (ou todos) com os professores do mesmo PPG
@@ -2370,7 +2370,7 @@ class QueriesPPG():
 
         return grafo
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_producoes_do_professor(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna todas as produções do professor por anos
@@ -2425,7 +2425,7 @@ class QueriesPPG():
 
         return prods
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_dados_de_projetos(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         query = """with qprojetos as (select ano_inicio, nm_projeto as nome, situacao,  num_doutorado, num_mestrado, num_graduacao,
                         CASE WHEN producoes IS NULL OR jsonb_typeof(producoes) = 'null' OR (producoes = '[]') THEN 0 ELSE 1 END as producao from lattes_projetos as lp
@@ -2511,7 +2511,7 @@ class QueriesPPG():
 
         return {'nodes': nos, 'links':links}
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_dados_de_linhas_de_pesquisa(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         query1 = """select ctp.tipo as source, cstp.sub_tipo as target, count(*) as value from coleta_producoes as cp
 			inner join coleta_sub_tipo_producao as cstp on (cstp.id = cp.id_sub_tipo_producao)
@@ -2563,7 +2563,7 @@ class QueriesPPG():
 
     #* Bancas
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_levantemento_externos_em_bancas(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         query = """with qqext as (select distinct cdpt.dados->>'id' as id, d."idPessoa" as idpessoa, 
 			   d."categoria", d."nomePessoa" as nome, qq.ano
@@ -2651,7 +2651,7 @@ class QueriesPPG():
                 'grau_academico': grau_academico, 'area_titulacao': dict(sorted(area_titulacao.items(), key=lambda item: item[1], reverse=True)), 'participa_ppg': participa_ppg,
                 'tipo_participacao_ppg': tipo_participacao_ppg, 'quantidade_externos':contagem_externos, 'quantidade_internos': contagem_internos, 'quantidade_bancas': len(bancas)}
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_media_dados_de_produtos_por_tcc_nacional(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         # query1 = """
         #     select tp_producao as source, subtipo as target, count(*) as value from producoes 
@@ -2734,7 +2734,7 @@ class QueriesPPG():
         return medias_producoes#, 'tccs_com_producoes': tccs_com_producoes, 'tccs_com_livros': tccs_com_livros}
    
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_dados_de_produtos_por_tcc(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         # query1 = """
         #     select tp_producao as source, subtipo as target, count(*) as value from producoes 
@@ -2838,7 +2838,7 @@ class QueriesPPG():
         return {'medias': medias, 'produtos': produtos, 'tccs_com_producoes': tccs_com_producoes, 'tccs_com_qualis': tccs_com_qualis, 'tccs_com_livros': tccs_com_livros}
   
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_dados_de_tccs_por_linhas_de_pesquisa(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         query1 = """select ctp.tipo as source, cstp.sub_tipo as target, count(*) as value from coleta_producoes as cp
 			inner join coleta_sub_tipo_producao as cstp on (cstp.id = cp.id_sub_tipo_producao)
@@ -2885,7 +2885,7 @@ class QueriesPPG():
 
         return {'nodes': nodes, 'links':links}
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_dados_de_projetos_e_linhas_de_pesquisa(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         query1 = """select CASE WHEN nome_projeto_pesquisa IS NULL OR nome_projeto_pesquisa = 'null' OR (nome_projeto_pesquisa = '') THEN 'NÃO INFORMADO' ELSE nome_projeto_pesquisa END as source, CASE WHEN nome_linha_pesquisa IS NULL OR nome_linha_pesquisa = 'null' OR (nome_linha_pesquisa = '') THEN 'NÃO INFORMADO' ELSE nome_linha_pesquisa END as target, count(*) as value from coleta_producoes as cp 
             where id_programa = (select id_programa from programas where codigo_programa = %(id)s) and cp.ano >= %(anoi)s and cp.ano <= %(anof)s
@@ -2924,7 +2924,7 @@ class QueriesPPG():
     
     #* Egressos
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_tempo_de_atualizacao_do_lattes_do_egresso(self, id: str, db: DBConnector = None):
         """
         Retorna a quantidade de tempo que o Perfi Lattes está desatualizado
@@ -2962,7 +2962,7 @@ class QueriesPPG():
         return ''
     
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_dados_egressos(self, id_ppg, ano_inicial, ano_final, db: DBConnector = None):
         query = f"""
                 WITH idlattes_egressos AS (
@@ -3019,7 +3019,7 @@ class QueriesPPG():
         except Exception as error:
             print(error)
             
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_tempo_de_atualizacao_do_lattes_egressos(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna a quantidade de Perfis Lattes desatualizados por PPG
@@ -3074,7 +3074,7 @@ class QueriesPPG():
 
         return dicionario
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_quantidade_egressos_titulados_por_ano(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         # query = """select count(le.idlattes) as quantidade, ids.ano_titulacao from lattes_egressos as le
         # inner join (select ce.id_pessoa, p.lattes as lattes, p.ano_titulacao from coleta_egressos as ce
@@ -3111,7 +3111,7 @@ class QueriesPPG():
         
         return titulacao_grau    
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_producoes_egresso(self, id: str, anoi:int, anof:int, db:DBConnector = None):
         query = """with t as (select p.lattes, ce.ano from coleta_egressos as ce inner join pessoas as p on (p.id_pessoa = ce.id_pessoa)
         inner join programas as prog on (prog.id_programa = ce.id_programa) 
@@ -3127,7 +3127,7 @@ class QueriesPPG():
         
         return datas
     
-    # @tratamento_excecao_com_db
+    # @tratamento_excecao_db_ppg()
     # async def retorna_resumo_lattes(self, id:str, anoi:int, anof:int, db:DBConnector = None):
     #     query="""
     #     with t as (select p.lattes, ce.ano from coleta_egressos as ce inner join pessoas as p on (p.id_pessoa = ce.id_pessoa)
@@ -3144,7 +3144,7 @@ class QueriesPPG():
         
     #     return datas
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_producoes_do_professor(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna todas as produções do professor por anos
@@ -3200,7 +3200,7 @@ class QueriesPPG():
         return prods
     
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_lista_programas(self, id_ies: str, db: DBConnector = None):
         """   
         Retorna todos os PPG de uma instituição
@@ -3217,7 +3217,7 @@ class QueriesPPG():
         programas = [dict(r) for r in row]
         return programas
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_lista_docentes_do_ppg_do_ultimo_ano(self, id: str, db: DBConnector = None):
         """
         Retorna a lista de todos os docentes do ultimo ano de coleta
@@ -3235,7 +3235,7 @@ class QueriesPPG():
         professores = [dict(r) for r in row]
         return professores
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_tempo_de_atualizacao_do_lattes_do_professor(self, id: str, db: DBConnector = None):
         """
         Retorna a quantidade de tempo que o Perfi Lattes está desatualizado
@@ -3273,7 +3273,7 @@ class QueriesPPG():
 
         return ''
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_producoes_do_professor_totais(self, id: str, db: DBConnector = None):
         """
         Retorna todas as produções do professor por anos
@@ -3324,7 +3324,7 @@ class QueriesPPG():
 
         return prods
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_lista_de_professores_atuais_para_ranking(self, id: str, db: DBConnector = None):
         """
         Retorna lista de professores por ano
@@ -3354,7 +3354,7 @@ class QueriesPPG():
         return {'professores': professores,'produtos': producoes, 'avatares': avatares, 'datalattes': datalattes}
   
     
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_dados_home(self, id_ies: str, db: DBConnector = None):
         """   
         Retorna todos os PPG de uma instituição
@@ -3401,7 +3401,7 @@ class QueriesPPG():
 
         return {'programas': programs, 'time':str(time.time()), 'ranking': dicionario_ordenado}
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_informacao_ppg(self, id: str, db: DBConnector = None):
         """        
         Retorna as informações do PPG

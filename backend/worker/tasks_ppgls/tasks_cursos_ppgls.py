@@ -1,6 +1,11 @@
 from google.protobuf.json_format import MessageToDict
 import json
+import re
+from celery import group
+from celery import chain
+from protos.out.messages_pb2 import PPGLSResponse
 from protos.out.messages_pb2 import PPGLSJson
+from backend.schemas.grafico import DadosGrafico, DataSet, Grafico
 from backend.worker.crud.ppgls.queries.cursos_ppgls import queries_cursos
 from backend.worker.celery_start_queries import app_celery_queries
 
@@ -32,7 +37,7 @@ def get_curso(id_curso: str, id_ies: str):
     :param id_ies(str): Código da Instituição
     """
     try:
-        curso = queries_cursos.retorna_curso(id=id_curso, id_ies=id_ies)
+        curso = queries_cursos.retorna_curso(id_curso=id_curso, id_ies=id_ies)
         message = PPGLSJson(nome="dadosCurso", json=json.dumps(dict(curso)))
         return MessageToDict(message)
     except Exception as error:
@@ -281,9 +286,7 @@ def get_quant_alunos_vieram_gradu_e_nao_vieram_por_curso(id_curso: str, id_ies: 
         )
         return MessageToDict(message)
     except Exception as erro:
-        message = PPGLSJson(
-            nome="graficoQuantAlunosVieramGraduENaoVieramPorCurso",
-            json=None,
-        )
+        print(erro)
+        message = PPGLSJson(nome="graficoQuantAlunosVieramGraduENaoVieramPorCurso",json=None)
         return MessageToDict(message)
 

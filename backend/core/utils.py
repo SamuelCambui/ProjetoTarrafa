@@ -174,7 +174,7 @@ def tratamento_excecao_com_db(tipo_banco):
                     db = tipo_banco()
                     kwargs['db'] = db
                 else:
-                    db = kwargs['db']
+                    db = kwargs['db'] if kwargs['db'] is not None else tipo_banco()
                 return func(*args, **kwargs)
             except Exception as error:
                 nome_funcao = func.__name__
@@ -186,11 +186,11 @@ def tratamento_excecao_com_db(tipo_banco):
         return wrapper
     return decorator
 
-def tratamento_excessao_db_ppg():
+def tratamento_excecao_db_ppg():
     return tratamento_excecao_com_db(tipo_banco=DBConnectorPPG)
 
-def tratamento_excessao_db_grad_form():
+def tratamento_excecao_db_grad_form():
     return tratamento_excecao_com_db(tipo_banco=DBConnectorGRADForm)
 
-def tratamento_excessao_db_grad():
+def tratamento_excecao_db_grad():
     return tratamento_excecao_com_db(tipo_banco=DBConnectorGRAD)

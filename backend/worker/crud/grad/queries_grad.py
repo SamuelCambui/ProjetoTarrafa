@@ -1,7 +1,6 @@
 from backend.core import utils
 from backend.db.db import DBConnector
 
-
 class QueriesGrad:
     def inserir_usuarios_formulario(self, db: DBConnector, **kwargs):
         query = utils.InsertQuery("formulario", **kwargs)
@@ -16,7 +15,7 @@ class QueriesGrad:
             return False
         return True
 
-    @utils.tratamento_excessao_db_grad()
+    @utils.tratamento_excecao_db_grad()
     def naturalidade_alunos(
         self,
         anoi: int,
@@ -43,7 +42,7 @@ class QueriesGrad:
         ret = db.fetch_all(query, anoi=anoi, anof=anof, id_ies=id_ies)
         return ret
 
-    @utils.tratamento_excessao_db_grad()
+    @utils.tratamento_excecao_db_grad()
     def sexo_alunos(self, anoi: int, anof: int, id_ies: str, db: DBConnector = None):
         """
         Retorna a quantidade de alunos do sexo masculino e feminino.
@@ -61,7 +60,7 @@ class QueriesGrad:
         ret = db.fetch_all(query, anoi=anoi, anof=anof, id_ies=id_ies)
         return ret
 
-    @utils.tratamento_excessao_db_grad()
+    @utils.tratamento_excecao_db_grad()
     def egressos(self, anoi: int, anof: int, id_ies: str, db: DBConnector = None):
         query = """
             select cast(date_part('year', data_colacao) as integer) as ano_letivo, 
@@ -81,7 +80,7 @@ class QueriesGrad:
         ret = db.fetch_all(query, anoi=anoi, anof=anof, id_ies=id_ies)
         return ret
 
-    @utils.tratamento_excessao_db_grad()
+    @utils.tratamento_excecao_db_grad()
     def boxplot_idade(self, id_ies: str, anoi: int, anof: int, db: DBConnector):
         """
         Retorna as medidas do boxplot para a variável idade de todos os cursos de Graduação ou Licenciatura.
@@ -126,7 +125,7 @@ class QueriesGrad:
         ret = db.fetch_all(query=query, id_ies=id_ies, anoi=anoi, anof=anof)
         return ret
 
-    @utils.tratamento_excessao_db_grad()
+    @utils.tratamento_excecao_db_grad()
     def taxa_matriculas(
         self,
         id_ies: str,

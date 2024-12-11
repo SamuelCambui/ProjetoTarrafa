@@ -1,9 +1,8 @@
 from backend.db.db import DBConnector
-from backend.core.utils import tratamento_excessao_db_grad
-
+from backend.core.utils import tratamento_excecao_db_grad
 
 class QueriesDisciplinas:
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def retorna_disciplina(
         self,
         id: int,
@@ -30,7 +29,7 @@ class QueriesDisciplinas:
         ret = db.fetch_one(query, id=id, id_ies=id_ies)
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def disciplinas_grade(
         self,
         id_grade: str,
@@ -90,7 +89,7 @@ class QueriesDisciplinas:
         ret = db.fetch_all(query, id_ies=id_ies, id_curso=id_curso)
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def disciplinas_departamento(
         self,
         id: str,
@@ -118,7 +117,7 @@ class QueriesDisciplinas:
 
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def quantidade_alunos_por_semestre(
         self,
         id_disc: str,
@@ -150,7 +149,7 @@ class QueriesDisciplinas:
         ret = db.fetch_all(query, id_disc=id_disc, anoi=anoi, anof=anof, id_ies=id_ies)
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def aprovacoes_reprovacoes_por_semestre(
         self,
         id_disc: int,
@@ -196,7 +195,7 @@ class QueriesDisciplinas:
         )
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def quantidade_prova_final(
         self,
         id_disc: str,
@@ -225,7 +224,7 @@ class QueriesDisciplinas:
         ret = db.fetch_all(query, id_disc=id_disc, anoi=anoi, anof=anof, id_ies=id_ies)
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def boxplot_notas_disciplina(
         self,
         id_disc: int,
@@ -272,7 +271,7 @@ class QueriesDisciplinas:
         ret = db.fetch_all(query, id_disc=id_disc, anoi=anoi, anof=anof, id_ies=id_ies)
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def histograma_notas_disciplina(
         self,
         id_disc: int,
@@ -309,7 +308,7 @@ class QueriesDisciplinas:
         )
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def boxplot_notas_prova_final(
         self,
         id_disc: str,
@@ -359,7 +358,7 @@ class QueriesDisciplinas:
         )
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def boxplot_notas_grade(
         self,
         id_curso: str,
@@ -473,10 +472,10 @@ class QueriesDisciplinas:
         return ret
 
     # TODO
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def classificao_disciplinas(self): ...
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def evasao_disciplina(
         self,
         id_disc: str,
@@ -525,7 +524,7 @@ class QueriesDisciplinas:
 
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def boxplot_notas_evasao(
         self,
         id_disc: str,
@@ -602,7 +601,7 @@ class QueriesDisciplinas:
 
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def boxplot_desempenho_alunos_professor(
         self,
         id_disc: str,
@@ -661,7 +660,7 @@ class QueriesDisciplinas:
 
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def taxa_aprovacao_reprovacao_serie(
         self,
         id_curso: str,
@@ -780,7 +779,7 @@ class QueriesDisciplinas:
 
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def boxplot_desempenho_cotistas(
         self,
         id_disc: str,
@@ -829,7 +828,7 @@ class QueriesDisciplinas:
 
         return ret
 
-    @tratamento_excessao_db_grad()
+    @tratamento_excecao_db_grad()
     def histograma_desempenho_cotistas(
         self,
         id_disc: str,
