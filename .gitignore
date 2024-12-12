@@ -10,4 +10,4 @@ temp\.venv
 temp\logs*
 flask_session
 *.pyc
-
+node_modules
