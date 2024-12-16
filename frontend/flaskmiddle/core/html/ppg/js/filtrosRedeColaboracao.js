@@ -46,6 +46,7 @@ const procurarNo = (e) => {
     const text = svg.selectAll(".text");
     text.style("opacity", "0")
 
+    console.log(selectNode)
     const nodeId = selectNode.data()[0].id;
 
     links.style('stroke', function (link_d) {
@@ -148,6 +149,59 @@ buttonLimparBusca.addEventListener("click", () => {
 });
 
 //Filtros adicionais
+//TODO: logica de criação do slider 
+// ? se mudar de produto/data/fonte entao constroi um novo slider/faz uma nova requisição (constroi um novo grafo)
+// ? caso contrário apenas faz um update do grafo
+
+// * Slider
+const mapeiaPorConexoes = () => {
+  const numDeConexoes = {};
+
+  dados.nodes.forEach((node) => (numDeConexoes[node.id] = 0));
+
+  dados.links.forEach(function (link) {
+    if (link.source !== link.target) {
+      numDeConexoes[link.source] = (numDeConexoes[link.source] || 0) + 1;
+      numDeConexoes[link.target] = (numDeConexoes[link.target] || 0) + 1;
+    }
+  });
+
+  return numDeConexoes;
+};
+
+const criarSliderConexoes = (numDeConexoes) => {
+  let valores = Object.values(numDeConexoes);
+  let menorValor = Math.min(...valores);
+  let maiorValor = Math.max(...valores);
+
+  let sliderParams = {
+    id: "valorSlider",
+    min: menorValor,
+    max: maiorValor,
+    value: menorValor,
+  };
+
+  let slider = document.createElement("input");
+  slider.type = "range";
+  slider.id = sliderParams.id;
+  slider.min = sliderParams.min;
+  slider.max = sliderParams.max;
+  slider.value = sliderParams.value;
+  slider.classList.add("slider");
+  filtroPorConexoes.classList.add("ativo");
+
+  let valorAtual = document.createElement("p");
+  valorAtual.id = "valorAtual";
+
+  filtroPorConexoes.appendChild(slider);
+  filtroPorConexoes.appendChild(valorAtual);
+
+  slider.addEventListener("input", () => {
+    valorAtual.textContent = `Conexões: ${slider.value}`;
+    return parseInt(slider.value);
+  });
+};
+
 //* Aba filtros
 document
   .getElementById("btn-aplicar-filtros")

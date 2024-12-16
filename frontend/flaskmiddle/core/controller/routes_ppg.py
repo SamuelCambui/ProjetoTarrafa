@@ -1,9 +1,9 @@
 import json
 import requests
 import os
-from flask import (Blueprint, redirect, render_template, request, session)
+from flask import (Blueprint, flash, redirect, render_template, request, session)
 from flask.helpers import url_for
-from flask_login import login_user, logout_user, login_required
+from flask_login import utils, login_user, logout_user, login_required, current_user
 from google.protobuf.json_format import MessageToDict
 import grpc
 import sys
@@ -15,9 +15,7 @@ sys.path.append(str(diretorio_raiz))
 from frontend.flaskmiddle.core.models.User import Usuario
 from frontend.flaskmiddle.core import login_control
 from frontend.flaskmiddle.config import config
-from protos.out import messages_pb2, usuarios_pb2_grpc
-from protos.out.ppg_pb2_grpc import HomeStub, PPGStub
-from frontend.flaskmiddle.core.utils import Utils
+from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2, usuarios_pb2_grpc
 
 controller_ppg = Blueprint('controller_ppg', __name__, url_prefix='/ppg')
 
@@ -33,38 +31,7 @@ def unauthorized():
     session.clear()
     return redirect(url_for('principal.controller_ppg.login_get'))
 
-@controller_ppg.get("/")
-@login_required
-def index():
-    imagens = []
-    path = os.path.dirname(os.path.realpath(__file__))
-    for arquivo in os.listdir(path+'/../html/assets/img/usuarios'):
-        imagens.append(arquivo)
-    
-    return render_template("index.html", imagens = imagens, login_link='/ppg/login')
-
-@controller_ppg.get("/usuarios")
-def usuarios():
-    return "Usuarios"
-
-@controller_ppg.get("/rede_colaboracao")
-def rede_colaboracao():
-    return "Rede colaboracao"
-
-@controller_ppg.get("/ranking_docentes")
-def ranking_docentes():
-    return "ranking_docentes"
-
-@controller_ppg.get("/artigos_docentes")
-def artigos_docentes():
-    return "artigos_docentes"
-
-@controller_ppg.get("/setup")
-def setup():
-    return "setup"
-
 @controller_ppg.post("/login")
-# @Utils.home_stub()
 def login_post():
     try:
         email = request.form.get("username").strip()
@@ -82,11 +49,10 @@ def login_post():
             if user:
                 login_user(user)
                 session['user'] = MessageToDict(response)
-                session['user']['id_ies'] = user.id_ies
                 session['user']['site'] = 'principal.controller_ppg.ppg'
                 session['requestssession'] = requests.Session()
 
-                return redirect(url_for('principal.controller_ppg.home'))
+                return redirect(url_for('principal.controller_ppg.ppg'))
         
         #flash(json.loads(ret.content)['detail'], 'erro')
         return redirect(url_for('principal.controller_ppg.login_get'))
@@ -97,7 +63,15 @@ def login_post():
 @controller_ppg.get("/login")
 def login_get():
     try:
-        return render_template('ppg/login_ppg.html')
+        if 'user' in session:
+            return redirect(url_for('principal.controller_ppg.ppg'))
+
+        imagens = []
+        path = os.path.dirname(os.path.realpath(__file__))
+        for arquivo in os.listdir(path+'/../html/assets/img/usuarios'):
+            imagens.append(arquivo)
+        
+        return render_template('ppg/login_ppg.html', imagens=imagens, dominios=None, login_link='/ppg/login')
     except Exception as error:
         print(error)
         return render_template('ppg/erro.html', erro=error, url=config.FASTAPI_URL)
@@ -124,39 +98,15 @@ def processa_retorno(response):
 def ppg():
     return render_template("ppg/ppg.html")
 
-@controller_ppg.get("/home")
+@controller_ppg.get("graficos/indicadores-paralelo-tab/<id>/<anoi>/<anof>")
 @login_required
-@Utils.home_stub()
-def home(stub : HomeStub):
-    try:
-        if stub:
-            response = stub.ObtemHome(messages_pb2.PpgRequest(id=session['user']['id_ies']))
-            print('Home ok')
-            retorno = processa_retorno(response)
-            avatar = session['user']['avatar']
-            listaProgramas = retorno['listaprogramas']
-            nome = retorno['listaprogramas'][0]['nome_ies']
-            # print("A")
-            # return "HOME"
-            return render_template('ppg/home.html', avatar = avatar, listaProgramas = listaProgramas, nome = nome)
-        # return ret.json()['detail'], 400
-    except Exception as error:
-        print(error)
-        return render_template('ppg/erro.html')
-
-@controller_ppg.get("<id_ppg>")
-@Utils.ppg_stub()
-@login_required
-def ppgs(stub : PPGStub, id_ppg=None):
-    try:
-        retorno = {}
-        if stub:
-            response = stub.ObtemInformacaoPPG(messages_pb2.PpgRequest(id=id_ppg))
-            print('ok')
-        retorno = processa_retorno(response)
-        avatar = session['user']['avatar']
-        session['id_ppg'] = id_ppg
-        session['nota_ppg'] = retorno['informacao_ppg']['nota']
-        return render_template('ppg/ppg.html', avatar = avatar, **(retorno['informacao_ppg']))
-    except Exception as e:
-        return render_template('ppg/erro.html')
+def indicadores(id, anoi, anof):
+    print('Iniciando comunicacao com grpc...')
+    retorno = {}
+    with grpc.insecure_channel(config.GRPC_SERVER_HOST) as channel:
+            stub = ppg_pb2_grpc.IndicadoresStub(channel)
+            if stub:
+                response = stub.ObtemIndicadores(messages_pb2.PpgRequest(id=id, anoi=int(anoi), anof=int(anof)))
+                print('ok')
+                retorno = processa_retorno(response)
+    return retorno

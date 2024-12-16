@@ -1,38 +1,26 @@
-// !todo navegação por botoes
+export const renderizarItensPesquisa = (dados, resultadosDocentes, inputDocentes) => {
+    resultadosDocentes.innerHTML = "";
 
-export const renderizarItensPesquisa = (nomes, container, input) => {
-  container.innerHTML = "";
+    dados.forEach((item) => {
+        const itemResultado = document.createElement("div");
+        itemResultado.classList.add("resultado-nome");
+        itemResultado.textContent = item;
 
-  if (nomes.length === 0) {
-    container.classList.add("hidden");
-    return;
-  }
-
-  const fragment = document.createDocumentFragment();
-
-  nomes.forEach((nome) => {
-    const item = document.createElement("div");
-    item.className =
-      "resultado-item cursor-pointer rounded p-2 mb-1 mx-2 hover:bg-indigo-100 transition-colors duration-100";
-    item.textContent = nome;
-    fragment.appendChild(item);
-
-    item.addEventListener("click", () => {
-      input.value = nome;
-      container.classList.add("hidden");
+        itemResultado.addEventListener("click", () => {
+            inputDocentes.value = item;
+            itemResultado.style.display = "none";
+        });
+        resultadosDocentes.appendChild(itemResultado);
     });
-  });
 
-  container.appendChild(fragment);
-  container.classList.remove("hidden");
-};
+    resultadosDocentes.style.display = dados.length ? "block" : "none";
+}
 
-export const filtrarResultadosPesquisa = (input, trie) => {
-  const valorBusca = input.value.trim().toLowerCase();
 
-  if (!valorBusca) {
-    return [];
-  }
+export const filtrarResultadosPesquisa = (inputDocentes, trie) => {
+    const inputDocente = inputDocentes.value.trim().toLowerCase();
 
-  return trie.autocomplete(valorBusca);
-};
+    if (inputDocente.length > 0) {
+        return trie.autocomplete(inputDocente);
+    }
+}

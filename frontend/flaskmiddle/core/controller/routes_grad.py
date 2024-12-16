@@ -1,48 +1,79 @@
 import json
-import logging
-from threading import Thread
-import time
-import traceback
-from datetime import date, datetime
-from urllib import response
-from decimal import Decimal
-
 import requests
-import os
-
-import io
-import sys
-
-import bcrypt
-import flask
-from flask_session import Session
-
-from flask import (Blueprint, Flask, current_app, flash, jsonify, make_response,
-                   redirect, render_template, request, send_file, stream_with_context, session, abort)
-
+from flask import (Blueprint, flash, jsonify, redirect, render_template, request, session)
 from flask.helpers import url_for
-from flask_login import LoginManager, utils, login_user, logout_user, login_required, current_user
-#from werkzeug.exceptions import HTTPException
-
-from core import login_control
-from core.models.User import Usuario
-from core.utils import Utils
-
-from config import config
-import core.controller.login
-
-import hashlib
-import time
+from flask_login import login_user
+from frontend.flaskmiddle.core.models.User import Usuario
+from frontend.flaskmiddle.config import config
+from frontend.flaskmiddle.core.utils import Utils
+from protos.out.grad_pb2_grpc import DadosGraduacaoStub, IndicadoresGraduacaoStub
+from protos.out.messages_pb2 import GradRequest
+from google.protobuf.json_format import MessageToDict
 
 controller_grad = Blueprint('controller_grad', __name__, url_prefix='/grad')
 
+@controller_grad.get("/indicadores-gerais/<int:anoi>/<int:anof>")
+@Utils.indicadores_grad_stub()
+def indicadores_gerais(anoi, anof, stub: IndicadoresGraduacaoStub):
+    response = stub.GetIndicadoresGlobais(GradRequest(anoi=anoi, anof=anof))
+    response = MessageToDict(response)
+    indicadores = { item['nome'] : json.loads(item['json']) for item in response['item']}
+    return jsonify(indicadores)
+
+@controller_grad.get("/aba-professores/<id>/<int:anoi>/<int:anof>")
+@Utils.indicadores_grad_stub()
+def aba_professores(id, anoi, anof, stub: IndicadoresGraduacaoStub):
+    response = stub.GetAbaProfessores(GradRequest(id=id, anoi=anoi, anof=anof))
+    response = MessageToDict(response)
+    indicadores = [{ item['nome'] : json.loads(item['json']) } for item in response['item']]
+    return jsonify(indicadores)
+
+@controller_grad.get("/aba-egressos/<id>/<int:anoi>/<int:anof>")
+@Utils.indicadores_grad_stub()
+def aba_egressos(id, anoi, anof, stub: IndicadoresGraduacaoStub):
+    response = stub.GetAbaEgressos(GradRequest(id=id, anoi=anoi, anof=anof))
+    response = MessageToDict(response)
+    indicadores = [{ item['nome'] : json.loads(item['json']) } for item in response['item']]
+    return jsonify(indicadores)
+
+@controller_grad.get("/aba-disciplinas/<int:id>/<int:anoi>/<int:anof>")
+@Utils.indicadores_grad_stub()
+def aba_disciplinas(id, anoi, anof, stub: IndicadoresGraduacaoStub):
+    response = stub.GetAbaDisciplinas(GradRequest(id=id, anoi=anoi, anof=anof))
+    response = MessageToDict(response)
+    indicadores = [{ item['nome'] : json.loads(item['json']) } for item in response['item']]
+    return jsonify(indicadores)
+
+@controller_grad.get("/aba-indicadores/<id>/<int:anoi>/<int:anof>")
+@Utils.indicadores_grad_stub()
+def aba_indicadores(id, anoi, anof, stub: IndicadoresGraduacaoStub):
+    response = stub.GetAbaIndicadoresCurso(GradRequest(id=id, anoi=anoi, anof=anof))
+    response = MessageToDict(response)
+    indicadores = {{ item['nome'] : json.loads(item['json']) } for item in response['item']}
+    return jsonify(indicadores)
+
 @controller_grad.get("/home")
-def home():
-    return '<h1>home grad</h1>'
+@Utils.dados_grad_stub()
+def home(stub: DadosGraduacaoStub):
+    response = stub.GetCursos(GradRequest())
+    response = MessageToDict(response)
+    cursos = json.loads(response['item'][0]['json'])
+    return render_template("grad/home.html", cursos=cursos, nome='Universidade Estadual de Montes Claros')
+
+@controller_grad.get("/curso/<id>")
+@Utils.dados_grad_stub()
+def curso(id, stub: DadosGraduacaoStub):
+    response = stub.GetCurso(GradRequest(id=id))
+    response = MessageToDict(response)
+    curso = json.loads(response['item'][0]['json'])
+    return render_template("grad/curso.html", curso=curso, nome=curso['nome'])
+
+@controller_grad.get("/indicadores-geral")
+def indicadores_geral():
+    return render_template("grad/geral.html", nome= 'Unimontes')
 
 @controller_grad.post("/login")
 def login_post():
-    #return render_template('index.html')
     try:
         uname = request.form.get("username")
         email = uname+request.form.get("selectUniversidade")

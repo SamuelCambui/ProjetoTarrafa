@@ -1,24 +1,21 @@
 version: '3.8'
 
 services:
-  # frontend-teste:
-  #   build: ./frontend/flaskmiddle
-  #   command: >
-  #     /bin/bash -c "NUM_WORKERS=20 &&
-  #     gunicorn -b 0.0.0.0:${FRONTEND_PORT} --worker-class gevent --workers $$NUM_WORKERS --timeout 600 frontend.flaskmiddle.run:app"
-  #   volumes:
-  #     - .:/app
-  #   env_file:
-  #     - ./.env
-  #   depends_on:
-  #     # - backend-teste
-  #     - grpc-server-teste
-  #   expose:
-  #     - ${FRONTEND_PORT}
-  #   ports:
-  #     - "${FRONTEND_PORT}:${FRONTEND_PORT}"
-  #   networks:
-  #     - backend-net
+  frontend-teste:
+    build: ./frontend/flaskmiddle
+    command: >
+      /bin/bash -c "NUM_WORKERS=$$((2 * $$(nproc) + 1)) &&
+      gunicorn -b 0.0.0.0:${FRONTEND_PORT} --worker-class gevent --workers $$NUM_WORKERS --timeout 600 run:app"
+    env_file:
+      - ./.env
+    depends_on:
+      - backend-teste
+    expose:
+      - ${FRONTEND_PORT}
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    networks:
+      - frontend-backend-net
 
 #   celery_queries-teste:
 #     build: ./backend
@@ -35,72 +32,55 @@ services:
 #       - backend-net
 #       - banco
 
-  # redis-teste:
-  #   image: 'redis:latest'
-  #   env_file:
-  #     - ./.env
-  #   command: --port ${REDIS_PORT}
-  #   expose:
-  #     - ${REDIS_PORT}
-  #   networks:
-  #     - backend-net
-
-  rabbitmq:
-    image: rabbitmq:3.8-management-alpine
-    ports:
-      - 15673:15672
-      - 5672:5672
-    expose:
-      - 15672
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping", "-q"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    # depends_on:
-    #   - redis-teste
+  backend-teste:
+    build: ./backend
+    command: >
+      /bin/bash -c "NUM_WORKERS=$$((2 * $$(nproc) + 1)) &&
+      gunicorn backend.app.main:app --workers $$NUM_WORKERS --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:${BACKEND_PORT} --timeout 600"
+    volumes:
+      - .:/app
     env_file:
       - ./.env
-    # environment:
-    #   RABBITMQ_DEFAULT_VHOST: vhost
-    #   RABBITMQ_DEFAULT_USER: guest
-    #   RABBITMQ_DEFAULT_PASS: guest
+    expose:
+      - ${BACKEND_PORT}
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    depends_on:
+#      - db-teste
+      - redis-teste
+      - celery_tasks-teste
+      - celery_despachante-teste
+    networks:
+      - backend-net
+      - frontend-backend-net
+ 
+
+  celery_tasks-teste:
+    build: ./backend
+    command: celery -A backend.worker.celery_start_tasks worker -Q fila_tasks -c 10
+    env_file:
+      - ./.env
+    volumes:
+      - .:/app
+    depends_on:
+#      - db-teste
+      - redis-teste
     networks:
       - backend-net
 
-#   flower-teste:
-#     build: ./backend
-#     command: celery -A backend.worker.celery_start_tasks flower --port=5555
-#     env_file:
-#       - ./.env
-#     volumes:
-#       - .:/app
-#     depends_on:
-# #      - db-teste
-#       - redis-teste
-#       - celery_tasks-teste
-#     ports:
-#       - "5555:5555"
-#     expose:
-#       - 5555
-#     networks:
-#       - backend-net
-  
-  # server-queries-teste:
-  #   build: ./backend
-  #   command: python backend/app/crud/crud_api.py
-  #   env_file:
-  #     - ./.env
-  #   volumes:
-  #     - .:/app
-  #   restart: always
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #   networks:
-  #     - backend-net
-  #     - banco
-      
+  celery_despachante-teste:
+    build: ./backend
+    command: celery -A backend.worker.celery_start_despachante worker -Q fila_despachante --loglevel=info -c 10
+    env_file:
+      - ./.env
+    volumes:
+      - .:/app
+    depends_on:
+#      - db-teste
+      - redis-teste
+      - celery_tasks-teste
+    networks:
+      - backend-net
 
   # grpc-server-teste:
   #   build: ./backend
@@ -127,18 +107,33 @@ services:
   #   networks:
   #     - backend-net
 
-  # nginx:
-  #   image: nginx
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - ./backend/lb/nginx.conf:/etc/nginx/nginx.conf
-  #   depends_on:
-  #     # grpc-server-teste:
-  #     #   condition: service_healthy
-  #      - grpc-server-teste
-  #   networks:
-  #     - backend-net
+  redis-teste:
+    image: 'redis:latest'
+    env_file:
+      - ./.env
+    command: --port ${REDIS_PORT}
+    expose:
+      - ${REDIS_PORT}
+    networks:
+      - backend-net
+
+  flower-teste:
+    build: ./backend
+    command: celery -A backend.worker.celery_start_tasks flower --port=5555
+    env_file:
+      - ./.env
+    volumes:
+      - .:/app
+    depends_on:
+#      - db-teste
+      - redis-teste
+      - celery_tasks-teste
+    ports:
+      - "5555:5555"
+    expose:
+      - 5555
+    networks:
+      - backend-net
 
 #  db-teste:
 #    build: ./backend/db

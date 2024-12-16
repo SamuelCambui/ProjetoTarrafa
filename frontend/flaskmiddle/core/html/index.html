@@ -16,52 +16,40 @@
 <body>
   <div class="bg-zinc-100 min-h-screen">
     <header class="px-6 max-w-7xl mx-auto">
-      <div class="flex justify-between items-center py-10 gap-y-2 flex-wrap">
-        <a href="/">
+      <div class="flex justify-between py-10 flex-wrap">
         <img class="w-28" src="./assets/img/icons/tarrafa_logo_alt_2.png" alt="Logo Tarrafa">
-        </a>
-        <button
-          class="rounded-md p-2 hover:bg-gray-200 block md:hidden"
-          id="btn-menu"
-          aria-controls="nav-menu"
-          aria-expanded="false"
-        >
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-      </button>
-        <nav
-          class="fixed inset-0 bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:bg-transparent md:shadow-none md:flex md:items-center md:gap-8 md:p-0"
-          id="nav-menu"
-          aria-hidden="true"
-        >
-          <button
-            class="absolute top-4 right-4 rounded-lg text-gray-600 p-2 hover:bg-gray-200 hover:text-gray-900 md:hidden"
-            id="btn-fechar"
-            aria-label="Fechar menu"
-          >
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>          </button>
-          <ul role="list" class="justify-center flex items-center flex-col mt-8 md:mt-0 gap-y-4 md:flex-row md:space-x-4 p-6 md:p-0">
-            <li><a href="#quemutiliza" class="block py-3 px-6 text-gray-600 hover:text-indigo-500 md:inline-block">Quem utiliza</a></li>
-            <li><a href="#funcionalidades" class="block py-3 px-6 text-gray-600 hover:text-indigo-500 md:inline-block">Funcionalidades</a></li>
-            <li><a href="/equipe" class="block py-3 px-6 mb-4 md:mb-0 text-gray-600 hover:text-indigo-500 md:inline-block">Equipe</a></li>
+        <nav>
+          <ul role="list" class="flex items-center gap-8 text-zinc-600">
             <li>
-              <a role="button" href="/ppg/login" class=" bg-indigo-400 hover:bg-indigo-500 text-white font-bold py-4 px-6 rounded-full md:w-auto">Pós-graduação Stricto Sensu
+              <a href="#quemutiliza" class="hover:text-indigo-500">Quem utiliza</a>
+            </li>
+            <li>
+              <a href="#funcionalidades" class="hover:text-indigo-500">Funcionalidades</a>
+            </li>
+            <li>
+              <a href="/equipe" class="hover:text-indigo-500">Equipe</a>
+            </li>
+            <li>
+              <a href="/ppg/login">
+                <button
+                  class="flex items-center justify-center bg-indigo-400 hover:bg-indigo-500 font-bold text-zinc-50 py-3 px-12 border border-transparent rounded-[28px]">Pós-graduação
+                  Stricto Sensu</button>
               </a>
             </li>
           </ul>
         </nav>
-      </div>
     </header>
-        <main>
+
+    <main>
       <section class="py-12 px-6 max-w-7xl mx-auto">
-        <div class="md:py-10 max-w-3xl text-center mx-auto">
-          <h1 class="md:text-5xl text-3xl font-extrabold text-indigo-500">
-            <span class="inline-block transition-transform duration-300 ease-in-out hover:-translate-y-1">Solução</span> para integrar e acompanhar as informações de 
-            <span class="inline-block transition-transform duration-300 ease-in-out hover:-translate-y-1">desempenho</span> dos PPGs
-          </h1>                    
+        <div class="py-10 max-w-3xl text-center mx-auto">
+          <h1 class="text-5xl font-extrabold text-indigo-500">
+            Solução para integrar e acompanhar as informações de desempenho dos PPGs
+          </h1>
           <p class="py-10 text-zinc-700">
             Possuimos foco na produção de docentes pesquisadores e discentes, utilizando fontes de dados
             disponíveis
-            na Web, CAPES e CNPq, de modo a apoiar a implementação de políticas de gestão na Pós-graduação
+            na Web, CAPES e CNPq, de modo a apoiar a implementação de políticas de gestão na Pós-graduação.
           </p>
         </div>
         <div class="max-w-4xl mx-auto">
@@ -71,17 +59,17 @@
 
       <section id="quemutiliza" class="py-10 bg-indigo-100">
         <h2 class="pb-8 text-3xl font-extrabold text-indigo-500 text-center">Quem utiliza</h2>
+
         <div class="max-w-7xl mx-auto">
           <div class="flex flex-wrap justify-center gap-6 p-10">
             {% for img in imagens %}
             <div
-              class="w-28 h-28 rounded-xl px-8 py-10 border-zinc-200 backdrop-blur-xl bg-indigo-500 flex justify-center items-center">
-              <img alt="" src="/assets/img/usuarios/{{img}}" loading="lazy"
+              class="w-28 h-28 rounded-xl px-8 py-10 border-zinc-200 backdrop-blur-xl bg-indigo-500/50 flex justify-center items-center">
+              <img src="/assets/img/usuarios/{{img}}" loading="lazy"
                 class="max-w-[60px] min-w-[60px] block mx-auto h-auto">
             </div>
             {% endfor %}
           </div>
-        </div>
       </section>
 
       <section id="funcionalidades" class="py-10 px-6 max-w-7xl mx-auto">
@@ -302,31 +290,12 @@
     </main>
   </div>
 
-  <footer class="bg-indigo-500 p-8 text-zinc-100">
-    <div class="text-center">Copyright © Sistema Tarrafa 2024</div>
+  <footer class="bg-indigo-400 text-zinc-100 p-8">
+    <div class="text-center font-semibold">
+      Copyright © Sistema Tarrafa 2024
+    </div>
+    </div>
   </footer>
-
 </body>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const menuButton = document.getElementById('btn-menu');
-    const closeButton = document.getElementById('btn-fechar');
-    const navMenu = document.getElementById('nav-menu');
-    
-    menuButton.addEventListener('click', function() {
-      navMenu.classList.remove('translate-x-full');
-      navMenu.classList.add('translate-x-0');
-      menuButton.setAttribute('aria-expanded', 'true');
-      navMenu.setAttribute('aria-hidden', 'false');
-    });
-    
-    closeButton.addEventListener('click', function() {
-      navMenu.classList.add('translate-x-full');
-      navMenu.classList.remove('translate-x-0');
-      menuButton.setAttribute('aria-expanded', 'false');
-      navMenu.setAttribute('aria-hidden', 'true');
-    });
-  });
-</script>
 </html>

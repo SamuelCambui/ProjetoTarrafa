@@ -1,15 +1,9 @@
 export const graficosDocentes = () => {
   let listaDocentes;
 
-  const carregamento = document.getElementById("carregamento");
-  carregamento.classList.remove("hidden");
-  carregamento.classList.add("flex");
-
   const gerarGraficos = async (anoInicio, anoFim) => {
     try {
-      const resposta = await axios.get(
-        `/ppg/graficos/docentes-tab/${anoInicio}/${anoFim}`,
-      );
+      const resposta = await axios.get(`/ppg/graficos/docentes-tab/${anoInicio}/${anoFim}`);
       const {
         id_ppg: idPpg,
         listadocentes,
@@ -18,31 +12,19 @@ export const graficosDocentes = () => {
         categorias,
       } = resposta.data;
 
-      listaDocentes = listadocentes;
+      listaDocentes = listadocentes
 
-      exibirGraficoProfessorPorCategoria(
-        "chartprofessorsbycategory",
-        categorias,
-      );
+      exibirGraficoProfessorPorCategoria("chartprofessorsbycategory", categorias);
       exibirGraficoLattesDesatualizado("chartlattesupdate", lattes);
       exibirListaDocentes(listaDocentes, idPpg, anoInicio, anoFim);
       exibirGrafoCoautoriasDocentes(dados);
-
-      document.getElementById("select-prof").addEventListener("change", (e) => {
-        buscarRedeColaboracao(e, anoInicio, anoFim)
-      });
     } catch (error) {
       console.error("Erro ao buscar dados de docentes: ", error);
-    }
-    finally {
-      carregamento.classList.remove("flex");  
-      carregamento.classList.add("hidden");
     }
   };
 
   const atualizarTitulo = (anoInicio, anoFim) => {
-    document.getElementById("titulo-docentes").textContent =
-      `Professores no período de ${anoInicio} a ${anoFim}`;
+    document.getElementById("titulo-docentes").textContent = `Professores no período de ${anoInicio} à ${anoFim}`;
   };
 
   const atualizarFormula = (formula) => {
@@ -53,8 +35,7 @@ export const graficosDocentes = () => {
   const limparElementos = () => {
     document.getElementById("tbody-lista-profs").innerHTML = "";
     const select = document.getElementById("select-prof");
-    select.innerHTML =
-      '<option value="" disabled selected>Escolha um docente</option><option value="todos">* TODOS</option>';
+    select.innerHTML = '<option value="" disabled selected>Escolha um docente</option><option value="todos">* TODOS</option>';
   };
 
   const ordenarProfessoresPorMedia = (medias) => {
@@ -63,64 +44,38 @@ export const graficosDocentes = () => {
     });
   };
 
-  const criarLinhaProfessor = (
-    professor,
-    indProdArt,
-    tooltip,
-    tooltip_lattes,
-    status,
-    avatar,
-    idPpg,
-    anoInicio,
-    anoFim,
-    text_qualis,
-    corLattes,
-  ) => {
-    const linhaProfessor = document.createElement("tr");
-    linhaProfessor.className =
-      "border-b cursor-pointer hover:bg-zinc-50 border-b-gray-300";
-    linhaProfessor.innerHTML = `
-    <td class="px-3 py-3.5">
-      <div class="flex items-center gap-4"> 
-        <img class="h-11 w-11 rounded-full" src="${avatar}"/>
-        <span class="font-medium capitalize">${professor.nome.toLowerCase()}</span>
-      </div>
-    </td>
+  const criarLinhaProfessor = (professor, indProdArt, tooltip, tooltip_lattes, status, avatar, idPpg, anoInicio, anoFim, text_qualis, corLattes) => {
 
-    <td class="px-3 py-3.5" title="${tooltip}">${indProdArt.toFixed(2)}</td>
+    const linhaProfessor = document.createElement('tr');
+    linhaProfessor.className = "border-b cursor-pointer hover:bg-zinc-50 border-b-gray-300";
+    linhaProfessor.innerHTML = `
+  <td class="px-3 py-3.5">
+  <div class="flex items-center gap-4"> 
+    <img class="h-11 w-11 rounded-full" src="${avatar}"/>
+    <span class="font-medium capitalize">${professor.nome.toLowerCase()}</span>
+  </div>
+</td>
+
+  <td class="px-3 py-3.5" title="${tooltip}" style="text-align: center;">${indProdArt.toFixed(2)}</td>
     <td class="px-3 py-3.5" title="${status}\nÚltima atualização do Lattes: ${tooltip_lattes}">
       ${status}
       <i class="fas fa-exclamation-circle" style="color: ${corLattes[tooltip_lattes]};"></i>
     </td>`;
-    linhaProfessor.onclick = () =>
-      buscaProducoesProf(
-        professor.num_identificador,
-        professor.nome,
-        idPpg,
-        anoInicio,
-        anoFim,
-        text_qualis,
-      );
+    linhaProfessor.onclick = () => buscaProducoesProf(professor.num_identificador, professor.nome, idPpg, anoInicio, anoFim, text_qualis);
 
     return linhaProfessor;
   };
 
   const criarLinhaMedia = (nomeMedia, valorMedia) => {
-    const linhaMedia = document.createElement("tr");
-    linhaMedia.classList.add("border-b", "border-b-gray-300", "bg-zinc-50");
+    const linhaMedia = document.createElement('tr');
+    linhaMedia.classList.add('border-b', 'border-b-gray-300', 'bg-zinc-50');
     linhaMedia.innerHTML = `
-    <th class="text-left font-semibold px-3 py-3.5" scope="colgroup" colspan="5"> IndProd médio dos ${nomeMedia}: ${valorMedia.toFixed(2)} </th>`;
+    <th class="text-left font-semibold px-3 py-3.5" scope="colgroup" colspan="5"> IndProd médio dos ${nomeMedia}: ${valorMedia.toFixed(2)} </th>`
 
     return linhaMedia;
   };
 
-  const processarListaProfessores = (
-    listaDocentes,
-    idPpg,
-    anoInicio,
-    anoFim,
-    corLattes,
-  ) => {
+  const processarListaProfessores = (listaDocentes, idPpg, anoInicio, anoFim, corLattes) => {
     const tabelaProfessores = document.getElementById("tbody-lista-profs");
     const select = document.getElementById("select-prof");
     let flagMediaInserida;
@@ -134,37 +89,17 @@ export const graficosDocentes = () => {
         const professor = listaDocentes.professores[i];
         const indProdArt = professor.indprod;
 
-        if (
-          parseFloat(indProdArt.toFixed(2)) >=
-          parseFloat(listaDocentes.medias[m].toFixed(2))
-        ) {
+        if (parseFloat(indProdArt.toFixed(2)) >= parseFloat(listaDocentes.medias[m].toFixed(2))) {
           const text_qualis = `<strong>A1:</strong> ${professor.A1}, <strong>A2:</strong> ${professor.A2}, <strong>A3:</strong> ${professor.A3}, <strong>A4:</strong> ${professor.A4}, <strong>B1:</strong> ${professor.B1}, <strong>B2:</strong> ${professor.B2}, <strong>B3:</strong> ${professor.B3}, <strong>B4:</strong> ${professor.B4}, <strong>C:</strong> ${professor.C}`;
-          const tooltip = text_qualis
-            .replace(/<strong>/g, "")
-            .replace(/<\/strong>/g, "");
-          const tooltip_lattes =
-            listaDocentes.datalattes[professor.num_identificador];
-          const status = listaDocentes.status[professor.num_identificador]
-            .map((s) => `<span><strong>${s[0]}</strong></span>`)
-            .join("");
+          const tooltip = text_qualis.replace(/<strong>/g, "").replace(/<\/strong>/g, "");
+          const tooltip_lattes = listaDocentes.datalattes[professor.num_identificador];
+          const status = listaDocentes.status[professor.num_identificador].map(s => `<span><strong>${s[0]}</strong></span>`).join('');
           let avatar = "/assets/img/avatars/avatar1.jpeg";
           if (listaDocentes.avatares !== "null") {
             avatar = listaDocentes.avatares[professor.num_identificador];
           }
 
-          const linha = criarLinhaProfessor(
-            professor,
-            indProdArt,
-            tooltip,
-            tooltip_lattes,
-            status,
-            avatar,
-            idPpg,
-            anoInicio,
-            anoFim,
-            text_qualis,
-            corLattes,
-          );
+          const linha = criarLinhaProfessor(professor, indProdArt, tooltip, tooltip_lattes, status, avatar, idPpg, anoInicio, anoFim, text_qualis, corLattes);
           tabelaProfessores.appendChild(linha);
 
           select.innerHTML += `<option value="${professor.id_sucupira}">${professor.nome}</option>`;
@@ -194,121 +129,117 @@ export const graficosDocentes = () => {
     atualizarTitulo(anoInicio, anoFim);
     atualizarFormula(listaProfsTemp.formula);
     limparElementos();
-    processarListaProfessores(
-      listaProfsTemp,
-      idPpg,
-      anoInicio,
-      anoFim,
-      corLattes,
-    );
+    processarListaProfessores(listaProfsTemp, idPpg, anoInicio, anoFim, corLattes);
   };
 
-  const exibirGraficoProfessorPorCategoria = (
-    idCanvas,
-    listagemProfessores,
-  ) => {
+  const exibirGraficoProfessorPorCategoria = (idCanvas, listagemProfessores) => {
     renderChartProfessorsByCategory(idCanvas, listagemProfessores);
-  };
+  }
 
   const exibirGraficoLattesDesatualizado = (idCanvas, lattes) => {
     const lattesdocs = lattes;
     renderizarGraficoAtualizacao(idCanvas, lattesdocs);
-  };
+  }
+
 
   const exibirGrafoCoautoriasDocentes = (dados) => {
     const data = dados.links;
     const elem = document.getElementById("links-graph");
     elem.innerHTML = "";
 
-    // Reduced size of the graph
-    const width = 500;
-    const height = 500;
-    const innerRadius = Math.min(width, height) * 0.2; // Adjusted innerRadius
+    const width = 1000;
+    const height = 1000;
+    const innerRadius = Math.min(width, height) * 0.3;
     const outerRadius = innerRadius + 10;
 
     const names = d3.sort(
-        d3.union(
-            data.map((d) => d.source),
-            data.map((d) => d.target),
-        ),
+      d3.union(
+        data.map((d) => d.source),
+        data.map((d) => d.target),
+      ),
     );
     const index = new Map(names.map((name, i) => [name, i]));
     const matrix = Array.from(index, () => new Array(names.length).fill(0));
     for (const { source, target, value } of data)
-        matrix[index.get(source)][index.get(target)] += value;
+      matrix[index.get(source)][index.get(target)] += value;
 
     const chord = d3
-        .chordDirected()
-        .padAngle(10 / innerRadius)
-        .sortSubgroups(d3.descending)
-        .sortChords(d3.descending);
+      .chordDirected()
+      .padAngle(10 / innerRadius)
+      .sortSubgroups(d3.descending)
+      .sortChords(d3.descending);
 
     const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);
 
     const ribbon = d3
-        .ribbonArrow()
-        .radius(innerRadius - 1)
-        .padAngle(1 / innerRadius);
+      .ribbonArrow()
+      .radius(innerRadius - 1)
+      .padAngle(1 / innerRadius);
 
     const colors = d3.quantize(d3.interpolateRainbow, names.length);
 
     const svg = d3
-        .select("#links-graph")
-        .append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("viewBox", [-width / 2, -height / 2, width, height])
-        .attr("style", "width: 100%; height: 100%; font-size: 5px"); 
+      .select("#links-graph")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("viewBox", [-width / 2, -height / 2, width, height])
+      .attr(
+        "style",
+        "width: 100%; height: 100%; font-size: 12px",
+      );
 
     const chords = chord(matrix);
 
     const group = svg.append("g").selectAll().data(chords.groups).join("g");
 
     group
-        .append("path")
-        .attr("fill", (d) => colors[d.index])
-        .attr("d", arc);
+      .append("path")
+      .attr("fill", (d) => colors[d.index])
+      .attr("d", arc);
 
     group
-        .append("text")
-        .each((d) => (d.angle = (d.startAngle + d.endAngle) / 2))
-        .attr("dy", "0.35em")
-        .attr(
-            "transform",
-            (d) => `
-                rotate(${(d.angle * 180) / Math.PI - 90})
-                translate(${outerRadius + 5})
-                ${d.angle > Math.PI ? "rotate(180)" : ""}
-            `,
-        )
-        .attr("text-anchor", (d) => (d.angle > Math.PI ? "end" : null))
-        .text((d) => names[d.index]);
+      .append("text")
+      .each((d) => (d.angle = (d.startAngle + d.endAngle) / 2))
+      .attr("dy", "0.35em")
+      .attr(
+        "transform",
+        (d) => `
+						rotate(${(d.angle * 180) / Math.PI - 90})
+						translate(${outerRadius + 5})
+						${d.angle > Math.PI ? "rotate(180)" : ""}
+					`,
+      )
+      .attr("text-anchor", (d) => (d.angle > Math.PI ? "end" : null))
+      .text((d) => names[d.index]);
 
     group.append("title").text(
-        (d) => `${names[d.index]}
-            ${d3.sum(chords, (c) => (c.source.index === d.index) * c.source.value) + d3.sum(chords, (c) => (c.target.index === d.index) * c.source.value)} artigos`,
+      (d) => `${names[d.index]}
+				${d3.sum(chords, (c) => (c.source.index === d.index) * c.source.value) + d3.sum(chords, (c) => (c.target.index === d.index) * c.source.value)} artigos`,
     );
 
     svg
-        .append("g")
-        .attr("fill-opacity", 0.75)
-        .selectAll()
-        .data(chords)
-        .join("path")
-        .style("mix-blend-mode", "multiply")
-        .attr("fill", (d) => colors[d.target.index])
-        .attr("d", ribbon)
-        .append("title")
-        .text(
-            (d) =>
-                `${names[d.source.index]} → ${names[d.target.index]} ${d.source.value}`,
-        );
-};
+      .append("g")
+      .attr("fill-opacity", 0.75)
+      .selectAll()
+      .data(chords)
+      .join("path")
+      .style("mix-blend-mode", "multiply")
+      .attr("fill", (d) => colors[d.target.index])
+      .attr("d", ribbon)
+      .append("title")
+      .text(
+        (d) =>
+          `${names[d.source.index]} → ${names[d.target.index]} ${d.source.value}`,
+      );
+  };
 
- 
-  const buscarRedeColaboracao = (e, anoInicio, anoFim) => {
-    let ids = e.target.value;    
-    let nome = e.target.options[e.target.selectedIndex].text;  
+
+  const buscarRedeColaboraca = (op) => {
+    const ids = op.options[op.selectedIndex].value;
+    const nome = op.options[op.selectedIndex].label;
+
+    if (!ids) ids = "todos";
 
     axios
       .get(`/ppg/grafo/coautores/docente/${ids}/${anoInicio}/${anoFim}`)
@@ -424,10 +355,11 @@ export const graficosDocentes = () => {
           event.subject.fy = null;
         }
 
-        document.getElementById("legend-graph").innerHTML = "";
+        const leg_elem = document.getElementById("legend-graph");
+        leg_elem.innerHTML = "";
         const legendContainer = d3.select("#legend-graph");
 
-        const svgl = legendContainer.append("svg").attr("width", 200); 
+        const svgl = legendContainer.append("svg").attr("width", 200); // Adjust the width as needed
 
         const legendData = Object.entries({
           "Docentes com coaturorias": d3.schemeCategory10[0],
@@ -468,7 +400,6 @@ export const graficosDocentes = () => {
           .attr("x", 24)
           .attr("y", 9)
           .attr("dy", ".35em")
-          .style("font-size", "10px") 
           .text(function (d) {
             return d[0];
           });
@@ -476,27 +407,38 @@ export const graficosDocentes = () => {
       .catch((error) => {
         console.error("Error fetching graph: ", error);
       });
-  };
+  }
 
-  const buscaProducoesProf = (idLattes, nome) => {
-    let btnVerLattes = document.getElementById("btn-lattes-docente");
-    btnVerLattes.addEventListener("click", function () {
-      let url = `http://lattes.cnpq.br/${idLattes}`;
-      let width = 800;
-      let height = 600;
-      let left = (window.screen.width - width) / 2;
-      let top = (window.screen.height - height) / 2;
-      window.open(
-        url,
-        "Popup",
-        `width=${width},height=${height},left=${left},top=${top}`,
-      );
-    });
+
+  const buscaProducoesProf = (num_prof,
+    nome,
+    ) => {
 
     if (listaDocentes !== undefined) {
       const produtos = listaDocentes["produtos"];
-      renderChartProfessorProductions(produtos[idLattes]);
-      const dadosOrientandos = listaDocentes["orientados"][idLattes];
+      renderChartProfessorProductions(produtos[num_prof]);
+      const dadosOrientandos = listaDocentes["orientados"][num_prof];
+
+      let btnVerLattes = document.getElementById("bt_verlattes");
+      $("#bt_verlattes").click(function () {
+        let url = `http://lattes.cnpq.br/${num_prof}`;
+        let width = 800;
+        let height = 600;
+        let left = (window.screen.width - width) / 2;
+        let top = (window.screen.height - height) / 2;
+        window.open(
+          url,
+          "Popup",
+          "width=" +
+          width +
+          ", height=" +
+          height +
+          ", left=" +
+          left +
+          ", top=" +
+          top,
+        );
+      });
 
       let divNomeProfessor = document.getElementById("nome-prof");
       const nomes = nome.trim().split(" ");
@@ -524,11 +466,9 @@ export const graficosDocentes = () => {
        *
        */
       const d_dtitulados =
-        dadosOrientandos[0].TITULADO +
-        dadosOrientandos[0]["MUDANCA DE NÍVEL COM DEFESA"];
+        dadosOrientandos[0].TITULADO + dadosOrientandos[0]["MUDANCA DE NÍVEL COM DEFESA"];
       const d_ftitulados =
-        dadosOrientandos[1].TITULADO +
-        dadosOrientandos[1]["MUDANCA DE NÍVEL COM DEFESA"];
+        dadosOrientandos[1].TITULADO + dadosOrientandos[1]["MUDANCA DE NÍVEL COM DEFESA"];
       const d_atitulados =
         dadosOrientandos[0].DESLIGADO +
         dadosOrientandos[1].DESLIGADO +
@@ -536,25 +476,24 @@ export const graficosDocentes = () => {
         dadosOrientandos[1].ABANDONOU;
 
       const m_dtitulados =
-        dadosOrientandos[2].TITULADO +
-        dadosOrientandos[2]["MUDANCA DE NÍVEL COM DEFESA"];
+        dadosOrientandos[2].TITULADO + dadosOrientandos[2]["MUDANCA DE NÍVEL COM DEFESA"];
       const m_ftitulados =
-        dadosOrientandos[3].TITULADO +
-        dadosOrientandos[3]["MUDANCA DE NÍVEL COM DEFESA"];
+        dadosOrientandos[3].TITULADO + dadosOrientandos[3]["MUDANCA DE NÍVEL COM DEFESA"];
       const m_atitulados =
         dadosOrientandos[2].DESLIGADO +
         dadosOrientandos[3].DESLIGADO +
         dadosOrientandos[2].ABANDONOU +
         dadosOrientandos[3].ABANDONOU;
 
-      let divMestradoPrazo = document.getElementById("pb-mestrado-dentro");
-      let spanMestradoPrazo = document.getElementById("span-mestrado-dentro");
+      //<div id="pb-mestrado-dentro" class="progress-bar bg-primary" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"><span class="visually-hidden">60%</span></div>
+      let div_mest_dentro = document.getElementById("pb-mestrado-dentro");
+      let span_mest_dentro = document.getElementById("span-mestrado-dentro");
 
-      let divMestradoForaPrazo = document.getElementById("pb-mestrado-fora");
-      let spanMestradoForaPrazo = document.getElementById("span-mestrado-fora");
+      let div_mest_fora = document.getElementById("pb-mestrado-fora");
+      let span_mest_fora = document.getElementById("span-mestrado-fora");
 
-      let divMestradoDesligado = document.getElementById("pb-mestrado-desligado");
-      let spanMestradoDesligado = document.getElementById(
+      let div_mest_desligado = document.getElementById("pb-mestrado-desligado");
+      let span_mest_desligado = document.getElementById(
         "span-mestrado-desligado",
       );
 
@@ -562,32 +501,32 @@ export const graficosDocentes = () => {
       let perc;
       if (total_mest > 0) {
         perc = (m_dtitulados * 100) / total_mest;
-        divMestradoPrazo.setAttribute("aria-valuenow", perc);
-        divMestradoPrazo.style = "width: " + perc.toFixed(2) + "%";
-        spanMestradoPrazo.innerHTML = "" + perc.toFixed(2) + "%";
+        div_mest_dentro.setAttribute("aria-valuenow", perc);
+        div_mest_dentro.style = "width: " + perc.toFixed(2) + "%";
+        span_mest_dentro.innerHTML = "" + perc.toFixed(2) + "%";
 
         perc = (m_ftitulados * 100) / total_mest;
-        divMestradoForaPrazo.setAttribute("aria-valuenow", perc);
-        divMestradoForaPrazo.style = "width: " + perc.toFixed(2) + "%";
-        spanMestradoForaPrazo.innerHTML = "" + perc.toFixed(2) + "%";
+        div_mest_fora.setAttribute("aria-valuenow", perc);
+        div_mest_fora.style = "width: " + perc.toFixed(2) + "%";
+        span_mest_fora.innerHTML = "" + perc.toFixed(2) + "%";
 
         perc = (m_atitulados * 100) / total_mest;
-        divMestradoDesligado.setAttribute("aria-valuenow", perc);
-        divMestradoDesligado.style = "width: " + perc.toFixed(2) + "%";
-        spanMestradoDesligado.innerHTML = "" + perc.toFixed(2) + "%";
+        div_mest_desligado.setAttribute("aria-valuenow", perc);
+        div_mest_desligado.style = "width: " + perc.toFixed(2) + "%";
+        span_mest_desligado.innerHTML = "" + perc.toFixed(2) + "%";
       } else {
         perc = 0.0;
-        divMestradoPrazo.setAttribute("aria-valuenow", perc);
-        divMestradoPrazo.style = "width: " + perc.toFixed(2) + "%";
-        spanMestradoPrazo.innerHTML = "" + perc.toFixed(2) + "%";
+        div_mest_dentro.setAttribute("aria-valuenow", perc);
+        div_mest_dentro.style = "width: " + perc.toFixed(2) + "%";
+        span_mest_dentro.innerHTML = "" + perc.toFixed(2) + "%";
 
-        divMestradoForaPrazo.setAttribute("aria-valuenow", perc);
-        divMestradoForaPrazo.style = "width: " + perc.toFixed(2) + "%";
-        spanMestradoForaPrazo.innerHTML = "" + perc.toFixed(2) + "%";
+        div_mest_fora.setAttribute("aria-valuenow", perc);
+        div_mest_fora.style = "width: " + perc.toFixed(2) + "%";
+        span_mest_fora.innerHTML = "" + perc.toFixed(2) + "%";
 
-        divMestradoDesligado.setAttribute("aria-valuenow", perc);
-        divMestradoDesligado.style = "width: " + perc.toFixed(2) + "%";
-        spanMestradoDesligado.innerHTML = "" + perc.toFixed(2) + "%";
+        div_mest_desligado.setAttribute("aria-valuenow", perc);
+        div_mest_desligado.style = "width: " + perc.toFixed(2) + "%";
+        span_mest_desligado.innerHTML = "" + perc.toFixed(2) + "%";
       }
       let span = document.getElementById("qdade-orientados-mestrado");
       span.innerHTML = "" + total_mest;
@@ -636,9 +575,8 @@ export const graficosDocentes = () => {
       span = document.getElementById("qdade-orientados-doutorado");
       span.innerHTML = "" + total_dot;
     }
-  };
-  
+  }
   return {
-    gerarGraficos,
+    gerarGraficos
   };
 };

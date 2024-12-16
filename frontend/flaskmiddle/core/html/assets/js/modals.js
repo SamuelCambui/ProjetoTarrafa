@@ -1,10 +1,10 @@
 const abrirModal = () => {
-    const modal = document.getElementById('modal-esqueceu-senha');
+    const modal = document.getElementById('modalEsqueceuSenha');
     modal.classList.remove('invisible');
 }
 
 function fecharModal() {
-    const modal = document.getElementById('modal-esqueceu-senha');
+    const modal = document.getElementById('modalEsqueceuSenha');
     modal.classList.add('invisible');
 }
 

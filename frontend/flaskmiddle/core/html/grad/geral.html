@@ -1,0 +1,130 @@
+{% extends 'grad/base.html' %} {% block title %}Unimontes{% endblock %} {% block
+content %}
+<div class="mx-auto max-w-screen-2xl px-4 py-6 lg:px-16">
+    <div class="flex justify-end mb-4">
+        <button
+            class="flex items-center gap-2 rounded-lg bg-indigo-400 px-6 py-3 text-sm font-bold text-zinc-50 hover:bg-indigo-500"
+            id="btn-drop-filtrar" type="button" aria-controls="container-filtro-periodo" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="21" x2="14" y1="4" y2="4"></line>
+                <line x1="10" x2="3" y1="4" y2="4"></line>
+                <line x1="21" x2="12" y1="12" y2="12"></line>
+                <line x1="8" x2="3" y1="12" y2="12"></line>
+                <line x1="21" x2="16" y1="20" y2="20"></line>
+                <line x1="12" x2="3" y1="20" y2="20"></line>
+                <line x1="14" x2="14" y1="2" y2="6"></line>
+                <line x1="8" x2="8" y1="10" y2="14"></line>
+                <line x1="16" x2="16" y1="18" y2="22"></line>
+            </svg>
+            Filtrar por período
+        </button>
+        <div class="absolute top-20 z-10 mt-2 hidden w-fit rounded-lg border border-gray-300 bg-white px-6 py-4 shadow-md"
+            id="container-filtro-periodo">
+            <div class="flex flex-col gap-2">
+                <label>Filtre por período </label>
+                <div class="flex gap-2">
+                    <div class="relative mt-1">
+                        <select
+                            class="w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 pr-8 text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            id="ano-inicio">
+                        </select>
+                        <div
+                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg class="lucide lucide-chevrons-up-down" xmlns="http://www.w3.org/2000/svg" width="20"
+                                height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m7 15 5 5 5-5"></path>
+                                <path d="m7 9 5-5 5 5"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="mt-auto pb-1 text-zinc-700">até</p>
+                    <div class="relative w-24">
+                        <div class="relative mt-1">
+                            <select
+                                class="w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-2 pr-8 text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                id="ano-fim">
+                            </select>
+                            <div
+                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg class="lucide lucide-chevrons-up-down" xmlns="http://www.w3.org/2000/svg"
+                                    width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m7 15 5 5 5-5"></path>
+                                    <path d="m7 9 5-5 5 5"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button
+                class="ml-auto mt-4 block rounded-lg bg-indigo-400 px-6 py-3 text-sm font-bold text-zinc-50 hover:bg-indigo-500"
+                id="btn-filtrar-periodo">
+                Filtrar
+            </button>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 gap-3">
+            <div class="rounded-lg bg-white px-6 py-4 shadow">
+                <div class="relative flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-amber-700" id="modaltitlechartindprodsproductions">
+                        Gênero
+                    </h3>
+                    <button class="bg-white p-2 text-zinc-700 hover:bg-zinc-100" id="btn-drop-opcoes"
+                        data-value="chartindprodsproductions" aria-expanded="false" aria-label="Opções">
+                        <svg class="stroke-zinc-700" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="12" cy="5" r="1"></circle>
+                            <circle cx="12" cy="19" r="1"></circle>
+                        </svg>
+                    </button>
+                    <div class="absolute right-0 top-12 hidden w-fit rounded-lg border bg-white p-2 text-zinc-700 shadow-md"
+                        id="dropdown-menu">
+                        <button class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+                            onclick="SaveChart('chartindprodsproductions')">
+                            <svg class="stroke-current" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
+                                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                                <path d="M12 18v-6"></path>
+                                <path d="m9 15 3 3 3-3"></path>
+                            </svg>
+                            Fazer download do gráfico
+                        </button>
+                        <button class="flex w-full gap-2 p-2 font-normal hover:bg-zinc-200"
+                            onclick="exportarParaExcel('/api/dados/ppg/indicadores/indprodart', 'chartindprodsproductions')">
+                            <svg class="stroke-current" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
+                                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                                <path d="M8 13h2"></path>
+                                <path d="M14 13h2"></path>
+                                <path d="M8 17h2"></path>
+                                <path d="M14 17h2"></path>
+                            </svg>
+                            Exportar para .xlsx
+                        </button>
+                    </div>
+                </div>
+                <p class="pb-4 text-sm font-medium text-zinc-700" id="formula_indprod">
+                    Quantidade de alunos por gênero da universidade.
+                </p>
+                <div class="h-96 mx-auto">
+                    <canvas id="graficoSexoAlunos"></canvas>
+                </div>
+            </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block modais %} {% endblock %}
+{% block scripts %} 
+<script src="{{ url_for('static', filename='grad/js/scripts-grad.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='grad/js/pagina-geral.js') }}" type="module"></script>
+{% endblock%}

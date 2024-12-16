@@ -13,97 +13,37 @@
     <title>Equipe</title>
   </head>
 
-  <body class="text-zinc-700">
+  <body>
     <div class="min-h-screen bg-zinc-100">
       <header class="mx-auto max-w-7xl px-6">
-        <div class="flex flex-wrap items-center justify-between gap-y-2 py-10">
-          <a href="/">
-            <img
-              class="w-28"
-              src="./assets/img/icons/tarrafa_logo_alt_2.png"
-              alt="Logo Tarrafa"
-            />
-          </a>
-          <button
-            class="block rounded-md p-2 hover:bg-gray-200 md:hidden"
-            id="btn-menu"
-            aria-controls="nav-menu"
-            aria-expanded="false"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="32"
-              height="32"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-menu"
-            >
-              <line x1="4" x2="20" y1="12" y2="12"></line>
-              <line x1="4" x2="20" y1="6" y2="6"></line>
-              <line x1="4" x2="20" y1="18" y2="18"></line>
-            </svg>
-          </button>
-          <nav
-            class="fixed inset-0 z-50 translate-x-full transform bg-white shadow-lg transition-transform duration-300 ease-in-out md:relative md:flex md:translate-x-0 md:items-center md:gap-8 md:bg-transparent md:p-0 md:shadow-none"
-            id="nav-menu"
-            aria-hidden="true"
-          >
-            <button
-              class="absolute right-4 top-4 rounded-lg p-2 text-gray-600 hover:bg-gray-200 hover:text-gray-900 md:hidden"
-              id="btn-fechar"
-              aria-label="Fechar menu"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-x"
-              >
-                <path d="M18 6 6 18"></path>
-                <path d="m6 6 12 12"></path>
-              </svg>
-            </button>
-            <ul
-              role="list"
-              class="mt-8 flex flex-col items-center justify-center gap-y-4 p-6 md:mt-0 md:flex-row md:space-x-4 md:p-0"
-            >
+        <div class="flex justify-between py-10">
+          <img
+            class="w-28"
+            src="./assets/img/icons/tarrafa_logo_alt_2.png"
+            alt="Logo Tarrafa"
+          />
+          <nav>
+            <ul class="flex items-center gap-8 text-zinc-900" role="list">
               <li>
-                <a
-                  href="./#quemutiliza"
-                  class="block px-6 py-3 text-gray-600 hover:text-indigo-500 md:inline-block"
+                <a class="hover:text-indigo-900" href="/#quemutiliza"
                   >Quem utiliza</a
                 >
               </li>
               <li>
-                <a
-                  href="./#funcionalidades"
-                  class="block px-6 py-3 text-gray-600 hover:text-indigo-500 md:inline-block"
+                <a class="hover:text-indigo-900" href="/#funcionalidades"
                   >Funcionalidades</a
                 >
               </li>
               <li>
-                <a
-                  href="/equipe"
-                  class="mb-4 block px-6 py-3 text-gray-600 hover:text-indigo-500 md:mb-0 md:inline-block"
-                  >Equipe</a
-                >
+                <a class="hover:text-indigo-900" href="./equipe">Equipe</a>
               </li>
               <li>
-                <a
-                  role="button"
-                  href="/ppg/login"
-                  class="rounded-full bg-indigo-400 px-6 py-4 font-bold text-white hover:bg-indigo-500 md:w-auto"
-                  >Pós-graduação Stricto Sensu
+                <a href="/ppg/login">
+                  <button
+                    class="flex items-center justify-center rounded-[28px] border border-transparent bg-indigo-400 px-12 py-3 font-bold text-zinc-50 hover:bg-indigo-500"
+                  >
+                    Pós-graduação Stricto Sensu
+                  </button>
                 </a>
               </li>
             </ul>
@@ -128,7 +68,7 @@
           >
         </div>
 
-        <div class="">
+        <div class="divide-y divide-indigo-950">
           <div class="py-4">
             <div class="flex gap-1 text-indigo-950">
               <svg
@@ -185,7 +125,7 @@
         </div>
 
         <h1
-          class="pb-2 pt-8 text-center text-2xl font-extrabold text-indigo-500"
+          class="pb-2 pt-4 text-center text-2xl font-extrabold text-indigo-500"
         >
           Equipe
         </h1>
@@ -212,16 +152,13 @@
               <span class="font-medium">Formação acadêmica:</span> Doutor em
               Ciência da Computação <br />
               <a
-                class="underline hover:no-underline"
+                class="underline"
                 href="https://scholar.google.com.br/citations?user=G6uQjUwAAAAJ&hl"
               >
                 Currículo Lattes</a
               >
               <br />
-              <a
-                class="underline hover:no-underline"
-                href="lattes.cnpq.br/5262545895128956"
-              >
+              <a class="underline" href="lattes.cnpq.br/5262545895128956">
                 Google Scholar</a
               >
             </p>
@@ -231,126 +168,24 @@
               Gabrielle Zuba Nunes
             </h2>
             <p>Acadêmica de Sistemas de Informação</p>
-            <a href="https://www.linkedin.com" target="_blank">
-              <button
-                class="flex items-center text-neutral-500 hover:text-blue-800"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-linkedin"
-                >
-                  <path
-                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
-                  />
-                  <rect width="4" height="12" x="2" y="9" />
-                  <circle cx="4" cy="4" r="2" />
-                </svg>
-              </button>
-            </a>
           </div>
           <div>
             <h2 class="text-lg font-medium text-indigo-950">
               Luiz Henrique Almeida Gomes
             </h2>
             <p>Acadêmico de Sistemas de Informação</p>
-            <a
-              href="https://www.linkedin.com/in/luiz-henrique-almeida-gomes-b0ab9a27a/"
-              target="_blank"
-            >
-              <button
-                class="flex items-center text-neutral-500 hover:text-blue-800"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-linkedin"
-                >
-                  <path
-                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
-                  />
-                  <rect width="4" height="12" x="2" y="9" />
-                  <circle cx="4" cy="4" r="2" />
-                </svg>
-              </button>
-            </a>
           </div>
           <div>
             <h2 class="text-lg font-medium text-indigo-950">
               Samuel Machado Cambuí
             </h2>
             <p>Acadêmico de Sistemas de Informação</p>
-            <a href="https://www.linkedin.com" target="_blank">
-              <button
-                class="flex items-center text-neutral-500 hover:text-blue-800"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-linkedin"
-                >
-                  <path
-                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
-                  />
-                  <rect width="4" height="12" x="2" y="9" />
-                  <circle cx="4" cy="4" r="2" />
-                </svg>
-              </button>
-            </a>
           </div>
           <div>
             <h2 class="text-lg font-medium text-indigo-950">
               Yago Henrique Veloso Maia
             </h2>
             <p>Acadêmico de Engenharia de Sistemas</p>
-            <a
-              href="https://www.linkedin.com/in/yago-henrique-6410562b6/"
-              target="_blank"
-            >
-              <button
-                class="flex items-center text-neutral-500 hover:text-blue-800"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-linkedin"
-                >
-                  <path
-                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
-                  />
-                  <rect width="4" height="12" x="2" y="9" />
-                  <circle cx="4" cy="4" r="2" />
-                </svg>
-              </button>
-            </a>
           </div>
         </div>
 
@@ -369,29 +204,8 @@
       </main>
     </div>
 
-    <footer class="bg-indigo-500 p-8 text-zinc-100">
+    <footer class="bg-indigo-950 p-8 text-zinc-100">
       <div class="text-center">Copyright © Sistema Tarrafa 2024</div>
     </footer>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const menuButton = document.getElementById("btn-menu");
-        const closeButton = document.getElementById("btn-fechar");
-        const navMenu = document.getElementById("nav-menu");
-
-        menuButton.addEventListener("click", function () {
-          navMenu.classList.remove("translate-x-full");
-          navMenu.classList.add("translate-x-0");
-          menuButton.setAttribute("aria-expanded", "true");
-          navMenu.setAttribute("aria-hidden", "false");
-        });
-
-        closeButton.addEventListener("click", function () {
-          navMenu.classList.add("translate-x-full");
-          navMenu.classList.remove("translate-x-0");
-          menuButton.setAttribute("aria-expanded", "false");
-          navMenu.setAttribute("aria-hidden", "true");
-        });
-      });
-    </script>
   </body>
 </html>

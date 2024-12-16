@@ -1,5 +1,5 @@
 Chart.register(ChartDataLabels);
-Chart.defaults.font.size = 12;
+Chart.defaults.font.size = 14;
 
 var carttempodefesa;
 function renderChartTimesConclusions(idCanvas, timesConclusions) {
@@ -16,26 +16,33 @@ function renderChartTimesConclusions(idCanvas, timesConclusions) {
     groupedData[key].push(item.meses);
   });
 
+  // Counting the occurrences for each group
   const mestradoData = groupedData["Mestrado-TITULADO"] || [];
   const doutoradoData = groupedData["Doutorado-TITULADO"] || [];
   const mestradoCount = countOccurrences(mestradoData);
   const doutoradoCount = countOccurrences(doutoradoData);
 
+  // Find the unique keys from both mestradoCount and doutoradoCount arrays
   const mestradoKeys = Object.keys(mestradoCount);
   const doutoradoKeys = Object.keys(doutoradoCount);
 
+  // Create a new array containing all unique keys from both arrays
   const combinedKeys = [...new Set([...mestradoKeys, ...doutoradoKeys])];
 
+  // Iterate over combinedKeys and align the keys in both mestradoCount and doutoradoCount arrays
   combinedKeys.forEach((key) => {
     if (!mestradoCount.hasOwnProperty(key)) {
+      // If key exists in doutoradoCount but not in mestradoCount, add it with a value of zero
       mestradoCount[key] = 0;
     }
 
     if (!doutoradoCount.hasOwnProperty(key)) {
+      // If key exists in mestradoCount but not in doutoradoCount, add it with a value of zero
       doutoradoCount[key] = 0;
     }
   });
 
+  //create the dataset based on existence of each level
   var dataset = [];
   if (keys.has("Mestrado-TITULADO"))
     dataset.push({
@@ -66,8 +73,8 @@ function renderChartTimesConclusions(idCanvas, timesConclusions) {
       datasets: dataset,
     },
     options: {
+      //responsive: true,
       maintainAspectRatio: false,
-      responsive: true,
       scales: {
         x: {
           beginAtZero: true,
@@ -81,6 +88,10 @@ function renderChartTimesConclusions(idCanvas, timesConclusions) {
           anchor: "end",
           align: "top",
           color: "black",
+          //backgroundColor: 'rgba(75, 192, 192, 0.6)',
+          //borderColor: 'rgba(75, 192, 192, 1)',
+          //borderWidth: 1,
+          //borderRadius: 5,
           font: {
             size: 10,
           },
@@ -175,7 +186,7 @@ function renderChartStudentsGraduated(idCanvas, listStudents) {
 
     options: {
       maintainAspectRatio: false,
-      responsive: true,
+
       scales: {
         y: {
           stacked: false,
@@ -291,7 +302,7 @@ function renderChartProfessorsByCategory(idCanvas, listProfessors) {
 
     options: {
       maintainAspectRatio: false,
-      responsive: true,
+
       scales: {
         y: {
           stacked: false,
@@ -538,8 +549,6 @@ function renderizarGraficoQualis(idCanvas, listQualisProductions, listArtigos) {
       },
     },
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       spanGaps: true,
       stacked: false,
       plugins: {
@@ -592,11 +601,12 @@ function renderizarGraficoQualis(idCanvas, listQualisProductions, listArtigos) {
           position: "left",
         },
       },
+      maintainAspectRatio: false,
     },
   });
 }
 
-let chartqualisdiscenteproductions;
+var chartqualisdiscenteproductions;
 function renderChartQualis_discente(idCanvas, listQualisProductions) {
   // Filtrar os dados com base na black_list
   //listQualisProductions = listQualisProductions.filter(data => !black_list.includes(data.id_pessoa));
@@ -604,6 +614,30 @@ function renderChartQualis_discente(idCanvas, listQualisProductions) {
   // Recalcular os anos, se necessário
   var anosSet = new Set(Object.keys(listQualisProductions)); //listQualisProductions.map(data => data.ano));
   var anos = [...anosSet].sort();
+
+  // Recalcular as pontuações por ano
+  // var pontuacoesPorAno = anos.map(ano => {
+  //     return listQualis = {
+  //         ano: ano,
+  //         A1: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A1, 0),
+  //         A2: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A2, 0),
+  //         A3: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A3, 0),
+  //         A4: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A4, 0),
+  //         B1: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B1, 0),
+  //         B2: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B2, 0),
+  //         B3: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B3, 0),
+  //         B4: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B4, 0),
+  //         C: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.C, 0),
+  //     };
+  // });
+
+  // for (var dicionario of pontuacoesPorAno) {
+  //     let indProdArt = 1 * dicionario.A1 + 0.875 * dicionario.A2 + 0.75 * dicionario.A3 + 0.625 * dicionario.A4 + 0.5 * dicionario.B1 + 0.375 * dicionario.B2 + 0.25 * dicionario.B3 + 0.125 * dicionario.B4;
+  //     let glosa = 0.25 * dicionario.B3 + 0.125 * dicionario.B4;
+  //     if (glosa > (0.2 * indProdArt))
+  //       indProdArt = 1 * dicionario.A1 + 0.875 * dicionario.A2 + 0.75 * dicionario.A3 + 0.625 * dicionario.A4 + 0.5 * dicionario.B1 + 0.375 * dicionario.B2 + (0.2 * indProdArt);
+  //     listIndProds.push({'indprod': indProdArt, 'ano': a})
+  // }
 
   var a1 = [];
   var a2 = [];
@@ -627,6 +661,7 @@ function renderChartQualis_discente(idCanvas, listQualisProductions) {
     c.push(listQualisProductions[ano].C);
   }
 
+  //localização da legenda da coluna Lattes
   var max_qualis =
     listQualisProductions[anos[anos.length - 1]].A1 +
     listQualisProductions[anos[anos.length - 1]].A2 +
@@ -638,6 +673,18 @@ function renderChartQualis_discente(idCanvas, listQualisProductions) {
     listQualisProductions[anos[anos.length - 1]].B4 +
     listQualisProductions[anos[anos.length - 1]].C +
     5;
+
+  // for (var dicionario of pontuacoesPorAno) {
+  //     a1.push(dicionario.A1);
+  //     a2.push(dicionario.A2);
+  //     a3.push(dicionario.A3);
+  //     a4.push(dicionario.A4);
+  //     b1.push(dicionario.B1);
+  //     b2.push(dicionario.B2);
+  //     b3.push(dicionario.B3);
+  //     b4.push(dicionario.B4);
+  //     c.push(dicionario.C);
+  // }
 
   var datasets_qualis = [];
 
@@ -720,8 +767,20 @@ function renderChartQualis_discente(idCanvas, listQualisProductions) {
     yAxisID: "y",
   });
 
+  // a1.push(null);
+  // a2.push(null);
+  // a3.push(null);
+  // a4.push(null);
+  // b1.push(null);
+  // b2.push(null);
+  // b3.push(null);
+  // b4.push(null);
+  // c.push(null);
+  // anos.push(null);
+
   const canvas = document.getElementById(idCanvas);
   const ctx = canvas.getContext("2d");
+  //const ctx = document.getElementById('chartqualisdiscenteproductions');
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -736,12 +795,10 @@ function renderChartQualis_discente(idCanvas, listQualisProductions) {
     },
     layout: {
       padding: {
-        left: 5, // Increase the left margin by 5 pixel
+        left: 5, // Increase the left margin by 5 pixels
       },
     },
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       spanGaps: true,
       stacked: false,
       plugins: {
@@ -767,16 +824,43 @@ function renderChartQualis_discente(idCanvas, listQualisProductions) {
           position: "left",
         },
       },
+      maintainAspectRatio: false,
     },
   });
 }
 
 var chartsimulacaoqualisproductions;
 function renderChartQualis_simulacao(idCanvas, listQualisProductions) {
+  // Filtrar os dados com base na black_list
+  //listQualisProductions = listQualisProductions.filter(data => !black_list.includes(data.id_pessoa));
 
   // Recalcular os anos, se necessário
   var anosSet = new Set(Object.keys(listQualisProductions)); //listQualisProductions.map(data => data.ano));
   var anos = [...anosSet].sort();
+
+  // Recalcular as pontuações por ano
+  // var pontuacoesPorAno = anos.map(ano => {
+  //     return listQualis = {
+  //         ano: ano,
+  //         A1: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A1, 0),
+  //         A2: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A2, 0),
+  //         A3: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A3, 0),
+  //         A4: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A4, 0),
+  //         B1: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B1, 0),
+  //         B2: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B2, 0),
+  //         B3: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B3, 0),
+  //         B4: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B4, 0),
+  //         C: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.C, 0),
+  //     };
+  // });
+
+  // for (var dicionario of pontuacoesPorAno) {
+  //     let indProdArt = 1 * dicionario.A1 + 0.875 * dicionario.A2 + 0.75 * dicionario.A3 + 0.625 * dicionario.A4 + 0.5 * dicionario.B1 + 0.375 * dicionario.B2 + 0.25 * dicionario.B3 + 0.125 * dicionario.B4;
+  //     let glosa = 0.25 * dicionario.B3 + 0.125 * dicionario.B4;
+  //     if (glosa > (0.2 * indProdArt))
+  //       indProdArt = 1 * dicionario.A1 + 0.875 * dicionario.A2 + 0.75 * dicionario.A3 + 0.625 * dicionario.A4 + 0.5 * dicionario.B1 + 0.375 * dicionario.B2 + (0.2 * indProdArt);
+  //     listIndProds.push({'indprod': indProdArt, 'ano': a})
+  // }
 
   var a1 = [];
   var a2 = [];
@@ -800,6 +884,7 @@ function renderChartQualis_simulacao(idCanvas, listQualisProductions) {
     c.push(listQualisProductions[ano].C);
   }
 
+  //localização da legenda da coluna Lattes
   var max_qualis =
     listQualisProductions[anos[anos.length - 1]].A1 +
     listQualisProductions[anos[anos.length - 1]].A2 +
@@ -812,6 +897,17 @@ function renderChartQualis_simulacao(idCanvas, listQualisProductions) {
     listQualisProductions[anos[anos.length - 1]].C +
     5;
 
+  // for (var dicionario of pontuacoesPorAno) {
+  //     a1.push(dicionario.A1);
+  //     a2.push(dicionario.A2);
+  //     a3.push(dicionario.A3);
+  //     a4.push(dicionario.A4);
+  //     b1.push(dicionario.B1);
+  //     b2.push(dicionario.B2);
+  //     b3.push(dicionario.B3);
+  //     b4.push(dicionario.B4);
+  //     c.push(dicionario.C);
+  // }
 
   var datasets_qualis = [];
 
@@ -894,8 +990,20 @@ function renderChartQualis_simulacao(idCanvas, listQualisProductions) {
     yAxisID: "y",
   });
 
+  // a1.push(null);
+  // a2.push(null);
+  // a3.push(null);
+  // a4.push(null);
+  // b1.push(null);
+  // b2.push(null);
+  // b3.push(null);
+  // b4.push(null);
+  // c.push(null);
+  // anos.push(null);
+
   const canvas = document.getElementById(idCanvas);
   const ctx = canvas.getContext("2d");
+  //const ctx = document.getElementById('chartqualisproductions');
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -910,12 +1018,10 @@ function renderChartQualis_simulacao(idCanvas, listQualisProductions) {
     },
     layout: {
       padding: {
-        left: 5,
+        left: 5, // Increase the left margin by 5 pixels
       },
     },
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       spanGaps: true,
       stacked: false,
       plugins: {
@@ -968,14 +1074,231 @@ function renderChartQualis_simulacao(idCanvas, listQualisProductions) {
           position: "left",
         },
       },
+      maintainAspectRatio: false,
     },
   });
 }
 
+// var chartqualisproductions;
+// function renderChartQualisProductions(idCanvas, listQualisProductions, black_list) {
+
+//     // Filtrar os dados com base na black_list
+//     listQualisProductions = listQualisProductions.filter(data => !black_list.includes(data.id_pessoa));
+
+//     // Recalcular os anos, se necessário
+//     var anosSet = new Set(listQualisProductions.map(data => data.ano));
+//     var anos = [...anosSet].sort();
+
+//     var max_qualis = 0;
+
+//     // Recalcular as pontuações por ano
+//     var pontuacoesPorAno = anos.map(ano => {
+//         let listQualis = {
+//             ano: ano,
+//             A1: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A1, 0),
+//             A2: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A2, 0),
+//             A3: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A3, 0),
+//             A4: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A4, 0),
+//             B1: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B1, 0),
+//             B2: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B2, 0),
+//             B3: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B3, 0),
+//             B4: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B4, 0),
+//             C: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.C, 0),
+//         };
+//         if(max_qualis < (listQualis.A1+listQualis.A2+listQualis.A3+listQualis.A4+listQualis.B1+listQualis.B2+listQualis.B3+listQualis.B4+listQualis.C))
+//             max_qualis = (listQualis.A1+listQualis.A2+listQualis.A3+listQualis.A4+listQualis.B1+listQualis.B2+listQualis.B3+listQualis.B4+listQualis.C);
+//         return listQualis;
+//     });
+
+//     // for (var dicionario of pontuacoesPorAno) {
+//     //     let indProdArt = 1 * dicionario.A1 + 0.875 * dicionario.A2 + 0.75 * dicionario.A3 + 0.625 * dicionario.A4 + 0.5 * dicionario.B1 + 0.375 * dicionario.B2 + 0.25 * dicionario.B3 + 0.125 * dicionario.B4;
+//     //     let glosa = 0.25 * dicionario.B3 + 0.125 * dicionario.B4;
+//     //     if (glosa > (0.2 * indProdArt))
+//     //       indProdArt = 1 * dicionario.A1 + 0.875 * dicionario.A2 + 0.75 * dicionario.A3 + 0.625 * dicionario.A4 + 0.5 * dicionario.B1 + 0.375 * dicionario.B2 + (0.2 * indProdArt);
+//     //     listIndProds.push({'indprod': indProdArt, 'ano': a})
+//     // }
+
+//     var a1 = [];
+//     var a2 = [];
+//     var a3 = [];
+//     var a4 = [];
+//     var b1 = [];
+//     var b2 = [];
+//     var b3 = [];
+//     var b4 = [];
+//     var c = [];
+
+//     for (var dicionario of pontuacoesPorAno) {
+//         a1.push(dicionario.A1);
+//         a2.push(dicionario.A2);
+//         a3.push(dicionario.A3);
+//         a4.push(dicionario.A4);
+//         b1.push(dicionario.B1);
+//         b2.push(dicionario.B2);
+//         b3.push(dicionario.B3);
+//         b4.push(dicionario.B4);
+//         c.push(dicionario.C);
+//     }
+
+//     var datasets_qualis = [];
+
+//     const colors = ["#002d83", "#175399", "#638fbc", "#b5cfe6", "#49207c", "#654791", "#9d88b1", "#d7c9e2", "#cb3dab"];
+//     const colors_rgba = ["rgba(0,45,131,0.7)", "rgba(23,83,153,0.7)", "rgba(99,143,188,0.7)", "rgba(181,207,230,0.7)", "rgba(73,32,124,0.7)", "rgba(101,71,145,0.7)", "rgba(157,136,177,0.7)", "rgba(215,201,226,0.7)", "rgba(203,61,171,0.7)"];
+
+//     datasets_qualis.push({
+//         label: 'A1',
+//         data: a1,
+//         backgroundColor: colors_rgba[0],
+//         yAxisID: 'y',
+//     });
+
+//     datasets_qualis.push({
+//         label: 'A2',
+//         data: a2,
+//         backgroundColor: colors_rgba[1],
+//         yAxisID: 'y',
+//     });
+
+//     datasets_qualis.push(
+//         {
+//             label: 'A3',
+//             data: a3,
+//             backgroundColor: colors_rgba[2],
+//             yAxisID: 'y',
+//         });
+//     datasets_qualis.push({
+//         label: 'A4',
+//         data: a4,
+//         backgroundColor: colors_rgba[3],
+//         yAxisID: 'y',
+//     });
+//     datasets_qualis.push({
+//         label: 'B1',
+//         data: b1,
+//         backgroundColor: colors_rgba[4],
+//         yAxisID: 'y',
+//     });
+//     datasets_qualis.push({
+//         label: 'B2',
+//         data: b2,
+//         backgroundColor: colors_rgba[5]
+//     });
+//     datasets_qualis.push({
+//         label: 'B3',
+//         data: b3,
+//         backgroundColor: colors_rgba[6],
+//         yAxisID: 'y',
+//     });
+//     datasets_qualis.push({
+//         label: 'B4',
+//         data: b4,
+//         backgroundColor: colors_rgba[7],
+//         yAxisID: 'y',
+//     });
+//     datasets_qualis.push({
+//         label: 'C',
+//         data: c,
+//         backgroundColor: colors_rgba[8],
+//         yAxisID: 'y',
+//     });
+
+//     a1.push(null);
+//     a2.push(null);
+//     a3.push(null);
+//     a4.push(null);
+//     b1.push(null);
+//     b2.push(null);
+//     b3.push(null);
+//     b4.push(null);
+//     c.push(null);
+//     anos.push(null);
+
+//     const canvas = document.getElementById(idCanvas);
+//     const ctx = canvas.getContext("2d");
+//     //const ctx = document.getElementById('chartqualisproductions');
+
+//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//     if (chartqualisproductions) {
+//         chartqualisproductions.destroy();
+//     }
+//     chartqualisproductions = new Chart(ctx, {
+//         type: 'bar',
+//         data: {
+//             labels: anos,
+//             datasets: datasets_qualis
+//         },
+//         layout: {
+//             padding: {
+//                 left: 5 // Increase the left margin by 5 pixels
+//             }
+//         },
+//         options: {
+//             spanGaps: true,
+//             stacked: false,
+//             plugins: {
+//                 legend: {
+//                     display: true,
+//                     //ltl: true,
+//                     reverse: true
+//                 },
+//                 datalabels: {
+//                     display: false
+//                 },
+
+//                 annotation: {
+//                     drawTime: 'beforeDatasetsDraw',
+//                     annotations: {
+//                         Lattes: {
+//                             type: 'box',
+//                             xMin: anos.length - 2.5,
+//                             xMax: anos.length - 1.5,
+//                             yMin: 0,
+//                             borderWidth: 0,
+//                             //yMax: 70,
+//                             backgroundColor: 'rgba(100, 99, 255, 0.2)'
+//                         },
+//                         label1: {
+//                             type: 'label',
+//                             yScaleID: 'y',
+//                             yValue: max_qualis+0.5,
+//                             xValue: anos.length - 2,
+//                             color: 'rgba(100, 99, 255, 0.8)',
+//                             //backgroundColor: 'rgba(245,245,245)',
+//                             content: ['Lattes (atual)'],
+//                             font: {
+//                                 size: 12
+//                             }
+//                         }
+//                     }
+//                 },
+
+//             },
+//             scales: {
+//                 x: {
+//                     stacked: true,
+
+//                 },
+//                 y: {
+//                     stacked: true,
+//                     title: {
+//                         display: true,
+//                         text: 'Quantidade',
+//                     },
+//                     position: 'left'
+//                 }
+
+//             },
+//             maintainAspectRatio: false,
+//         },
+//     });
+// }
+
 let chartindprodsproductions;
-const renderChartIndprods_ = (idCanvas, listAvgIndProds, indicadores) => {
-  let anosSet = new Set(Object.keys(listAvgIndProds.indprods)); //map(data => data.ano));
-  let anos = [...anosSet].sort();
+function renderChartIndprods_(idCanvas, listAvgIndProds, indicadores) {
+  // Recalcular os anos, se necessário
+  var anosSet = new Set(Object.keys(listAvgIndProds.indprods)); //map(data => data.ano));
+  var anos = [...anosSet].sort();
 
   var counts = Object.keys(listAvgIndProds.indprods).map(function (key) {
     if (listAvgIndProds.indprods[key] === 0.0) return null;
@@ -1019,6 +1342,7 @@ const renderChartIndprods_ = (idCanvas, listAvgIndProds, indicadores) => {
     i <= parseInt(listAvgIndProds["maxima"]);
     i++
   ) {
+    //for (var i = 0; i < curvas.length; i++) {
     if (listAvgIndProds[i.toString()]) {
       conceito = i.toString();
 
@@ -1042,6 +1366,65 @@ const renderChartIndprods_ = (idCanvas, listAvgIndProds, indicadores) => {
       cor_estilo++;
     }
   }
+  // if (listAvgIndProds['país']) {
+  //     labelsAvg = listAvgIndProds['pais'].map(ind => ind.ano);
+  //     avgCounts = listAvgIndProds['pais'].map(ind => ind.indprodall);
+
+  //     max_indprod_temp = Math.max(...avgCounts);
+  //     if(max_indprod_temp > max_indprod) max_indprod = max_indprod_temp;
+
+  //     datasets_indprod.push({
+  //         type: 'line',
+  //         label: `Avg IndProd (PPGs do país)`,
+  //         data: avgCounts,
+  //         //lineTension: 0.4,
+  //         borderColor: 'rgb(220, 20, 60)',
+  //         //backgroundColor: 'rgb(220, 20, 60)',
+  //         borderWidth: 1,
+  //         pointRadius: 1,
+  //         borderDash: [5,5],
+  //         yAxisID: 'y'
+  //     });
+  // }
+  // else if (listAvgIndProds['região']) {
+  //     labelsAvg = listAvgIndProds['regiao'].map(ind => ind.ano);
+  //     avgCounts = listAvgIndProds['regiao'].map(ind => ind.indprodall);
+
+  //     max_indprod_temp = Math.max(...avgCounts);
+  //     if(max_indprod_temp > max_indprod) max_indprod = max_indprod_temp;
+
+  //     datasets_indprod.push({
+  //         type: 'line',
+  //         label: `Avg IndProd (PPGs da região ${listAvgIndProds['nome_regiao']})`,
+  //         data: avgCounts,
+  //         //lineTension: 0.4,
+  //         borderColor: 'darkgreen',
+  //         borderWidth: 1,
+  //         pointRadius: 1,
+  //         borderDash: [5,5],
+  //         yAxisID: 'y'
+  //     });
+  // }
+  // else if (listAvgIndProds['uf']) {
+  //     labelsAvg = listAvgIndProds['uf'].map(ind => ind.ano);
+  //     avgCounts = listAvgIndProds['uf'].map(ind => ind.indprodall);
+
+  //     max_indprod_temp = Math.max(...avgCounts);
+  //     if(max_indprod_temp > max_indprod) max_indprod = max_indprod_temp;
+
+  //     datasets_indprod.push({
+  //         type: 'line',
+  //         label: `Avg IndProd (PPGs do estado ${listAvgIndProds['nome_uf']})`,
+  //         data: avgCounts,
+  //         //lineTension: 0.4,
+  //         borderColor: 'rgb(120, 20, 220)',
+  //         //backgroundColor: 'rgb(120, 20, 220)',
+  //         borderWidth: 1,
+  //         pointRadius: 1,
+  //         borderDash: [5,5],
+  //         yAxisID: 'y'
+  //     });
+  // }
 
   var annotation_values = {
     line_fraco: {
@@ -1058,6 +1441,10 @@ const renderChartIndprods_ = (idCanvas, listAvgIndProds, indicadores) => {
       yValue: indicadores.fraco + 0.06,
       color: "grey",
       yScaleID: "y",
+      //backgroundColor: 'rgba(245,245,245)',
+      //borderColor: 'black',
+      //borderWidth: 1,
+      //borderRadius: 2,
       content: ["Fraco"],
       font: {
         size: 10,
@@ -1077,6 +1464,10 @@ const renderChartIndprods_ = (idCanvas, listAvgIndProds, indicadores) => {
       yValue: indicadores.regular + 0.06,
       color: "grey",
       yScaleID: "y",
+      //backgroundColor: 'rgba(245,245,245)',
+      //borderColor: 'black',
+      //borderWidth: 1,
+      //borderRadius: 2,
       content: ["Reg."],
       font: {
         size: 10,
@@ -1096,6 +1487,10 @@ const renderChartIndprods_ = (idCanvas, listAvgIndProds, indicadores) => {
       yValue: indicadores.bom + 0.06,
       color: "grey",
       yScaleID: "y",
+      //backgroundColor: 'rgba(245,245,245)',
+      //borderColor: 'black',
+      //borderWidth: 1,
+      //borderRadius: 2,
       content: ["Bom"],
       font: {
         size: 10,
@@ -1172,6 +1567,8 @@ const renderChartIndprods_ = (idCanvas, listAvgIndProds, indicadores) => {
       },
     };
 
+  //const max_indprod = Math.max(...counts, ...avgCounts);
+
   anos.push(null);
   counts.push(null);
   labelsAvg.push(null);
@@ -1179,6 +1576,7 @@ const renderChartIndprods_ = (idCanvas, listAvgIndProds, indicadores) => {
 
   const canvas = document.getElementById(idCanvas);
   const ctx = canvas.getContext("2d");
+  //const ctx = document.getElementById('chartindprodsproductions');
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1197,8 +1595,6 @@ const renderChartIndprods_ = (idCanvas, listAvgIndProds, indicadores) => {
       },
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
       spanGaps: true,
       stacked: false,
       plugins: {
@@ -1230,6 +1626,18 @@ const renderChartIndprods_ = (idCanvas, listAvgIndProds, indicadores) => {
           formatter: function (value) {
             return value.toFixed(2); // Formata o valor do rótulo (número de casas decimais)
           },
+          // color: function (context) {
+          //     if (context.dataset.label.includes('pais'))
+          //         return 'rgb(220, 20, 60)';
+          //     if (context.dataset.label.includes('estado'))
+          //         return 'rgb(120, 20, 220)';
+          //     if (context.dataset.label.includes('região'))
+          //         return 'darkgreen';
+          //     if (context.dataset.label.includes('nota'))
+          //         return colors_indprods[parseInt(context.dataset.label[context.dataset.label.indexOf("nota")+5])-parseInt(listAvgIndProds['conceito'])];
+          //     if (context.dataset.label.includes('IndProd'))
+          //         return 'black'; // Cor do rótulo
+          // },
         },
 
         annotation: {
@@ -1263,6 +1671,7 @@ const renderChartIndprods_ = (idCanvas, listAvgIndProds, indicadores) => {
         //     //},
         // },
       },
+      maintainAspectRatio: false,
     },
   });
 }
@@ -1509,8 +1918,6 @@ function renderChartIndprodextsups_(idCanvas, listAvgIndProds, indicadores) {
       },
     },
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       spanGaps: true,
       stacked: false,
       plugins: {
@@ -1588,6 +1995,7 @@ function renderChartIndprodextsups_(idCanvas, listAvgIndProds, indicadores) {
         //     //},
         // },
       },
+      maintainAspectRatio: false,
     },
   });
 }
@@ -1947,9 +2355,379 @@ function renderChartIndprods_simulacao(idCanvas, listAvgIndProds, indicadores) {
         //     //},
         // },
       },
+      maintainAspectRatio: false,
     },
   });
 }
+
+// var chartindprodsproductions;
+// function renderChartIndprodsProductions(idCanvas, listQualisProductions, listPermanentesTotal, listAvgIndProds, black_list, curvas) {
+
+//     var listaPermanentes = listQualisProductions.map(data => data.id_pessoa);
+//     listaPermanentes = [...new Set(listaPermanentes.filter(data => ![""].includes(data)))];
+
+//     // Filtrar os dados com base na black_list
+//     listQualisProductions = listQualisProductions.filter(data => !black_list.includes(data.id_pessoa));
+
+//     // Recalcular os anos, se necessário
+//     var anosSet = new Set(listQualisProductions.map(data => data.ano));
+//     var anos = [...anosSet].sort();
+
+//     var listIndProds = []
+//     // Recalcular as pontuações por ano
+//     var pontuacoesPorAno = anos.map(ano => {
+//         let listQualis = {
+//             ano: ano,
+//             A1: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A1, 0),
+//             A2: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A2, 0),
+//             A3: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A3, 0),
+//             A4: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.A4, 0),
+//             B1: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B1, 0),
+//             B2: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B2, 0),
+//             B3: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B3, 0),
+//             B4: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.B4, 0),
+//             C: listQualisProductions.filter(data => data.ano === ano).reduce((acc, data) => acc + data.C, 0),
+//         };
+
+//         let indProdArt = 1 * listQualis.A1 + 0.875 * listQualis.A2 + 0.75 * listQualis.A3 + 0.625 * listQualis.A4 + 0.5 * listQualis.B1 + 0.375 * listQualis.B2 + 0.25 * listQualis.B3 + 0.125 * listQualis.B4;
+//         let glosa = 0.25 * listQualis.B3 + 0.125 * listQualis.B4;
+//         if (glosa > (0.2 * indProdArt))
+//             indProdArt = 1 * listQualis.A1 + 0.875 * listQualis.A2 + 0.75 * listQualis.A3 + 0.625 * listQualis.A4 + 0.5 * listQualis.B1 + 0.375 * listQualis.B2 + (0.2 * indProdArt);
+//         listIndProds.push({ 'indprod': indProdArt / listPermanentesTotal[ano].length, 'ano': listQualis.ano });
+
+//         return listQualis;
+
+//     });
+
+//     var labels = listIndProds.map(ind => ind.ano);
+//     var counts = listIndProds.map(ind => {
+//         if (ind.indprod === 0.0) return null
+//         return ind.indprod;
+//     });
+
+//     var datasets_indprod = [
+//         {
+//             type: 'line',
+//             label: 'IndProd',
+//             data: counts,
+//             backgroundColor: 'rgb(54, 162, 235)',
+//             borderColor: 'rgb(54, 162, 235)',
+//             yAxisID: 'y',
+//         }];
+
+//     var colors_indprods = ['rgb(255, 99, 132)','rgb(255, 159, 64)','rgb(255, 205, 86)','rgb(75, 192, 192)','rgb(153, 102, 255)'];
+//     var point_styles = ['cross', 'rect', 'triangle','dash', 'star']
+
+//     var labelsAvg = [];
+//     var avgCounts = [];
+//     var conceito = '3';
+
+//     var max_indprod = 0;
+//     var max_indprod_temp = 0;
+
+//     max_indprod_temp = Math.max(...counts);
+//     if(max_indprod_temp > max_indprod) max_indprod = max_indprod_temp;
+
+//     //for(var i = parseInt(listAvgIndProds['conceito']); i<=parseInt(listAvgIndProds['maxima']); i++){
+//     for (var i = 0; i < curvas.length; i++) {
+//         if (curvas[i].includes('conceito')) {
+//             conceito = curvas[i].substring(9)
+
+//             labelsAvg = listAvgIndProds[conceito].map(ind => ind.ano);
+//             avgCounts = listAvgIndProds[conceito].map(ind => ind.indprodall);
+
+//             max_indprod_temp = Math.max(...avgCounts);
+//             if(max_indprod_temp > max_indprod) max_indprod = max_indprod_temp;
+
+//             datasets_indprod.push({
+//                 type: 'line',
+//                 label: `Avg IndProd (PPGs nota ${conceito})`,
+//                 data: avgCounts,
+//                 //lineTension: 0.4,
+//                 backgroundColor: colors_indprods[i],
+//                 borderColor: colors_indprods[i],//'rgb(220, 20, 60)',
+//                 borderWidth: 1,
+//                 pointStyle: point_styles[i],
+//                 yAxisID: 'y'
+//             });
+//         }
+//         else if (curvas[i].includes('país')) {
+//             labelsAvg = listAvgIndProds['pais'].map(ind => ind.ano);
+//             avgCounts = listAvgIndProds['pais'].map(ind => ind.indprodall);
+
+//             max_indprod_temp = Math.max(...avgCounts);
+//             if(max_indprod_temp > max_indprod) max_indprod = max_indprod_temp;
+
+//             datasets_indprod.push({
+//                 type: 'line',
+//                 label: `Avg IndProd (PPGs do país)`,
+//                 data: avgCounts,
+//                 //lineTension: 0.4,
+//                 borderColor: 'rgb(220, 20, 60)',
+//                 //backgroundColor: 'rgb(220, 20, 60)',
+//                 borderWidth: 1,
+//                 pointRadius: 1,
+//                 borderDash: [5,5],
+//                 yAxisID: 'y'
+//             });
+//         }
+//         else if (curvas[i].includes('região')) {
+//             labelsAvg = listAvgIndProds['regiao'].map(ind => ind.ano);
+//             avgCounts = listAvgIndProds['regiao'].map(ind => ind.indprodall);
+
+//             max_indprod_temp = Math.max(...avgCounts);
+//             if(max_indprod_temp > max_indprod) max_indprod = max_indprod_temp;
+
+//             datasets_indprod.push({
+//                 type: 'line',
+//                 label: `Avg IndProd (PPGs da região ${listAvgIndProds['nome_regiao']})`,
+//                 data: avgCounts,
+//                 //lineTension: 0.4,
+//                 borderColor: 'darkgreen',
+//                 borderWidth: 1,
+//                 pointRadius: 1,
+//                 borderDash: [5,5],
+//                 yAxisID: 'y'
+//             });
+//         }
+//         else if (curvas[i].includes('uf')) {
+//             labelsAvg = listAvgIndProds['uf'].map(ind => ind.ano);
+//             avgCounts = listAvgIndProds['uf'].map(ind => ind.indprodall);
+
+//             max_indprod_temp = Math.max(...avgCounts);
+//             if(max_indprod_temp > max_indprod) max_indprod = max_indprod_temp;
+
+//             datasets_indprod.push({
+//                 type: 'line',
+//                 label: `Avg IndProd (PPGs do estado ${listAvgIndProds['nome_uf']})`,
+//                 data: avgCounts,
+//                 //lineTension: 0.4,
+//                 borderColor: 'rgb(120, 20, 220)',
+//                 //backgroundColor: 'rgb(120, 20, 220)',
+//                 borderWidth: 1,
+//                 pointRadius: 1,
+//                 borderDash: [5,5],
+//                 yAxisID: 'y'
+//             });
+//         }
+//     }
+
+//     //const max_indprod = Math.max(...counts, ...avgCounts);
+
+//     anos.push(null);
+//     labels.push(null);
+//     counts.push(null);
+//     labelsAvg.push(null);
+//     avgCounts.push(null);
+
+//     const canvas = document.getElementById(idCanvas);
+//     const ctx = canvas.getContext("2d");
+//     //const ctx = document.getElementById('chartindprodsproductions');
+
+//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//     if (chartindprodsproductions) {
+//         chartindprodsproductions.destroy();
+//     }
+//     chartindprodsproductions = new Chart(ctx, {
+//         type: 'bar',
+//         data: {
+//             labels: anos,
+//             datasets: datasets_indprod
+//         },
+//         layout: {
+//             padding: {
+//                 left: 5 // Increase the left margin by 5 pixels
+//             }
+//         },
+//         options: {
+//             spanGaps: true,
+//             stacked: false,
+//             plugins: {
+//                 legend: {
+//                     display: true,
+//                     //ltl: true,
+//                     reverse: true
+//                 },
+
+//                 datalabels: {
+//                     display: function (context) {
+//                         if (context.dataset.label.includes('IndProd'))
+//                             return true; // Mostra rótulos apenas para o conjunto de dados 'IndProd'
+//                         return false;
+//                     },
+//                     align: 'end', // Alinha o rótulo no final da barra/linha
+//                     anchor: 'end', // Ancora o rótulo no final da barra/linha
+//                     formatter: function (value) {
+//                         return value.toFixed(2); // Formata o valor do rótulo (número de casas decimais)
+//                     },
+//                     color: function (context) {
+//                         if (context.dataset.label.includes('pais'))
+//                             return 'rgb(220, 20, 60)';
+//                         if (context.dataset.label.includes('estado'))
+//                             return 'rgb(120, 20, 220)';
+//                         if (context.dataset.label.includes('região'))
+//                             return 'darkgreen';
+//                         if (context.dataset.label.includes('nota'))
+//                             return colors_indprods[parseInt(context.dataset.label[context.dataset.label.indexOf("nota")+5])-parseInt(listAvgIndProds['conceito'])];
+//                         if (context.dataset.label.includes('IndProd'))
+//                             return 'black'; // Cor do rótulo
+//                     },
+
+//                 },
+
+//                 annotation: {
+//                     drawTime: 'beforeDatasetsDraw',
+//                     annotations: {
+//                         line_fraco: {
+//                             type: 'line',
+//                             scaleID: 'y',
+//                             value: 0.5,
+//                             borderColor: 'grey',
+//                             borderWidth: 2,
+//                             borderDash: [1, 2]
+//                         },
+//                         label_fraco: {
+//                             type: 'label',
+//                             xValue: anos.length - 1,
+//                             yValue: 0.56,
+//                             color: 'grey',
+//                             yScaleID: 'y',
+//                             //backgroundColor: 'rgba(245,245,245)',
+//                             //borderColor: 'black',
+//                             //borderWidth: 1,
+//                             //borderRadius: 2,
+//                             content: ['Fraco'],
+//                             font: {
+//                                 size: 10
+//                             }
+//                         },
+//                         line_regular: {
+//                             type: 'line',
+//                             scaleID: 'y',
+//                             value: 1.0,
+//                             borderColor: 'grey',
+//                             borderWidth: 2,
+//                             borderDash: [1, 2]
+//                         },
+//                         label_regular: {
+//                             type: 'label',
+//                             xValue: anos.length - 1,
+//                             yValue: 1.06,
+//                             color: 'grey',
+//                             yScaleID: 'y',
+//                             //backgroundColor: 'rgba(245,245,245)',
+//                             //borderColor: 'black',
+//                             //borderWidth: 1,
+//                             //borderRadius: 2,
+//                             content: ['Reg.'],
+//                             font: {
+//                                 size: 10
+//                             }
+//                         },
+//                         line_bom: {
+//                             type: 'line',
+//                             scaleID: 'y',
+//                             value: 1.6,
+//                             borderColor: 'grey',
+//                             borderWidth: 2,
+//                             borderDash: [1, 2]
+//                         },
+//                         label_bom: {
+//                             type: 'label',
+//                             xValue: anos.length - 1,
+//                             yValue: 1.66,
+//                             color: 'grey',
+//                             yScaleID: 'y',
+//                             //backgroundColor: 'rgba(245,245,245)',
+//                             //borderColor: 'black',
+//                             //borderWidth: 1,
+//                             //borderRadius: 2,
+//                             content: ['Bom'],
+//                             font: {
+//                                 size: 10
+//                             }
+//                         },
+//                         line_muitobom: {
+//                             type: 'line',
+//                             scaleID: 'y',
+//                             value: 2.3,
+//                             borderColor: 'grey',
+//                             borderWidth: 2,
+//                             borderDash: [1, 2]
+//                         },
+//                         label_muitobom: {
+//                             type: 'label',
+//                             xValue: anos.length - 1,
+//                             yValue: 2.36,
+//                             yScaleID: 'y',
+//                             color: 'grey',
+//                             //backgroundColor: 'rgba(245,245,245)',
+//                             //borderColor: 'black',
+//                             //borderWidth: 1,
+//                             //borderRadius: 2,
+//                             content: ['M.Bom'],
+//                             font: {
+//                                 size: 10
+//                             }
+//                         },
+//                         Lattes: {
+//                             type: 'box',
+//                             xMin: anos.length - 2.5,
+//                             xMax: anos.length - 1.5,
+//                             yMin: 0,
+//                             borderWidth: 0,
+//                             //yMax: 70,
+//                             backgroundColor: 'rgba(100, 99, 255, 0.2)'
+//                         },
+//                         label1: {
+//                             type: 'label',
+//                             yScaleID: 'y',
+//                             yValue: max_indprod + 0.25,
+//                             xValue: anos.length - 2,
+//                             color: 'rgba(100, 99, 255, 0.8)',
+//                             //backgroundColor: 'rgba(245,245,245)',
+//                             content: ['Lattes (atual)'],
+//                             font: {
+//                                 size: 12
+//                             }
+//                         }
+//                     }
+//                 },
+
+//             },
+//             scales: {
+//                 x: {
+//                     stacked: true,
+
+//                 },
+//                 y: {
+//                     max: max_indprod+0.5,
+//                     stacked: false,
+//                     title: {
+//                         display: true,
+//                         text: 'IndProd',
+//                     },
+//                     position: 'left'
+//                 },
+//                 // y1: {
+//                 //     //type: 'linear',
+//                 //     //stacked: true,
+//                 //     title: {
+//                 //         display: true,
+//                 //         text: 'IndProd',
+//                 //     },
+//                 //     position: 'right', // Position the second y-axis on the right side
+//                 //     //grid: {
+//                 //     //  drawOnChartArea: false, // Hide the grid lines for the second y-axis
+//                 //     //},
+//                 // },
+
+//             },
+//             maintainAspectRatio: false,
+//         },
+//     });
+// }
 
 var chartpartdis;
 function renderChartPartDiss(
@@ -1986,6 +2764,10 @@ function renderChartPartDiss(
       xValue: 0,
       yValue: indicadores.fraco + 0.008,
       color: "grey",
+      //backgroundColor: 'rgba(245,245,245)',
+      //borderColor: 'black',
+      //borderWidth: 1,
+      //borderRadius: 2,
       content: ["Fraco"],
       font: {
         size: 10,
@@ -2089,9 +2871,8 @@ function renderChartPartDiss(
       ],
     },
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       spanGaps: true,
+      maintainAspectRatio: false,
       plugins: {
         annotation: {
           drawTime: "beforeDatasetsDraw",
@@ -2250,7 +3031,6 @@ function renderChartIndCoautorias(
       ],
     },
     options: {
-      responsive: true,
       maintainAspectRatio: false,
       plugins: {
         annotation: {
@@ -2411,7 +3191,6 @@ function renderChartIndOris(
     },
     options: {
       maintainAspectRatio: false,
-      responsive: true,
       plugins: {
         annotation: {
           drawTime: "beforeDatasetsDraw",
@@ -2571,7 +3350,6 @@ function renderChartIndDistOris(
     },
     options: {
       maintainAspectRatio: false,
-      responsive: true,
       plugins: {
         annotation: {
           drawTime: "beforeDatasetsDraw",
@@ -2731,7 +3509,6 @@ function renderChartIndAuts(
     },
     options: {
       maintainAspectRatio: false,
-      responsive: true,
       plugins: {
         annotation: {
           drawTime: "beforeDatasetsDraw",
@@ -2893,9 +3670,8 @@ function renderChartIndDiss(
       ],
     },
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       spanGaps: true,
+      maintainAspectRatio: false,
       plugins: {
         annotation: {
           drawTime: "beforeDatasetsDraw",
@@ -2944,8 +3720,6 @@ function renderChartProfessorProductions(produtos) {
       ],
     },
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       plugins: {
         legend: {
           display: true,
@@ -2956,18 +3730,32 @@ function renderChartProfessorProductions(produtos) {
             },
           },
         },
+        //title: {
+        //   display: true,
+        //   text: 'Produtos'
+        //}
       },
+      //animation: {
+      // onComplete: function(animation) {
+      //   //document.getElementById('saveGraph').setAttribute('onclick', //"saveChart('charttotalproductions.png');");
+      // }
+      // },
+      maintainAspectRatio: false,
     },
   });
 }
 
-let chartpositionindprods;
+var chartpositionindprods;
 function renderChartPositionIndProd(dados, id_ppg) {
-  const labels = dados.indprods.map(indprod => indprod.nome + ` (${indprod.sigla})\n( ${indprod.municipio}/${indprod.uf} )\n id: ${indprod.id} \n\n Clique para abrir o PPG\n\n`);
+  const labels = dados.indprods.map(
+    (indprod) =>
+      indprod.nome +
+      ` (${indprod.sigla})\n( ${indprod.municipio}/${indprod.uf} )`,
+  );
   const values = dados.indprods.map((indprod) => indprod.indprod);
 
   const dataset = {
-    data: values.map((value, index) => ({ x: index, y: value, id: dados.indprods[index].id })),
+    data: values.map((value, index) => ({ x: index, y: value })),
     pointRadius: values.map((value, index) => {
       if (dados.indprods[index].id === id_ppg) {
         return 11; // Adjust the opacity here
@@ -2990,22 +3778,6 @@ function renderChartPositionIndProd(dados, id_ppg) {
       }
       return 14;
     }),
-    onClick: function (event, elements) {
-      if (elements.length > 0) {
-          // Obter o índice do ponto clicado
-          var index = elements[0].index;
-          //debugger;
-
-          // Obter o ponto clicado (você pode acessar o dataset e a informação associada)
-          var data = this.data.datasets[0].data[index];
-
-          // Definir um link específico para o ponto clicado (use data ou labels para determinar)
-          var link = '/ppg/graficos/' + data.id; // Ajuste o link conforme necessário
-
-          // Abrir o link em uma nova aba
-          window.open(link, '_blank');
-      }
-  },
     showLine: false,
     tension: 0.4,
     fill: false,
@@ -3040,10 +3812,10 @@ function renderChartPositionIndProd(dados, id_ppg) {
         yMin: 0,
         borderColor:
           dados.indprods[i].status === "Pública Estadual"
-            ? "#22d3ee"
+            ? "rgba(0, 0, 255, 0.8)"
             : dados.indprods[i].status === "Pública Federal"
-              ? "#c084fc"
-              : "#fbbf24",
+              ? "rgba(0, 128, 0, 0.8)"
+              : "rgba(255, 0, 0, 0.8)",
         borderWidth: 1,
       };
     }
@@ -3127,10 +3899,9 @@ function renderChartPositionIndProd(dados, id_ppg) {
     },
     options: {
       maintainAspectRatio: false,
-      responsive: true,
       scales: {
         x: {
-          display: false, 
+          display: false, // Hide x-axis labels
         },
         y: {
           beginAtZero: true,
@@ -3204,8 +3975,6 @@ function index_renderChartProductions(idCanvas, listProductions) {
       },
     },
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       scales: {
         x: {
           display: true,
@@ -3228,6 +3997,8 @@ function index_renderChartProductions(idCanvas, listProductions) {
           color: "black",
           backgroundColor: "rgba(75, 192, 192, 0.6)",
           borderColor: "rgba(75, 192, 192, 1)",
+          //borderWidth: 1,
+          //borderRadius: 5,
           font: {
             size: 8,
           },
@@ -3236,6 +4007,12 @@ function index_renderChartProductions(idCanvas, listProductions) {
           },
         },
       },
+      /*animation: {
+          onComplete: function (animation) {
+              document.getElementById('saveGraph').setAttribute('onclick', "saveChart('charttotalproductions.png');");
+          }
+      },*/
+      maintainAspectRatio: false,
     },
   });
 }
@@ -3279,8 +4056,6 @@ function index_renderChartPeriodicProductions(
     },
 
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       plugins: {
         datalabels: {
           anchor: "end",
@@ -3298,6 +4073,12 @@ function index_renderChartPeriodicProductions(
           },
         },
       },
+      //animation: {
+      // onComplete: function(animation) {
+      //   //document.getElementById('saveGraph').setAttribute('onclick', //"saveChart('charttotalproductions.png');");
+      // }
+      // },
+      maintainAspectRatio: false,
     },
   });
 }
@@ -3334,8 +4115,6 @@ function index_renderChartTechnicalProductions(
     },
 
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       scales: {
         x: {
           type: "linear",
@@ -3364,6 +4143,7 @@ function index_renderChartTechnicalProductions(
           },
         },
       },
+      maintainAspectRatio: false,
     },
   });
 }
@@ -3434,9 +4214,8 @@ function index_renderChartBiblioProductions(idCanvas, listBiblioProductions) {
     data: {
       datasets: datasets,
     },
+
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       scales: {
         x: {
           type: "linear",
@@ -3465,6 +4244,7 @@ function index_renderChartBiblioProductions(idCanvas, listBiblioProductions) {
           },
         },
       },
+      maintainAspectRatio: false,
     },
   });
 }
@@ -3497,8 +4277,12 @@ function index_renderChartStudentsLevel(idCanvas, listStudents) {
       ],
     },
     options: {
+      //animation: {
+      // onComplete: function(animation) {
+      //   //document.getElementById('saveGraph').setAttribute('onclick', //"saveChart('charttotalproductions.png');");
+      // }
+      // },
       maintainAspectRatio: false,
-      responsive: true,
     },
   });
 }
@@ -3542,8 +4326,6 @@ function renderizarGraficoAtualizacao(idCanvas, lattesdocs) {
       ],
     },
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       scales: {
         r: {
           angleLines: {
@@ -3553,6 +4335,7 @@ function renderizarGraficoAtualizacao(idCanvas, lattesdocs) {
           suggestedMax: 10,
         },
       },
+      maintainAspectRatio: true,
     },
   });
 }
@@ -3648,8 +4431,6 @@ function log_renderChartLogAcessos(idCanvas, listLogAcessos) {
     },
 
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       plugins: {
         datalabels: {
           anchor: "end",
@@ -3667,6 +4448,12 @@ function log_renderChartLogAcessos(idCanvas, listLogAcessos) {
           },
         },
       },
+      //animation: {
+      // onComplete: function(animation) {
+      //   //document.getElementById('saveGraph').setAttribute('onclick', //"saveChart('charttotalproductions.png');");
+      // }
+      // },
+      maintainAspectRatio: false,
     },
   });
 }
@@ -3762,8 +4549,6 @@ function log_renderChartLogGrafos(idCanvas, listLogGrafos) {
     },
 
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       plugins: {
         datalabels: {
           anchor: "end",
@@ -3782,6 +4567,12 @@ function log_renderChartLogGrafos(idCanvas, listLogGrafos) {
           },
         },
       },
+      //animation: {
+      // onComplete: function(animation) {
+      //   //document.getElementById('saveGraph').setAttribute('onclick', //"saveChart('charttotalproductions.png');");
+      // }
+      // },
+      maintainAspectRatio: false,
     },
   });
 }
@@ -3807,9 +4598,42 @@ var charttccsproductions;
 function renderChartTCCsProductions_(idCanvas, listtccsProductions) {
   if (Object.keys(listtccsProductions).length == 0) return;
 
+  // Recalcular os anos, se necessário
+  // var anosSet = new Set(Object.keys(listtccsProductions)); //listQualisProductions.map(data => data.ano));
+  // var anos = [...anosSet].sort();
+
   const canvas = document.getElementById(idCanvas);
   const ctx = canvas.getContext("2d");
 
+  // canvas.addEventListener('click', function (event){
+  //     var activePoints = charttccsproductions.getElementsAtEventForMode(event, 'nearest', {intersect: true }, true);
+
+  //     if(activePoints.length > 0){
+  //         var clickedDatasetIndex = activePoints[0].datasetIndex;
+  //         var clickedYear = charttccsproductions.data.labels[activePoints[0].index];
+
+  //         var html = '';
+  //         var cont_artigos = 0;
+  //         listaArtigos.forEach(e => {
+  //             if (e.ano == clickedYear){
+  //                 html +=`<div class="card">
+  //                         <div class="card-body" style="font-size: 11px;">
+  //                         (${e.ano}) [<strong style="color: red;">${e.qualis}</strong>] ${e.nome_producao} ${e.duplicado > 0 ? `<strong style="color:red;">DUPLICADO (${(100*e.duplicado).toFixed(1)}%)</strong>`:''}
+  //                         </div>
+  //                         </div>`;
+  //                 cont_artigos++;
+  //             }
+  //           });
+  //           html += `<br><span>Total = ${cont_artigos}</span>`;
+
+  //         document.getElementById('listaArtigosModalLabel').innerText = `Lista de artigos de ${clickedYear}`
+  //         var modal = document.getElementById('listaArtigosModal');
+  //         modal.querySelector('.modal-body').innerHTML = html;
+
+  //         modal = new bootstrap.Modal(modal);
+  //         modal.show();
+  //     }
+  // });
   var maior_valor = 0;
   var labels = extractAndSortProductTypes(listtccsProductions, [
     "total",
@@ -3818,9 +4642,10 @@ function renderChartTCCsProductions_(idCanvas, listtccsProductions) {
   ]);
   var datasets = labels.map(function (label, index) {
     var dataEntries = Object.keys(listtccsProductions).map(function (year) {
+      // Only include entries that are not zero
       var value = listtccsProductions[year][label] || 0;
       if (maior_valor < value) maior_valor = value;
-      return value === 0 ? null : value;
+      return value === 0 ? null : value; // Return null for zero values to skip drawing these bars
     });
 
     return {
@@ -3846,7 +4671,6 @@ function renderChartTCCsProductions_(idCanvas, listtccsProductions) {
     },
     options: {
       maintainAspectRatio: false,
-      responsive: true,
       plugins: {
         datalabels: {
           anchor: "end",
@@ -3871,7 +4695,7 @@ function renderChartTCCsProductions_(idCanvas, listtccsProductions) {
           type: "logarithmic",
           stacked: false,
           beginAtZero: false,
-          min: 0.1,
+          min: 0.1, // Set minimum scale value to 0.1 to help show bars with value of 1
           ticks: {
             callback: function (value, index, values) {
               if (
@@ -3883,7 +4707,7 @@ function renderChartTCCsProductions_(idCanvas, listtccsProductions) {
               ) {
                 return value;
               }
-              return null;
+              return null; // Avoid cluttering with too many labels
             },
           },
         },
@@ -3952,7 +4776,6 @@ function renderChartTCCsProductions_tipos(
     },
     options: {
       maintainAspectRatio: false,
-      responsive: true,
       plugins: {
         datalabels: {
           anchor: "end",
@@ -4119,8 +4942,6 @@ function renderChartTCCsArtigos(idCanvas, listtccsProductions) {
       },
     },
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
       spanGaps: true,
       stacked: false,
       plugins: {
@@ -4151,6 +4972,7 @@ function renderChartTCCsArtigos(idCanvas, listtccsProductions) {
           position: "left",
         },
       },
+      maintainAspectRatio: false,
     },
   });
 }
@@ -4158,8 +4980,9 @@ function renderChartTCCsArtigos(idCanvas, listtccsProductions) {
 let chartlivrostccs;
 const renderizarGraficoTCCsLivros = (idCanvas, producoesTCC) => {
   if (Object.keys(producoesTCC).length === 0) {
-    document.getElementById("container-grafico-livros").innerText =
-      "Nenhum livro encontrado";
+    document.getElementById("container-grafico-livros").innerHTML =
+      '<p class="text-center font-medium text-zinc-700">Nenhum livro publicado</p>';
+    return;
   }
 
   const canvas = document.getElementById(idCanvas);
@@ -4186,7 +5009,6 @@ const renderizarGraficoTCCsLivros = (idCanvas, producoesTCC) => {
     },
     options: {
       maintainAspectRatio: false,
-      responsive: true,
       plugins: {
         datalabels: {
           anchor: "end",
@@ -4223,7 +5045,7 @@ const renderizarGraficoTCCsLivros = (idCanvas, producoesTCC) => {
               ) {
                 return value;
               }
-              return null;
+              return null; 
             },
           },
         },
@@ -4260,183 +5082,7 @@ criaGraficoPizza = (context, labels, data, chartLabel) => {
       ],
     },
     options: {
-      maintainAspectRatio: false,
       responsive: true,
     },
   });
 };
-
-
-var chartlattesupdateEgressos;
-function renderChartLattesUpdateEgressos(idCanvas, lattesdocs) {
-  const labels = lattesdocs.map(dicionario => dicionario.legenda);
-  const data = lattesdocs.map(dicionario => dicionario.quantidade);
-
-  const canvas = document.getElementById(idCanvas);
-  const ctx = canvas.getContext("2d");
-
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-
-  if (chartlattesupdateEgressos) {
-    chartlattesupdateEgressos.destroy();
-  }
-  chartlattesupdateEgressos = new Chart(ctx, {
-    type: 'polarArea',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: data,
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.7)',
-          'rgba(54, 162, 235, 0.7)',
-          'rgba(255, 206, 86, 0.7)',
-          'rgba(75, 192, 192, 0.7)',
-          'rgba(153, 102, 255, 0.7)'
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)'
-        ],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        r: {
-          angleLines: {
-            display: false
-          },
-          suggestedMin: 0,
-          suggestedMax: 10
-        }
-      },
-      maintainAspectRatio: false,
-      responsive: true
-    }
-  });
-}
-
-var chartegressostituladosporano;
-function renderChartEgressosTituladosPorAno(idCanvas, listaEgressos) {
-  // //debugger
-  let quantidade = [], labels = [], datasets = [], anosSet = [];
-  let color;
-  for (let [key, value] of Object.entries(listaEgressos)) {
-    if (Object.keys(value).length > anosSet.length)
-      anosSet = value.map(egresso => egresso.ano_egresso);
-    labels = [...anosSet].sort();
-    quantidade = value.map(egresso => egresso.quantidade);
-    color = obterCorAleatoria();
-    datasets.push({
-      label: `${key}`,
-      data: quantidade,
-      borderColor: color,
-      backgroundColor: color + '20',
-      borderWidth: 1,
-      fill: 'start',
-    })
-
-  }
-
-  const canvas = document.getElementById(idCanvas);
-  const ctx = canvas.getContext("2d");
-  var gradient = ctx.createLinearGradient(0, 25, 0, 300);
-  gradient.addColorStop(0, colors.indigo.half);
-  gradient.addColorStop(0.35, colors.indigo.quarter);
-  gradient.addColorStop(1, colors.indigo.zero);
-
-  var gradient2 = ctx.createLinearGradient(0, 25, 0, 300);
-  gradient2.addColorStop(0, colors.blue.half);
-  gradient2.addColorStop(0.35, colors.blue.quarter);
-  gradient2.addColorStop(1, colors.blue.zero);
-
-  var gradient3 = ctx.createLinearGradient(0, 25, 0, 300);
-  gradient3.addColorStop(0, colors.orange.half);
-  gradient3.addColorStop(0.35, colors.orange.quarter);
-  gradient3.addColorStop(1, colors.orange.zero);
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  if (chartegressostituladosporano) {
-    chartegressostituladosporano.destroy();
-  }
-  chartegressostituladosporano = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      // datasets: [{
-      //     label: 'Egressos Titulados por Ano',
-      //     data: quantidade,
-      //     borderColor: 'rgb(75, 192, 192)',
-      //     backgroundColor: 'rgba(75, 192, 192, 0.2)',
-      //     borderWidth: 1,
-      //     fill: 'start',
-      // }]
-      datasets: datasets
-    },
-    options: {
-      maintainAspectRatio: false,
-      responsive: true,
-      scales: {
-        y: {
-          stacked: false,
-          beginAtZero: true,
-        }
-      },
-      plugins: {
-        datalabels: {
-          display: false,
-        },
-      }
-    },
-  });
-}
-
-
-let chartProducoes
-function renderChartProducoes(produtos, idCanva) {
-  // //debugger
-  var labels = produtos.map(prods => prods.subtipo);
-  var counts = produtos.map(prods => prods.qdade);
-
-  const canvas = document.getElementById(idCanva);
-  const ctx = canvas.getContext("2d");
-
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  if (chartProducoes) {
-    chartProducoes.destroy();
-  }
-  chartProducoes = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Produtos',
-        data: counts,
-        hoverOffset: 20
-      }]
-    },
-    options: {
-      plugins: {
-        legend: {
-          display: true,
-          position: 'bottom',
-          labels: {
-            font: {
-              size: 9
-            }
-          }
-        },
-      },
-      maintainAspectRatio: false,
-      responsive: true
-    },
-  });
-}

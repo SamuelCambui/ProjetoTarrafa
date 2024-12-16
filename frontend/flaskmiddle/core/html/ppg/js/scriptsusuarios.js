@@ -1,476 +1,452 @@
-const limparCamposModal = () => {
-  document.getElementById("editarAlert").innerHTML = "";
-  document.getElementById("editarIdLattes").value = "";
-  document.getElementById("editarFullName").value = "";
-  document.getElementById("editarEmail").value = "";
-  document.getElementById("editar-senha").value = "";
-  document.getElementById("editar-senha").setAttribute("disabled", "");
-  document.getElementById("checkbox-senha").checked = false;
+document.getElementById("editar").addEventListener("submit", function (e) {
+  e.preventDefault();
 
-  const superuserForm = document.getElementById("superuserForm");
-  if (superuserForm && superuserForm.textContent.trim()) {
-    const editarSelectPerfil = document.getElementById("editarSelectPerfil");
-    if (editarSelectPerfil && editarSelectPerfil.options.length > 2) {
-      editarSelectPerfil.options[2].selected = true;
-    }
-  }
-  const editarIdIes = document.getElementById("editarIdIes");
-  if (editarIdIes) {
-    editarIdIes.value = "000";
-  }
-};
+  const idLattes = document.getElementById('editarIdLattes').value;
+  const fullName = document.getElementById('editarFullName').value;
+  const email = document.getElementById('editarEmail').value;
+  const password = document.getElementById('password').value;
 
-document
-  .getElementById("editar")
-  .addEventListener("submit", async function (e) {
-    e.preventDefault();
+  let isSuperuser = false;
+  let isAdmin = false;
 
-    const idLattes = document.getElementById("editarIdLattes").value;
-    const nomeCompleto = document.getElementById("editarFullName").value;
-    const email = document.getElementById("editarEmail").value;
-    const senha = document.getElementById("editar-senha").value;
+  const perfilElement = document.getElementById('editarSelectPerfil');
+  if (perfilElement) {
+    const perfil = perfilElement.value;
+    const idIes = document.getElementById('editarIdIes').value;
 
-    let eSuperuser = false;
-    let isAdmin = false;
+    switch (perfil) {
+      case 'Dono':
+        isSuperuser = true;
+        isAdmin = true;
+        break;
 
-    const perfilOpcao = document.getElementById("editar-tipo-perfil");
-    if (perfilOpcao) {
-      const perfil = perfilOpcao.value;
-      const idIes = document.getElementById("editar-id-ies").value;
+      case 'Administrador':
+        isSuperuser = false;
+        isAdmin = true;
+        break;
 
-      switch (perfil) {
-        case "Dono":
-          eSuperuser = true;
-          isAdmin = true;
-          break;
-
-        case "Administrador":
-          eSuperuser = false;
-          isAdmin = true;
-          break;
-
-        case "Usuário comum":
-          eSuperuser = false;
-          isAdmin = false;
-          break;
-      }
-
-      const checkbox = document.getElementById("checkbox-senha");
-
-      if (checkbox.checked && !senha) {
-        alert("É necessário inserir uma senha não vazia");
-        return;
-      }
-
-      if (idIes !== "000") {
-        axios
-          .post("/ppg/atualizar/usuario", {
-            idlattes: idLattes,
-            full_name: nomeCompleto,
-            email: email,
-            is_admin: isAdmin,
-            change_password: senha,
-            is_superuser: eSuperuser,
-            id_ies: idIes,
-          })
-          .then((response) => {
-            const linkPagina = response.data;
-            window.location = linkPagina;
-          })
-          .catch((error) => {
-            console.error("Create user error:", error);
-          });
-        return;
-      }
-
-      axios
-        .post("/ppg/atualizar/usuario", {
-          idlattes: idLattes,
-          full_name: nomeCompleto,
-          change_password: senha,
-          email: email,
-        })
-        .then((response) => {
-          const linkPagina = response.data;
-          window.location = linkPagina;
-        })
-        .catch((error) => {
-          console.error("Create user error:", error);
-        });
-    }
-  });
-
-document
-  .getElementById("cadastrar")
-  .addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    const idLattes = document.getElementById("idLattes").value;
-    const fullName = document.getElementById("fullName").value;
-    const email = document.getElementById("email").value;
-
-    let isSuperUser = false;
-    let isAdmin = false;
-
-    const selectPerfil = document.getElementById("tipo-perfil");
-    const idIesElement = document.getElementById("id-ies");
-
-    const carregamento = document.getElementById("carregamento");
-    carregamento.classList.remove("hidden");
-    carregamento.classList.add("flex");
-    esconderModal(backdropModalNovoUser, conteudoNovoUser);
-
-    try {
-      if (selectPerfil) {
-        const perfil = selectPerfil.value;
-        const idIes = idIesElement.options[idIesElement.selectedIndex].value;
-
-        switch (perfil) {
-          case "Dono":
-            isSuperUser = true;
-            isAdmin = true;
-            break;
-          case "Administrador":
-            isSuperUser = false;
-            isAdmin = true;
-            break;
-          case "Usuário comum":
-            isSuperUser = false;
-            isAdmin = false;
-            break;
-        }
-
-        if (idIes !== "000") {
-          const response = await axios.post("/ppg/cadastrar/usuario", {
-            idlattes: idLattes,
-            full_name: fullName,
-            email: email,
-            is_admin: isAdmin,
-            is_superuser: isSuperUser,
-            id_ies: idIes,
-          });
-          const pageLink = response.data;
-          window.location = pageLink;
-        }
-      } else {
-        const response = await axios.post("/ppg/cadastrar/usuario", {
-          idlattes: idLattes,
-          full_name: fullName,
-          email: email,
-        });
-        const pageLink = response.data;
-        window.location = pageLink;
-      }
-    } catch (error) {
-      console.error("Erro ao cadastrar usuário:", error);
-    } finally {
-      carregamento.classList.remove("flex");
-      carregamento.classList.add("hidden");
-    }
-  });
-
-const obterUsuario = async (idLattes, is_superuser, is_admin) => {
-  const carregamento = document.getElementById("carregamento");
-  carregamento.classList.remove("hidden");
-  carregamento.classList.add("flex");
-
-  limparCamposModal();
-
-  try {
-    const response = await axios.get(`/ppg/user/${idLattes}`);
-    const user = response.data;
-    
-    document.getElementById("editarIdLattes").value = user.idlattes;
-    document.getElementById("editarFullName").value = user.full_name;
-    document.getElementById("editarEmail").value = user.email;
-
-    if (is_superuser) {
-      const perfilSelecionado = document.getElementById("editar-id-ies");
-
-      if (user.is_superuser) {
-        perfilSelecionado.options[0].selected = true;
-        perfilSelecionado.options[2].selected = true;
-      }
-
-      $("#editar-id-ies").val(user.id_ies).change();
-
-      const checkbox = document.getElementById("checkbox-senha");
-      const passwordInput = document.getElementById("editar-senha");
-      const btnMostrarSenha = document.getElementById("mostrar-senha");
-
-      passwordInput.disabled = false;
-      checkbox.checked = true;
-
-      checkbox.addEventListener("change", () => {
-        if (checkbox.checked) {
-          passwordInput.disabled = false;
-          passwordInput.classList.remove("bg-gray-100", "cursor-not-allowed");
-        } else {
-          passwordInput.disabled = true;
-          passwordInput.value = "";
-          passwordInput.classList.add("bg-gray-100", "cursor-not-allowed");
-        }
-        btnMostrarSenha.classList.toggle("hidden");
-      });
+      case 'Usuário comum':
+        isSuperuser = false;
+        isAdmin = false;
+        break;
     }
 
-    mostrarModal(backdropModalEditarUser, conteudoEditarUser);
-  } catch (error) {
-    console.error("Erro:", error);
-  } finally {
-    carregamento.classList.remove("flex");
-    carregamento.classList.add("hidden");
-  }
-};
-
-//Funções chamadas diretamente
-document
-  .getElementById("alterarSenha")
-  .addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    const idLattes = document.getElementById("alterarSenhaIdLattes").value;
-    const fullName = document.getElementById("alterarSenhaFullName").value;
-    const email = document.getElementById("alterarSenhaEmail").value;
-    const password = document.getElementById("alterarSenhaPassword").value;
-
-    if (email === "teste@unimontes.br") return;
-
-    const carregamento = document.getElementById("carregamento");
-    carregamento.classList.remove("hidden");
-    carregamento.classList.add("flex");
-
-    esconderModal(backdropModalEditarSenhaUser, conteudoEditarSenhaUser);
-
-    try {
-      const response = await axios.post("/ppg/atualizar/usuario", {
+    if (idIes !== '000') {
+      axios.post('/ppg/atualizar/usuario', {
         idlattes: idLattes,
         full_name: fullName,
-        change_password: password,
         email: email,
+        is_admin: isAdmin,
+        change_password: password,
+        is_superuser: isSuperuser,
+        id_ies: idIes
+      })
+        .then(response => {
+          const page_link = response.data;
+          window.location = page_link;
+        })
+        .catch(error => {
+          console.error('Create user error:', error);
+        });
+    }
+  } else {
+    axios.post('/ppg/atualizar/usuario', {
+      idlattes: idLattes,
+      full_name: fullName,
+      change_password: password,
+      email: email,
+    })
+      .then(response => {
+        const page_link = response.data;
+        window.location = page_link;
+      })
+      .catch(error => {
+        console.error('Create user error:', error);
       });
-
-      //Melhorar isso, ao invés de redirecionar, continuar na mesma página
-      const pageLink = response.data;
-      window.location = pageLink;
-    } catch (error) {
-      console.error("Error updating user:", error);
-    } finally {
-      carregamento.classList.remove("flex");
-      carregamento.classList.add("hidden");
-    }
-  });
-
-const alterarSenha = async (idLattes, is_superuser, is_admin) => {
-  const carregamento = document.getElementById("carregamento");
-  carregamento.classList.remove("hidden");
-  carregamento.classList.add("flex");
-
-  try {
-    const response = await axios.get(`/ppg/user/${idLattes}`);
-    const user = response.data;
-
-    document.getElementById("alterarSenhaIdLattes").value = user.idlattes;
-    document.getElementById("alterarSenhaFullName").value = user.full_name;
-    document.getElementById("alterarSenhaEmail").value = user.email;
-
-    mostrarModal(backdropModalEditarSenhaUser, conteudoEditarSenhaUser);
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-  } finally {
-    carregamento.classList.remove("flex");
-    carregamento.classList.add("hidden");
   }
-};
+});
 
-const modificarStatus = async (idLattes) => {
-  const carregamento = document.getElementById("carregamento");
-  carregamento.classList.remove("hidden");
-  carregamento.classList.add("flex");
 
-  try {
-    const response = await axios.get(`/ppg/user/inverte_status/${idLattes}`);
-    const user = response.data;
+document.getElementById("alterarSenha").addEventListener("submit", function (e) {
+  e.preventDefault();
 
-    const lockElement = document.getElementById("lock" + idLattes);
-    const ativoElement = document.getElementById("ativo" + idLattes);
+  const idLattes = document.getElementById('alterarSenhaIdLattes').value;
+  const fullName = document.getElementById('alterarSenhaFullName').value;
+  const email = document.getElementById('alterarSenhaEmail').value;
+  const password = document.getElementById('alterarSenhaPassword').value;
 
-    if (!user.is_active) {
-      lockElement.setAttribute("class", "fas fa-user-slash");
-      ativoElement.innerHTML = "Não";
-      lockElement.setAttribute("title", "Ativar");
-    } else {
-      lockElement.setAttribute("class", "fas fa-user");
-      ativoElement.innerHTML = "Sim";
-      lockElement.setAttribute("title", "Desativar");
-    }
-  } catch (error) {
-    console.error("Error setting user status:", error);
-  } finally {
-    carregamento.classList.remove("flex");
-    carregamento.classList.add("hidden");
-  }
-};
+  if (email === 'teste@unimontes.br')
+    return;
 
-const apagarUser = (idLattes, nome) => {
-  sessionStorage.setItem("idLattes", idLattes);
+  axios.post('/ppg/atualizar/usuario', {
+    idlattes: idLattes,
+    full_name: fullName,
+    change_password: password,
+    email: email,
+  })
+    .then(response => {
+      const page_link = response.data;
+      window.location = page_link;
+    })
+    .catch(error => {
+      console.error('Create user error:', error);
+    });
+});
 
-  document.getElementById("msg-exclusao").innerHTML = `
-      O usuário <span class="font-bold"> ${nome} </span> será excluído permanentemente do banco de dados. Deseja continuar com a operação?
+
+function modificarStatus(idLattes) {
+  axios.get(`/ppg/user/inverte_status/${idLattes}`)
+    .then(response => {
+      const user = response.data;
+
+      if (!user.is_active) {
+        document.getElementById('lock' + idLattes).setAttribute("class", "fas fa-user-slash");
+        document.getElementById('ativo' + idLattes).innerHTML = 'Não';
+        document.getElementById('lock' + idLattes).setAttribute("title", "Ativar");
+      }
+      else {
+        document.getElementById('lock' + idLattes).setAttribute("class", "fas fa-user");
+        document.getElementById('ativo' + idLattes).innerHTML = 'Sim';
+        document.getElementById('lock' + idLattes).setAttribute("title", "Desativar");
+      }
+    })
+    .catch(error => {
+      console.log("Set status user error:", error);
+    })
+}
+
+
+function getUser(idLattes, is_superuser, is_admin) {
+  axios.get(`/ppg/user/${idLattes}`)
+    .then(response => {
+      const user = response.data;
+
+      document.getElementById('editarIdLattes').value = user.idlattes;
+      document.getElementById('editarFullName').value = user.full_name;
+      document.getElementById('editarEmail').value = user.email;
+
+      if (is_superuser) {
+        const selectPerfil = document.getElementById('editarSelectPerfil');
+
+        if (user.is_superuser) {
+          selectPerfil.options[0].selected = true;
+        } else if (user.is_admin) {
+          selectPerfil.options[1].selected = true;
+        } else {
+          selectPerfil.options[2].selected = true;
+        }
+
+        const idIes = document.getElementById('editarIdIes');
+        idIes.value = user.id_ies;
+        const event = new Event('change');
+        idIes.dispatchEvent(event);
+      }
+
+      const modalOverlay = document.getElementById('modalEditarUsuario');
+      const modalPanel = document.getElementById('modalPanelEditar');
+      modalOverlay.classList.remove('hidden');
+      modalPanel.classList.remove('hidden');
+    })
+    .catch(error => {
+      console.error('Get user error:', error);
+    });
+}
+
+function esconderModalEditaUser() {
+  const modalOverlay = document.getElementById('modalEditarUsuario');
+  const modalPanel = document.getElementById('modalPanelEditar');
+  modalOverlay.classList.add('hidden');
+  modalPanel.classList.add('hidden');
+}
+
+document.getElementById('btn-cancela-user').addEventListener('click', esconderModalEditaUser);
+
+function togglePassword() {
+  const passwordField = document.getElementById('alterarSenhaPassword');
+  const checkbox = document.getElementById('checkboxPassword');
+  passwordField.disabled = !checkbox.checked;
+}
+
+function alterarSenha(idLattes, is_superuser, is_admin) {
+  axios.get(`/ppg/user/${idLattes}`)
+    .then(response => {
+      const user = response.data;
+
+      document.getElementById('alterarSenhaIdLattes').value = user.idlattes;
+      document.getElementById('alterarSenhaFullName').value = user.full_name;
+      document.getElementById('alterarSenhaEmail').value = user.email;
+
+      const modal = document.getElementById('modalPanel');
+      const overlay = document.getElementById('modalAlterarSenha');
+
+      overlay.classList.remove('hidden');
+      modal.classList.remove('hidden');
+
+      overlay.classList.add('opacity-100');
+      modal.classList.add('opacity-100');
+    })
+    .catch(error => {
+      console.error('Get user error:', error);
+    });
+}
+
+document.getElementById('btn-cancela-alteracao').addEventListener('click', function () {
+  const modal = document.getElementById('modalPanel');
+  const overlay = document.getElementById('modalAlterarSenha');
+
+  overlay.classList.add('opacity-0', 'hidden');
+  modal.classList.add('opacity-0', 'hidden');
+
+  overlay.addEventListener("click", () => {
+    overlay.classList.add('opacity-0', 'hidden');
+    modal.classList.add('opacity-0', 'hidden');  
+  })
+
+});
+
+function mostrarSenhaId(id) {
+  const passwordInput = document.getElementById(id);
+  const type = passwordInput.type === 'password' ? 'text' : 'password';
+  passwordInput.type = type;
+}
+
+
+function apagarUser(idLattes, nome) {
+  const btExcluirUsuario = document.getElementById('bt-excluir-usuario');
+  const modalConfirmacao = document.getElementById('modalConfirmacao');
+  const modalContainerExluirUsuario = document.getElementById('modalContainerExluirUsuario');
+  const btnCancelaExclusao = document.getElementById('btn-cancela-exclusao');
+
+  sessionStorage.setItem('idLattes', idLattes);
+
+  document.getElementById('msg-exclusao').innerHTML = `
+      O usuário ${nome} será excluído permanentemente do banco de dados. Deseja continuar com a operação?
   `;
 
-  const btnExcluiUser = document.getElementById("btn-excluir-user");
-  if (btnExcluiUser) {
-    btnExcluiUser.addEventListener("click", async () => {
-      const carregamento = document.getElementById("carregamento");
-      carregamento.classList.remove("hidden");
-      carregamento.classList.add("flex");
+  btExcluirUsuario.removeEventListener('click', handleExcluirClick);
+  btnCancelaExclusao.removeEventListener('click', esconderModal);
 
-      try {
-        // await axios.post(`/ppg/excluir/usuario/${idLattes}`);
-        location.href = `/ppg/excluir/usuario/${idLattes}`;
-      } catch (error) {
-        console.error("Error deleting user:", error);
-      } finally {
-        carregamento.classList.remove("flex");
-        carregamento.classList.add("hidden");
+  function handleExcluirClick() {
+    location.href = `/ppg/excluir/usuario/${idLattes}`;
+  }
+
+  function mostrarModal() {
+    modalConfirmacao.classList.remove('hidden');
+    modalConfirmacao.classList.add('opacity-100');
+    modalContainerExluirUsuario.classList.remove('hidden');
+    modalContainerExluirUsuario.classList.add('opacity-100', 'translate-y-0');
+  }
+
+  function esconderModal() {
+    modalConfirmacao.classList.add('hidden');
+    modalConfirmacao.classList.remove('opacity-100');
+    modalContainerExluirUsuario.classList.add('hidden');
+    modalContainerExluirUsuario.classList.remove('opacity-100', 'translate-y-0');
+    modalContainerExluirUsuario.classList.add('translate-y-4');
+  }
+
+  btExcluirUsuario.addEventListener('click', handleExcluirClick);
+  btnCancelaExclusao.addEventListener('click', esconderModal);
+
+  mostrarModal();
+}
+
+
+$("#search-users").on("keyup", function () {
+  var value = $(this).val().toLowerCase();
+  $("#tbody-users tr").each(function () {
+    var $row = $(this);
+    var $cells = $row.find("td:lt(3)"); // Seleciona as 3 primeiras colunas (índices 0 a 2)
+
+    var rowContainsValue = false;
+
+    $cells.each(function () {
+      if ($(this).text().toLowerCase().indexOf(value) > -1) {
+        rowContainsValue = true;
+        return false; // Saia do loop interno se um valor for encontrado
       }
     });
+
+    $row.toggle(rowContainsValue);
+  });
+});
+
+//FECHA MODAL
+$('#modalEditarUsuario').on('hidden.bs.modal', function () {
+  // Limpa inputs
+  document.getElementById('editarAlert').innerHTML = '';
+  document.getElementById('editarIdLattes').value = '';
+  document.getElementById('editarFullName').value = '';
+  document.getElementById('editarEmail').value = '';
+  document.getElementById('password').value = '';
+  document.getElementById('password').setAttribute('disabled', '');
+  document.getElementById('checkboxPassword').checked = false;
+
+  if (document.getElementById('superuserForm').textContent) {
+    document.getElementById('editarSelectPerfil').options[2].selected = true;
+    $('#editarIdIes').val('000').change();
+    //document.getElementById('editarIdIes').value = '';
   }
+});
 
-  mostrarModal(backdropModalExcluirUser, conteudoModalExcluirUser);
-};
+// document.getElementById("checkboxPassword").addEventListener("submit", function() {
+//   const password = document.getElementById('password');
 
-//! Funções relacionadas aos modais e seus respectivos event handlers
-const mostrarModal = (brackdropModal, conteudoModal) => {
-  if (brackdropModal && conteudoModal) {
-    conteudoModal.setAttribute("aria-hidden", "false");
-    brackdropModal.setAttribute("aria-hidden", "false");
+//   if (document.getElementById('checkboxPassword').checked)
+//     password.removeAttribute('disabled');
+//   else {
+//     password.value = '';
+//     password.setAttribute('disabled', '');
+//   }
+// })
 
-    conteudoModal.classList.remove("hidden");
-    brackdropModal.classList.remove("hidden");
-    brackdropModal.classList.add("opacity-100", "translate-y-0");
-    conteudoModal.classList.add("opacity-100");
+document.getElementById("cadastrar").addEventListener("submit", function (e) {
+  e.preventDefault();
 
-    brackdropModal.focus();
+  const idLattes = document.getElementById('idLattes').value;
+  const fullName = document.getElementById('fullName').value;
+  const email = document.getElementById('email').value;
+
+  let isSuperUser = false;
+  let isAdmin = false;
+
+  const selectPerfil = document.getElementById('selectPerfil');
+  const idIesElement = document.getElementById('idIes');
+
+  if (selectPerfil) {
+    const perfil = selectPerfil.value;
+    const idIes = idIesElement.options[idIesElement.selectedIndex].value;
+
+    switch (perfil) {
+      case 'Dono':
+        isSuperUser = true;
+        isAdmin = true;
+        break;
+
+      case 'Administrador':
+        isSuperUser = false;
+        isAdmin = true;
+        break;
+
+      case 'Usuário comum':
+        isSuperUser = false;
+        isAdmin = false;
+        break;
+    }
+
+    if (idIes !== '000') {
+      axios.post('/ppg/cadastrar/usuario', {
+        idlattes: idLattes,
+        full_name: fullName,
+        email: email,
+        is_admin: isAdmin,
+        is_superuser: isSuperUser,
+        id_ies: idIes
+      })
+        .then(response => {
+          const page_link = response.data;
+          window.location = page_link;
+        })
+        .catch(error => {
+          console.error('Create user error:', error);
+        });
+    }
+  } else {
+    axios.post('/ppg/cadastrar/usuario', {
+      idlattes: idLattes,
+      full_name: fullName,
+      email: email
+    })
+      .then(response => {
+        const page_link = response.data;
+        window.location = page_link;
+      })
+      .catch(error => {
+        console.error('Create user error:', error);
+      });
   }
-};
+});
 
-const esconderModal = (brackdropModal, conteudoModal) => {
-  if (brackdropModal && conteudoModal) {
-    conteudoModal.setAttribute("aria-hidden", "true");
-    brackdropModal.setAttribute("aria-hidden", "true");
 
-    conteudoModal.classList.remove("opacity-100");
-    conteudoModal.classList.add("opacity-0", "hidden");
-    brackdropModal.classList.remove("opacity-100", "translate-y-0");
-    brackdropModal.classList.add("opacity-0");
+const backdropNovoUsuario = document.getElementById('modalNovoUsuario');
+const modalContainerNovoUsuario = document.getElementById('modalContainerNovoUsuario');
+const modalNovoUsuario = document.getElementById('modalPanelNovoUsuario');
+const btnNovoUsuario = document.getElementById('novoUsuario');
+const cancelaNovoUser = document.getElementById("cancelaNovoUser");
 
-    setTimeout(() => {
-      conteudoModal.classList.add("hidden");
-      brackdropModal.classList.add("hidden");
-    }, 300);
-  }
-};
+function mostrarModalNovoUser() {
+  backdropNovoUsuario.classList.remove("hidden");
+  modalContainerNovoUsuario.classList.remove("hidden");
+  modalNovoUsuario.classList.remove("translate-y-4");
+  modalNovoUsuario.classList.add("opacity-100", "translate-y-0");
+}
 
-//?Abrir modal novo user
-const btnNovoUsuario = document.getElementById("btn-novo-usuario");
-const cancelaNovoUser = document.getElementById("btn-cancela-novo-user");
-const backdropModalNovoUser = document.getElementById("modal-novo-user");
-const conteudoNovoUser = document.getElementById("conteudo-novo-user");
+function esconderModalNovoUser() {
+  backdropNovoUsuario.classList.add("hidden");
+  modalContainerNovoUsuario.classList.add("hidden");
+  modalNovoUsuario.classList.remove("opacity-100", "translate-y-0");
+  modalNovoUsuario.classList.add("opacity-0", "translate-y-4");
+}
 
 btnNovoUsuario.addEventListener("click", () => {
-  mostrarModal(backdropModalNovoUser, conteudoNovoUser);
+  mostrarModalNovoUser();
 });
+
 cancelaNovoUser.addEventListener("click", () => {
-  esconderModal(backdropModalNovoUser, conteudoNovoUser);
-});
-backdropModalNovoUser.addEventListener("click", () => {
-  esconderModal(backdropModalNovoUser, conteudoNovoUser);
+  esconderModalNovoUser();
 });
 
-//?Abrir modal editar user
-const btnEditUser = document.getElementById("btn-edita-user");
-const cancelaEditUser = document.getElementById("btn-cancela-edicao-user");
-const backdropModalEditarUser = document.getElementById("modal-editar-user");
-const conteudoEditarUser = document.getElementById("conteudo-editar-user");
-
-// btnEditUser.addEventListener("click", () => {
-//   mostrarModal(backdropModalEditarUser, conteudoEditarUser);
-// });
-
-cancelaEditUser.addEventListener("click", () => {
-  esconderModal(backdropModalEditarUser, conteudoEditarUser);
-});
-backdropModalEditarUser.addEventListener("click", () => {
-  esconderModal(backdropModalEditarUser, conteudoEditarUser);
+backdropNovoUsuario.addEventListener("click", () => {
+  esconderModalNovoUser();
 });
 
-//?Modal alterar senha
-const cancelaEditSenhaUser = document.getElementById(
-  "btn-cancela-edicao-senha-user",
-);
-const backdropModalEditarSenhaUser = document.getElementById(
-  "modal-editar-senha-user",
-);
-const conteudoEditarSenhaUser = document.getElementById(
-  "conteudo-editar-senha-user",
-);
+function mostrarModalExcluirUser() {
+  backdropNovoUsuario.classList.remove("hidden");
+  modalContainerNovoUsuario.classList.remove("hidden");
+  modalNovoUsuario.classList.remove("translate-y-4");
+  modalNovoUsuario.classList.add("opacity-100", "translate-y-0");
+}
 
-cancelaEditSenhaUser.addEventListener("click", () => {
-  esconderModal(backdropModalEditarSenhaUser, conteudoEditarSenhaUser);
-});
-backdropModalEditarSenhaUser.addEventListener("click", () => {
-  esconderModal(backdropModalEditarSenhaUser, conteudoEditarSenhaUser);
-});
+function esconderModalNovoUser() {
+  backdropNovoUsuario.classList.add("hidden");
+  modalContainerNovoUsuario.classList.add("hidden");
+  modalNovoUsuario.classList.remove("opacity-100", "translate-y-0");
+  modalNovoUsuario.classList.add("opacity-0", "translate-y-4");
+}
 
-//?Modal para excluir user
-const btnExcluiUser = document.getElementById("btn-excluir-user");
-const cancelaExclusaoUser = document.getElementById(
-  "btn-cancela-exclusao-user",
-);
-const backdropModalExcluirUser = document.getElementById("modal-exclui-user");
-const conteudoModalExcluirUser = document.getElementById(
-  "conteudo-exclui-user",
-);
-
-cancelaExclusaoUser.addEventListener("click", () => {
-  esconderModal(backdropModalExcluirUser, conteudoModalExcluirUser);
+btnNovoUsuario.addEventListener("click", () => {
+  mostrarModalNovoUser();
 });
 
-backdropModalExcluirUser.addEventListener("click", () => {
-  esconderModal(backdropModalExcluirUser, conteudoModalExcluirUser);
+cancelaNovoUser.addEventListener("click", () => {
+  esconderModalNovoUser();
 });
 
-btnExcluiUser.addEventListener("click", () => {});
-//Fim dos modais
+backdropNovoUsuario.addEventListener("click", () => {
+  esconderModalNovoUser();
+});
 
-document
-  .getElementById("buscar-usuario")
-  .addEventListener("keyup", function () {
-    let valor = this.value.toLowerCase();
-    let linhas = document.querySelectorAll("#tbody-users tr");
+const checkbox = document.getElementById('checkbox-password');
+const passwordInput = document.getElementById('password');
 
-    linhas.forEach(function (linha) {
-      let celulas = linha.querySelectorAll("td:nth-child(-n+3)");
+passwordInput.disabled = false;
+checkbox.checked = true;
 
-      let linhaContemValor = false;
+checkbox.addEventListener("change", () => {
+  if (checkbox.checked) {
+    passwordInput.disabled = false;
+    passwordInput.classList.remove("bg-gray-100", "cursor-not-allowed");
+  } else {
+    passwordInput.disabled = true;
+    passwordInput.classList.add("bg-gray-100", "cursor-not-allowed");
+  }
+});
 
-      celulas.forEach(function (cel) {
-        if (cel.textContent.toLowerCase().indexOf(valor) > -1) {
-          linhaContemValor = true;
-        }
-      });
-
-      linha.style.display = linhaContemValor ? "" : "none";
-    });
-  });
-
-const btnFecharMsg = document.getElementById("btn-fechar-msg");
+const btnFecharMsg = document.getElementById("btn-fechar");
 const msgAlerta = document.getElementById("msg-alerta");
 
 if (btnFecharMsg) {
-  btnFecharMsg.addEventListener("click", () => {
-    msgAlerta.remove();
+  btnFecharMsg.addEventListener("click", function () {
+    msgAlerta.style.display = 'none';
   });
 }

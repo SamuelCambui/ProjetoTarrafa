@@ -1,11 +1,11 @@
-let anoInicio = 2017;
-let anoFim = 2023;
-
 const inicializaGraficos = async (idAlvo) => {
+  const anoInicio = 2017;
+  const anoFim = 2023;
+
   switch (idAlvo) {
     case "#indicadores":
       const { graficosIndicadores } = await import("./indicadores.js");
-      graficosIndicadores(anoInicio, anoFim);
+      graficosIndicadores();
       break;
     case "#docentes":
       const { graficosDocentes } = await import("./docentes.js");
@@ -19,9 +19,9 @@ const inicializaGraficos = async (idAlvo) => {
       const { graficosBancasTCCs } = await import("./bancasTccs.js");
       await graficosBancasTCCs().gerarGraficos(anoInicio, anoFim);
       break;
-    case "#egressos":
-      const { graficosEgressos } = await import("./egressos.js");
-      await graficosEgressos().gerarGraficos(anoInicio, anoFim);
+    case "#engressos":
+      const { graficosEgressos } = await import("./engressos.js");
+      // graficosEgressos();
       break;
   }
 };
@@ -112,49 +112,16 @@ btnDropFiltrar.addEventListener("click", () => {
   btnDropFiltrar.setAttribute("aria-expanded", !estaEscondido);
 });
 
-
 document.getElementById("btn-filtrar-periodo").addEventListener("click", () => {
-  anoInicio = Number(document.getElementById("ano-inicio").value);
-  anoFim = Number(document.getElementById("ano-fim").value);
+  let anoInicio = document.getElementById("ano-inicio").value;
+  let anoFim = document.getElementById("ano-fim").value;
+
+  anoInicio = Number(anoInicio);
+  anoFim = Number(anoFim);
 
   if (anoInicio > anoFim) {
-    alert("O ano de inicio deve ser menor que o ano final"); 
-    return;
+    anoInicio = anoFim;
   }
 
   document.getElementById("ano-inicio").value = anoInicio;
-  document.getElementById("ano-fim").value = anoFim;
-
-  const abaAtiva = document.querySelector('[aria-selected="true"]');
-  if (abaAtiva) {
-    const idAlvo = abaAtiva.getAttribute("data-bs-target");
-    inicializaGraficos(idAlvo);
-  }
 });
-
-document.querySelectorAll(".drop-btn").forEach((botao) => {
-  botao.addEventListener("click", (e) => {
-    e.stopPropagation();
-
-    const targetId = e.currentTarget.getAttribute("data-target");
-    const dropdown = document.getElementById(targetId);
-
-    document.querySelectorAll(".dropdown").forEach((d) => {
-      if (d !== dropdown) {
-        d.classList.add("hidden");
-      }
-    });
-
-    dropdown.classList.toggle("hidden");
-  });
-});
-
-window.addEventListener("click", (e) => {
-  if (!e.target.closest(".drop-btn") && !e.target.closest(".dropdown")) {
-    document.querySelectorAll(".dropdown").forEach((dropdown) => {
-      dropdown.classList.add("hidden");
-    });
-  }
-});
-
-

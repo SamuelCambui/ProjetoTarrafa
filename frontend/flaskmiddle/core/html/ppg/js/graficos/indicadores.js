@@ -1,7 +1,9 @@
-export const graficosIndicadores = async (anoInicio, anoFim) => {
-  const carregamento = document.getElementById("carregamento");
-  carregamento.classList.remove("hidden");
-  carregamento.classList.add("flex");
+let anoInicio;
+let anoFim;
+
+export const graficosIndicadores = async () => {
+  anoInicio = 2017;
+  anoFim = 2023;
 
   try {
     const resposta = await axios.get(
@@ -25,7 +27,7 @@ export const graficosIndicadores = async (anoInicio, anoFim) => {
       "chartindprodextsupsproductions",
       dados.dadosextsup,
     );
-    buscarPosicaoIndProd(dados.dadosposition, idPpg, notaPpg, anoInicio, anoFim);
+    buscarPosicaoIndProd(dados.dadosposition, idPpg, notaPpg);
     buscarTempoDefesa("carttempodefesa", dados.dadostempodefesa);
     buscarEstudantesGraduados(
       "chartstudentsgraduated",
@@ -82,9 +84,6 @@ export const graficosIndicadores = async (anoInicio, anoFim) => {
     );
   } catch (erro) {
     console.error("Erro ao buscar dados: ", erro);
-  } finally {
-    carregamento.classList.remove("flex");
-    carregamento.classList.add("hidden");
   }
 };
 
@@ -114,6 +113,8 @@ const buscarArtigosDiscentesPpg = (idCanvasArtigosDiscente, estatisticas) => {
 
     // Update the width of the progress bar
     elemento.style.width = porcentagem;
+
+    // Update the aria-valuenow attribute
     elemento.setAttribute(
       "aria-valuenow",
       ((valor * 100) / estatisticas.total).toFixed(1),
@@ -150,12 +151,14 @@ const buscarArtigosDiscentesPpg = (idCanvasArtigosDiscente, estatisticas) => {
   const chaves = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C"];
   const soma = chaves.reduce((sum, key) => sum + (qualisDiscente[key] || 0), 0);
 
+  const tituloGrafico = document.getElementById(
+    "titlechartpercentqualisdiscente",
+  );
   const porcentagem = ((soma * 100) / total).toFixed(2);
-  document.getElementById("porcentagem-producao").textContent =
-    `${porcentagem}%`;
+  tituloGrafico.querySelector("span").textContent = `${porcentagem}%`;
 
-  const width = 300;
-  const height = 300;
+  const width = 400;
+  const height = 400;
   let arcSize = (10 * width) / 250;
   let innerRadius = arcSize * 1;
 
@@ -236,7 +239,8 @@ const buscarArtigosDiscentesPpg = (idCanvasArtigosDiscente, estatisticas) => {
 
   let svg = d3
     .select(`#${idCanvasArtigosDiscente}`)
-    .attr("class", "w-[300px] h-[300px] mx-auto");
+    .attr("width", width)
+    .attr("height", height);
 
   let arcs = data.map(function (obj, i) {
     return d3
@@ -396,6 +400,12 @@ const buscarMapaBrasil = (coordenadasCirculo, maior, menor, idPpg) => {
 
       svg.call(zoom);
 
+      const tooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
       svg
         .selectAll("circle")
         .data(coordenadasCirculo)
@@ -412,22 +422,26 @@ const buscarMapaBrasil = (coordenadasCirculo, maior, menor, idPpg) => {
         })
         .attr("stroke", "white")
         .attr("fill-opacity", 0.4)
-        .attr("class", "cursor-pointer")
         .on("mouseover", function (event, d) {
           d3.select(this).attr(
             "r",
             (d) => normaliza(d.indprod, maior, menor) * 20,
           );
+          tooltip
+            .style("opacity", 1)
+            .html(
+              `${d.nome}<br>${d.sigla} - ${d.status}<br>(${d.municipio}/${d.uf})<br>indProd: ${d.indprod.toFixed(3)}`,
+            )
+            .style("left", event.pageX - 80 + "px")
+            .style("top", event.pageY - 80 + "px");
         })
         .on("mouseout", function () {
           d3.select(this).attr(
             "r",
             (d) => normaliza(d.indprod, maior, menor) * 15,
           );
-        }
-      ).on("click", function (e, d) {
-				window.open('/ppg/graficos/' + d.id, '_blank');
-			});
+          tooltip.style("opacity", 0);
+        });
 
       function zoomed(e) {
         const { transform } = e;
@@ -450,20 +464,20 @@ const buscarMapaBrasil = (coordenadasCirculo, maior, menor, idPpg) => {
               "r",
               (d) => normaliza(d.indprod, maior, menor) * 20 * transform.k,
             );
-            // tooltip
-            //   .style("opacity", 1)
-            //   .html(
-            //     `${d.nome}<br>${d.sigla} - ${d.status}<br>(${d.municipio}/${d.uf})<br>indProd: ${d.indprod.toFixed(3)}`,
-            //   )
-            //   .style("left", event.pageX - 80 + "px")
-            //   .style("top", event.pageY - 80 + "px");
+            tooltip
+              .style("opacity", 1)
+              .html(
+                `${d.nome}<br>${d.sigla} - ${d.status}<br>(${d.municipio}/${d.uf})<br>indProd: ${d.indprod.toFixed(3)}`,
+              )
+              .style("left", event.pageX - 80 + "px")
+              .style("top", event.pageY - 80 + "px");
           })
-          .on("mouseout", function (d) {
+          .on("mouseout", function () {
             d3.select(this).attr(
               "r",
               normaliza(d.indprod, maior, menor) * 15 * transform.k,
             );
-            // tooltip.style("opacity", 0);
+            tooltip.style("opacity", 0);
           });
       }
     })
@@ -472,17 +486,18 @@ const buscarMapaBrasil = (coordenadasCirculo, maior, menor, idPpg) => {
     });
 };
 
-const buscarPosicaoIndProd = (dadosPosicao, idPpg, notaPpg, anoInicio, anoFim) => {
+const buscarPosicaoIndProd = (dadosPosicao, idPpg, notaPpg) => {
   const {
     indprods,
     maior_indprod: maiorIndProd,
     menor_indprod: menorIndProd,
   } = dadosPosicao;
-
   try {
-    document.getElementById("texto-chartpositionindprod").textContent =`Ranking de PPGs nota ${notaPpg} (mesma área)`;
-    document.getElementById("titulo-chartpositionindprod").textContent =
-      `Comparação do indicador Média ponderada de artigos (IndArtigo) por DPs e por ano do PPG com os programas nota ${notaPpg} no período de ${anoInicio} a ${anoFim}`;
+    document.getElementById("text-chartpositionindprod").textContent =
+      `Posicionamento do PPG em relação a outros nota ${notaPpg} da área`;
+
+    document.getElementById("text-chartpositionindprod").textContent =
+      `Comparação do indicador Média ponderada de artigos (IndArtigo) por DPs e por ano do PPG com os programas nota ${notaPpg} no período de ${anoInicio} - ${anoFim}`;
 
     renderChartPositionIndProd(dadosPosicao, idPpg);
     buscarMapaBrasil(indprods, maiorIndProd, menorIndProd, idPpg);

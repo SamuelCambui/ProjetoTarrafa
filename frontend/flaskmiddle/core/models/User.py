@@ -1,14 +1,12 @@
-# import sys
-# import os
-
 from flask_login import UserMixin
 from flask import jsonify
-from config import config
+import requests
+from requests import ConnectionError
+from frontend.flaskmiddle.config import config
+from flask import abort
 
-# # Adiciona o diretório raiz do projeto ao sys.path
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../..')))
-
-from protos.out import messages_pb2, usuarios_pb2_grpc
+from protos.out import ppg_pb2, ppg_pb2_grpc, messages_pb2, usuarios_pb2_grpc
+from google.protobuf.json_format import MessageToDict
 
 import grpc
 
@@ -28,7 +26,7 @@ class Usuario(UserMixin):
                 stub = usuarios_pb2_grpc.UsuarioStub(channel)
                 user = None
                 if stub:
-                    response = stub.ObtemUsuario(messages_pb2.UsuarioRequest(username=id))
+                    response = stub.ObtemUsuario (messages_pb2.UsuarioRequest(username=id))
                     print('ok')
                     user = Usuario(response.idlattes, response.email, response.full_name, response.is_superuser, response.is_admin, response.id_ies)
             return user
