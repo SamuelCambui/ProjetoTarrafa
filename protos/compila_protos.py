@@ -13,7 +13,7 @@ def compile_protos(proto_dir, proto_out):
                     '--grpc_python_out={}'.format(proto_out),
                     '--pyi_out={}'.format(proto_out),
                     proto_path,
-                ))
+            ))
 
 def fix_imports(proto_dir):
     for root, _, files in os.walk(proto_dir):

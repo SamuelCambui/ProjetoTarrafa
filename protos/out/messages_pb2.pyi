@@ -6,10 +6,28 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class HomeRequest(_message.Message):
-    __slots__ = ("id_ies",)
+    __slots__ = ("id_ies", "anoi", "anof", "produto", "fonte", "aresta")
     ID_IES_FIELD_NUMBER: _ClassVar[int]
+    ANOI_FIELD_NUMBER: _ClassVar[int]
+    ANOF_FIELD_NUMBER: _ClassVar[int]
+    PRODUTO_FIELD_NUMBER: _ClassVar[int]
+    FONTE_FIELD_NUMBER: _ClassVar[int]
+    ARESTA_FIELD_NUMBER: _ClassVar[int]
     id_ies: str
-    def __init__(self, id_ies: _Optional[str] = ...) -> None: ...
+    anoi: int
+    anof: int
+    produto: str
+    fonte: str
+    aresta: str
+    def __init__(self, id_ies: _Optional[str] = ..., anoi: _Optional[int] = ..., anof: _Optional[int] = ..., produto: _Optional[str] = ..., fonte: _Optional[str] = ..., aresta: _Optional[str] = ...) -> None: ...
+
+class HomeResponse(_message.Message):
+    __slots__ = ("nome", "json")
+    NOME_FIELD_NUMBER: _ClassVar[int]
+    JSON_FIELD_NUMBER: _ClassVar[int]
+    nome: str
+    json: str
+    def __init__(self, nome: _Optional[str] = ..., json: _Optional[str] = ...) -> None: ...
 
 class PpgRequest(_message.Message):
     __slots__ = ("id_ies", "id_ppg", "anoi", "anof", "nota")

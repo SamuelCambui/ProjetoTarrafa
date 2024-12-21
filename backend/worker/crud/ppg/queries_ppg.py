@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from typing import List
 import time
 from itertools import combinations
+import pandas as pd
 
 class QueriesPPG():
 
@@ -3128,76 +3129,59 @@ class QueriesPPG():
         return datas
     
     # @tratamento_excecao_db_ppg()
-    # async def retorna_resumo_lattes(self, id:str, anoi:int, anof:int, db:DBConnector = None):
-    #     query="""
-    #     with t as (select p.lattes, ce.ano from coleta_egressos as ce inner join pessoas as p on (p.id_pessoa = ce.id_pessoa)
-    #     inner join programas as prog on (prog.id_programa = ce.id_programa) 
-    #     and ce.ano BETWEEN %(ano_inicial)s and %(ano_final)s where prog.codigo_programa = %(id_ppg)s)
-    #     select distinct lattes_egressos.idlattes from lattes_egressos inner join t on (t.lattes = lattes_egressos.idlattes)
+    # def retorna_producoes_do_professor(self, id: str, anoi: int, anof: int, db: DBConnector = None):
     #     """
-    #     rows = db.fetch_all(query, id_ppg=id, ano_final=anof, ano_inicial=anoi)
-    #     idlattes_egressos = [dict(r) for r in rows]
-    #     datas = {}
-    #     for row in idlattes_egressos:
-    #         idlattes = row['idlattes']
-    #         datas[idlattes] = await filtragem_lattes.json_formatado_llama3(idlattes)
+    #     Retorna todas as produções do professor por anos
         
-    #     return datas
-    
-    @tratamento_excecao_db_ppg()
-    def retorna_producoes_do_professor(self, id: str, anoi: int, anof: int, db: DBConnector = None):
-        """
-        Retorna todas as produções do professor por anos
-        
-        Paramêtros:
-            Id(str): IdLattes do Professor
-            anoi(str): Ano de início
-            anof(str): Ano Final
-            db(class): DataBase
-        """
-        query = """SELECT
-                        tipo,
-                        dados
-                    FROM lattes_producao_bibliografica
-                    WHERE num_identificador = %(id)s
-                    UNION ALL
-                    SELECT
-                        tipo,
-                        dados
-                    FROM lattes_producao_tecnica
-                    WHERE num_identificador = %(id)s
-                    UNION ALL
-                    SELECT
-                        tipo,
-                        dados
-                    FROM lattes_outra_producao
-                    WHERE num_identificador = %(id)s"""
-        row = db.fetch_all(query, id=id)
-        prods = [dict(r) for r in row]
+    #     Paramêtros:
+    #         Id(str): IdLattes do Professor
+    #         anoi(str): Ano de início
+    #         anof(str): Ano Final
+    #         db(class): DataBase
+    #     """
+    #     query = """SELECT
+    #                     tipo,
+    #                     dados
+    #                 FROM lattes_producao_bibliografica
+    #                 WHERE num_identificador = %(id)s
+    #                 UNION ALL
+    #                 SELECT
+    #                     tipo,
+    #                     dados
+    #                 FROM lattes_producao_tecnica
+    #                 WHERE num_identificador = %(id)s
+    #                 UNION ALL
+    #                 SELECT
+    #                     tipo,
+    #                     dados
+    #                 FROM lattes_outra_producao
+    #                 WHERE num_identificador = %(id)s"""
+    #     row = db.fetch_all(query, id=id)
+    #     prods = [dict(r) for r in row]
 
-        contagens = {}
+    #     contagens = {}
 
 
-        for prod in prods:
-            if prod['tipo'] not in contagens and 'ORIENTACOES' not in prod['tipo'] and 'APRESENTACAO-DE-TRABALHO' not in prod['tipo']:
-                contagens[prod['tipo']] = 0
-                for dado in prod['dados']:
-                    dado_key = [k for k in dado.keys() if 'DADOS' in k][0]
-                    ano_key = [a for a in dado[dado_key].keys() if 'ANO' in a][0]
-                    try:
-                        if dado[dado_key][ano_key] != '' and anoi <= int(dado[dado_key][ano_key]) <= anof:
-                            contagens[prod['tipo']] += 1
-                    except:
-                        pass
+    #     for prod in prods:
+    #         if prod['tipo'] not in contagens and 'ORIENTACOES' not in prod['tipo'] and 'APRESENTACAO-DE-TRABALHO' not in prod['tipo']:
+    #             contagens[prod['tipo']] = 0
+    #             for dado in prod['dados']:
+    #                 dado_key = [k for k in dado.keys() if 'DADOS' in k][0]
+    #                 ano_key = [a for a in dado[dado_key].keys() if 'ANO' in a][0]
+    #                 try:
+    #                     if dado[dado_key][ano_key] != '' and anoi <= int(dado[dado_key][ano_key]) <= anof:
+    #                         contagens[prod['tipo']] += 1
+    #                 except:
+    #                     pass
         
 
-        prods = []
-        for k, v in contagens.items():
-            p = {'subtipo': k, 'qdade': v}
-            if v > 0:
-                prods.append(p)
+    #     prods = []
+    #     for k, v in contagens.items():
+    #         p = {'subtipo': k, 'qdade': v}
+    #         if v > 0:
+    #             prods.append(p)
 
-        return prods
+    #     return prods
     
     
     @tratamento_excecao_db_ppg()
@@ -3353,7 +3337,6 @@ class QueriesPPG():
 
         return {'professores': professores,'produtos': producoes, 'avatares': avatares, 'datalattes': datalattes}
   
-    
     @tratamento_excecao_db_ppg()
     def retorna_dados_home(self, id_ies: str, db: DBConnector = None):
         """   
@@ -3426,5 +3409,186 @@ class QueriesPPG():
 
             return {'info': texto, 'sigla_ies':row['sigla_ies'], 'nome':row['nome'], 'nota': row['conceito'], 'siglas': row['sigla_curso'], 'url': row['contato_url'], 'email':row['contato_email']}
         return None
+
+    @tratamento_excecao_db_ppg()
+    def retorna_lista_de_artigos_da_universidade(self, id_ies: str, ano: int, db: DBConnector = None):
+        """
+        Retornar a lista de artigos de toda a universidade considerando a base de dados lattes
+
+        Parametros:
+            Id(str): Id da IES
+            ano(int): ano atual
+            db(class): DataBase
+        """
+
+        query = """
+            with query_ids as (
+                    select STRING_AGG(DISTINCT ld.num_identificador, ',') as ids, 
+                        issn, 
+						doi,
+                        titulo,                          
+                        ano
+                        from (select CONCAT(SUBSTRING(d."DETALHAMENTO-DO-ARTIGO"->>'@ISSN', 1, 4), '-', SUBSTRING(d."DETALHAMENTO-DO-ARTIGO"->>'@ISSN', 5)) as issn, 
+							       d."DADOS-BASICOS-DO-ARTIGO"->>'@DOI' as doi,
+                                    d."DADOS-BASICOS-DO-ARTIGO"->>'@TITULO-DO-ARTIGO' as titulo,
+                                    cast(d."DADOS-BASICOS-DO-ARTIGO"->>'@ANO-DO-ARTIGO' as integer) as ano,
+                                    num_identificador
+                                from lattes_producao_bibliografica as lpb
+                                join lateral jsonb_to_recordset(lpb.dados) as d("DETALHAMENTO-DO-ARTIGO" jsonb, "DADOS-BASICOS-DO-ARTIGO" jsonb) on true    
+                                where lpb.tipo = 'ARTIGO-PUBLICADO' and 
+                                    d."DETALHAMENTO-DO-ARTIGO"->>'@ISSN' != '' and 									  
+                                    d."DADOS-BASICOS-DO-ARTIGO"->>'@ANO-DO-ARTIGO' = '%(ano)s'
+                            ) as artigos_total
+                        inner join lattes_docentes as ld on (ld.num_identificador = artigos_total.num_identificador)
+                        group by issn, doi, titulo, ano
+						order by titulo
+                    )
+                        
+			select qids.ano, qids.issn, lower(qids.titulo) as nome_producao, qids.doi, STRING_AGG(DISTINCT prog.nome, ',') as programas  from query_ids as qids
+					inner join pessoas as p on ids like '%%'||p.lattes||'%%'					
+                    inner join coleta_docentes as dp on dp.id_pessoa = p.id_pessoa and dp.tipo_categoria = 3 and dp.ano = %(anocoleta)s
+                    inner join programas as prog on prog.id_programa = dp.id_programa and prog.id_ies = %(id_ies)s
+					group by qids.ano, qids.issn, qids.doi, nome_producao
+					order by nome_producao
+        """
+
+
+        anocoleta = self.retorna_ultimo_ano_coleta()
+
+        row = db.fetch_all(query, id_ies=id_ies, ano=ano, anocoleta=anocoleta)
+        artigos = [dict(r) for r in row]
+        for art in artigos:
+            art['duplicado'] = 0
+            art['id_dupl'] = -1
+            art['programas'] = art['programas'].split(',')
+
+        count_dupl = 0
+        for art1 in artigos:
+            if art1['nome_producao'] != '---FORA':
+                if art1['id_dupl'] == -1:
+                    art1['id_dupl'] = count_dupl
+                    count_dupl += 1
+                if art1['duplicado'] == 0:
+                    for art2 in artigos:
+                        if art2['duplicado'] == 0:
+                            if art1 != art2:
+                                similarity = jellyfish.jaro_winkler_similarity(art1['nome_producao'], art2['nome_producao'])
+                                if similarity > 0.9 and (art1['ano'] == art2['ano']):
+                                    if art1['issn'] == art2['issn'] or (art1['doi'] == art2['doi'] and art1['doi'] != ''):
+                                        art1['duplicado'] = art2['duplicado'] = similarity
+                                        art1['programas'].extend(art2['programas'])
+                                        art1['programas'] = list(set(art1['programas']))
+                                        art2['nome_producao'] = '---FORA'
+                                        if art1['doi'] == '' and art2['doi'] != '':
+                                            art1['doi'] = art2['doi']
+
+
+        nova_lista = [dicionario for dicionario in artigos if dicionario['nome_producao'] != '---FORA']
+
+        return nova_lista
+
+    @tratamento_excecao_db_ppg()
+    def retorna_grafo_de_coautores_por_subtipo(self, id_ies: str, produto: str, tipo: str, anoi: int, anof: int, db: DBConnector = None):
+        """
+        Retorna um grafo de coautorias por subtipo de todos os PPG's
+        
+        Paramêtros:
+            Produto(str): Tipo do Produto
+            anoi(str): Ano de início
+            anof(str): Ano final
+            db(class): DataBase
+        """
+        if produto == 'DESENVOLVIMENTO DE TÉCNICA E SERVIÇOS TÉCNICOS':
+            where = "cstp.sub_tipo ilike 'DESENVOLVIMENTO DE TÉCNICA' or cstp.sub_tipo ilike 'SERVIÇOS TÉCNICOS'"
+        else:
+            where = "cstp.sub_tipo ilike %(produto)s"
+        
+        query = f"""select cp.nome_producao as id_producao, p.nome_pessoa as nm_autor, ca.ano as ano_publicacao, prog.codigo_programa as id_programa from coleta_autores as ca
+                    inner join coleta_producoes as cp on (cp.id_producao = ca.id_producao and cp.id_programa = ca.id_programa)
+                    inner join coleta_sub_tipo_producao as cstp on (cstp.id = cp.id_sub_tipo_producao and {where})
+                    inner join pessoas as p on (p.id_pessoa = ca.id_pessoa)
+                    inner join programas as prog on (prog.id_programa = ca.id_programa and prog.id_ies = %(id_ies)s)
+                    where ca.ano >= %(anoi)s and ca.ano <= %(anof)s
+                        and ca.tipo_vinculo = 3
+                        group by cp.nome_producao, p.nome_pessoa, ca.ano, prog.codigo_programa
+                        order by ca.ano ASC"""
+        row = db.fetch_all(query, id_ies=id_ies, anoi=anoi, anof=anof, produto=produto)
+        coauts = [dict(r) for r in row]
+
+        artigos = {}
+        nodes_authors = {}
+        importance_authors = {}
+        links = []
+
+        links_count = {}
+
+        for c in coauts:
+            if c['id_producao'] not in artigos:
+                artigos[c['id_producao']] = []
+            artigos[c['id_producao']].append(c['nm_autor'])
+            if c['nm_autor'] not in nodes_authors:
+                nodes_authors[c['nm_autor']] = []
+                importance_authors[c['nm_autor']] = 1
+            nodes_authors[c['nm_autor']].append(c['id_programa'])
+
+        for k, v in artigos.items():
+            if len(v) > 1:
+                comb = self.generates_combinations(v)
+                for c in comb:
+                    if (c[0], c[1]) not in links_count:
+                        links_count[(c[0], c[1])] = 1
+                    else:
+                        links_count[(c[0], c[1])] += 1
+
+        for k, v in links_count.items():
+            links.append(
+                {'source': str(k[0]), 'target': str(k[1]), 'value': v})
+            if k[0] in importance_authors:
+                importance_authors[k[0]] += 1
+            if k[1] in importance_authors:
+                importance_authors[k[1]] += 1
+
+        grafo = {'nodes': [], 'links': links}
+
+        programas_prp = utils.retorna_programas_ppg(id_ies,db)
+
+        grupos = {}
+
+        for k, v in nodes_authors.items():
+            max = pd.Series(v).value_counts()
+            importancia = 1
+            if k in importance_authors:
+                importancia = importance_authors[k]
+
+            grupos[k] = programas_prp[max.idxmax()]
+            grafo['nodes'].append({'id': k, 'group': max.idxmax(), 'nome': programas_prp[max.idxmax()], 'importancia': importancia})
+
+        forca = -60
+
+        #teste para diminuir o tamanho do grafo agrupando os docentes em programas
+        if tipo == 'ppgs' or len(grafo['nodes']) > 1000:
+            forca = -400
+            importance_authors = {}
+            grafo = {'nodes': [], 'links': []}
+            nos_ppgs = list(set(grupos.values()))
+
+            for k, v in links_count.items():
+                if grupos[k[0]] != grupos[k[1]]:
+                    if grupos[k[0]] not in importance_authors:
+                        importance_authors[grupos[k[0]]] = 1
+                    else:
+                        importance_authors[grupos[k[0]]] += 1
+                    if grupos[k[1]] not in importance_authors:
+                        importance_authors[grupos[k[1]]] = 1
+                    else:
+                        importance_authors[grupos[k[1]]] += 1
+
+                    grafo['links'].append({'source': grupos[k[0]], 'target': grupos[k[1]], 'value': 1})
+
+            for e, g in enumerate(nos_ppgs):
+                grafo['nodes'].append({'id': g, 'group': e, 'nome': g, 'importancia':  importance_authors[g] if g in importance_authors else 1})
+
+        return grafo,forca
+
 
 queries_ppg = QueriesPPG()

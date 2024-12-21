@@ -31,6 +31,12 @@ service PPG{
   gerais da página inicial da aplicação.
 */
 service Home{
-  // Retorna as informações gerais para exibição na home.
-  rpc ObtemHome (PpgRequest) returns (PpgResponse);
+  // Retorna os programas da Universidade
+  rpc ObtemProgramas (HomeRequest) returns (HomeResponse);
+  // Retorna a rede de colaboração da univesidade
+  rpc ObtemRedeColaboracao (HomeRequest) returns (HomeResponse);
+  // Retorna o ranking dos docentes da Universidade
+  rpc ObtemRankingDocentes(HomeRequest) returns (HomeResponse);
+  // Retorna os artigos dos docentes da Universidade
+  rpc ObtemArtigosDocentes(HomeRequest) returns (HomeResponse);
 }

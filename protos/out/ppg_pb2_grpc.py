@@ -351,10 +351,25 @@ class HomeStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.ObtemHome = channel.unary_unary(
-                '/protos.Home/ObtemHome',
-                request_serializer=messages__pb2.PpgRequest.SerializeToString,
-                response_deserializer=messages__pb2.PpgResponse.FromString,
+        self.ObtemProgramas = channel.unary_unary(
+                '/protos.Home/ObtemProgramas',
+                request_serializer=messages__pb2.HomeRequest.SerializeToString,
+                response_deserializer=messages__pb2.HomeResponse.FromString,
+                _registered_method=True)
+        self.ObtemRedeColaboracao = channel.unary_unary(
+                '/protos.Home/ObtemRedeColaboracao',
+                request_serializer=messages__pb2.HomeRequest.SerializeToString,
+                response_deserializer=messages__pb2.HomeResponse.FromString,
+                _registered_method=True)
+        self.ObtemRankingDocentes = channel.unary_unary(
+                '/protos.Home/ObtemRankingDocentes',
+                request_serializer=messages__pb2.HomeRequest.SerializeToString,
+                response_deserializer=messages__pb2.HomeResponse.FromString,
+                _registered_method=True)
+        self.ObtemArtigosDocentes = channel.unary_unary(
+                '/protos.Home/ObtemArtigosDocentes',
+                request_serializer=messages__pb2.HomeRequest.SerializeToString,
+                response_deserializer=messages__pb2.HomeResponse.FromString,
                 _registered_method=True)
 
 
@@ -365,8 +380,29 @@ class HomeServicer(object):
     gerais da página inicial da aplicação.
     """
 
-    def ObtemHome(self, request, context):
-        """Retorna as informações gerais para exibição na home.
+    def ObtemProgramas(self, request, context):
+        """Retorna os programas da Universidade
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemRedeColaboracao(self, request, context):
+        """Retorna a rede de colaboração da univesidade
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemRankingDocentes(self, request, context):
+        """Retorna o ranking dos docentes da Universidade
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemArtigosDocentes(self, request, context):
+        """Retorna os artigos dos docentes da Universidade
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -375,10 +411,25 @@ class HomeServicer(object):
 
 def add_HomeServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'ObtemHome': grpc.unary_unary_rpc_method_handler(
-                    servicer.ObtemHome,
-                    request_deserializer=messages__pb2.PpgRequest.FromString,
-                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            'ObtemProgramas': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemProgramas,
+                    request_deserializer=messages__pb2.HomeRequest.FromString,
+                    response_serializer=messages__pb2.HomeResponse.SerializeToString,
+            ),
+            'ObtemRedeColaboracao': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemRedeColaboracao,
+                    request_deserializer=messages__pb2.HomeRequest.FromString,
+                    response_serializer=messages__pb2.HomeResponse.SerializeToString,
+            ),
+            'ObtemRankingDocentes': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemRankingDocentes,
+                    request_deserializer=messages__pb2.HomeRequest.FromString,
+                    response_serializer=messages__pb2.HomeResponse.SerializeToString,
+            ),
+            'ObtemArtigosDocentes': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemArtigosDocentes,
+                    request_deserializer=messages__pb2.HomeRequest.FromString,
+                    response_serializer=messages__pb2.HomeResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -396,7 +447,7 @@ class Home(object):
     """
 
     @staticmethod
-    def ObtemHome(request,
+    def ObtemProgramas(request,
             target,
             options=(),
             channel_credentials=None,
@@ -409,9 +460,90 @@ class Home(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Home/ObtemHome',
-            messages__pb2.PpgRequest.SerializeToString,
-            messages__pb2.PpgResponse.FromString,
+            '/protos.Home/ObtemProgramas',
+            messages__pb2.HomeRequest.SerializeToString,
+            messages__pb2.HomeResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemRedeColaboracao(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.Home/ObtemRedeColaboracao',
+            messages__pb2.HomeRequest.SerializeToString,
+            messages__pb2.HomeResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemRankingDocentes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.Home/ObtemRankingDocentes',
+            messages__pb2.HomeRequest.SerializeToString,
+            messages__pb2.HomeResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemArtigosDocentes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.Home/ObtemArtigosDocentes',
+            messages__pb2.HomeRequest.SerializeToString,
+            messages__pb2.HomeResponse.FromString,
             options,
             channel_credentials,
             insecure,

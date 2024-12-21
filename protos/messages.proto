@@ -3,20 +3,30 @@ syntax = "proto3";
 package protos;
 
 message HomeRequest {
-  string id_ies = 1;
+  optional string id_ies = 1;
+  optional int32 anoi = 2;
+  optional int32 anof = 3;
+  optional string produto = 4;
+  optional string fonte = 5;
+  optional string aresta = 6;
+}
+
+message HomeResponse {
+  optional string nome = 1;
+  optional string json = 2;
 }
 
 message PpgRequest {
-    string id_ies = 1;
-    string id_ppg = 2;
-    int32 anoi = 3;
-    int32 anof = 4;
-    string nota = 5;
+  optional string id_ies = 1;
+  optional string id_ppg = 2;
+  optional int32 anoi = 3;
+  optional int32 anof = 4;
+  optional string nota = 5;
 }
 
 message PpgJson {
-    string nome = 1;
-    string json = 2;
+  optional string nome = 1;
+  optional string json = 2;
 }
 
 message PpgResponse {
