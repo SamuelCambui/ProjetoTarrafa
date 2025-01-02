@@ -44,15 +44,15 @@ def tarefa_retorna_producoes_egresso(id : str, anoi : int, anof : int):
         print(e)
         return MessageToDict(messages_pb2.PpgJson(nome='producoesegressos', json=None))
     
-@app_celery_queries.task
-def tarefa_retorna_resumo_lattes(id : str, anoi : int, anof : int):
-    try:
-        respostaDict = crud.queries_ppg.retorna_resumo_lattes(id, anoi, anof)
-        retorno = messages_pb2.PpgJson(nome='levantamentoexternosembancas', json=json.dumps(respostaDict))
-        return MessageToDict(retorno)
-    except Exception as e:
-        print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='levantamentoexternosembancas', json=None))
+# @app_celery_queries.task
+# def tarefa_retorna_resumo_lattes(id : str, anoi : int, anof : int):
+#     try:
+#         respostaDict = crud.queries_ppg.retorna_resumo_lattes(id, anoi, anof)
+#         retorno = messages_pb2.PpgJson(nome='levantamentoexternosembancas', json=json.dumps(respostaDict))
+#         return MessageToDict(retorno)
+#     except Exception as e:
+#         print(e)
+#         return MessageToDict(messages_pb2.PpgJson(nome='levantamentoexternosembancas', json=None))
     
 def agrupar_tarefas_egressos(id : str, anoi : int, anof : int):
     tarefas = []

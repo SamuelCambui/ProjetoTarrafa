@@ -3,97 +3,107 @@ from google.protobuf.json_format import MessageToDict
 from .. import crud
 from backend.worker.celery_start_queries import app_celery_queries
 from protos.out import messages_pb2
-from backend.schemas.grafico import *
+from backend.schemas.grafico import (DadosGrafico, DataSet, Grafico)
 
 #* Indicadores
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_indprodart_com_listanegra(id : str, anoi : int, anof : int, lista_negra : list):
     try:
         respostaDict = crud.queries_ppg.retorna_contagem_de_indprodart_com_listanegra(id, anoi, anof, lista_negra)
-        retorno = messages_pb2.PpgJson(nome='dadosindprods', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='dadosIndprods', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='dadosindprods', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='dadosIndprods', json=None))
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_qualis_com_listanegra(id : str, anoi : int, anof : int, lista_negra : list):
     try:
         respostaDict = crud.queries_ppg.retorna_contagem_de_qualis_com_listanegra(id, anoi, anof, lista_negra)
-        retorno = messages_pb2.PpgJson(nome='dadosqualis', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='dadosQualis', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='dadosqualis', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='dadosQualis', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_qualis_do_lattes(id : str, anoi : int, anof : int):
     try:
         respostaDict = crud.queries_ppg.retorna_contagem_de_qualis_do_lattes(id, anoi, anof)
-        retorno = messages_pb2.PpgJson(nome='contagemqualislattes', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='contagemQualisLattes', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='contagemqualislattes', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='contagemQualisLattes', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_qualis_discentes(id : str, anoi : int, anof : int):
     try:
         respostaDict = crud.queries_ppg.retorna_contagem_de_qualis_discentes(id, anoi, anof)
-        retorno = messages_pb2.PpgJson(nome='contagemqualisdiscentes', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='contagemQualisDiscentes', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='contagemqualisdiscentes', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='contagemQualisDiscentes', json=None))
 
 @app_celery_queries.task
 def tarefa_retorna_estatisticas_de_artigos(id : str, anoi : int, anof : int):
     try:
         respostaDict = crud.queries_ppg.retorna_estatisticas_de_artigos(id, anoi, anof)
-        retorno = messages_pb2.PpgJson(nome='estatisticaartigos', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='estatisticaArtigos', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='estatisticaartigos', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='estatisticaArtigos', json=None))
 
 @app_celery_queries.task
 def tarefa_retorna_estatisticas_de_artigos_ppgs_correlatos(id : str, anoi : int, anof : int):
     try:
         respostaDict = crud.queries_ppg.retorna_estatisticas_de_artigos_ppgs_correlatos(id, anoi, anof)
-        retorno = messages_pb2.PpgJson(nome='estatisticaartigoscorrelatos', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='estatisticaArtigosCorrelatos', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='estatisticaartigoscorrelatos', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='estatisticaArtigosCorrelatos', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_indprodart_absoluto(id : str, anoi : int, anof : int):
     try:
         respostaDict = crud.queries_ppg.retorna_contagem_de_indprodart_absoluto(id, anoi, anof)
-        retorno = messages_pb2.PpgJson(nome='inprodartabsoluto', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='inprodartAbsoluto', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='inprodartabsoluto', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='inprodartAbsoluto', json=None))
 
 @app_celery_queries.task
 def tarefa_retorna_contagem_de_indprodart_extrato_superior_com_listanegra(id : str, anoi : int, anof : int):
     try:
         respostaDict = crud.queries_ppg.retorna_contagem_de_indprodart_extrato_superior_com_listanegra(id, anoi, anof, None)
-        retorno = messages_pb2.PpgJson(nome='indprodartextratosuperior', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='indprodartExtratoSuperior', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='indprodartextratosuperior', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='indprodartExtratoSuperior', json=None))
+    
+@app_celery_queries.task
+def tarefa_popsitions_avg_ppg(id : str, anoi : int, anof : int):
+    try:
+        respostaDict = crud.queries_ppg.retorna_popsitions_avg_ppg(id, anoi, anof)
+        retorno = messages_pb2.PpgJson(nome='popsitionsAvgPpg', json=json.dumps(respostaDict))
+        return MessageToDict(retorno)
+    except Exception as e:
+        print(e)
+        return MessageToDict(messages_pb2.PpgJson(nome='popsitionsAvgPpg', json=None))
 
 @app_celery_queries.task
 def tarefa_retorna_tempos_de_conclusao(id : str, anoi : int, anof : int):
     try:
         respostaDict = crud.queries_ppg.retorna_tempos_de_conclusao(id, anoi, anof)
-        retorno = messages_pb2.PpgJson(nome='tempoconclusao', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='tempoConclusao', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='tempoconclusao', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='tempoConclusao', json=None))
     
 #TODO
 
@@ -203,7 +213,7 @@ def tarefa_retorna_indaut(id : str, anoi : int, anof : int, nota : str):
     try:
         respostaDict = crud.queries_ppg.retorna_indaut(id, anoi, anof)
         data_avg = tarefa_retorna_indaut_medio.delay(id, anoi, anof).get(disable_sync_subtasks = False)
-        retorno = padronizar_grafico_indicador(respostaDict, data_avg, 'IndAut', 'indaut', nota)
+        retorno = padronizar_grafico_indicador(respostaDict, data_avg, 'Indaut', 'indaut', nota)
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
@@ -246,8 +256,8 @@ def tarefa_retorna_indcoautoria(id : str, anoi : int, anof : int, nota : str):
 def agrupar_tarefas_indicadores(id : str, anoi : int, anof : int, nota : str):
     tarefas = []
     print('Acumulando unica tarefas Indicadores padronizado...')
-    tarefas.append(tarefa_retorna_contagem_de_indprodart_com_listanegra.s(id, anoi, anof, None))
-    tarefas.append(tarefa_retorna_contagem_de_qualis_com_listanegra.s(id, anoi, anof, None))
+    tarefas.append(tarefa_retorna_contagem_de_indprodart_com_listanegra.s(id, anoi, anof, []))
+    tarefas.append(tarefa_retorna_contagem_de_qualis_com_listanegra.s(id, anoi, anof, []))
     tarefas.append(tarefa_retorna_contagem_de_qualis_do_lattes.s(id, anoi, anof))
     tarefas.append(tarefa_retorna_contagem_de_qualis_discentes.s(id, anoi, anof))
     tarefas.append(tarefa_retorna_estatisticas_de_artigos.s(id, anoi, anof))

@@ -9,31 +9,31 @@ from protos.out import messages_pb2
 def tarefa_retorna_dados_de_tccs_por_linhas_de_pesquisa(id : str, anoi : int, anof : int):
     try:
         respostaDict = crud.queries_ppg.retorna_dados_de_tccs_por_linhas_de_pesquisa(id, anoi, anof)
-        retorno = messages_pb2.PpgJson(nome='dadosdetccsporlinhasdepesquisa', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='dadosDeTccsPorLinhasDePesquisa', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='dadosdetccsporlinhasdepesquisa', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='dadosDeTccsPorLinhasDePesquisa', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_dados_de_produtos_por_tcc(id : str, anoi : int, anof : int):
     try:
         respostaDict = crud.queries_ppg.retorna_dados_de_produtos_por_tcc(id, anoi, anof)
-        retorno = messages_pb2.PpgJson(nome='dadosdeprodutosportcc', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='dadosDeProdutosPorTcc', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='dadosdeprodutosportcc', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='dadosDeProdutosPorTcc', json=None))
     
 @app_celery_queries.task
 def tarefa_retorna_levantemento_externos_em_bancas(id : str, anoi : int, anof : int):
     try:
         respostaDict = crud.queries_ppg.retorna_levantemento_externos_em_bancas(id, anoi, anof)
-        retorno = messages_pb2.PpgJson(nome='levantamentoexternosembancas', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='levantamentoExternosEmBancas', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        return MessageToDict(messages_pb2.PpgJson(nome='levantamentoexternosembancas', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='levantamentoExternosEmBancas', json=None))
     
 def agrupar_tarefas_bancas(id : str, anoi : int, anof : int):
     tarefas = []

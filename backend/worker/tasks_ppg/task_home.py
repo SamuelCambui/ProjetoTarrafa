@@ -28,7 +28,7 @@ def tarefa_retorna_dados_home(id_ies : str):
 def tarefa_retorna_lista_de_artigos_da_universidade(id_ies : str, ano : int):
     try:
         respostaDict = crud.queries_ppg.retorna_lista_de_artigos_da_universidade(id_ies, ano)
-        retorno = messages_pb2.HomeResponse(nome='listAartigos', json=json.dumps(respostaDict))
+        retorno = messages_pb2.HomeResponse(nome='listaArtigos', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)

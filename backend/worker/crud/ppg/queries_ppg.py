@@ -143,9 +143,10 @@ class QueriesPPG():
         
         # print("Query retorna_contagem_de_qualis_do_lattes: ", query)
         # print(f"id = {id}, anof = {anof}, anocoleta = {anocoleta}")
-        q = query.replace('%(id)s', f"'{id}'").replace('%(anocoleta)s', str(anocoleta)).replace('%(anof)s', str(anof))
-        # row = db.fetch_all(query, id=id, anof=anof, anocoleta=anocoleta)
-        row = db.fetch_all(q)
+        # q = query.replace('%(id)s', f"'{id}'").replace('%(anocoleta)s', str(anocoleta)).replace('%(anof)s', str(anof))
+        row = db.fetch_all(query, id=id, anof=anof, anocoleta=anocoleta)
+        # row = db.fetch_all(q)
+        # print("ROW: ", row)
         products_atual = [dict(r) for r in row]
         return products_atual
     
@@ -425,7 +426,7 @@ class QueriesPPG():
         
         products = sorted(products, key=lambda k: k['ano'])
 
-        if listanegra is None:
+        if not listanegra:
             listanegra = []
 
             lista_qualis = products
@@ -583,7 +584,7 @@ class QueriesPPG():
         start_time = time.time()
         products = sorted(products, key=lambda k: k['ano'])
 
-        if listanegra is None:
+        if not listanegra:
             listanegra = []
 
             lista_qualis = products
@@ -704,12 +705,12 @@ class QueriesPPG():
         #             p.nota = (select nota from programas where id = %(id)s) and
         #             p.nm_area_avaliacao = (select nm_area_avaliacao from programas where id = %(id)s)
         #             and pb.ano >=%(anoi)s and pb.ano <= %(anof)s and p.id <> %(id)s group by pb.ano order by pb.ano"""
-
-        
+        dictindprods['dados'] = []
         for i in range(3, nota_maxima+1):
             row = db.fetch_all(query, id=id, anof=anof, anoi=anoi, nota=str(i))
-            indprods = [dict(r) for r in row]
+            indprods = [dict(r) | {'conceito': str(i)} for r in row]
             dictindprods[str(i)] = indprods
+            dictindprods['dados'].extend(indprods)
             rotulos.append(str(i))
 
         dictindprods['maxima'] = str(nota_maxima)
@@ -725,7 +726,7 @@ class QueriesPPG():
 
         row = db.fetch_all(query, id=id, anof=anof, anoi=anoi)
         indprods = [dict(r) for r in row]
-        dictindprods['pais'] = indprods
+        dictindprods['país'] = indprods
         rotulos.append('país')
 
         query = """select avg(cast(dados->>'indProd' as float)) as indProdAll, pb.ano, avg(cast(dados->>'quantidade_permanentes' as float)) as permanentes
@@ -740,7 +741,7 @@ class QueriesPPG():
 
         row = db.fetch_all(query, id=id, anof=anof, anoi=anoi)
         indprods = [dict(r) for r in row]
-        dictindprods['regiao'] = indprods
+        dictindprods['região'] = indprods
         rotulos.append('região')
 
         query = """select nome_regiao from programas where codigo_programa = %(id)s"""
@@ -1418,9 +1419,9 @@ class QueriesPPG():
         
         for a in range(anoi, ultimo_ano_coleta+diferenca_anos+1):
             if a > ultimo_ano_coleta:
-                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, ultimo_ano_coleta, )
+                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, ultimo_ano_coleta)
             else:
-                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, a, )
+                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, a)
             if lista_permanente:
                 permanentes[a] = eval(lista_permanente)
         
@@ -1783,7 +1784,7 @@ class QueriesPPG():
             if ano_in == False:
                 coautorias.append({'indcoautoria': 0.0, 'ano': a})
         coautorias = sorted(coautorias, key=lambda k: k['ano'])
-        return {'indcoaut':coautorias,'indicadores':indicadores}
+        return {'indcoautoria':coautorias,'indicadores':indicadores}
     
     @tratamento_excecao_db_ppg()
     def retorna_indori_medio(self, id: str, anoi: int, anof: int, db: DBConnector = None):
@@ -2050,7 +2051,7 @@ class QueriesPPG():
         return dicionario
 
     @tratamento_excecao_db_ppg()
-    async def retorna_lista_de_professores_por_ano(self, id: str, anoi: int, anof: int, db: DBConnector = None):
+    def retorna_lista_de_professores_por_ano(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         Retorna lista de professores por ano
 
@@ -2205,17 +2206,17 @@ class QueriesPPG():
         for p in professors:
             if 'nome' in p:
                 id_professor = p['num_identificador']
-                datalattes[id_professor] = await self.retorna_tempo_de_atualizacao_do_lattes_do_professor(id_professor)
+                datalattes[id_professor] = self.retorna_tempo_de_atualizacao_do_lattes_do_professor(id_professor)
                 # FONTE: lattes
                 producoes[id_professor] = self.retorna_producoes_do_professor(id_professor, anoi, anof)
                 # FONTE: sucupira
-                orientados[id_professor] = await self.retorna_orientandos_do_professor(id, p['id_sucupira'], anoi, anof)
+                orientados[id_professor] = self.retorna_orientandos_do_professor(id, p['id_sucupira'], anoi, anof)
                 # FONTE: sucupira
-                status[id_professor] = await self.getStatusOfProfessor(id, p['id_sucupira'], anoi, anof)
+                status[id_professor] = self.getStatusOfProfessor(id, p['id_sucupira'], anoi, anof)
                 status[id_professor] = list(set(status[id_professor].replace(' ','').split(',')))
                 # query = f"select cast(id as text) from docentes where nome ilike '{id_professor}' limit 1"
                 if id_professor:
-                    avatares[id_professor] = await self.retorna_link_avatar_lattes(id_professor, True)
+                    avatares[id_professor] = self.retorna_link_avatar_lattes(id_professor, True)
                     
 
                 indprod_prof, formula = utils.calcula_indprod(id,p,db)
@@ -2224,7 +2225,7 @@ class QueriesPPG():
                 #indprods[id_professor] = (indprod_prof/len(range(anoi,anof+1)))
                 #indprods[id_professor] = (1 * p['A1'] + 0.875 * p['A2'] + 0.75 * p['A3'] + 0.625 * p['A4'] + 0.5 * p['B1'] + 0.375 * p['B2'] + 0.25 * p['B3'] + 0.125 * p['B4'])/(anof-anoi if anoi<anof else 1)
         professors = sorted(professors, key=lambda p: p['indprod'], reverse=True)
-        medias = self.retorna_indprods_medios_extratificados(id,anoi, anof,)
+        medias = self.retorna_indprods_medios_extratificados(id,anoi, anof)
         
 
         medias_uteis = {}
@@ -2245,6 +2246,102 @@ class QueriesPPG():
 
         return {'professores': professors, 'medias':medias, 'produtos': producoes, 'orientados': orientados, 'avatares': avatares, 'datalattes': datalattes, 'status':status, 'formula': formula}
     
+    def calcula_medias(self, lista):
+        medias = sum([l['indprodall'] for l in lista])
+        return medias/len(lista)
+    
+    @tratamento_excecao_db_ppg()
+    def retorna_orientandos_do_professor(self, id: str, id_docente: str, anoi: int, anof: int, db: DBConnector = None):
+        """
+        Retorna orientandos do professor
+
+        Paramêtros:
+            Id(str): Id do PPG
+            id_docente(str): Id Sucupira of the Professor
+            anoi(int): Ano de início
+            anof(int): Ano final
+            db(class): DataBase
+        """
+
+        query = """select distinct co.id_pessoa, cast(EXTRACT(year FROM age(co.fim,co.inicio))*12 + 
+                                    EXTRACT(month FROM age(co.fim,co.inicio)) as integer) as tempo, cdis.grau_academico as nivel, csd.situacao from coleta_orientacoes as co
+                    inner join coleta_discentes as cdis on (co.id_pessoa = cdis.id_pessoa and co.id_programa = cdis.id_programa and co.ano = cdis.ano)
+                    inner join coleta_situacao_discente as csd on (csd.id = cdis.situacao_discente)
+                    where co.id_programa = (select id_programa from programas where codigo_programa = %(id)s) and co.ano >= %(anoi)s and co.ano <= %(anof)s and
+                        co.id_docente = %(id_docente)s and co.principal = 1 and cdis.situacao_discente != 7 """
+
+        row = db.fetch_all(query, id=id, anoi=anoi, anof=anof, id_docente=id_docente)
+        orientados = [dict(r) for r in row]
+        df = pd.DataFrame(orientados)
+        doutorado_dentro = {'TITULADO': 0, 'ABANDONOU': 0,
+                            'DESLIGADO': 0, 'MUDANCA DE NÍVEL COM DEFESA': 0}
+        doutorado_fora = {'TITULADO': 0, 'ABANDONOU': 0,
+                          'DESLIGADO': 0, 'MUDANCA DE NÍVEL COM DEFESA': 0}
+        mestrado_dentro = {'TITULADO': 0, 'ABANDONOU': 0,
+                           'DESLIGADO': 0, 'MUDANCA DE NÍVEL COM DEFESA': 0}
+        mestrado_fora = {'TITULADO': 0, 'ABANDONOU': 0,
+                         'DESLIGADO': 0, 'MUDANCA DE NÍVEL COM DEFESA': 0}
+
+        if not df.empty:
+            situacoes = set(df['situacao'].values)
+            niveis = set(df['nivel'].values)
+
+            for n in niveis:
+                for s in situacoes:
+                    if 'mestrado' in n.lower():
+                        mestrado_fora[s] = len(df[(df['nivel'] == n) & (
+                            df['situacao'] == s) & (df['tempo'] > 24)])
+                        mestrado_dentro[s] = len(df[(df['nivel'] == n) & (
+                            df['situacao'] == s) & (df['tempo'] <= 24)])
+                    elif 'doutorado' in n.lower():
+                        doutorado_fora[s] = len(df[(df['nivel'] == n) & (
+                            df['situacao'] == s) & (df['tempo'] > 48)])
+                        doutorado_dentro[s] = len(df[(df['nivel'] == n) & (
+                            df['situacao'] == s) & (df['tempo'] <= 48)])
+
+        # Doutorado TITULADO <=48 4
+        # Doutorado MUDANCA DE NÍVEL COM DEFESA >48 0
+        # Doutorado MUDANCA DE NÍVEL COM DEFESA <=48 1
+        # Mestrado MATRICULADO >24 0
+        # Mestrado MATRICULADO <=24 0
+        # Mestrado TITULADO >24 3
+        # Mestrado TITULADO <=24 4
+        # Mestrado MUDANCA DE NÍVEL COM DEFESA >24 0
+        # Mestrado MUDANCA DE NÍVEL COM DEFESA <=24 0
+
+        return [doutorado_dentro, doutorado_fora, mestrado_dentro, mestrado_fora]
+    
+    
+    @tratamento_excecao_db_ppg()
+    def getStatusOfProfessor(self, id: str, id_docente: str, anoi: int, anof: int, db: DBConnector = None):
+        """
+        Returns the status (permanente, colaborador, visitante) of Professors
+
+
+        Parameters:
+            Id(str): Id of PPG
+            id_docente(str): Id Sucupira of the Professor
+            anoi(str): Year of Start
+            anof(str): Year of End
+            db(class): DataBase
+        """
+        query = """select STRING_AGG(ctcd.categoria, ', ') AS categorias_concatenadas from coleta_docentes as cd
+                    inner join coleta_tipo_categoria_docente as ctcd on ctcd.id = cd.tipo_categoria
+                    where cd.ano >= %(anoi)s and cd.ano <= %(anof)s and cd.id_pessoa =  %(id_docente)s and 
+                    cd.id_programa = (select id_programa from programas where codigo_programa = %(id)s)"""
+        query_ano_atual = """select STRING_AGG(ctcd.categoria, ', ') AS categorias_concatenadas from coleta_docentes as cd
+                    inner join coleta_tipo_categoria_docente as ctcd on ctcd.id = cd.tipo_categoria
+                    where cd.ano >= %(ano_anterior)s and cd.ano <= %(anof)s and cd.id_pessoa =  %(id_docente)s and 
+                    cd.id_programa = (select id_programa from programas where codigo_programa = %(id)s)"""
+
+        ultimo_ano_coleta = self.retorna_ultimo_ano_coleta() + 1
+        if anoi == anof and anoi == ultimo_ano_coleta:
+            row = db.fetch_one(query_ano_atual, id=id, anof=anof, id_docente=id_docente, ano_anterior=anoi-1)
+        else:
+            row = db.fetch_one(query, id=id, anoi=anoi, anof=anof, id_docente=id_docente)
+        if row:
+            return row[0]
+        return ''
     
     @tratamento_excecao_db_ppg()
     def retorna_grafo_de_coautores_do_ppg(self, id: str, anoi: int, anof: int, db: DBConnector = None):
@@ -3590,5 +3687,99 @@ class QueriesPPG():
 
         return grafo,forca
 
+    @tratamento_excecao_db_ppg()
+    def retorna_ranking_ppgs(self, id: str, anoi: int, anof: int, db: DBConnector = None):
+        """
+        Retorna a posição de PPG's de mesma área
+        
+        Paramêtros:
+            id(str): Id do PPG
+            anoi(int): Ano de início
+            anof(int): Ano final
+            db(class): DataBase
+        """
+        query = """
+                select avg(cast(dados->>'indProd' as float)) as indProd, 
+					p.nome,
+					p.codigo_programa as id,
+					i.sigla,
+                    p.conceito as nota,
+					m.nome as municipio,
+					p.sigla_uf as uf,
+					i.categoria_administrativa as status,
+					m.latitude,
+					m.longitude
+                    from programas as p
+                    inner join programas_historico as pb on (p.id_programa=pb.id_programa)
+					inner join municipios as m on (m.nome = p.municipio)
+					inner join instituicoes as i on (i.id_ies = p.id_ies)
+					inner join estados as e on (e.codigo_uf = m.codigo_uf and e.uf = p.sigla_uf)
+					where
+					p.programa_em_rede != 1 and
+                    p.situacao ilike '%%FUNCIONAMENTO%%' and p.modalidade = (select modalidade from programas where codigo_programa = %(id)s) and
+                    p.conceito = (select conceito from programas where codigo_programa = %(id)s) and
+					p.nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
+                    and pb.ano >= %(anoi)s and pb.ano <= %(anof)s
+					group by p.nome,
+					p.codigo_programa,
+					i.sigla,
+                    p.conceito,
+					m.nome,
+					p.sigla_uf,
+					i.categoria_administrativa,
+					m.latitude,
+					m.longitude
+					order by indprod DESC
+
+                """
+        row = db.fetch_all(query, anoi=anoi, anof=anof, id=id)
+        progs = [dict(r) for r in row]
+        menor = 10000
+        maior = 0
+        for ppg in progs:
+            if ppg['indprod'] > maior:
+                maior = ppg['indprod']
+            if ppg['indprod'] < menor:
+                menor = ppg['indprod']
+                    
+        return progs, maior, menor
+
+    @tratamento_excecao_db_ppg()
+    def retorna_indprod_medio_entre_ppgs_dada_nota(self, id: str, anoi: int, anof: int, nota: str | None, db: DBConnector = None):
+        """
+        Retorna indprod medio entre PPG's dada nota
+        """
+        if nota:
+            query = """select avg(cast(dados->>'indProd' as float)) as indprod
+                    from programas as p
+                    inner join programas_historico as pb on (p.id_programa=pb.id_programa) where
+                    p.situacao ilike '%%FUNCIONAMENTO%%' and 
+					pb.ano >= %(anoi)s and pb.ano <= %(anof)s and
+					p.conceito = %(nota)s and
+					p.modalidade = (select modalidade from programas where codigo_programa = %(id)s) and
+					p.nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s)"""
+        else:
+            query = """select avg(cast(dados->>'indProd' as float)) as indprod
+                    from programas as p
+                    inner join programas_historico as pb on (p.id_programa=pb.id_programa) where
+                    p.situacao ilike '%%FUNCIONAMENTO%%' and 
+					pb.ano >= %(anoi)s and pb.ano <= %(anof)s and
+					p.conceito = (select conceito from programas where codigo_programa = %(id)s) and
+					p.modalidade = (select modalidade from programas where codigo_programa = %(id)s) and
+					p.nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s)"""
+            
+        row = db.fetch_one(query, anoi=anoi, anof=anof, id=id, nota=nota)
+        return row[0]
+
+    @tratamento_excecao_db_ppg()
+    def retorna_popsitions_avg_ppg(self, id : str, anoi : int, anof : int):
+        indprods, maior, menor  = self.retorna_ranking_ppgs(id, anoi, anof)
+        media = self.retorna_indprod_medio_entre_ppgs_dada_nota(id, anoi, anof, None)
+        media_maior = [0.0]
+        if len(indprods) > 0:
+            ncount = 0
+            if indprods[0]['nota'] != 'A' and int(indprods[0]['nota']) < 7:
+                media_maior[ncount] = self.retorna_indprod_medio_entre_ppgs_dada_nota(id, anoi, anof, str(int(indprods[0]['nota'])+(ncount+1)))
+        return {'media':media, 'media_maior':media_maior, 'maior_indprod': maior, 'menor_indprod':menor, 'indprods':indprods}
 
 queries_ppg = QueriesPPG()

@@ -21,6 +21,7 @@ def cache_grpc(response_type):
         
          
          try:
+            print("id_ies: ", universidade)
             cached_result = redis.existsField(universidade, cache_key)
             if cached_result:
                print('Cache hit')

@@ -8,6 +8,8 @@ porta = settings.REDIS_PORT
 backend = 'redis://'+settings.LOCAL_REDIS_URL+':'+porta+'/1'
 broker = 'amqp://'+settings.RABBITMQ_DEFAULT_USER+':'+ settings.RABBITMQ_DEFAULT_PASS+'@'+settings.RABBITMQ_HOST+':5672/'+settings.RABBITMQ_DEFAULT_VHOST
 
+print("BROKER: " + broker)
+
 BASE_PATH_PPG = "backend/worker/tasks_ppg"
 BASE_IMPORT_PATH_PPG = "backend.worker.tasks_ppg"
 BASE_PATH_PPGLS = "backend/worker/tasks_ppgls"
@@ -43,3 +45,6 @@ app_celery_queries.conf.update(
 )
 
 app_celery_queries.conf.broker_connection_retry_on_startup = True
+
+response = app_celery_queries.control.enable_events(reply = True)
+print("Response: ", response)

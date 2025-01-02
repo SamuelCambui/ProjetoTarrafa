@@ -52,6 +52,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
             
             job = group(tarefas)
             result = job.apply_async()
+            print("Iniciando tarefas")
             ret_values = result.get()
             print('Coletando resultados das tarefas...')
             
@@ -97,7 +98,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
             print(e)
             return None
         
-    @cache_grpc_ppg()
+    # @cache_grpc_ppg()
     def ObtemDocentes(self, request, context):
         print('ObtemDocentes chamada...')
         try:
