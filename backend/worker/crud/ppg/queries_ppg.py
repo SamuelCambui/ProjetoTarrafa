@@ -20,6 +20,27 @@ class QueriesPPG():
         return None
     
     @tratamento_excecao_db_ppg()
+    def retorna_anos(self, id: str, db: DBConnector = None):
+        """
+        Retorna os anos de existência do PPG
+        
+        Paramêtros:
+            id(str): Id do PPG
+            db(class): DataBase
+        
+        Retorno:
+            anos(lista): Retorna uma lista contendo todos os anos do PPG
+        """
+        query = """select ano from programas_historico where id_programa = (select id_programa from programas where codigo_programa = %(id)s) and dados != 'null' order by ano ASC LIMIT 1 """
+        row = db.fetch_one(query, id=id)
+        inicial = 2013
+        if row:
+            inicial = row[0]
+        ultimo_ano_coleta = self.retorna_ultimo_ano_coleta() + 1
+        anos = [a for a in range(inicial, ultimo_ano_coleta+1)]
+        return anos
+    
+    @tratamento_excecao_db_ppg()
     def retorna_link_avatar_lattes(self, ids: str, idlattes: bool, db: DBConnector = None):
         """
         Retorna o link do avatar do currículo Lattes

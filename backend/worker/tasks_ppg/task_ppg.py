@@ -9,14 +9,25 @@ from protos.out import messages_pb2
 def tarefa_retorna_informacao_ppg(id_ppg : str):
     try:
         respostaDict = crud.queries_ppg.retorna_informacao_ppg(id_ppg)
-        retorno = messages_pb2.PpgJson(nome='informacao_ppg', json=json.dumps(respostaDict))
+        retorno = messages_pb2.PpgJson(nome='informacaoPpg', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
         print(e)
-        print("ERROR")
-        return MessageToDict(messages_pb2.PpgJson(nome='informacao_ppg', json=None))
+        return MessageToDict(messages_pb2.PpgJson(nome='informacaoPpg', json=None))
+
+@app_celery_queries.task
+def tarefa_retorna_anos_ppg(id_ppg : str):
+    try:
+        respostaDict = crud.queries_ppg.retorna_anos(id_ppg)
+        retorno = messages_pb2.PpgJson(nome='anosPpg', json=json.dumps(respostaDict))
+        return MessageToDict(retorno)
+    except Exception as e:
+        print(e)
+        return MessageToDict(messages_pb2.PpgJson(nome='anosPpg', json=None))
+
 def agrupar_tarefas_ppg(id_ppg : str):
     tarefas = []
     print('Acumulando unica tarefas PPG...')
     tarefas.append(tarefa_retorna_informacao_ppg.s(id_ppg))
+    tarefas.append(tarefa_retorna_anos_ppg.s(id_ppg))
     return tarefas
