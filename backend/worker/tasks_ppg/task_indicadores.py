@@ -2,6 +2,7 @@ import json
 from google.protobuf.json_format import MessageToDict
 from .. import crud
 from backend.worker.celery_start_queries import app_celery_queries
+from .task_docentes import tarefa_retorna_quantidade_de_discentes_titulados
 from protos.out import messages_pb2
 from backend.schemas.grafico import (DadosGrafico, DataSet, Grafico)
 
@@ -264,11 +265,14 @@ def agrupar_tarefas_indicadores(id : str, anoi : int, anof : int, nota : str):
     tarefas.append(tarefa_retorna_estatisticas_de_artigos_ppgs_correlatos.s(id, anoi, anof))
     tarefas.append(tarefa_retorna_contagem_de_indprodart_absoluto.s(id, anoi, anof))
     tarefas.append(tarefa_retorna_contagem_de_indprodart_extrato_superior_com_listanegra.s(id, anoi, anof))
+    tarefas.append(tarefa_retorna_tempos_de_conclusao.s(id, anoi, anof))
+    tarefas.append(tarefa_retorna_quantidade_de_discentes_titulados.s(id, anoi, anof))
+    tarefas.append(tarefa_popsitions_avg_ppg.s(id, anoi, anof))
     tarefas.append(tarefa_retorna_indori.s(id, anoi, anof, nota))
     tarefas.append(tarefa_retorna_inddistori.s(id, anoi, anof, nota))
     tarefas.append(tarefa_retorna_indaut.s(id, anoi, anof, nota))
     tarefas.append(tarefa_retorna_inddis.s(id, anoi, anof, nota))
     tarefas.append(tarefa_retorna_partdis.s(id, anoi, anof, nota))
-    tarefas.append(tarefa_retorna_partdis.s(id, anoi, anof, nota))
     tarefas.append(tarefa_retorna_indcoautoria.s(id, anoi, anof, nota))
+    print(f'{len(tarefas)} tarefas foram acumuladas...')
     return tarefas
