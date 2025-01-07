@@ -29,7 +29,8 @@
                 "-l",
                 "INFO",
                 "-n",
-                "worker1@%h"
+                "worker1@%h",
+                "--events"
             ],
             "jinja": true,
             "justMyCode": true,
@@ -89,6 +90,18 @@
             "justMyCode": true,
             "envFile": "${workspaceFolder}/.env.desenvolvimento",
             "args": []
-        }
+        },
+	{
+	      "name": "Next.js: debug full stack",
+	      "type": "node-terminal",
+	      "cwd": "${workspaceFolder}/frontend/frontend-next",
+	      "request": "launch",
+	      "command": "npm run dev",
+	      "serverReadyAction": {
+		"pattern": "- Local:.+(https?://.+)",
+		"uriFormat": "%s",
+		"action": "debugWithChrome"
+	      }
+    }	
     ]
 }

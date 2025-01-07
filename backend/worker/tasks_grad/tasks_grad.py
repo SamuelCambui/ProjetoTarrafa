@@ -1,4 +1,5 @@
 import json
+from backend.schemas.grafico import DadosGrafico, DataSet, Grafico
 from protos.out.messages_pb2 import GradJson
 from google.protobuf.json_format import MessageToDict
 from backend.worker.crud.grad.queries_grad import queries_grad
@@ -54,6 +55,25 @@ def get_egressos(id_ies: str, anoi: int, anof: int):
         message = GradJson(nome="graficoEgressos", json=None)
         return MessageToDict(message)
 
+@app_celery_queries.task
+def get_egressos_por_cota(id_ies: str, anoi: int, anof: int):
+    """
+    Retorna a quantidade de egressos por cota de todos os cursos de Graduação ou Licenciatura.
+
+    :param id_ies(str): Código da Instituição.
+    :param anoi(int): Ano Inicial.
+    :param anof(int): Ano Final
+    """
+    try:
+        egressos = queries_grad.egressos_por_cota(id_ies=id_ies, anoi=anoi, anof=anof)
+
+        message = GradJson(
+            nome="graficoEgressosCota", json=json.dumps([dict(e) for e in egressos])
+        )
+        return MessageToDict(message)
+    except Exception as erro:
+        message = GradJson(nome="graficoEgressosCota", json=None)
+        return MessageToDict(message)
 
 @app_celery_queries.task
 def get_boxplot_idade(id_ies: str, anoi: int, anof: int):
@@ -100,4 +120,26 @@ def get_taxa_matriculas(
         return MessageToDict(message)
     except Exception as err:
         message = GradJson(nome="taxaMatriculas", json=None)
+        return MessageToDict(message)
+    
+@app_celery_queries.task
+def get_taxa_matriculas_por_cota(
+    id_ies: str,
+    anoi: int,
+    anof: int,
+):
+    try:
+        matriculas = queries_grad.taxa_matriculas_por_cota(
+            id_ies=id_ies,
+            anoi=anoi,
+            anof=anof,
+        )
+
+        message = GradJson(
+            nome="taxaMatriculasCota",
+            json=json.dumps([dict(matricula) for matricula in matriculas]),
+        )
+        return MessageToDict(message)
+    except Exception as err:
+        message = GradJson(nome="taxaMatriculasCota", json=None)
         return MessageToDict(message)

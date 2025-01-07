@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend/flaskmiddle
+    command: >
+      /bin/bash -c "NUM_WORKERS=$$((2 * $$(nproc) + 1)) &&
+      gunicorn -b 0.0.0.0:8001 --worker-class gevent --workers $$NUM_WORKERS --timeout 600 run:app"
+    env_file:
+      - ./.env
+    depends_on:
+      - backend
+    expose:
+      - ${FRONTEND_PORT}
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    networks:
+      - frontend-backend-net
+
+
+  backend:
+    build: ./backend
+    command: >
+      /bin/bash -c "NUM_WORKERS=$$((2 * $$(nproc) + 1)) &&
+      gunicorn backend.app.main:app --workers $$NUM_WORKERS --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --timeout 600"
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    expose:
+      - ${BACKEND_PORT}
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - backend-net
+      - frontend-backend-net
+ 
+
+  celery:
+    build: ./backend
+    command: celery -A backend.worker.tasks worker --pool=gevent --autoscale=50,300 --loglevel=info
+    env_file:
+      - ./.env
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    networks:
+      - backend-net
+
+
+  redis:
+    image: 'redis:latest'
+    env_file:
+      - ./.env
+    command: --port ${REDIS_PORT}
+    expose:
+      - ${REDIS_PORT}
+    networks:
+      - backend-net
+
+
+  db:
+    build: ./backend/db
+    env_file:
+      - ./.env
+    command: -p ${POSTGRES_PORT}
+    expose:
+      - ${POSTGRES_PORT}
+    volumes:
+      - ./dados/postgres_data:/var/lib/postgresql/data
+      - ./backend/db/tarrafaDB_2_tables.sql:/docker-entrypoint-initdb.d/tarrafaDB_2_tables.sql
+      - ./backend/db/tarrafaDB_grad_tables.sql:/docker-entrypoint-initdb.d/tarrafaDB_grad_tables.sql
+      - ./backup:/backup
+    networks:
+      - backend-net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@tarrafa.unimontes.br"
+      PGADMIN_DEFAULT_PASSWORD: "#pgadmin4@tarrafa.unimontes#2024"
+    ports:
+      - "8002:80"
+    restart: "no"  # Importante para não iniciar automaticamente
+    networks:
+      - backend-net  # Acesso à rede onde o DB está disponível
+
+networks:
+  frontend-backend-net:
+  backend-net:
+    

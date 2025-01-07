@@ -66,21 +66,7 @@ def get_quantidade_prova_final(id_disc: str, id_ies: str, anoi: int, anof: int):
             anoi=anoi,
             anof=anof,
         )
-        dataset = DataSet()
-        dados_grafico = DadosGrafico()
-        dataset.label = "Quantidade de Provas Finais"
-
-        dataset.data = [item["quantidade"] for item in quantidade]
-        dados_grafico.labels = [
-            "/".join([str(item["ano_letivo"]), str(item["semestre"])])
-            for item in quantidade
-        ]
-
-        dados_grafico.datasets.append(dataset)
-
-        grafico = Grafico()
-        grafico.data = dados_grafico
-        message = GradJson(nome="graficoProvaFinal", json=json.dumps(grafico.to_dict()))
+        message = GradJson(nome="graficoProvaFinal", json=json.dumps([dict(r) for r in quantidade]))
         return MessageToDict(message)
     except:
         message = GradJson(nome="graficoProvaFinal", json=None)
@@ -287,7 +273,7 @@ def get_evasao_disciplina(
     :param anof(int): Ano Final
     """
     try:
-        evasoes = queries_disciplinas.evasao_disciplina(
+        evasao = queries_disciplinas.evasao_disciplina(
             id_disc=id_disc,
             id_curso=id_curso,
             id_ies=id_ies,
@@ -297,7 +283,7 @@ def get_evasao_disciplina(
 
         message = GradJson(
             nome="evasaoDisciplina",
-            json=json.dumps([dict(e) for e in evasoes]),
+            json=json.dumps([dict(e) for e in evasao]),
         )
         return MessageToDict(message)
     except Exception as err:

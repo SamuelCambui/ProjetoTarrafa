@@ -48,14 +48,32 @@ class QueriesGrad:
         Retorna a quantidade de alunos do sexo masculino e feminino.
         """
         query = """
-            select sexo, count(sexo) as quantidade from alunos
-            where matricula in (
-                select distinct matricula_aluno from historico
-                where cast(ano_letivo as integer) between %(anoi)s and %(anof)s
-                and id_ies = %(id_ies)s
+            WITH cursos_graduacao as (
+                select id_curso from curso_tipo where id_tipo in (1, 2, 10) and id_ies = %(id_ies)s
             )
-            group by sexo
-            order by sexo;
+            select (case when sexo = 'F' then 'Feminino' else 'Masculino' end) as sexo, 
+                ano_letivo || '/' || semestre as semestre_letivo, 
+                count(*) as quantidade 
+            from ( 
+                select 
+                    distinct h.matricula_aluno, 
+                    alunos.sexo, 
+                    ano_letivo, 
+                    (case 
+                        when semestre < 1 then 1
+                        when semestre > 2 then 2
+                        else semestre
+                    end) as semestre
+                from historico as h
+                inner join alunos on alunos.matricula = h.matricula_aluno and alunos.id_ies = h.id_ies
+                inner join aluno_curso as al on al.id = h.id_aluno_curso and al.id_ies = h.id_ies
+                where h.id_ies = %(id_ies)s
+                and cast(h.ano_letivo as integer) between %(anoi)s and %(anof)s
+                and al.id_curso in (select * from cursos_graduacao)
+                order by ano_letivo, semestre
+            ) as foo
+            group by sexo, ano_letivo, semestre
+            order by ano_letivo
         """
         ret = db.fetch_all(query, anoi=anoi, anof=anof, id_ies=id_ies)
         return ret
@@ -63,21 +81,54 @@ class QueriesGrad:
     @utils.tratamento_excecao_db_grad()
     def egressos(self, anoi: int, anof: int, id_ies: str, db: DBConnector = None):
         query = """
-            select cast(date_part('year', data_colacao) as integer) as ano_letivo, 
-            case
-                when date_part('month', data_colacao) <= 6 then 1
-                else 2
-            end as semestre,
+            select
+                (case when alunos.sexo = 'F' then 'Feminino' else 'Masculino' end) as sexo,
+                cast(date_part('year', data_colacao) as integer) as ano_letivo, 
+                case
+                    when date_part('month', data_colacao) <= 6 then 1
+                    else 2
+                end as semestre,
             count(*) as egressos
             from aluno_curso
+            inner join alunos on alunos.matricula = aluno_curso.matricula_aluno and alunos.id_ies = aluno_curso.id_ies
             where data_colacao is not null
             and date_part('year', data_colacao) between %(anoi)s and %(anof)s
-            and id_ies = %(id_ies)s
-            group by ano_letivo, semestre
+            and aluno_curso.id_ies = %(id_ies)s
+            group by alunos.sexo, ano_letivo, semestre
             order by ano_letivo, semestre
         """
 
         ret = db.fetch_all(query, anoi=anoi, anof=anof, id_ies=id_ies)
+        return ret
+
+    @utils.tratamento_excecao_db_grad()
+    def egressos_por_cota(self, id_ies: str, anoi: int, anof: int, db: DBConnector):
+        """
+        Retorna a quantidade de egressos por cota de todos os cursos de Graduação ou Licenciatura.
+
+        :param id_ies(str): Código da Instituição.
+        :param anoi(int): Ano Inicial.
+        :param anof(int): Ano Final
+        """
+        query = """
+            select
+                formasingresso.cota,
+                cast(date_part('year', data_colacao) as integer) || '/' ||
+                case
+                    when date_part('month', data_colacao) <= 6 then 1
+                    else 2
+                end as semestre_letivo,
+                count(*) as egressos
+            from aluno_curso
+            left join formasingresso on formasingresso.id = aluno_curso.id_forma_ing and formasingresso.id_ies = aluno_curso.id_ies
+            where data_colacao is not null
+            and date_part('year', data_colacao) between %(anoi)s and %(anof)s
+            and aluno_curso.id_ies = %(id_ies)s
+            and formasingresso.cota is not null
+            group by formasingresso.cota, semestre_letivo
+            order by semestre_letivo
+        """
+        ret = db.fetch_all(query, id_ies=id_ies, anoi=anoi, anof=anof)
         return ret
 
     @utils.tratamento_excecao_db_grad()
@@ -92,7 +143,7 @@ class QueriesGrad:
         query = """
             with query_idades as (
                 select 
-                    (data_matricula - data_nascimento)/365 as idade, 
+                    round((data_matricula - data_nascimento)/365, 0) as idade, 
                     date_part('year', data_matricula) as ano_ingresso,
                     ntile(4) over (partition by date_part('year', data_matricula) order by (data_matricula - data_nascimento)/365) as quartil
                 from alunos
@@ -134,12 +185,19 @@ class QueriesGrad:
         db: DBConnector = None,
     ):
         query = """
-            select alunos.sexo, date_part('year', data_matricula) as ano_ingresso, count(*) as quantidade 
+            select
+                (case when alunos.sexo = 'F' then 'Feminino' else 'Masculino' end) as sexo, 
+                date_part('year', data_matricula) || '/' ||
+                (CASE
+                    when date_part('month', data_matricula) <= 6 THEN 1
+                    else 2
+                END) as semestre_letivo,
+                count(*) as quantidade
             from aluno_curso
             inner join alunos on aluno_curso.matricula_aluno = alunos.matricula and aluno_curso.id_ies = alunos.id_ies
             where date_part('year', data_matricula) between %(anoi)s and %(anof)s
             and alunos.id_ies = %(id_ies)s
-            group by sexo, date_part('year', data_matricula)
+            group by sexo, date_part('year', data_matricula), semestre_letivo
             order by date_part('year', data_matricula)
         """
 
@@ -151,6 +209,38 @@ class QueriesGrad:
         )
 
         return ret
-
+    
+    @utils.tratamento_excecao_db_grad()
+    def taxa_matriculas_por_cota(
+        self,
+        id_ies: str,
+        anoi: int,
+        anof: int,
+        db: DBConnector = None,
+    ):
+        query = """
+            select
+                formasingresso.cota, 
+                date_part('year', data_matricula) || '/' ||
+                (CASE
+                    when date_part('month', data_matricula) <= 6 THEN 1
+                    else 2
+                END) as semestre_letivo,
+                count(*) as quantidade
+            from aluno_curso
+            left join formasingresso on formasingresso.id = aluno_curso.id_forma_ing and formasingresso.id_ies = aluno_curso.id_ies
+            where date_part('year', data_matricula) between %(anoi)s and %(anof)s
+            and aluno_curso.id_ies = %(id_ies)s
+            and cota is not null
+            group by cota, date_part('year', data_matricula), semestre_letivo
+            order by date_part('year', data_matricula)
+        """
+        ret = db.fetch_all(
+            query=query,
+            id_ies=id_ies,
+            anoi=anoi,
+            anof=anof,
+        )
+        return ret
 
 queries_grad = QueriesGrad()

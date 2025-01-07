@@ -28,6 +28,12 @@ class IndicadoresGraduacaoServicer(grad_pb2_grpc.IndicadoresGraduacaoServicer):
                 id_ies=request.id_ies,
             )
         )
+        consultas.append(
+            tasks_cursos.get_grades.s(
+                id_curso=request.id_curso, 
+                id_ies=request.id_ies
+            )
+        )
 
         for serie in range(serie_inicial, serie_final + 1):
             consultas.append(
@@ -83,10 +89,15 @@ class IndicadoresGraduacaoServicer(grad_pb2_grpc.IndicadoresGraduacaoServicer):
     def GetAbaIndicadoresCurso(self, request: GradRequest, context):
         consultas = []
         consultas.append(
-            tasks_cursos.get_curso.s(id_curso=request.id, id_ies=request.id_ies)
+            tasks_cursos.get_quantidade_alunos_por_sexo.s(
+                id_curso=request.id,
+                id_ies=request.id_ies,
+                anoi=request.anoi,
+                anof=request.anof,
+            )
         )
         consultas.append(
-            tasks_cursos.get_quantidade_alunos_por_sexo.s(
+            tasks_cursos.get_boxplot_idade.s(
                 id_curso=request.id,
                 id_ies=request.id_ies,
                 anoi=request.anoi,
@@ -226,6 +237,14 @@ class IndicadoresGraduacaoServicer(grad_pb2_grpc.IndicadoresGraduacaoServicer):
                 id_ies=request.id_ies,
             )
         )
+        consultas.append(
+            tasks_disciplinas.get_boxplot_desempenho_alunos_professor.s(
+                id_disc=request.id_disc,
+                id_ies=request.id_ies,
+                anoi=request.anoi,
+                anof=request.anof
+            )
+        )
 
         job = group(consultas)
         result = job.apply_async()
@@ -257,7 +276,34 @@ class IndicadoresGraduacaoServicer(grad_pb2_grpc.IndicadoresGraduacaoServicer):
                 anof=request.anof,
             )
         )
-
+        consultas.append(
+            tasks_grad.get_boxplot_idade.s(
+                id_ies=request.id_ies,
+                anoi=request.anoi,
+                anof=request.anof,
+            )
+        )
+        consultas.append(
+            tasks_grad.get_taxa_matriculas.s(
+                id_ies=request.id_ies,
+                anoi=request.anoi,
+                anof=request.anof
+            )
+        )
+        consultas.append(
+            tasks_grad.get_egressos_por_cota.s(
+                id_ies=request.id_ies,
+                anoi=request.anoi,
+                anof=request.anof
+            )
+        )
+        consultas.append(
+            tasks_grad.get_taxa_matriculas_por_cota.s(
+                id_ies=request.id_ies,
+                anoi=request.anoi,
+                anof=request.anof
+            )
+        )
         job = group(consultas)
         result = job.apply_async()
         result = result.get()

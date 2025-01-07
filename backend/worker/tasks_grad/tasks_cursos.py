@@ -1,4 +1,5 @@
 import json
+from backend.schemas.grafico import DadosGrafico, DataSet, Grafico
 from protos.out.messages_pb2 import GradJson
 from google.protobuf.json_format import MessageToDict
 from backend.worker.crud.grad.queries_cursos import queries_cursos
@@ -216,3 +217,32 @@ def get_tempo_formacao(id_curso: str, id_ies: str, anoi: int):
     except Exception as erro:
         message = GradJson(nome="graficoTempoFormacao", json=None)
         return MessageToDict(message)
+
+@app_celery_queries.task
+def get_boxplot_idade(id_curso: str, id_ies: str, anoi: int, anof: int):
+    try:
+        idades = queries_cursos.boxplot_idade(id_curso=id_curso, id_ies=id_ies, anoi=anoi, anof=anof)
+
+        message = GradJson(
+            nome="boxplotIdade",
+            json=json.dumps([dict(idade) for idade in idades]),
+        )
+        return MessageToDict(message)
+    except Exception as erro:
+        message = GradJson(nome="boxplotIdade", json=None)
+        return MessageToDict(message)
+    
+@app_celery_queries.task
+def get_grades(id_curso: str, id_ies: str):
+    try:
+        grades = queries_cursos.grades(id_curso=id_curso, id_ies=id_ies)
+
+        message = GradJson(
+            nome="grades",
+            json=json.dumps([dict(grade) for grade in grades]),
+        )
+        return MessageToDict(message)
+    except Exception as erro:
+        message = GradJson(nome="grades", json=None)
+        return MessageToDict(message)
+ 

@@ -130,7 +130,7 @@ class QueriesCursos:
         :param anof(int): Ano final.
         """
         query = """
-            select sexo, ano_letivo, semestre, count(sexo) as quantidade from ( 
+            select sexo, ano_letivo || '/' || semestre as semestre_letivo, count(sexo) as quantidade from ( 
                 select distinct h.matricula_aluno, alunos.sexo, ano_letivo, semestre from historico as h
                 inner join alunos on alunos.matricula = h.matricula_aluno and alunos.id_ies = h.id_ies
                 inner join aluno_curso as al on al.id = h.id_aluno_curso and al.id_ies = h.id_ies
@@ -258,26 +258,32 @@ class QueriesCursos:
                     AND h.cod_disc IN (SELECT cod_disc FROM disciplinas_curso)
                     AND cast(ano_letivo as integer) between %(anoi)s and %(anof)s
                 GROUP BY h.id_prof, dis.cod_disc, dis.nome, dis.abreviacao
+                ORDER BY h.id_prof, MAX(ano_letivo) DESC
             )
             SELECT 
                 id_prof,
                 prof.nome,
                 prof.qualificacao,
                 prof.sexo,
+                COALESCE(dep.nome, 'NÃO ESPECIFICADO') as departamento,
+                COALESCE(prof.vinculo, 'NÃO ESPECIFICADO') as vinculo,
                 JSON_AGG(
                     JSON_BUILD_OBJECT(
                         'id_disc', cod_disc,
                         'nome', disciplina,
-                        'abreviacao', abreviacao,
+                        'abreviacao', historico_curso.abreviacao,
                         'ultima_vez_lecionada', ano_letivo
                     )
                 ) AS disciplinas
             FROM historico_curso
             INNER JOIN professores AS prof ON prof.id = id_prof
+            LEFT JOIN departamentos AS dep ON dep.id_dep = prof.id_dep
             GROUP BY 
                 id_prof, 
                 prof.nome,
                 prof.qualificacao,
+                dep.nome,
+                prof.vinculo,
                 prof.sexo;
 
         """
@@ -288,6 +294,22 @@ class QueriesCursos:
             anoi=anoi,
             anof=anof,
         )
+        return ret
+
+    @tratamento_excecao_db_grad()
+    def grades(self, id_curso: str, id_ies: str, db: DBConnector = None):
+        """
+        Retorna todas as grades de um curso.
+
+        :param id_curso(str): Código do curso.
+        :param id_ies(str): Código da universidade.
+        """
+        query = """
+            select id_grade, ano || '/' || semestre as semestre_letivo from grades 
+            where id_curso = %(id_curso)s and id_ies = %(id_ies)s
+            order by semestre_letivo desc
+        """
+        ret = db.fetch_all(query, id_curso=id_curso, id_ies=id_ies)
         return ret
 
     @tratamento_excecao_db_grad()
@@ -404,10 +426,10 @@ class QueriesCursos:
             query_quartis as (
                 select
                     ano_ingresso,
-                    max(case when quartil = 1 then idade end) as primeiro_quartil,
-                    max(case when quartil = 2 then idade end) as segundo_quartil,
-                    max(case when quartil = 3 then idade end) as terceiro_quartil,
-                    round(avg(idade), 2) as media
+                    cast(max(case when quartil = 1 then idade end) as float) as primeiro_quartil,
+                    cast(max(case when quartil = 2 then idade end) as float) as segundo_quartil,
+                    cast(max(case when quartil = 3 then idade end) as float) as terceiro_quartil,
+                    cast(round(avg(idade), 2) as float) as media
                 from query_idades
                 group by ano_ingresso
                 having MAX(CASE WHEN quartil = 1 THEN idade END) IS NOT NULL
