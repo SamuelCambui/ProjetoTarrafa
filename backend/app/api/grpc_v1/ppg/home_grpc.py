@@ -1,12 +1,12 @@
 from google.protobuf.json_format import ParseDict
 from backend.worker.tasks_ppg import task_home
-from backend.db.cache import cache_grpc_ppg
+from backend.db.cache import cache_grpc_ppg_home
 from protos.out import ppg_pb2_grpc, messages_pb2
 
 
 # Implementação do serviço gRPC
 class Home(ppg_pb2_grpc.HomeServicer):
-    @cache_grpc_ppg()
+    @cache_grpc_ppg_home()
     def ObtemProgramas(self, request, context):
         print('ObtemProgramas chamada...')
         try:
@@ -24,7 +24,7 @@ class Home(ppg_pb2_grpc.HomeServicer):
             print(e)
             return None
         
-    @cache_grpc_ppg()
+    @cache_grpc_ppg_home()
     def ObtemRedeColaboracao(self, request, context):
         print('ObtemRedeColaboracao chamada...')
         try:
@@ -48,7 +48,7 @@ class Home(ppg_pb2_grpc.HomeServicer):
             print(e)
             return None
         
-    @cache_grpc_ppg()
+    @cache_grpc_ppg_home()
     def ObtemRankingDocentes(self, request, context):
         print('ObtemRankingDocentes chamada...')
         try:
@@ -66,7 +66,7 @@ class Home(ppg_pb2_grpc.HomeServicer):
             print(e)
             return None
         
-    @cache_grpc_ppg()
+    @cache_grpc_ppg_home()
     def ObtemArtigosDocentes(self, request, context):
         print('ObtemArtigosDocentes chamada...')
         try:

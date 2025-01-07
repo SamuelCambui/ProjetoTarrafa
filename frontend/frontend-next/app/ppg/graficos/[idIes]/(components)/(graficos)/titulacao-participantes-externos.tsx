@@ -5,22 +5,80 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { mapearFormatoGrafico } from "@/lib/utils";
 import { Pie } from "@ant-design/plots";
 
-export const TitulacaoPaticipantesExternos = () => {
-  const config = {
-    data: [
-      { type: "分类一", value: 27 },
-      { type: "分类二", value: 25 },
-      { type: "分类三", value: 18 },
-      { type: "分类四", value: 15 },
-      { type: "分类五", value: 10 },
-      { type: "其他", value: 5 },
-    ],
-    angleField: "value",
-    colorField: "type",
+interface LevantamentoExternos {
+  areaTitulacao: Record<string, number>;
+  grauAcademico: Record<string, number>;
+  paisOrigem: Record<string, number>;
+  paisTitulacao: Record<string, number>;
+}
+
+export const TitulacaoPaticipantesExternos = ({
+  areaTitulacao,
+  grauAcademico,
+  paisOrigem,
+  paisTitulacao,
+}: LevantamentoExternos) => {
+
+  const configGrafico1 = {
+    data: mapearFormatoGrafico(areaTitulacao),
+    angleField: "quantidade",
+    colorField: "tipo",
     label: {
-      text: "value",
+      text: "quantidade",
+      position: "outside",
+    },
+    legend: {
+      color: {
+        title: false,
+        position: "right",
+        rowPadding: 5,
+      },
+    },
+  };
+
+  const configGrafico2 = {
+    data: mapearFormatoGrafico(grauAcademico),
+    angleField: "quantidade",
+    colorField: "tipo",
+    label: {
+      text: "quantidade",
+      position: "outside",
+    },
+    legend: {
+      color: {
+        title: false,
+        position: "right",
+        rowPadding: 5,
+      },
+    },
+  };
+
+  const configGrafico3 = {
+    data: mapearFormatoGrafico(paisOrigem),
+    angleField: "quantidade",
+    colorField: "tipo",
+    label: {
+      text: "quantidade",
+      position: "outside",
+    },
+    legend: {
+      color: {
+        title: false,
+        position: "right",
+        rowPadding: 5,
+      },
+    },
+  };
+
+  const configGrafico4 = {
+    data: mapearFormatoGrafico(paisTitulacao),
+    angleField: "quantidade",
+    colorField: "tipo",
+    label: {
+      text: "quantidade",
       position: "outside",
     },
     legend: {
@@ -35,17 +93,21 @@ export const TitulacaoPaticipantesExternos = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle> Titulação dos participantes externos </CardTitle>
+        <CardTitle>Titulação dos participantes externos</CardTitle>
         <CardDescription>
-          Este gráfico apresenta quantidade de produtos do PPG vinculados aos
-          TCCs defendidos{" "}
+          Este gráfico apresenta a quantidade de produtos do PPG vinculados aos
+          TCCs defendidos
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Pie {...config} />
-        <Pie {...config} />
-        <Pie {...config} />
-        <Pie {...config} />
+        <CardTitle>Área de Titulação</CardTitle>
+        <Pie {...configGrafico1} />
+        <CardTitle>Grau Acadêmico</CardTitle>
+        <Pie {...configGrafico2} />
+        <CardTitle>País de Origem</CardTitle>
+        <Pie {...configGrafico3} />
+        <CardTitle>País de Titulação</CardTitle>
+        <Pie {...configGrafico4} />
       </CardContent>
     </Card>
   );

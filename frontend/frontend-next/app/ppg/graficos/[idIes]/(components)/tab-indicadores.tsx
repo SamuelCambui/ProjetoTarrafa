@@ -11,28 +11,25 @@ import { ProdDiscenteQualis } from "./(graficos)/prod-discente-qualis";
 import { ProdDocenteQualis } from "./(graficos)/prod-docente-qualis";
 import { QtdDiscentesTitulados } from "./(graficos)/qtd-discente-titulados";
 import { TempoDefesa } from "./(graficos)/tempo-defesa";
-import { useAbaIndicadoresPpg } from "@/hooks/ppg/use-aba-indicadores";
+// import { useAbaIndicadoresPpg } from "@/hooks/ppg/use-aba-indicadores";
 
 export default function TabIndicadores() {
-  
-  const idPpg = "1" 
-  const idIes = "10"
 
-  const [periodo, setPeriodo] = useState({
-    anoInicial: new Date().getFullYear() - 10,
-    anoFinal: new Date().getFullYear(),
-  });
+  // const [periodo, setPeriodo] = useState({
+  //   anoInicial: new Date().getFullYear() - 10,
+  //   anoFinal: new Date().getFullYear(),
+  // });
 
-  const { data, isLoading } = useAbaIndicadoresPpg({
-    idPpg: idPpg,
-    idIes: idIes,
-    anoInicial: periodo.anoInicial,
-    anoFinal: periodo.anoFinal,
-  });
+  // const { data, isLoading } = useAbaIndicadoresPpg({
+  //   idPpg: idPpg,
+  //   idIes: idIes,
+  //   anoInicial: periodo.anoInicial,
+  //   anoFinal: periodo.anoFinal,
+  // });
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
+  // if (isLoading) {
+  //   return <p>Loading...</p>;
+  // }
 
   return (
     <div>

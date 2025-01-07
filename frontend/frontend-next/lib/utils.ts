@@ -9,3 +9,14 @@ export function cn(...inputs: ClassValue[]) {
 export const axiosGradInstance = axios.create({
   baseURL: "/api/grad",
 });
+
+export const mapearFormatoGrafico = (
+  obj: Record<string, any>,
+  chave: string | number = "tipo",
+  valor: string | number = "quantidade"
+) => {
+  return Object.entries(obj).map(([key, value]) => ({
+    [chave]: key,
+    [valor]: value,
+  }));
+};

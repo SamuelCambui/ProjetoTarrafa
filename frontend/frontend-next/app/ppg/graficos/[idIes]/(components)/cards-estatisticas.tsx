@@ -1,6 +1,12 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
-export default function CardsEstatisticas() {
+interface PropsCardsEstatistics {
+  quantidadeBancas: number,
+  quantidadeExternos: number,
+  quantidadeInternos: number
+}
+
+export default function CardsEstatisticas({quantidadeBancas, quantidadeExternos, quantidadeInternos} : PropsCardsEstatistics) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 w-fit mx-auto">
       <Card>
@@ -11,7 +17,7 @@ export default function CardsEstatisticas() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">54</div>
+          <div className="text-2xl font-bold">{ quantidadeBancas}</div>
         </CardContent>
       </Card>
       <Card>
@@ -21,7 +27,7 @@ export default function CardsEstatisticas() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold"> 1.33 </div>
+          <div className="text-2xl font-bold">{(quantidadeInternos / quantidadeBancas).toFixed(2)}</div>
         </CardContent>
       </Card>
       <Card>
@@ -32,7 +38,7 @@ export default function CardsEstatisticas() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold"> 0.70 </div>
+          <div className="text-2xl font-bold">{(quantidadeExternos / quantidadeBancas).toFixed(2)}</div>
         </CardContent>
       </Card>
     </div>

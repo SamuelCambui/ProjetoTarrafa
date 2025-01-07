@@ -2505,44 +2505,50 @@ class QueriesPPG():
                         dados
                     FROM lattes_producao_bibliografica
                     WHERE num_identificador = %(id)s
+                    AND dados != '[null]'
                     UNION ALL
                     SELECT
                         tipo,
                         dados
                     FROM lattes_producao_tecnica
                     WHERE num_identificador = %(id)s
+                    AND dados != '[null]'
                     UNION ALL
                     SELECT
                         tipo,
                         dados
                     FROM lattes_outra_producao
-                    WHERE num_identificador = %(id)s"""
+                    WHERE num_identificador = %(id)s
+                    AND dados != '[null]'"""
         row = db.fetch_all(query, id=id)
         prods = [dict(r) for r in row]
 
         contagens = {}
 
+        try:
+            for prod in prods:
+                if prod['tipo'] not in contagens and 'ORIENTACOES' not in prod['tipo'] and 'APRESENTACAO-DE-TRABALHO' not in prod['tipo']:
+                    contagens[prod['tipo']] = 0
+                    for dado in prod['dados']:
+                        dado_key = [k for k in dado.keys() if 'DADOS' in k][0]
+                        ano_key = [a for a in dado[dado_key].keys() if 'ANO' in a][0]
+                        try:
+                            if dado[dado_key][ano_key] != '' and anoi <= int(dado[dado_key][ano_key]) <= anof:
+                                contagens[prod['tipo']] += 1
+                        except:
+                            pass
+            
 
-        for prod in prods:
-            if prod['tipo'] not in contagens and 'ORIENTACOES' not in prod['tipo'] and 'APRESENTACAO-DE-TRABALHO' not in prod['tipo']:
-                contagens[prod['tipo']] = 0
-                for dado in prod['dados']:
-                    dado_key = [k for k in dado.keys() if 'DADOS' in k][0]
-                    ano_key = [a for a in dado[dado_key].keys() if 'ANO' in a][0]
-                    try:
-                        if dado[dado_key][ano_key] != '' and anoi <= int(dado[dado_key][ano_key]) <= anof:
-                            contagens[prod['tipo']] += 1
-                    except:
-                        pass
-        
+            prods = []
+            for k, v in contagens.items():
+                p = {'subtipo': k, 'qdade': v}
+                if v > 0:
+                    prods.append(p)
 
-        prods = []
-        for k, v in contagens.items():
-            p = {'subtipo': k, 'qdade': v}
-            if v > 0:
-                prods.append(p)
-
-        return prods
+            return prods
+        except Exception as err:
+            # return err
+            return [{}]
     
     @tratamento_excecao_db_ppg()
     def retorna_dados_de_projetos(self, id: str, anoi: int, anof: int, db: DBConnector = None):

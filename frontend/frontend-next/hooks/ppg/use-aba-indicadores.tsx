@@ -1,40 +1,39 @@
-"use client";
-import { getAbaIndicadoresPpg } from "@/service/ppg/service";
 import { useEffect, useState } from "react";
+import { getDadosEgressos, getDadosIndicadores } from "@/service/ppg/service";
 
-type Params = {
-  idIes: string;
-  idPpg: string;
-  anoInicial: number;
-  anoFinal: number;
-};
-
-export const useAbaIndicadoresPpg = ({
-  idIes,
-  idPpg,
-  anoInicial,
-  anoFinal,
-}: Params) => {
-  const [data, setData] = useState<any>(undefined);
+export default function useDadosAbaIndicadores(
+  idIes: string,
+  idPpg: string,
+  anoInicial: number,
+  anoFinal: number,
+  nota: string
+) {
+  const [dadosIndicadores, setDadosIndicadores] = useState<{
+    indicadores?: any[];
+  } | null>(null); 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    setIsLoading(true);
     const fetchData = async () => {
-      const data = await getAbaIndicadoresPpg(
-        idIes,
-        idPpg,
-        anoInicial,
-        anoFinal,
-      );
-      console.log(data);
-      setData(data);
+      setIsLoading(true);
+      try {
+        const response : any = await getDadosIndicadores(
+          idIes,
+          idPpg,
+          anoInicial,
+          anoFinal,
+          nota
+        );
+        setDadosIndicadores(response);
+      } catch (error) {
+        console.error("Error fetching egress data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    fetchData()
-      .catch((e) => console.error(e))
-      .finally(() => setIsLoading(false));
-  }, [anoInicial, anoFinal]);
+    fetchData();
+  }, [idIes, idPpg, anoInicial, anoFinal, nota]);
 
-  return { data, isLoading };
-};
+  return { dadosIndicadores, isLoading };
+}

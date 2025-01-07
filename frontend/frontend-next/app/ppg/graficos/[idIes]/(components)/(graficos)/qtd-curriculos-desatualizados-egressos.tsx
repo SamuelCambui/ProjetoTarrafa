@@ -1,29 +1,34 @@
 import { Column } from "@ant-design/plots";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export const CurriculosDesatualizadosEgressos = () => {
+interface EgressoData {
+  legenda: string;
+  quantidade: number;
+}
+
+interface CurriculosDesatualizadosEgressosProps {
+  tempoAtualizacaoEgressos: EgressoData[];
+}
+
+export const CurriculosDesatualizadosEgressos = ({
+  tempoAtualizacaoEgressos,
+}: CurriculosDesatualizadosEgressosProps) => {
+  const data = tempoAtualizacaoEgressos || []; 
+
   const config = {
-    data: {
-      type: "fetch",
-      value:
-        "https://gw.alipayobjects.com/os/antfincdn/iPY8JFnxdb/dodge-padding.json",
-    },
-    xField: "月份",
-    yField: "月均降雨量",
-    colorField: "name",
-    group: true,
-    style: {
-      inset: 5,
-    },
+    data,
+    xField: "legenda",
+    yField: "quantidade", 
+    colorField: "legenda", 
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle> Quantidade de currículos Lattes desatualizados </CardTitle>
+        <CardTitle>Tempo de atualização dos currículos Lattes dos egressos</CardTitle>
       </CardHeader>
       <CardContent>
-        <Column {...config} />;
+        <Column {...config} />
       </CardContent>
     </Card>
   );

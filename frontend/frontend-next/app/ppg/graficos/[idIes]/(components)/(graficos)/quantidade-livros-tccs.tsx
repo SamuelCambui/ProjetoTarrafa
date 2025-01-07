@@ -6,38 +6,34 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { mapearFormatoGrafico } from "@/lib/utils";
 
+interface QuantidadeLivrosTCCsProps {
+  tccsComLivros: Record<string, number>; 
+}
 
-export const QuantidadeLivrosTCCs = () => {
+export const QuantidadeLivrosTCCs = ({ tccsComLivros }: QuantidadeLivrosTCCsProps) => {
   const config = {
-    data: {
-      type: 'fetch',
-      value: 'https://render.alipay.com/p/yuyan/180020010001215413/antd-charts/column-column.json',
-    },
-    xField: 'letter',
-    yField: 'frequency',
+    data: mapearFormatoGrafico(tccsComLivros, "ano", "quantidade"),
+    xField: "ano",
+    yField: "quantidade",
     label: {
-      text: (d: { frequency: number; }) => `${(d.frequency * 100).toFixed(1)}%`,
+      text: (d: { quantidade: number; }) => `${d.quantidade}`,
       textBaseline: 'bottom',
-    },
-    axis: {
-      y: {
-        labelFormatter: '.0%',
-      },
     },
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>  Quantidade de Livros por TCC  </CardTitle>
+        <CardTitle>Quantidade de Livros por TCC</CardTitle>
         <CardDescription>
           Quantidade de TCCs geradores de livros e capítulos de livros em cada ano
-         </CardDescription>
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Column {...config} />
       </CardContent>
-    </Card> 
+    </Card>
   );
 };

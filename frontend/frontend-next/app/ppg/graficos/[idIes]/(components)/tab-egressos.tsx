@@ -1,104 +1,58 @@
-"use client";
-
-import {
-  Label,
-  PolarGrid,
-  PolarRadiusAxis,
-  RadialBar,
-  RadialBarChart,
-} from "recharts";
+import useDadosAbaEgressos from "@/hooks/ppg/use-aba-egressos";
+import { EgressoComMudanca } from "./(graficos)/egressos-mudanca";
 import { CurriculosDesatualizadosEgressos } from "./(graficos)/qtd-curriculos-desatualizados-egressos";
-import { EgressosPorAno } from "./(graficos)/qtd-egressos-ano";
+import { EgressosTituladosPorAno } from "./(graficos)/qtd-egressos-ano";
+import { Loading } from "@/components/loading";
+import DataTable from "@/app/ppg/(components)/table-egressos";
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardTitle
-} from "@/components/ui/card";
-import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-
-const chartData = [
-  { category: "Mudou de emprego", value: 75, fill: "var(--color-success)" }, 
-];
-
-const chartConfig = {
-  visitors: {
-    label: "Percentage",
-  },
-  "Mudou de emprego": {
-    label: "Mudou de emprego",
-    color: "hsl(var(--chart-2))",
-  },
-} satisfies ChartConfig;
-
-export function EgressoComMudanca() {
-  return (
-    <Card className="w-fit mx-auto">
-      <CardTitle className="p-6">Egressos com mudança de emprego</CardTitle>
-      <CardContent className="">
-      <ChartContainer
-  config={chartConfig}
-  className="mx-auto aspect-square max-h-[150px]" 
->
-  <RadialBarChart
-    data={chartData}
-    startAngle={0}
-    endAngle={(chartData[0].value / 100) * 360}
-    innerRadius={60} /* Adjusted to smaller size */
-    outerRadius={80}
-  >
-    <PolarGrid
-      gridType="circle"
-      radialLines={false}
-      stroke="none"
-      className="first:fill-muted last:fill-background"
-      polarRadius={[66, 54]} 
-    />
-    <RadialBar dataKey="value" background cornerRadius={6} /> /* Slightly smaller bars */
-    <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
-      <Label
-        content={({ viewBox }) => {
-          if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-            return (
-              <text
-                x={viewBox.cx}
-                y={viewBox.cy}
-                textAnchor="middle"
-                dominantBaseline="middle"
-              >
-                <tspan
-                  x={viewBox.cx}
-                  y={viewBox.cy}
-                  className="fill-foreground text-base font-bold" 
-                >
-                  {chartData[0].value}%
-                </tspan>
-              </text>
-            );
-          }
-          return null;
-        }}
-      />
-    </PolarRadiusAxis>
-  </RadialBarChart>
-</ChartContainer>
-      </CardContent>
-
-    </Card>
-  );
+interface TabEgressosProps {
+  idIes: string;
+  idPpg: string;
+  anoInicial: number;
+  anoFinal: number;
+  nota: string;
 }
 
-export default function TabEgressos() {
+export default function TabEgressos({
+  idIes,
+  idPpg,
+  anoInicial,
+  anoFinal,
+  nota,
+}: TabEgressosProps) {
+  const { dadosEgressos, isLoading } = useDadosAbaEgressos(
+    idIes,
+    idPpg,
+    anoInicial,
+    anoFinal,
+    nota
+  );
+
+    if (isLoading) {
+      return <Loading />;
+    }
+  
+    if (!dadosEgressos) {
+      return <div>Nenhum dado foi encontrado</div>;
+    }
+
+    console.log("dadosEgressos: ", dadosEgressos);
+
   return (
     <div>
       <h1>Egressos</h1>
       <p>Fonte: Lattes e Sucupira</p>
       <div>
-        <EgressoComMudanca />
-        <EgressosPorAno />
-        <CurriculosDesatualizadosEgressos />
-        {/* TabelaEgressos e produtos */}
+        <EgressoComMudanca informacoesEgressos={dadosEgressos.dadosEgressos}/>
+        <EgressosTituladosPorAno
+          egressosTituladosPorAno={dadosEgressos?.egressosTituladosPorAno || []}
+        />
+        <CurriculosDesatualizadosEgressos
+          tempoAtualizacaoEgressos={
+            dadosEgressos?.tempoAtualizacaoLattesEgressos || []
+          }
+        />
+          <DataTable informacoesEgressos={dadosEgressos.dadosEgressos} producoesEgressos={dadosEgressos.egressosTituladosPorAno} />
       </div>
     </div>
   );

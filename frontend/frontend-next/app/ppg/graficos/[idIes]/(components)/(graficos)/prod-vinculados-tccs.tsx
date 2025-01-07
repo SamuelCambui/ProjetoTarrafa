@@ -7,17 +7,30 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export const ProdVinculadosTCCs = () => {
+export const ProdVinculadosTCCs = ({ produtos }) => {
+
+  const formatarDados = (dados: Object) => {
+    return Object.entries(dados).flatMap(([ano, produtos]) =>
+      Object.entries(produtos)
+        .filter(([produto]) => produto !== "BIBLIOGRÁFICA" && produto !== "total")
+        .map(([produto, quantidade]) => ({
+          ano,
+          produto,
+          quantidade
+        }))
+    );
+  };
+  
   const config = {
-    data: {
-      type: "fetch",
-      value:
-        "https://gw.alipayobjects.com/os/antfincdn/iPY8JFnxdb/dodge-padding.json",
-    },
-    xField: "月份",
-    yField: "月均降雨量",
-    colorField: "name",
+    data: formatarDados(produtos),
+    xField: "ano",
+    yField: "quantidade",
+    colorField: "produto",
     group: true,
+    label: {
+      text: (d: { quantidade: number; }) => `${d.quantidade}`,
+      textBaseline: 'bottom',
+    },
     style: {
       inset: 5,
     },

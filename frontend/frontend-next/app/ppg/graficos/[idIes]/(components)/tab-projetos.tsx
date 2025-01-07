@@ -1,15 +1,46 @@
+import { Loading } from "@/components/loading";
 import { ProdLinhasPesquisa } from "./(graficos)/prod-linhas-pesquisa";
-import { ProdProjLinhasPesquisa } from "./(graficos)/prod-proj-linhas-pesquisa";
-import { ProjDocentesPPG } from "./(graficos)/proj-docentes-ppg";
+import { ProjDocentes } from "./(graficos)/projetos-docentes";
+import { ProdProjLinhasPesquisa } from "./(graficos)/prod-projetos-linhas-pesquisa";
+import useDadosAbaProjetos from "@/hooks/ppg/use-aba-projetos";
 
-export default function TabProjetos()  {
+interface TabProjetosProps {
+  idIes: string;
+  idPpg: string;
+  anoInicial: number;
+  anoFinal: number;
+  nota: string;
+}
+
+export default function TabProjetos({
+  idIes,
+  idPpg,
+  anoInicial,
+  anoFinal,
+  nota,
+}: TabProjetosProps) {
+  const { dadosProjetos, isLoading } = useDadosAbaProjetos(
+    idIes,
+    idPpg,
+    anoInicial,
+    anoFinal,
+    nota
+  );
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!dadosProjetos) {
+    return <div>Nenhum dado foi encontrado</div>;
+  }
+
   return (
     <h1>
       Linhas de Pesquisa e Projetos
-
-      <ProdLinhasPesquisa />
-      <ProdProjLinhasPesquisa />
-      <ProjDocentesPPG />
+      <ProdLinhasPesquisa  dadosLinhaPesquisa={dadosProjetos.dadosdelinhasdepesquisa} />
+      <ProdProjLinhasPesquisa dadosProjLinhaPesquisa={dadosProjetos.dadosdeprojetoselinhasdepesquisa}/>
+      <ProjDocentes teste={dadosProjetos.dadosdeprojetos} />
     </h1>
-  )
+  );
 }

@@ -1,49 +1,61 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { DualAxes } from "@ant-design/plots";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Line } from "@ant-design/plots";
 
-export const EgressosPorAno = () => {
-    const data = [
-      { time: '2019-03', value: 350, count: 800 },
-      { time: '2019-04', value: 900, count: 600 },
-      { time: '2019-05', value: 300, count: 400 },
-      { time: '2019-06', value: 450, count: 380 },
-      { time: '2019-07', value: 470, count: 220 },
-    ];
-  
-    const config = {
-      data,
-      xField: 'time',
-      legend: true,
-      children: [
-        {
-          type: 'interval',
-          yField: 'value',
-          style: { maxWidth: 80 },
-        },
-        {
-          type: 'line',
-          yField: 'count',
-          style: { lineWidth: 2 },
-          axis: { y: { position: 'right' } },
-        },
-      ],
-    };
+interface EgressosTituladosPorAno {
+  ano_egresso: number;
+  quantidade: number;
+}
+
+interface EgressosTituladosPorAnoProps {
+  egressosTituladosPorAno: Record<string, EgressosTituladosPorAno[]> | null;
+}
+
+export const EgressosTituladosPorAno = ({
+  egressosTituladosPorAno,
+}: EgressosTituladosPorAnoProps) => {
+  if (!egressosTituladosPorAno || Object.keys(egressosTituladosPorAno).length === 0) {
+    return <p>No data available for egressos titulados por ano.</p>;
+  }
+
+  const mergedData = Object.entries(egressosTituladosPorAno).flatMap(
+    ([category, data]) =>
+      data.map((item) => ({
+        ...item,
+        category,
+      }))
+  );
+
+  const config = {
+    data: mergedData,
+    xField: "ano_egresso", // X-axis represents the year
+    yField: "quantidade", // Y-axis represents the quantity
+    seriesField: "category", // Different lines for each category
+    point: {
+      shape: "circle", // Point shape
+      size: 4, // Point size
+    },
+    smooth: true, // Smooth the lines for better visualization
+    tooltip: {
+      showMarkers: false, // Disable tooltip markers
+    },
+    legend: {
+      position: "top", // Position of the legend
+    },
+    style: {
+      lineWidth: 2, // Thickness of the lines
+    },
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>   Quantidade de docentes por categoria    </CardTitle>
+        <CardTitle>Egressos titulados por ano</CardTitle>
       </CardHeader>
       <CardContent>
-        <DualAxes {...config} /> 
+        <Line {...config} />
       </CardContent>
     </Card>
   );
-}
+};

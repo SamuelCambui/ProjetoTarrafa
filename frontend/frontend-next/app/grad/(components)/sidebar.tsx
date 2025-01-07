@@ -3,12 +3,10 @@ import {
   Bell,
   Book,
   Building,
-  Calendar,
   ChevronDown,
   ChevronsUpDown,
   CreditCard,
   Home,
-  Inbox,
   LogOut,
   Sparkles,
 } from "lucide-react";
@@ -70,10 +68,13 @@ export function AppSidebar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
                 <DropdownMenuItem>
-                  <span>Acme Inc</span>
+                  <span>Stricto Sensu</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <span>Acme Corp.</span>
+                  <span>Graduação</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <span>Lato Sensu</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -48,6 +48,9 @@ def cache_grpc(response_type):
 def cache_grpc_ppg():
    return cache_grpc(messages_pb2.PpgResponse)
 
+def cache_grpc_ppg_home():
+   return cache_grpc(messages_pb2.HomeResponse)
+
 def cache_grpc_ppgls():
    return cache_grpc(messages_pb2.PPGLSResponse)
    

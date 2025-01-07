@@ -1,4 +1,5 @@
 "use client";
+
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -14,12 +15,15 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { DataProvider } from "@/lib/ppg/context/dados-home-context";
 import { usePathname } from "next/navigation";
 import React, { PropsWithChildren } from "react";
 
-const Layout = ({ children }: PropsWithChildren) => {
+const Layout = ({ children }: PropsWithChildren, nome : string) => {
   const route = usePathname();
   const segments = route.split("/").filter(Boolean); 
+
+  nome = "Nome"
 
   return (
     <SidebarProvider>
@@ -54,7 +58,9 @@ const Layout = ({ children }: PropsWithChildren) => {
         </header>
 
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {children}
+          <DataProvider>
+            {children}
+          </DataProvider>
           <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
         </div>
       </SidebarInset>

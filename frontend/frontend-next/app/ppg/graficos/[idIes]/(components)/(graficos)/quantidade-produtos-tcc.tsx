@@ -7,21 +7,37 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+export const QuantidadeProdutosTCCs = ({ tccsComProducoes, medias }) => {
+  const transformarDados = (dados: Record<string, Record<string, number>>) => {
+    const resultado = [];
+    for (const ano in dados) {
+      const valores = dados[ano];
+      for (const [produto, quantidade] of Object.entries(valores)) {
+        if (produto === "Periódicos" || quantidade === 0) continue;
+        resultado.push({
+          ano,
+          quantidade: parseFloat(quantidade.toFixed(2)),
+          produto,
+        });
+      }
+    }
+    return resultado;
+  };
 
-export const QuantidadeProdutosTCCs = () => {
+  const dadosTCCs = transformarDados(tccsComProducoes);
+  const dadosMedias = transformarDados(medias);
+
+  const dadosFormatados = [...dadosTCCs, ...dadosMedias];
+
   const config = {
-    data: {
-      type: "fetch",
-      value:
-        "https://gw.alipayobjects.com/os/antfincdn/iPY8JFnxdb/dodge-padding.json",
-    },
-    xField: "月份",
+    data: dadosFormatados,
+    xField: "ano",
+    yField: "quantidade",
+    colorField: "produto",
     label: {
-      text: `praia`,
-      textBaseline: 'bottom',
+      text: (d: { quantidade: number }) => `${d.quantidade}`,
+      textBaseline: "bottom",
     },
-    yField: "月均降雨量",
-    colorField: "name",
     group: true,
     style: {
       inset: 5,
@@ -33,12 +49,13 @@ export const QuantidadeProdutosTCCs = () => {
       <CardHeader>
         <CardTitle> Quantidade de Produtos por TCC </CardTitle>
         <CardDescription>
-        Quantidade de TCCs geradores dos produtos em cada ano. Comparado com médias dos PPGs de mesma nota
-         </CardDescription>
+          Quantidade de TCCs geradores dos produtos em cada ano. Comparado com
+          médias dos PPGs de mesma nota
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Column {...config} />
       </CardContent>
-    </Card> 
+    </Card>
   );
 };

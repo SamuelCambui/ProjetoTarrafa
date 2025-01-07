@@ -1,15 +1,24 @@
 "use client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
-import { TabDisciplinas } from "./(components)/TabDisciplinas";
-import { TabIndicadores } from "./(components)/TabIndicadores";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useGetCurso } from "@/service/grad/dados/queries";
 import { useParams } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
+import { TabDisciplinas } from "./(components)/(tab-disciplinas)/TabDisciplinas";
+import { TabEgressos } from "./(components)/(tab-egressos)/TabEgressos";
+import { TabIndicadores } from "./(components)/(tab-indicadores-curso)/TabIndicadores";
+import { TabProfessores } from "./(components)/(tab-professores)/TabProfessores";
+import { GradContext } from "@/app/grad/GradContext";
 
 type Abas = "indicadores" | "disciplinas" | "egressos" | "professores";
 
 const Curso = () => {
   const [activeTab, setActiveTab] = useState<Abas>("indicadores");
   const { idCurso, idIes } = useParams();
+  const { data, isLoading } = useGetCurso({
+    idCurso,
+    idIes,
+  });
 
   const onTabChange = (value: any) => {
     setActiveTab(value);
@@ -18,8 +27,17 @@ const Curso = () => {
   return (
     <div className="grid grid-cols-1 p-6">
       <div className="pb-4">
-        Curso de <b>BACHARELADO</b> com nota mínima de aprovação igual a 70 e
-        frequência mínima 75 %.
+        {isLoading || !data ? (
+          <Skeleton className="h-12 w-2/3" />
+        ) : (
+          <p>
+            {" "}
+            Curso de <b>TIPO_CURSO</b> com nota mínima de aprovação igual a{" "}
+            <b>{data?.nota_min_aprovacao}</b>, frequência mínima{" "}
+            <b>{data?.freq_min_aprovacao}%</b> e duração de{" "}
+            <b>{data?.serie_final}</b> semestres.
+          </p>
+        )}
       </div>
       <Tabs
         defaultValue="account"
@@ -37,9 +55,22 @@ const Curso = () => {
           idCurso={idCurso as string}
           idIes={idIes as string}
         />
-        <TabDisciplinas value="disciplinas" />
-        <TabsContent value="egressos">Egressos</TabsContent>
-        <TabsContent value="professores">Professores</TabsContent>
+        <TabDisciplinas
+          value="disciplinas"
+          idCurso={idCurso as string}
+          idIes={idIes as string}
+          serieFinal={data?.serie_final}
+        />
+        <TabEgressos
+          value="egressos"
+          idCurso={idCurso as string}
+          idIes={idIes as string}
+        />
+        <TabProfessores
+          value="professores"
+          idCurso={idCurso as string}
+          idIes={idIes as string}
+        />
       </Tabs>
     </div>
   );

@@ -7,8 +7,36 @@
 import * as jspb from "google-protobuf";
 
 export class HomeRequest extends jspb.Message { 
-    getIdIes(): string;
+
+    hasIdIes(): boolean;
+    clearIdIes(): void;
+    getIdIes(): string | undefined;
     setIdIes(value: string): HomeRequest;
+
+    hasAnoi(): boolean;
+    clearAnoi(): void;
+    getAnoi(): number | undefined;
+    setAnoi(value: number): HomeRequest;
+
+    hasAnof(): boolean;
+    clearAnof(): void;
+    getAnof(): number | undefined;
+    setAnof(value: number): HomeRequest;
+
+    hasProduto(): boolean;
+    clearProduto(): void;
+    getProduto(): string | undefined;
+    setProduto(value: string): HomeRequest;
+
+    hasFonte(): boolean;
+    clearFonte(): void;
+    getFonte(): string | undefined;
+    setFonte(value: string): HomeRequest;
+
+    hasAresta(): boolean;
+    clearAresta(): void;
+    getAresta(): string | undefined;
+    setAresta(value: string): HomeRequest;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): HomeRequest.AsObject;
@@ -22,20 +50,69 @@ export class HomeRequest extends jspb.Message {
 
 export namespace HomeRequest {
     export type AsObject = {
-        idIes: string,
+        idIes?: string,
+        anoi?: number,
+        anof?: number,
+        produto?: string,
+        fonte?: string,
+        aresta?: string,
+    }
+}
+
+export class HomeResponse extends jspb.Message { 
+
+    hasNome(): boolean;
+    clearNome(): void;
+    getNome(): string | undefined;
+    setNome(value: string): HomeResponse;
+
+    hasJson(): boolean;
+    clearJson(): void;
+    getJson(): string | undefined;
+    setJson(value: string): HomeResponse;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): HomeResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: HomeResponse): HomeResponse.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: HomeResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): HomeResponse;
+    static deserializeBinaryFromReader(message: HomeResponse, reader: jspb.BinaryReader): HomeResponse;
+}
+
+export namespace HomeResponse {
+    export type AsObject = {
+        nome?: string,
+        json?: string,
     }
 }
 
 export class PpgRequest extends jspb.Message { 
-    getIdIes(): string;
+
+    hasIdIes(): boolean;
+    clearIdIes(): void;
+    getIdIes(): string | undefined;
     setIdIes(value: string): PpgRequest;
-    getIdPpg(): string;
+
+    hasIdPpg(): boolean;
+    clearIdPpg(): void;
+    getIdPpg(): string | undefined;
     setIdPpg(value: string): PpgRequest;
-    getAnoi(): number;
+
+    hasAnoi(): boolean;
+    clearAnoi(): void;
+    getAnoi(): number | undefined;
     setAnoi(value: number): PpgRequest;
-    getAnof(): number;
+
+    hasAnof(): boolean;
+    clearAnof(): void;
+    getAnof(): number | undefined;
     setAnof(value: number): PpgRequest;
-    getNota(): string;
+
+    hasNota(): boolean;
+    clearNota(): void;
+    getNota(): string | undefined;
     setNota(value: string): PpgRequest;
 
     serializeBinary(): Uint8Array;
@@ -50,18 +127,24 @@ export class PpgRequest extends jspb.Message {
 
 export namespace PpgRequest {
     export type AsObject = {
-        idIes: string,
-        idPpg: string,
-        anoi: number,
-        anof: number,
-        nota: string,
+        idIes?: string,
+        idPpg?: string,
+        anoi?: number,
+        anof?: number,
+        nota?: string,
     }
 }
 
 export class PpgJson extends jspb.Message { 
-    getNome(): string;
+
+    hasNome(): boolean;
+    clearNome(): void;
+    getNome(): string | undefined;
     setNome(value: string): PpgJson;
-    getJson(): string;
+
+    hasJson(): boolean;
+    clearJson(): void;
+    getJson(): string | undefined;
     setJson(value: string): PpgJson;
 
     serializeBinary(): Uint8Array;
@@ -76,8 +159,8 @@ export class PpgJson extends jspb.Message {
 
 export namespace PpgJson {
     export type AsObject = {
-        nome: string,
-        json: string,
+        nome?: string,
+        json?: string,
     }
 }
 

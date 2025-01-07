@@ -127,34 +127,85 @@ export class PPGClient extends grpc.Client implements IPPGClient {
 }
 
 interface IHomeService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
-    obtemHome: IHomeService_IObtemHome;
+    obtemProgramas: IHomeService_IObtemProgramas;
+    obtemRedeColaboracao: IHomeService_IObtemRedeColaboracao;
+    obtemRankingDocentes: IHomeService_IObtemRankingDocentes;
+    obtemArtigosDocentes: IHomeService_IObtemArtigosDocentes;
 }
 
-interface IHomeService_IObtemHome extends grpc.MethodDefinition<messages_pb.PpgRequest, messages_pb.PpgResponse> {
-    path: "/protos.Home/ObtemHome";
+interface IHomeService_IObtemProgramas extends grpc.MethodDefinition<messages_pb.HomeRequest, messages_pb.HomeResponse> {
+    path: "/protos.Home/ObtemProgramas";
     requestStream: false;
     responseStream: false;
-    requestSerialize: grpc.serialize<messages_pb.PpgRequest>;
-    requestDeserialize: grpc.deserialize<messages_pb.PpgRequest>;
-    responseSerialize: grpc.serialize<messages_pb.PpgResponse>;
-    responseDeserialize: grpc.deserialize<messages_pb.PpgResponse>;
+    requestSerialize: grpc.serialize<messages_pb.HomeRequest>;
+    requestDeserialize: grpc.deserialize<messages_pb.HomeRequest>;
+    responseSerialize: grpc.serialize<messages_pb.HomeResponse>;
+    responseDeserialize: grpc.deserialize<messages_pb.HomeResponse>;
+}
+interface IHomeService_IObtemRedeColaboracao extends grpc.MethodDefinition<messages_pb.HomeRequest, messages_pb.HomeResponse> {
+    path: "/protos.Home/ObtemRedeColaboracao";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<messages_pb.HomeRequest>;
+    requestDeserialize: grpc.deserialize<messages_pb.HomeRequest>;
+    responseSerialize: grpc.serialize<messages_pb.HomeResponse>;
+    responseDeserialize: grpc.deserialize<messages_pb.HomeResponse>;
+}
+interface IHomeService_IObtemRankingDocentes extends grpc.MethodDefinition<messages_pb.HomeRequest, messages_pb.HomeResponse> {
+    path: "/protos.Home/ObtemRankingDocentes";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<messages_pb.HomeRequest>;
+    requestDeserialize: grpc.deserialize<messages_pb.HomeRequest>;
+    responseSerialize: grpc.serialize<messages_pb.HomeResponse>;
+    responseDeserialize: grpc.deserialize<messages_pb.HomeResponse>;
+}
+interface IHomeService_IObtemArtigosDocentes extends grpc.MethodDefinition<messages_pb.HomeRequest, messages_pb.HomeResponse> {
+    path: "/protos.Home/ObtemArtigosDocentes";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<messages_pb.HomeRequest>;
+    requestDeserialize: grpc.deserialize<messages_pb.HomeRequest>;
+    responseSerialize: grpc.serialize<messages_pb.HomeResponse>;
+    responseDeserialize: grpc.deserialize<messages_pb.HomeResponse>;
 }
 
 export const HomeService: IHomeService;
 
 export interface IHomeServer extends grpc.UntypedServiceImplementation {
-    obtemHome: grpc.handleUnaryCall<messages_pb.PpgRequest, messages_pb.PpgResponse>;
+    obtemProgramas: grpc.handleUnaryCall<messages_pb.HomeRequest, messages_pb.HomeResponse>;
+    obtemRedeColaboracao: grpc.handleUnaryCall<messages_pb.HomeRequest, messages_pb.HomeResponse>;
+    obtemRankingDocentes: grpc.handleUnaryCall<messages_pb.HomeRequest, messages_pb.HomeResponse>;
+    obtemArtigosDocentes: grpc.handleUnaryCall<messages_pb.HomeRequest, messages_pb.HomeResponse>;
 }
 
 export interface IHomeClient {
-    obtemHome(request: messages_pb.PpgRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.PpgResponse) => void): grpc.ClientUnaryCall;
-    obtemHome(request: messages_pb.PpgRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.PpgResponse) => void): grpc.ClientUnaryCall;
-    obtemHome(request: messages_pb.PpgRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.PpgResponse) => void): grpc.ClientUnaryCall;
+    obtemProgramas(request: messages_pb.HomeRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    obtemProgramas(request: messages_pb.HomeRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    obtemProgramas(request: messages_pb.HomeRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    obtemRedeColaboracao(request: messages_pb.HomeRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    obtemRedeColaboracao(request: messages_pb.HomeRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    obtemRedeColaboracao(request: messages_pb.HomeRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    obtemRankingDocentes(request: messages_pb.HomeRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    obtemRankingDocentes(request: messages_pb.HomeRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    obtemRankingDocentes(request: messages_pb.HomeRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    obtemArtigosDocentes(request: messages_pb.HomeRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    obtemArtigosDocentes(request: messages_pb.HomeRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    obtemArtigosDocentes(request: messages_pb.HomeRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
 }
 
 export class HomeClient extends grpc.Client implements IHomeClient {
     constructor(address: string, credentials: grpc.ChannelCredentials, options?: Partial<grpc.ClientOptions>);
-    public obtemHome(request: messages_pb.PpgRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.PpgResponse) => void): grpc.ClientUnaryCall;
-    public obtemHome(request: messages_pb.PpgRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.PpgResponse) => void): grpc.ClientUnaryCall;
-    public obtemHome(request: messages_pb.PpgRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.PpgResponse) => void): grpc.ClientUnaryCall;
+    public obtemProgramas(request: messages_pb.HomeRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    public obtemProgramas(request: messages_pb.HomeRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    public obtemProgramas(request: messages_pb.HomeRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    public obtemRedeColaboracao(request: messages_pb.HomeRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    public obtemRedeColaboracao(request: messages_pb.HomeRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    public obtemRedeColaboracao(request: messages_pb.HomeRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    public obtemRankingDocentes(request: messages_pb.HomeRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    public obtemRankingDocentes(request: messages_pb.HomeRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    public obtemRankingDocentes(request: messages_pb.HomeRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    public obtemArtigosDocentes(request: messages_pb.HomeRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    public obtemArtigosDocentes(request: messages_pb.HomeRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
+    public obtemArtigosDocentes(request: messages_pb.HomeRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.HomeResponse) => void): grpc.ClientUnaryCall;
 }

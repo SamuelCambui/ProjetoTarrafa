@@ -5,6 +5,13 @@ export type Programa = {
   id: string;
 }
 
+export type DadosHome = {
+  programas: [];
+  ranking: object;
+  time: string;
+}
+
+
 export type Docente = {
   avatar: string;
   nome: string;

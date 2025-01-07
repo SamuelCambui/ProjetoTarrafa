@@ -12,7 +12,7 @@ import {
 import { Docente } from "@/lib/ppg/definitions";
 
 type DataTableProps = {
-  data: Docente[];
+  data: Record<string, Docente>; 
 };
 
 export default function DataTable({ data }: DataTableProps) {
@@ -22,16 +22,12 @@ export default function DataTable({ data }: DataTableProps) {
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">Avatar</TableHead>
-          <TableHead>Nome</TableHead>
-          <TableHead>Sigla IES</TableHead>
-          <TableHead>Artigos Publicados</TableHead>
-          <TableHead>Trabalhos em Eventos</TableHead>
-          <TableHead>Livros Publicados</TableHead>
-          <TableHead>Capítulos de Livros</TableHead>
+          <TableHead>Egresso</TableHead>
+          <TableHead>Status de Atualização Lattes</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((docente, index) => (
+        {Object.values(data).map((docente, index) => (
           <TableRow key={index}>
             <TableCell>
               <img
@@ -40,15 +36,27 @@ export default function DataTable({ data }: DataTableProps) {
                 className="h-10 w-10 rounded-full"
               />
             </TableCell>
-            <TableCell className="font-medium">{docente.nome}</TableCell>
-            <TableCell>{docente.sigla_ies_vinculo}</TableCell>
-            <TableCell>{docente.produtos["ARTIGO-PUBLICADO"] || 0}</TableCell>
-            <TableCell>{docente.produtos["TRABALHO-EM-EVENTOS"] || 0}</TableCell>
             <TableCell>
-              {docente.produtos["LIVROS-PUBLICADOS-OU-ORGANIZADOS"] || 0}
+                <span className="font-medium">{docente.nome}</span>
+                <p>
+                  Tipo de vínculo com a {docente.sigla_ies_vinculo}:{" "}
+                  {docente.vinculo_ies}
+                </p>
+                <p>
+                  IES de Origem:{" "}{docente.ies}
+                </p>
             </TableCell>
             <TableCell>
-              {docente.produtos["CAPITULOS-DE-LIVROS-PUBLICADOS"] || 0}
+              {docente.produtos?.["ARTIGO-PUBLICADO"] ?? 0}
+            </TableCell>
+            <TableCell>
+              {docente.produtos?.["TRABALHO-EM-EVENTOS"] ?? 0}
+            </TableCell>
+            <TableCell>
+              {docente.produtos?.["LIVROS-PUBLICADOS-OU-ORGANIZADOS"] ?? 0}
+            </TableCell>
+            <TableCell>
+              {docente.produtos?.["CAPITULOS-DE-LIVROS-PUBLICADOS"] ?? 0}
             </TableCell>
           </TableRow>
         ))}
