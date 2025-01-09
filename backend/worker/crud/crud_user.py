@@ -43,6 +43,17 @@ class CRUDUser():
                 user = UserInDB(**row)
                 return user
             return None
+    
+    @tratamento_excecao_db_ppg()
+    def dados_complementares(self, id_ies : str, db: DBConnector = None) -> tuple[str, str]:
+        """
+        Retorna os dados complementares do usuário
+        """
+        query = "SELECT nome, sigla from instituicoes where id_ies = %(id_ies)s"
+        row = db.fetch_one(query, id_ies = id_ies)
+        if row:
+            return row[0], row[1]
+        return "", ""
 
     async def create(self, db: DBConnector, **obj_in) -> User:
         """

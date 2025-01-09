@@ -91,6 +91,17 @@
             "envFile": "${workspaceFolder}/.env.desenvolvimento",
             "args": []
         },
+        {
+            "name": "Python: SERVER LOGIN",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/app/api/api_login.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento",
+            "args": []
+        },
+        
 	{
 	      "name": "Next.js: debug full stack",
 	      "type": "node-terminal",

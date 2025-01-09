@@ -59,12 +59,14 @@ message UsuarioRequest {
 }
 
 message UsuarioResponse {
-  string idlattes = 1;
-  string email = 2;
-  string full_name = 3;
-  bool is_superuser = 4;
-  bool is_admin = 5;
-  string id_ies = 6;
+  optional string idLattes = 1;
+  optional string email = 2;
+  optional string nome = 3;
+  optional bool isSuperuser = 4;
+  optional bool isAdmin = 5;
+  optional string idIes = 6;
+  optional string nomeIes = 7;
+  optional string siglaIes = 8;
 }
 
 message PPGLSRequest{

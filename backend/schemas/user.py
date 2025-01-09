@@ -12,6 +12,8 @@ class UserBase(BaseModel):
     is_superuser: bool = False
     is_admin : bool = False
     id_ies: Optional[str] = None
+    nome_ies: Optional[str] = None
+    sigla_ies: Optional[str] = None
 
     def to_redis_dict(self):
         return {

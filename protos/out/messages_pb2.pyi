@@ -98,20 +98,24 @@ class UsuarioRequest(_message.Message):
     def __init__(self, username: _Optional[str] = ...) -> None: ...
 
 class UsuarioResponse(_message.Message):
-    __slots__ = ("idlattes", "email", "full_name", "is_superuser", "is_admin", "id_ies")
+    __slots__ = ("idLattes", "email", "nome", "isSuperuser", "isAdmin", "idIes", "nomeIes", "siglaIes")
     IDLATTES_FIELD_NUMBER: _ClassVar[int]
     EMAIL_FIELD_NUMBER: _ClassVar[int]
-    FULL_NAME_FIELD_NUMBER: _ClassVar[int]
-    IS_SUPERUSER_FIELD_NUMBER: _ClassVar[int]
-    IS_ADMIN_FIELD_NUMBER: _ClassVar[int]
-    ID_IES_FIELD_NUMBER: _ClassVar[int]
-    idlattes: str
+    NOME_FIELD_NUMBER: _ClassVar[int]
+    ISSUPERUSER_FIELD_NUMBER: _ClassVar[int]
+    ISADMIN_FIELD_NUMBER: _ClassVar[int]
+    IDIES_FIELD_NUMBER: _ClassVar[int]
+    NOMEIES_FIELD_NUMBER: _ClassVar[int]
+    SIGLAIES_FIELD_NUMBER: _ClassVar[int]
+    idLattes: str
     email: str
-    full_name: str
-    is_superuser: bool
-    is_admin: bool
-    id_ies: str
-    def __init__(self, idlattes: _Optional[str] = ..., email: _Optional[str] = ..., full_name: _Optional[str] = ..., is_superuser: bool = ..., is_admin: bool = ..., id_ies: _Optional[str] = ...) -> None: ...
+    nome: str
+    isSuperuser: bool
+    isAdmin: bool
+    idIes: str
+    nomeIes: str
+    siglaIes: str
+    def __init__(self, idLattes: _Optional[str] = ..., email: _Optional[str] = ..., nome: _Optional[str] = ..., isSuperuser: bool = ..., isAdmin: bool = ..., idIes: _Optional[str] = ..., nomeIes: _Optional[str] = ..., siglaIes: _Optional[str] = ...) -> None: ...
 
 class PPGLSRequest(_message.Message):
     __slots__ = ("id_disc", "id_ies", "id_curso", "id_grade", "anoi", "anof")

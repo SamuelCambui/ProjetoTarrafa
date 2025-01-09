@@ -16,6 +16,8 @@ BASE_PATH_PPGLS = "backend/worker/tasks_ppgls"
 BASE_IMPORT_PATH_PPGLS = "backend.worker.tasks_ppgls"
 BASE_PATH_GRAD = "backend/worker/tasks_grad"
 BASE_IMPORT_PATH_GRAD = "backend.worker.tasks_grad"
+BASE_PATH_LOGIN = "backend/worker"
+BASE_IMPORT_PATH_LOGIN = "backend.worker"
 
 # Encontra todos os arquivos Python no diretório BASE_PATH
 def list_task_modules(base_path, base_import_path):
@@ -32,6 +34,7 @@ def list_task_modules(base_path, base_import_path):
 task_modules = list_task_modules(BASE_PATH_PPG, BASE_IMPORT_PATH_PPG)
 task_modules.extend(list_task_modules(BASE_PATH_PPGLS, BASE_IMPORT_PATH_PPGLS))
 task_modules.extend(list_task_modules(BASE_PATH_GRAD, BASE_IMPORT_PATH_GRAD))
+task_modules.extend(list_task_modules(BASE_PATH_LOGIN, BASE_IMPORT_PATH_LOGIN))
 
 app_celery_queries = Celery('queries', broker=broker, backend=backend, include=task_modules)
 
