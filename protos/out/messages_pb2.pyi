@@ -91,13 +91,7 @@ class LoginResponse(_message.Message):
     erro: bool
     def __init__(self, avatar: _Optional[str] = ..., nome: _Optional[str] = ..., email: _Optional[str] = ..., idlattes: _Optional[str] = ..., erro: bool = ...) -> None: ...
 
-class UsuarioRequest(_message.Message):
-    __slots__ = ("username",)
-    USERNAME_FIELD_NUMBER: _ClassVar[int]
-    username: str
-    def __init__(self, username: _Optional[str] = ...) -> None: ...
-
-class UsuarioResponse(_message.Message):
+class UsuarioDados(_message.Message):
     __slots__ = ("idLattes", "email", "nome", "isSuperuser", "isAdmin", "idIes", "nomeIes", "siglaIes")
     IDLATTES_FIELD_NUMBER: _ClassVar[int]
     EMAIL_FIELD_NUMBER: _ClassVar[int]
@@ -116,6 +110,40 @@ class UsuarioResponse(_message.Message):
     nomeIes: str
     siglaIes: str
     def __init__(self, idLattes: _Optional[str] = ..., email: _Optional[str] = ..., nome: _Optional[str] = ..., isSuperuser: bool = ..., isAdmin: bool = ..., idIes: _Optional[str] = ..., nomeIes: _Optional[str] = ..., siglaIes: _Optional[str] = ...) -> None: ...
+
+class CriacaoUsuarioRequest(_message.Message):
+    __slots__ = ("usuarioBase", "password")
+    USUARIOBASE_FIELD_NUMBER: _ClassVar[int]
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    usuarioBase: UsuarioDados
+    password: str
+    def __init__(self, usuarioBase: _Optional[_Union[UsuarioDados, _Mapping]] = ..., password: _Optional[str] = ...) -> None: ...
+
+class UsuarioRequest(_message.Message):
+    __slots__ = ("email",)
+    EMAIL_FIELD_NUMBER: _ClassVar[int]
+    email: str
+    def __init__(self, email: _Optional[str] = ...) -> None: ...
+
+class UsuarioResponse(_message.Message):
+    __slots__ = ("usuario",)
+    USUARIO_FIELD_NUMBER: _ClassVar[int]
+    usuario: UsuarioDados
+    def __init__(self, usuario: _Optional[_Union[UsuarioDados, _Mapping]] = ...) -> None: ...
+
+class AlteracaoUsuarioResponse(_message.Message):
+    __slots__ = ("status", "menssagem")
+    STATUS_FIELD_NUMBER: _ClassVar[int]
+    MENSSAGEM_FIELD_NUMBER: _ClassVar[int]
+    status: bool
+    menssagem: str
+    def __init__(self, status: bool = ..., menssagem: _Optional[str] = ...) -> None: ...
+
+class ListaUsuariosResponse(_message.Message):
+    __slots__ = ("item",)
+    ITEM_FIELD_NUMBER: _ClassVar[int]
+    item: _containers.RepeatedCompositeFieldContainer[UsuarioResponse]
+    def __init__(self, item: _Optional[_Iterable[_Union[UsuarioResponse, _Mapping]]] = ...) -> None: ...
 
 class PPGLSRequest(_message.Message):
     __slots__ = ("id_disc", "id_ies", "id_curso", "id_grade", "anoi", "anof")

@@ -54,11 +54,7 @@ message LoginResponse {
   bool erro = 5;
 }
 
-message UsuarioRequest {
-  string username = 1;
-}
-
-message UsuarioResponse {
+message UsuarioDados {
   optional string idLattes = 1;
   optional string email = 2;
   optional string nome = 3;
@@ -67,6 +63,29 @@ message UsuarioResponse {
   optional string idIes = 6;
   optional string nomeIes = 7;
   optional string siglaIes = 8;
+}
+
+message CriacaoUsuarioRequest{
+  optional UsuarioDados usuarioBase = 1;
+  optional string password = 2;
+}
+
+message UsuarioRequest {
+  optional string email = 1;
+}
+
+message UsuarioResponse {
+  optional UsuarioDados usuario = 1;
+}
+
+message AlteracaoUsuarioResponse {
+  optional bool status = 1;
+  optional string menssagem = 2;
+}
+
+message ListaUsuariosResponse {
+  repeated UsuarioResponse item = 1;
+  // repeated string usuariosLogados = 2;
 }
 
 message PPGLSRequest{

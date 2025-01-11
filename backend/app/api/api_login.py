@@ -10,7 +10,7 @@ import grpc
 # Necessário para que as importações a seguir sejam encontradas no path
 diretorio_raiz = Path(__name__).resolve().parent
 sys.path.append(str(diretorio_raiz))
-from backend.app.api.grpc_v1.login_grpc import Usuario
+from backend.app.api.grpc_v1.usuario_grpc import Usuario
 from backend.core.config import settings
 from protos.out import usuarios_pb2_grpc
 

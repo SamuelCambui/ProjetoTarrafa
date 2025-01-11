@@ -729,7 +729,7 @@ class QueriesPPG():
         dictindprods['dados'] = []
         for i in range(3, nota_maxima+1):
             row = db.fetch_all(query, id=id, anof=anof, anoi=anoi, nota=str(i))
-            indprods = [dict(r) | {'conceito': str(i)} for r in row]
+            indprods = [dict(r) |  {'conceito': f'PPGs nota {i}'} for r in row]
             dictindprods[str(i)] = indprods
             dictindprods['dados'].extend(indprods)
             rotulos.append(str(i))
@@ -1339,9 +1339,12 @@ class QueriesPPG():
                     and pb.ano >= %(anoi)s and pb.ano <= %(anof)s and p.codigo_programa <> %(id)s group by pb.ano order by pb.ano
 				"""
         
+        dictindprods['dados'] = []
+        
         for i in range(3, nota_maxima+1):
             row = db.fetch_all(query, id=id, anof=anof, anoi=anoi, nota=str(i))
-            indprods = [dict(r) for r in row]
+            indprods = [dict(r) | {'conceito': f'PPGs nota {i}'} for r in row]
+            dictindprods['dados'].extend(indprods)
             dictindprods[str(i)] = indprods
             rotulos.append(str(i))
 
