@@ -112,7 +112,7 @@ def tarefa_retorna_tempos_de_conclusao(id : str, anoi : int, anof : int):
 
 #* Funções Finalizadas
 
-def padronizar_grafico_indicador(respostaDict : dict, data_avg : dict, label : str, indicador : str, nota : str):
+def padronizar_grafico_indicador(respostaDict : dict, data_avg : list[dict], label : str, indicador : str, nota : str):
     #* DataSets
     dataset = DataSet()
     dataset.label = label

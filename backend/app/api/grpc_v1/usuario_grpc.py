@@ -115,6 +115,7 @@ class Usuario(usuarios_pb2_grpc.UsuarioServicer):
     #     except Exception as e:
     #         print(e)
     #         return messages_pb2.AlteracaoUsuarioResponse()
+    
         
     # def AlternarStatusUsuario(self, request, context) -> messages_pb2.AlteracaoUsuarioResponse:
     #     print('DesativarUsuario chamada...')

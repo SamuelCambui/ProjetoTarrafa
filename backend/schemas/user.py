@@ -8,7 +8,7 @@ class UserBase(BaseModel):
     idlattes: Optional[str] = None
     email: Optional[EmailStr] = None
     full_name: Optional[str] = None
-    is_active: Optional[bool] = True
+    is_active: bool = True
     is_superuser: bool = False
     is_admin : bool = False
     id_ies: Optional[str] = None
@@ -57,4 +57,4 @@ class User(UserBase):
 
 # Additional properties stored in DB
 class UserInDB(UserBase):
-    hashed_password: str
+    hashed_password: str = ""

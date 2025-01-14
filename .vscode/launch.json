@@ -92,10 +92,10 @@
             "args": []
         },
         {
-            "name": "Python: SERVER LOGIN",
+            "name": "Python: SERVER USUARIOS",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/backend/app/api/api_login.py",
+            "program": "${workspaceFolder}/backend/app/api/api_usuarios.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "envFile": "${workspaceFolder}/.env.desenvolvimento",

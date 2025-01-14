@@ -11,6 +11,6 @@ diretorio_raiz = Path(__name__).resolve().parent.parent
 sys.path.append(str(diretorio_raiz))
 print(str(diretorio_raiz))
 
-from backend.worker.queries import *
+from backend.worker.task_users import *
 
 

@@ -8,7 +8,8 @@ from backend.core.utils import tratamento_excecao_db_ppg
 
 class CRUDUser():
 
-    def get_user_db(self, db:DBConnector, **kwargs) ->Optional[User]:
+    @tratamento_excecao_db_ppg()
+    def get_user_db(self, db : DBConnector = None, **kwargs) ->tuple[Optional[UserInDB], str]:
         """
         Retorna os dados do usuário e link para a foto do perfil lattes
         
@@ -16,33 +17,32 @@ class CRUDUser():
             user: Dados do usuário
             rowavatar: link para a foto do perfil lattes
         """
-        for key, value in kwargs.items():
-            query = f"SELECT * FROM usuarios where {key} =" + "%(identifier)s"
-            row = db.fetch_one(query, identifier = value)
-            if row:
-                user = UserInDB(**row)
-                #query = f"SELECT linkavatar FROM public.curriculos_lattes where idlattes='{user.idlattes}'"
-               # rowavatar = db.fetch_one(query)
-                rowavatar = crud.queries_ppg.retorna_link_avatar_lattes(user.idlattes, True)
+        key, value = next(iter(kwargs.items()))
+        query = f"SELECT * FROM usuarios WHERE {key} = %(identifier)s"
+        row = db.fetch_one(query, identifier = value)
+        if row:
+            user = UserInDB(**row)
+            #query = f"SELECT linkavatar FROM public.curriculos_lattes where idlattes='{user.idlattes}'"
+            # rowavatar = db.fetch_one(query)
+            rowavatar = crud.queries_ppg.retorna_link_avatar_lattes(user.idlattes, True)
 
-                if row:
-                    return user,rowavatar
-            return None, None
+            if row:
+                return user, rowavatar
+        return None, ""
 
     @tratamento_excecao_db_ppg()
-    def verify_in_db(self, db: DBConnector = None, **kwargs) -> Optional[User]:
+    def verify_in_db(self, db: DBConnector = None, **kwargs) -> Optional[UserInDB]:
         """
         Verificando se existe o usuário no banco de dados
         """
-        
-        for key, value in kwargs.items():
-            query = f"SELECT * FROM usuarios where {key} = " + "%(identifier)s"
+        key, value = next(iter(kwargs.items()))
+        query = f"SELECT * FROM usuarios where {key} = " + "%(identifier)s"
             # print(query)
-            row = db.fetch_one(query, identifier = value)
-            if row:
-                user = UserInDB(**row)
-                return user
-            return None
+        row = db.fetch_one(query, identifier = value)
+        if row:
+            user = UserInDB(**row)
+            return user
+        return None
     
     @tratamento_excecao_db_ppg()
     def dados_complementares(self, id_ies : str, db: DBConnector = None) -> tuple[str, str]:
@@ -101,17 +101,17 @@ class CRUDUser():
         return False, "Não foi possível alterar o status do usuário!"
 
     @tratamento_excecao_db_ppg()
-    def authenticate(self, db: DBConnector = None, *, password: str, **kwargs) -> Optional[User]:
+    def authenticate(self, password: str, **kwargs) -> tuple[Optional[UserInDB], str]:
         """
         Autenticando usuario no banco
         """
-        user, useravatar = self.get_user_db(db, **kwargs)
+        user, useravatar = self.get_user_db(**kwargs)
         if type(user) is not UserInDB:
-            return None, None
+            return None, ""
         if not user:
-            return None, None
+            return None, ""
         if not verify_password(password, user.hashed_password):
-            return None, None
+            return None, ""
 
         return user, useravatar
 
@@ -135,14 +135,17 @@ class CRUDUser():
         return user.is_admin
 
     @tratamento_excecao_db_ppg()
-    def get(self, db: DBConnector = None, **kwargs):
+    def get(self, db: DBConnector = None, **kwargs) -> Optional[User]:
         """
         Retorna todos os dados do usuário
         """
-        for key, value in kwargs.items():
+        try:
+            key, value = next(iter(kwargs.items()))
             query = f"SELECT * FROM usuarios where {key} = " + "%(identifier)s"
             row = db.fetch_one(query, identifier = value)
-        return User(**row)
+            return User(**row)
+        except Exception as e:
+            return None
 
     @tratamento_excecao_db_ppg()
     def get_multi(self, privilegio: bool, idlattes: str, id_ies : str, db: DBConnector = None) -> list[User]:
@@ -161,7 +164,7 @@ class CRUDUser():
         #logados = redis.scan('usuario:')
             
     @tratamento_excecao_db_ppg()
-    def delete_user(self, idlattes : str, db: DBConnector = None) -> tuple[bool, str]:
+    def delete_user(self, idlattes : str, db: DBConnector = None) -> bool:
         """
         Retorna se o usuário foi deletado ou não
         """

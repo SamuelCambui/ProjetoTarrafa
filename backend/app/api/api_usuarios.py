@@ -19,14 +19,14 @@ async def serve():
     server = grpc.aio.server()
     usuarios_pb2_grpc.add_UsuarioServicer_to_server(Usuario(), server)
 
-    server.add_insecure_port("[::]:50055")
+    server.add_insecure_port(f"[::]:{settings.GRPC_SERVER_USUARIOS}")
 
     await server.start()
     await server.wait_for_termination()
 
 
 if __name__ == "__main__":
-    print("Starting server in: %s" % (settings.GRPC_SERVER_LOGIN))
+    print("Starting server in: %s" % (settings.GRPC_SERVER_USUARIOS))
     print("Rodando o servidor de login")
     # Inicia o servidor
     asyncio.run(serve())

@@ -41,7 +41,7 @@ class QueriesPPG():
         return anos
     
     @tratamento_excecao_db_ppg()
-    def retorna_link_avatar_lattes(self, ids: str, idlattes: bool, db: DBConnector = None):
+    def retorna_link_avatar_lattes(self, ids: str, idlattes: bool, db: DBConnector = None) -> str:
         """
         Retorna o link do avatar do currículo Lattes
         """
@@ -1592,33 +1592,37 @@ class QueriesPPG():
             anof(int): Ano Final
             db(class): DataBase
         """
-        query = """select mbom, bom, regular, fraco from metricas_indicadores_areas_avaliacao
-                    where nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
-                        and metrica = 'indori'"""
-        row = db.fetch_one(query, id=id, anof=anof, anoi=anoi)
-        if row:
-            indicadores = dict(row)
-        else:
-            indicadores = {'mbom':0, 'bom':0,'regular':0, 'fraco':0}
-        
-        #query = """select cast(dados->>'indOri' as float) as indOri, ano from programas_historico where id = %(id)s
-		#			and (ano>=%(anoi)s and ano <=%(anof)s) and id=%(id)s order by ano"""
-        query = """select cast(dados->>'indOri' as float) as indOri, ano from programas_historico where id_programa = (select id_programa from programas where codigo_programa = %(id)s)
-					and (ano >= %(anoi)s and ano <= %(anof)s) order by ano"""
-        row = db.fetch_all(query, id=id, anof=anof, anoi=anoi)
-        indoris = [dict(r) for r in row]
+        try:
+            query = """select mbom, bom, regular, fraco from metricas_indicadores_areas_avaliacao
+                        where nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
+                            and metrica = 'indori'"""
+            row = db.fetch_one(query, id=id, anof=anof, anoi=anoi)
+            if row:
+                indicadores = dict(row)
+            else:
+                indicadores = {'mbom':0, 'bom':0,'regular':0, 'fraco':0}
+            
+            #query = """select cast(dados->>'indOri' as float) as indOri, ano from programas_historico where id = %(id)s
+            #			and (ano>=%(anoi)s and ano <=%(anof)s) and id=%(id)s order by ano"""
+            query = """select cast(dados->>'indOri' as float) as indOri, ano from programas_historico where id_programa = (select id_programa from programas where codigo_programa = %(id)s)
+                        and (ano >= %(anoi)s and ano <= %(anof)s) order by ano"""
+            row = db.fetch_all(query, id=id, anof=anof, anoi=anoi)
+            indoris = [dict(r) for r in row]
 
-        ano_in = False
-        for a in range(anoi, anof+1):
-            for i in indoris:
-                if i['indori'] is None:
-                    i['indori'] = 0.0
-                if a == i['ano']:
-                    ano_in = True
-            if ano_in == False:
-                indoris.append({'indori': 0.0, 'ano': a})
-        indoris = sorted(indoris, key=lambda k: k['ano'])
-        return {'indori': indoris, 'indicadores': indicadores}
+            ano_in = False
+            for a in range(anoi, anof+1):
+                for i in indoris:
+                    if i['indori'] is None:
+                        i['indori'] = 0.0
+                    if a == i['ano']:
+                        ano_in = True
+                if ano_in == False:
+                    indoris.append({'indori': 0.0, 'ano': a})
+            indoris = sorted(indoris, key=lambda k: k['ano'])
+            return {'indori': indoris, 'indicadores': indicadores}
+        except Exception as e:
+            print("Erro: ", e)
+            return None
     
     @tratamento_excecao_db_ppg()
     def retorna_inddistori(self, id: str, anoi: int, anof: int, db: DBConnector  = None):
@@ -3801,7 +3805,6 @@ class QueriesPPG():
         row = db.fetch_one(query, anoi=anoi, anof=anof, id=id, nota=nota)
         return row[0]
 
-    @tratamento_excecao_db_ppg()
     def retorna_popsitions_avg_ppg(self, id : str, anoi : int, anof : int):
         indprods, maior, menor  = self.retorna_ranking_ppgs(id, anoi, anof)
         media = self.retorna_indprod_medio_entre_ppgs_dada_nota(id, anoi, anof, None)

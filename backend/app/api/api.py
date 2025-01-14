@@ -18,7 +18,7 @@ async def serve():
     ppg_pb2_grpc.add_PPGServicer_to_server(PPG(), server)
     ppg_pb2_grpc.add_HomeServicer_to_server(Home(), server)
 
-    server.add_insecure_port('[::]:50052')
+    server.add_insecure_port(f'[::]:{settings.GRPC_SERVER_HOST}')
 
     await server.start()
     await server.wait_for_termination()

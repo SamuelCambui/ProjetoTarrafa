@@ -21,7 +21,7 @@ async def serve():
     ppgls_pb2_grpc.add_IndicadoresPosGraduacaoLSServicer_to_server(IndicadoresPPGLSServicer(), server)
     ppgls_pb2_grpc.add_DadosFormularioPosGraduacaoLSServicer_to_server(FormularioPPGLSServicer(), server)
 
-    server.add_insecure_port('[::]:50054')
+    server.add_insecure_port(f'[::]:{settings.GRPC_SERVER_PPGLS}')
 
     await server.start()
     await server.wait_for_termination()

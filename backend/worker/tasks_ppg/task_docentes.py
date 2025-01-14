@@ -56,7 +56,7 @@ def tarefa_retorna_grafo_de_coautores_do_ppg(id : str, anoi : int, anof : int):
         return MessageToDict(messages_pb2.PpgJson(nome='grafoCoautoresdoPpg', json=None))
     
 @app_celery_queries.task
-def tarefa_retorna_grafo_de_coautores_do_programa(id_ies, id, anoi, anof, autor):
+def tarefa_retorna_grafo_de_coautores_do_programa(id_ies : str, id : str, anoi : int, anof : int, autor : str):
     try:
         respostaDict = crud.queries_ppg.retorna_grafo_de_coautores_do_programa(id_ies, id, anoi, anof, autor)
         retorno = messages_pb2.PpgJson(nome='grafoCoautoresdoPrograma', json=json.dumps(respostaDict))

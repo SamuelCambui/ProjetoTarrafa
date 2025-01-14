@@ -18,7 +18,7 @@ async def serve():
     grad_pb2_grpc.add_DadosGraduacaoServicer_to_server(DadosGraduacaoServicer(), server)
     grad_pb2_grpc.add_IndicadoresGraduacaoServicer_to_server(IndicadoresGraduacaoServicer(), server)
 
-    server.add_insecure_port('[::]:50053')
+    server.add_insecure_port(f'[::]:{settings.GRPC_SERVER_GRAD}')
     
     await server.start()
     await server.wait_for_termination()
