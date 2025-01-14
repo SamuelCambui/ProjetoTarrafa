@@ -1,5 +1,6 @@
 "use server";
-import { stubHome, stubPPG, toApiResponse } from "@/app/api/ppg/utils";
+import { toApiResponse } from "@/lib/utils";
+import { stubHome, stubPPG } from "@/service/ppg/utils";
 import { HomeRequest } from "@/protos/messages_pb";
 import { PpgRequest } from "@/protos/messages_pb";
 
@@ -10,15 +11,18 @@ export async function getDadosHome(idIes: string) {
     homeRequest.setIdIes(idIes);
 
     const response = await new Promise((resolve, reject) => {
-      stubHome.obtemProgramas(homeRequest, (error: any, listaprogramas: any) => {
-        if (error) {
-          reject(error);
-        } else {
-          const dadosObj = listaprogramas.toObject()["json"];
-          resolve(toApiResponse(dadosObj));
-          console.log("PRONTO")
-        }
-      });
+      stubHome.obtemProgramas(
+        homeRequest,
+        (error: any, listaprogramas: any) => {
+          if (error) {
+            reject(error);
+          } else {
+            const dadosObj = listaprogramas.toObject()["json"];
+            resolve(toApiResponse(dadosObj));
+            console.log("PRONTO");
+          }
+        },
+      );
     });
 
     return response;
@@ -33,7 +37,7 @@ export async function getDadosIndicadores(
   idPpg: string,
   anoInicial: number,
   anoFinal: number,
-  nota: string
+  nota: string,
 ) {
   try {
     const ppgRequest = new PpgRequest();
@@ -55,7 +59,7 @@ export async function getDadosIndicadores(
             const dadosObj = listaprogramas.toObject()["itemList"];
             resolve(toApiResponse(dadosObj));
           }
-        }
+        },
       );
     });
 
@@ -71,7 +75,7 @@ export async function getDadosDocentes(
   idPpg: string,
   anoInicial: number,
   anoFinal: number,
-  nota: string
+  nota: string,
 ) {
   try {
     const ppgRequest = new PpgRequest();
@@ -106,7 +110,7 @@ export async function getDadosProjetos(
   idPpg: string,
   anoInicial: number,
   anoFinal: number,
-  nota: string
+  nota: string,
 ) {
   try {
     const ppgRequest = new PpgRequest();
@@ -140,7 +144,7 @@ export async function getDadosBancas(
   idPpg: string,
   anoInicial: number,
   anoFinal: number,
-  nota: string
+  nota: string,
 ) {
   try {
     const ppgRequest = new PpgRequest();
@@ -175,7 +179,7 @@ export async function getDadosEgressos(
   idPpg: string,
   anoInicial: number,
   anoFinal: number,
-  nota: string
+  nota: string,
 ) {
   try {
     const ppgRequest = new PpgRequest();

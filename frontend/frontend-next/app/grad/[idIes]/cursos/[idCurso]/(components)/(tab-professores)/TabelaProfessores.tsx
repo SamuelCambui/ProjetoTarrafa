@@ -27,23 +27,23 @@ type Params = {
 };
 
 type Professor = {
-  id_prof: string;
-  nome: string;
-  qualificacao: string;
-  vinculo: string;
-  departamento: string;
-  sexo: string;
-  disciplinas: {
-    id_disc: string;
-    nome: string;
-    abreviacao: string;
-    ultima_vez_lecionada: string;
+  id_prof?: string;
+  nome?: string;
+  qualificacao?: string;
+  vinculo?: string;
+  departamento?: string;
+  sexo?: string;
+  disciplinas?: {
+    id_disc?: string;
+    nome?: string;
+    abreviacao?: string;
+    ultima_vez_lecionada?: string;
   }[];
 };
 export const TabelaProfessores = ({ data, isLoading }: Params) => {
   const [professores, setProfessores] = useState<Professor[] | undefined>(data);
   const [professorAtivo, setProfessorAtivo] = useState<Professor | undefined>(
-    undefined,
+    undefined
   );
 
   useEffect(() => {
@@ -54,7 +54,10 @@ export const TabelaProfessores = ({ data, isLoading }: Params) => {
     return <div>Loading...</div>;
   }
 
-  const criaLabel = (nome: string) => {
+  const criaLabel = (nome: string | undefined) => {
+    if (!nome) {
+      return <User className="h-12 w-12 stroke-slate-600 stroke-1" />;
+    }
     try {
       const nomes = nome.split(" ");
       return nomes[0][0] + nomes[1][0];
@@ -67,8 +70,8 @@ export const TabelaProfessores = ({ data, isLoading }: Params) => {
   const handleSearchInput = (event: ChangeEvent<HTMLInputElement>) => {
     const fiteredProfessores = data?.filter((professor: Professor) =>
       professor.nome
-        .toLocaleLowerCase()
-        .startsWith(event.target.value.toLocaleLowerCase()),
+        ?.toLocaleLowerCase()
+        .startsWith(event.target.value.toLocaleLowerCase())
     );
     setProfessores(fiteredProfessores);
   };
@@ -116,7 +119,7 @@ export const TabelaProfessores = ({ data, isLoading }: Params) => {
                       </TableCell>
                       <TableCell>{professor.id_prof}</TableCell>
                       <TableCell className="capitalize">
-                        {professor.nome.toLocaleLowerCase()}
+                        {professor.nome?.toLocaleLowerCase()}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -140,7 +143,7 @@ export const TabelaProfessores = ({ data, isLoading }: Params) => {
                           "rounded-lg",
                           professorAtivo.sexo === "M"
                             ? "bg-blue-200"
-                            : "bg-pink-200",
+                            : "bg-pink-200"
                         )}
                       >
                         {criaLabel(professorAtivo.nome)}
@@ -149,12 +152,12 @@ export const TabelaProfessores = ({ data, isLoading }: Params) => {
                   </div>
                   <div className="mb-6 space-y-2">
                     <h2 className="text-xl font-bold capitalize">
-                      {professorAtivo.nome.toLocaleLowerCase()}
+                      {professorAtivo.nome?.toLocaleLowerCase()}
                     </h2>
                     <div className="flex flex-row gap-8">
                       <span className="font-semibold">Qualificação</span>
                       <span className="text-muted-foreground capitalize">
-                        {professorAtivo.qualificacao.toLocaleLowerCase()}
+                        {professorAtivo.qualificacao?.toLocaleLowerCase()}
                       </span>
                     </div>
                     <div className="flex flex-row gap-8">

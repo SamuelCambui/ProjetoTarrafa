@@ -252,7 +252,7 @@ class IndicadoresGraduacaoServicer(grad_pb2_grpc.IndicadoresGraduacaoServicer):
         response = [item for item in result]
         return GradResponse(item=response)
 
-    # @cache_grpc_grad()
+    @cache_grpc_grad()
     def GetIndicadoresGlobais(self, request: GradRequest, context):
         consultas = []
         consultas.append(

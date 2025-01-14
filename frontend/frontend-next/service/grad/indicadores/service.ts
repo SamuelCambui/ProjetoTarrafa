@@ -1,6 +1,7 @@
 "use server";
 import { GradDisciplinasRequest, GradRequest } from "@/protos/messages_pb";
-import { stubIndicadores, toApiResponse } from "../utils";
+import { stubIndicadores } from "../utils";
+import { toApiResponse } from "@/lib/utils";
 import {
   AbaDisciplinasParams,
   AbaEgressosParams,
@@ -188,8 +189,8 @@ export async function getAbaProfessores({
 export async function getIndicadoresGlobais({
   idIes,
   anoInicial,
-  anoFinal
-}: IndicadoresGlobaisParams){
+  anoFinal,
+}: IndicadoresGlobaisParams) {
   try {
     const gradRequest = new GradRequest();
 
@@ -198,15 +199,18 @@ export async function getIndicadoresGlobais({
     gradRequest.setAnof(anoFinal);
 
     const response = await new Promise((resolve, reject) => {
-      stubIndicadores.getIndicadoresGlobais(gradRequest, (error, indicadores) => {
-        if (error) {
-          reject(error); // Rejeita a promise em caso de erro
-        } else {
-          const data = indicadores.toObject()["itemList"];
+      stubIndicadores.getIndicadoresGlobais(
+        gradRequest,
+        (error, indicadores) => {
+          if (error) {
+            reject(error); // Rejeita a promise em caso de erro
+          } else {
+            const data = indicadores.toObject()["itemList"];
 
-          resolve(toApiResponse(data)); // Resolve a promise com os indicadores
-        }
-      });
+            resolve(toApiResponse(data)); // Resolve a promise com os indicadores
+          }
+        },
+      );
     });
 
     return response;

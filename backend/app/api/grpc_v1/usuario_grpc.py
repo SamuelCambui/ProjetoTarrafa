@@ -19,13 +19,18 @@ class Usuario(usuarios_pb2_grpc.UsuarioServicer):
                 raise
             elif not user.is_active:
                 raise 
-
-            loginResponse = messages_pb2.LoginResponse()
-            loginResponse.avatar = useravatar
-            loginResponse.nome = user.full_name
-            loginResponse.email  = user.email
-            loginResponse.idlattes = user.idlattes
-            loginResponse.erro = False
+            usuario = messages_pb2.UsuarioDados(
+                id_lattes=user.idlattes,
+                email=user.email,
+                nome=user.full_name,
+                is_superuser=user.is_superuser,
+                is_admin=user.is_admin,
+                id_ies=user.id_ies,
+                nome_ies=user.nome_ies,
+                sigla_ies=user.sigla_ies,
+                link_avatar=useravatar,
+            )
+            loginResponse = messages_pb2.LoginResponse(usuario=usuario, erro=False)
 
             return loginResponse
 

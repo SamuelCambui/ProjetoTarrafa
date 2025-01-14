@@ -78,46 +78,42 @@ class LoginRequest(_message.Message):
     def __init__(self, username: _Optional[str] = ..., password: _Optional[str] = ...) -> None: ...
 
 class LoginResponse(_message.Message):
-    __slots__ = ("avatar", "nome", "email", "idlattes", "erro")
-    AVATAR_FIELD_NUMBER: _ClassVar[int]
-    NOME_FIELD_NUMBER: _ClassVar[int]
-    EMAIL_FIELD_NUMBER: _ClassVar[int]
-    IDLATTES_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("usuario", "erro")
+    USUARIO_FIELD_NUMBER: _ClassVar[int]
     ERRO_FIELD_NUMBER: _ClassVar[int]
-    avatar: str
-    nome: str
-    email: str
-    idlattes: str
+    usuario: UsuarioDados
     erro: bool
-    def __init__(self, avatar: _Optional[str] = ..., nome: _Optional[str] = ..., email: _Optional[str] = ..., idlattes: _Optional[str] = ..., erro: bool = ...) -> None: ...
+    def __init__(self, usuario: _Optional[_Union[UsuarioDados, _Mapping]] = ..., erro: bool = ...) -> None: ...
 
 class UsuarioDados(_message.Message):
-    __slots__ = ("idLattes", "email", "nome", "isSuperuser", "isAdmin", "idIes", "nomeIes", "siglaIes")
-    IDLATTES_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("id_lattes", "email", "nome", "is_superuser", "is_admin", "id_ies", "nome_ies", "sigla_ies", "link_avatar")
+    ID_LATTES_FIELD_NUMBER: _ClassVar[int]
     EMAIL_FIELD_NUMBER: _ClassVar[int]
     NOME_FIELD_NUMBER: _ClassVar[int]
-    ISSUPERUSER_FIELD_NUMBER: _ClassVar[int]
-    ISADMIN_FIELD_NUMBER: _ClassVar[int]
-    IDIES_FIELD_NUMBER: _ClassVar[int]
-    NOMEIES_FIELD_NUMBER: _ClassVar[int]
-    SIGLAIES_FIELD_NUMBER: _ClassVar[int]
-    idLattes: str
+    IS_SUPERUSER_FIELD_NUMBER: _ClassVar[int]
+    IS_ADMIN_FIELD_NUMBER: _ClassVar[int]
+    ID_IES_FIELD_NUMBER: _ClassVar[int]
+    NOME_IES_FIELD_NUMBER: _ClassVar[int]
+    SIGLA_IES_FIELD_NUMBER: _ClassVar[int]
+    LINK_AVATAR_FIELD_NUMBER: _ClassVar[int]
+    id_lattes: str
     email: str
     nome: str
-    isSuperuser: bool
-    isAdmin: bool
-    idIes: str
-    nomeIes: str
-    siglaIes: str
-    def __init__(self, idLattes: _Optional[str] = ..., email: _Optional[str] = ..., nome: _Optional[str] = ..., isSuperuser: bool = ..., isAdmin: bool = ..., idIes: _Optional[str] = ..., nomeIes: _Optional[str] = ..., siglaIes: _Optional[str] = ...) -> None: ...
+    is_superuser: bool
+    is_admin: bool
+    id_ies: str
+    nome_ies: str
+    sigla_ies: str
+    link_avatar: str
+    def __init__(self, id_lattes: _Optional[str] = ..., email: _Optional[str] = ..., nome: _Optional[str] = ..., is_superuser: bool = ..., is_admin: bool = ..., id_ies: _Optional[str] = ..., nome_ies: _Optional[str] = ..., sigla_ies: _Optional[str] = ..., link_avatar: _Optional[str] = ...) -> None: ...
 
 class CriacaoUsuarioRequest(_message.Message):
-    __slots__ = ("usuarioBase", "password")
-    USUARIOBASE_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("usuario_base", "password")
+    USUARIO_BASE_FIELD_NUMBER: _ClassVar[int]
     PASSWORD_FIELD_NUMBER: _ClassVar[int]
-    usuarioBase: UsuarioDados
+    usuario_base: UsuarioDados
     password: str
-    def __init__(self, usuarioBase: _Optional[_Union[UsuarioDados, _Mapping]] = ..., password: _Optional[str] = ...) -> None: ...
+    def __init__(self, usuario_base: _Optional[_Union[UsuarioDados, _Mapping]] = ..., password: _Optional[str] = ...) -> None: ...
 
 class UsuarioRequest(_message.Message):
     __slots__ = ("email",)

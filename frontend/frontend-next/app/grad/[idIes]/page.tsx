@@ -10,7 +10,6 @@ import { GraficoBoxplotIdade } from "./(components)/GraficoBoxplotIdade";
 import { GraficoEgressosCota } from "./(components)/GraficoEgressosCota";
 import { GraficoTaxaMatriculasCota } from "./(components)/GraficoTaxaMatriculasCota";
 import { GraficoNaturalidade } from "./(components)/GraficoNaturalidade";
-import { GradContext } from "../GradContext";
 
 export const Home = () => {
   const { idIes } = useParams();
@@ -26,11 +25,6 @@ export const Home = () => {
     anoInicial: periodo.anoInicial,
     anoFinal: periodo.anoFinal,
   });
-  const { setVariables } = useContext(GradContext);
-
-  useEffect(() => {
-    setVariables(idIes as string, "Universidade Estadual de Montes Claros");
-  }, []);
 
   return (
     <div className="space-y-2">

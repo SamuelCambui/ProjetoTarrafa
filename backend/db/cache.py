@@ -7,7 +7,6 @@ from grpc import ServicerContext
 from backend.worker import crud
 from backend.core.config import settings
 
-
 def cache_grpc(response_type):
    def decorator(func):
       @wraps(func)
@@ -18,7 +17,6 @@ def cache_grpc(response_type):
 
          print(cache_key)
          universidade = request.id_ies
-        
          
          try:
             print("id_ies: ", universidade)
@@ -43,7 +41,6 @@ def cache_grpc(response_type):
          return result
       return wrapper
    return decorator
-
 
 def cache_grpc_ppg():
    return cache_grpc(messages_pb2.PpgResponse)

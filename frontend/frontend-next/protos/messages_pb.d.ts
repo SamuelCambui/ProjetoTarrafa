@@ -251,25 +251,10 @@ export namespace LoginRequest {
 
 export class LoginResponse extends jspb.Message { 
 
-    hasAvatar(): boolean;
-    clearAvatar(): void;
-    getAvatar(): string | undefined;
-    setAvatar(value: string): LoginResponse;
-
-    hasNome(): boolean;
-    clearNome(): void;
-    getNome(): string | undefined;
-    setNome(value: string): LoginResponse;
-
-    hasEmail(): boolean;
-    clearEmail(): void;
-    getEmail(): string | undefined;
-    setEmail(value: string): LoginResponse;
-
-    hasIdlattes(): boolean;
-    clearIdlattes(): void;
-    getIdlattes(): string | undefined;
-    setIdlattes(value: string): LoginResponse;
+    hasUsuario(): boolean;
+    clearUsuario(): void;
+    getUsuario(): UsuarioDados | undefined;
+    setUsuario(value?: UsuarioDados): LoginResponse;
     getErro(): boolean;
     setErro(value: boolean): LoginResponse;
 
@@ -285,17 +270,117 @@ export class LoginResponse extends jspb.Message {
 
 export namespace LoginResponse {
     export type AsObject = {
-        avatar?: string,
-        nome?: string,
-        email?: string,
-        idlattes?: string,
+        usuario?: UsuarioDados.AsObject,
         erro: boolean,
     }
 }
 
+export class UsuarioDados extends jspb.Message { 
+
+    hasIdLattes(): boolean;
+    clearIdLattes(): void;
+    getIdLattes(): string | undefined;
+    setIdLattes(value: string): UsuarioDados;
+
+    hasEmail(): boolean;
+    clearEmail(): void;
+    getEmail(): string | undefined;
+    setEmail(value: string): UsuarioDados;
+
+    hasNome(): boolean;
+    clearNome(): void;
+    getNome(): string | undefined;
+    setNome(value: string): UsuarioDados;
+
+    hasIsSuperuser(): boolean;
+    clearIsSuperuser(): void;
+    getIsSuperuser(): boolean | undefined;
+    setIsSuperuser(value: boolean): UsuarioDados;
+
+    hasIsAdmin(): boolean;
+    clearIsAdmin(): void;
+    getIsAdmin(): boolean | undefined;
+    setIsAdmin(value: boolean): UsuarioDados;
+
+    hasIdIes(): boolean;
+    clearIdIes(): void;
+    getIdIes(): string | undefined;
+    setIdIes(value: string): UsuarioDados;
+
+    hasNomeIes(): boolean;
+    clearNomeIes(): void;
+    getNomeIes(): string | undefined;
+    setNomeIes(value: string): UsuarioDados;
+
+    hasSiglaIes(): boolean;
+    clearSiglaIes(): void;
+    getSiglaIes(): string | undefined;
+    setSiglaIes(value: string): UsuarioDados;
+
+    hasLinkAvatar(): boolean;
+    clearLinkAvatar(): void;
+    getLinkAvatar(): string | undefined;
+    setLinkAvatar(value: string): UsuarioDados;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): UsuarioDados.AsObject;
+    static toObject(includeInstance: boolean, msg: UsuarioDados): UsuarioDados.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: UsuarioDados, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): UsuarioDados;
+    static deserializeBinaryFromReader(message: UsuarioDados, reader: jspb.BinaryReader): UsuarioDados;
+}
+
+export namespace UsuarioDados {
+    export type AsObject = {
+        idLattes?: string,
+        email?: string,
+        nome?: string,
+        isSuperuser?: boolean,
+        isAdmin?: boolean,
+        idIes?: string,
+        nomeIes?: string,
+        siglaIes?: string,
+        linkAvatar?: string,
+    }
+}
+
+export class CriacaoUsuarioRequest extends jspb.Message { 
+
+    hasUsuarioBase(): boolean;
+    clearUsuarioBase(): void;
+    getUsuarioBase(): UsuarioDados | undefined;
+    setUsuarioBase(value?: UsuarioDados): CriacaoUsuarioRequest;
+
+    hasPassword(): boolean;
+    clearPassword(): void;
+    getPassword(): string | undefined;
+    setPassword(value: string): CriacaoUsuarioRequest;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): CriacaoUsuarioRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: CriacaoUsuarioRequest): CriacaoUsuarioRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: CriacaoUsuarioRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CriacaoUsuarioRequest;
+    static deserializeBinaryFromReader(message: CriacaoUsuarioRequest, reader: jspb.BinaryReader): CriacaoUsuarioRequest;
+}
+
+export namespace CriacaoUsuarioRequest {
+    export type AsObject = {
+        usuarioBase?: UsuarioDados.AsObject,
+        password?: string,
+    }
+}
+
 export class UsuarioRequest extends jspb.Message { 
-    getUsername(): string;
-    setUsername(value: string): UsuarioRequest;
+
+    hasEmail(): boolean;
+    clearEmail(): void;
+    getEmail(): string | undefined;
+    setEmail(value: string): UsuarioRequest;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): UsuarioRequest.AsObject;
@@ -309,23 +394,16 @@ export class UsuarioRequest extends jspb.Message {
 
 export namespace UsuarioRequest {
     export type AsObject = {
-        username: string,
+        email?: string,
     }
 }
 
 export class UsuarioResponse extends jspb.Message { 
-    getIdlattes(): string;
-    setIdlattes(value: string): UsuarioResponse;
-    getEmail(): string;
-    setEmail(value: string): UsuarioResponse;
-    getFullName(): string;
-    setFullName(value: string): UsuarioResponse;
-    getIsSuperuser(): boolean;
-    setIsSuperuser(value: boolean): UsuarioResponse;
-    getIsAdmin(): boolean;
-    setIsAdmin(value: boolean): UsuarioResponse;
-    getIdIes(): string;
-    setIdIes(value: string): UsuarioResponse;
+
+    hasUsuario(): boolean;
+    clearUsuario(): void;
+    getUsuario(): UsuarioDados | undefined;
+    setUsuario(value?: UsuarioDados): UsuarioResponse;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): UsuarioResponse.AsObject;
@@ -339,12 +417,58 @@ export class UsuarioResponse extends jspb.Message {
 
 export namespace UsuarioResponse {
     export type AsObject = {
-        idlattes: string,
-        email: string,
-        fullName: string,
-        isSuperuser: boolean,
-        isAdmin: boolean,
-        idIes: string,
+        usuario?: UsuarioDados.AsObject,
+    }
+}
+
+export class AlteracaoUsuarioResponse extends jspb.Message { 
+
+    hasStatus(): boolean;
+    clearStatus(): void;
+    getStatus(): boolean | undefined;
+    setStatus(value: boolean): AlteracaoUsuarioResponse;
+
+    hasMenssagem(): boolean;
+    clearMenssagem(): void;
+    getMenssagem(): string | undefined;
+    setMenssagem(value: string): AlteracaoUsuarioResponse;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): AlteracaoUsuarioResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: AlteracaoUsuarioResponse): AlteracaoUsuarioResponse.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: AlteracaoUsuarioResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): AlteracaoUsuarioResponse;
+    static deserializeBinaryFromReader(message: AlteracaoUsuarioResponse, reader: jspb.BinaryReader): AlteracaoUsuarioResponse;
+}
+
+export namespace AlteracaoUsuarioResponse {
+    export type AsObject = {
+        status?: boolean,
+        menssagem?: string,
+    }
+}
+
+export class ListaUsuariosResponse extends jspb.Message { 
+    clearItemList(): void;
+    getItemList(): Array<UsuarioResponse>;
+    setItemList(value: Array<UsuarioResponse>): ListaUsuariosResponse;
+    addItem(value?: UsuarioResponse, index?: number): UsuarioResponse;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ListaUsuariosResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: ListaUsuariosResponse): ListaUsuariosResponse.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: ListaUsuariosResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ListaUsuariosResponse;
+    static deserializeBinaryFromReader(message: ListaUsuariosResponse, reader: jspb.BinaryReader): ListaUsuariosResponse;
+}
+
+export namespace ListaUsuariosResponse {
+    export type AsObject = {
+        itemList: Array<UsuarioResponse.AsObject>,
     }
 }
 

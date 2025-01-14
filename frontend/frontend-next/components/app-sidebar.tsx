@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Award,
@@ -12,28 +12,26 @@ import {
   Settings2,
   SquareTerminal,
   Users2,
-  Waypoints
-} from "lucide-react"
-import * as React from "react"
+  Waypoints,
+} from "lucide-react";
+import * as React from "react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavSuperUser } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/nav-main";
+import { NavSuperUser } from "@/components/nav-projects";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
-
+} from "@/components/ui/sidebar";
 
 const user = {
   name: "Gabrielle Zuba ",
   email: "gabszuba@unimontes.br",
   avatar: "/avatars/shadcn.jpg",
-}
-
+};
 
 const data = {
   navMain: [
@@ -69,17 +67,17 @@ const data = {
     },
     {
       title: "Ranking de Docentes",
-      url: "/ppg/ranking-docentes",  
+      url: "/ppg/ranking-docentes",
       icon: Award,
     },
     {
       title: "Artigos de Docentes",
-      url: "/ppg/artigos-docentes",  
+      url: "/ppg/artigos-docentes",
       icon: Library,
     },
     {
       title: "Usuários",
-      url: "/ppg/usuarios",  
+      url: "/ppg/usuarios",
       icon: Users2,
     },
   ],
@@ -100,14 +98,12 @@ const data = {
       icon: MessageSquare,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        {/* <TeamSwitcher /> */}
-      </SidebarHeader>
+      <SidebarHeader>{/* <TeamSwitcher /> */}</SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavSuperUser itemsUser={data.admin} />
@@ -117,5 +113,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

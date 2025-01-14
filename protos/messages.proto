@@ -47,26 +47,24 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  optional string avatar = 1;
-  optional string nome = 2;
-  optional string email  = 3;
-  optional string idlattes = 4;
-  bool erro = 5;
+  optional UsuarioDados usuario = 1;
+  bool erro = 2;
 }
 
 message UsuarioDados {
-  optional string idLattes = 1;
+  optional string id_lattes = 1;
   optional string email = 2;
   optional string nome = 3;
-  optional bool isSuperuser = 4;
-  optional bool isAdmin = 5;
-  optional string idIes = 6;
-  optional string nomeIes = 7;
-  optional string siglaIes = 8;
+  optional bool is_superuser = 4;
+  optional bool is_admin = 5;
+  optional string id_ies = 6;
+  optional string nome_ies = 7;
+  optional string sigla_ies = 8;
+  optional string link_avatar = 9;
 }
 
 message CriacaoUsuarioRequest{
-  optional UsuarioDados usuarioBase = 1;
+  optional UsuarioDados usuario_base = 1;
   optional string password = 2;
 }
 

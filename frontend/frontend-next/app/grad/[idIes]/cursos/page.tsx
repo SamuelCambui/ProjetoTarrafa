@@ -14,6 +14,7 @@ import { useParams, usePathname } from "next/navigation";
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GradContext } from "../../GradContext";
+import { useVariablesStore } from "@/store/variablesStore";
 
 export const Cursos = () => {
   const { idIes } = useParams();
@@ -23,10 +24,8 @@ export const Cursos = () => {
   const [cursos, setCursos] = useState<
     { id: string; nome: string; tipo_curso: string }[] | undefined
   >(data?.cursos);
-
+  const setVariablesStore = useVariablesStore((state) => state.setVariables);
   const router = useRouter();
-
-  const { setVariables } = useContext(GradContext);
 
   useEffect(() => {
     setCursos(data?.cursos);
@@ -36,7 +35,7 @@ export const Cursos = () => {
     const filteredCursos = data?.cursos.filter((curso: any) =>
       curso.nome
         .toLocaleLowerCase()
-        .startsWith(e.target.value.toLocaleLowerCase()),
+        .startsWith(e.target.value.toLocaleLowerCase())
     );
     setCursos(filteredCursos);
   };
@@ -68,7 +67,7 @@ export const Cursos = () => {
                   <Button
                     size="lg"
                     onClick={() => {
-                      setVariables(curso.id, curso.nome);
+                      setVariablesStore(idIes as string, curso.id, curso.nome);
                       router.push(`${path}/${curso.id}`);
                     }}
                   >

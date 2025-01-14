@@ -1,21 +1,18 @@
 import {
-  BadgeCheck,
-  Bell,
   Book,
   Building,
   ChevronDown,
   ChevronsUpDown,
-  CreditCard,
   Home,
   LogOut,
-  Sparkles,
 } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getCurrentUser, logout } from "@/app/login/actions";
+import { Loading } from "@/components/loading";
+import { Avatar } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -31,28 +28,47 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { User } from "@/types/user";
+import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useVariablesStore } from "@/store/variablesStore";
 
 export function AppSidebar() {
   const { isMobile } = useSidebar();
+  const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
+  const deleteStorage = useVariablesStore((state) => state.deleteStorage);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await getCurrentUser();
+      setCurrentUser(user?.user);
+    };
+    getUser();
+  }, []);
 
   const items = [
     {
       title: "Geral",
-      url: `/grad/${3727}`,
+      url: `/grad/${currentUser?.idIes}`,
       icon: Home,
     },
     {
       title: "Cursos",
-      url: `/grad/${3727}/cursos`,
+      url: `/grad/${currentUser?.idIes}/cursos`,
       icon: Book,
     },
     {
       title: "Departamentos",
-      url: `/grad/${3727}/departamentos`,
+      url: `/grad/${currentUser?.idIes}/departamentos`,
       icon: Building,
     },
   ];
+
+  const handleLogout = async () => {
+    await logout();
+    deleteStorage();
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -68,13 +84,13 @@ export function AppSidebar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
                 <DropdownMenuItem>
-                  <span>Stricto Sensu</span>
+                  <Link href={`/ppg/${currentUser?.idIes}`}>Stricto Sensu</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <span>Graduação</span>
+                  <Link href={`/grad/${currentUser?.idIes}`}>Graduação</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <span>Lato Sensu</span>
+                  <Link href={`/ppgls/${currentUser?.idIes}`}>Lato Sensu</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -103,15 +119,24 @@ export function AppSidebar() {
                   size="lg"
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <Avatar className="h-8 w-8 rounded-full">
+                    {currentUser ? (
+                      <Image
+                        src={currentUser?.linkAvatar ?? ""}
+                        alt="AV"
+                        fill
+                      />
+                    ) : (
+                      <Loading />
+                    )}
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">
-                      Luiz Henrique
+                      {currentUser?.nome ?? "Usuário"}
                     </span>
-                    <span className="truncate text-xs">email@email.com</span>
+                    <span className="truncate text-xs">
+                      {currentUser?.email ?? "E-mail"}
+                    </span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -124,42 +149,25 @@ export function AppSidebar() {
               >
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage />
-                      <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    <Avatar className="h-8 w-8 rounded-full">
+                      <Image
+                        src={currentUser?.linkAvatar ?? ""}
+                        alt="AV"
+                        fill
+                      />
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
-                        Luiz Henrique
+                        {currentUser?.nome ?? "Usuário"}
                       </span>
-                      <span className="truncate text-xs">email@email.com</span>
+                      <span className="truncate text-xs">
+                        {currentUser?.email ?? "E-mail"}
+                      </span>
                     </div>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <Sparkles />
-                    Upgrade to Pro
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <BadgeCheck />
-                    Account
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CreditCard />
-                    Billing
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Bell />
-                    Notifications
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleLogout()}>
                   <LogOut />
                   Log out
                 </DropdownMenuItem>

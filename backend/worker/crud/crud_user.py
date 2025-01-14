@@ -22,6 +22,9 @@ class CRUDUser():
         row = db.fetch_one(query, identifier = value)
         if row:
             user = UserInDB(**row)
+            nome_ies, sigla_ies = self.dados_complementares(user.id_ies)
+            user.nome_ies = nome_ies
+            user.sigla_ies = sigla_ies
             #query = f"SELECT linkavatar FROM public.curriculos_lattes where idlattes='{user.idlattes}'"
             # rowavatar = db.fetch_one(query)
             rowavatar = crud.queries_ppg.retorna_link_avatar_lattes(user.idlattes, True)

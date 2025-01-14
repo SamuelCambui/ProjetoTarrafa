@@ -8,17 +8,16 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Sistema Tarrafa',
-    default: 'Sistema Tarrafa',
+    template: "%s | Sistema Tarrafa",
+    default: "Sistema Tarrafa",
   },
-  description: 'Solução para integrar e acompanhar as informações de desempenho dos PPGs',
-  metadataBase: new URL('https://tarrafa.unimontes.br/'),
+  description:
+    "Solução para integrar e acompanhar as informações de desempenho dos PPGs",
+  metadataBase: new URL("https://tarrafa.unimontes.br/"),
   icons: {
-    icon: '/favicon.ico',
+    icon: "/favicon.ico",
   },
 };
-
-
 
 export default function RootLayout({
   children,

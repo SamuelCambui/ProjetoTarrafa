@@ -105,6 +105,11 @@ var UsuarioService = exports.UsuarioService = {
     responseSerialize: serialize_protos_UsuarioResponse,
     responseDeserialize: deserialize_protos_UsuarioResponse,
   },
+  // rpc ObtemListaUsuarios (UsuarioRequest) returns (ListaUsuariosResponse);
+// rpc AtualizarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+// rpc CriarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+// rpc DeletarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+// rpc AlternarStatusUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
 };
 
 exports.UsuarioClient = grpc.makeGenericClientConstructor(UsuarioService);

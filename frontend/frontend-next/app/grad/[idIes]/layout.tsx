@@ -8,15 +8,15 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useVariablesStore } from "@/store/variablesStore";
 import { Separator } from "@radix-ui/react-separator";
-import { usePathname } from "next/navigation";
-import React, { PropsWithChildren, useContext } from "react";
-import { GradContext } from "../GradContext";
+import { useParams, usePathname } from "next/navigation";
+import React, { PropsWithChildren } from "react";
 
 export const Layout = ({ children }: PropsWithChildren) => {
-  const { variables } = useContext(GradContext);
+  const { idIes } = useParams();
   const currentRoute = usePathname();
-
+  const variables = useVariablesStore((state) => state.variables);
   let routes = currentRoute.split("/");
   const lastRoute = routes[routes.length - 1];
   routes = routes.slice(2, routes.length - 1);
@@ -33,7 +33,8 @@ export const Layout = ({ children }: PropsWithChildren) => {
                 <React.Fragment key={index}>
                   <BreadcrumbItem className="hidden md:block">
                     <BreadcrumbLink className="capitalize">
-                      {variables[text] ?? text}
+                      {variables[idIes as string][text]?.toLocaleLowerCase() ??
+                        text}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
@@ -41,8 +42,8 @@ export const Layout = ({ children }: PropsWithChildren) => {
               ))}
               <BreadcrumbItem>
                 <BreadcrumbPage className="capitalize">
-                  {variables[lastRoute]
-                    ? variables[lastRoute].toLocaleLowerCase()
+                  {variables[idIes as string][lastRoute]
+                    ? variables[idIes as string][lastRoute].toLocaleLowerCase()
                     : lastRoute}
                 </BreadcrumbPage>
               </BreadcrumbItem>
