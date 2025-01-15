@@ -4,6 +4,39 @@
 var grpc = require('@grpc/grpc-js');
 var messages_pb = require('./messages_pb.js');
 
+function serialize_protos_AlteracaoUsuarioResponse(arg) {
+  if (!(arg instanceof messages_pb.AlteracaoUsuarioResponse)) {
+    throw new Error('Expected argument of type protos.AlteracaoUsuarioResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_protos_AlteracaoUsuarioResponse(buffer_arg) {
+  return messages_pb.AlteracaoUsuarioResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_protos_CriacaoUsuarioRequest(arg) {
+  if (!(arg instanceof messages_pb.CriacaoUsuarioRequest)) {
+    throw new Error('Expected argument of type protos.CriacaoUsuarioRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_protos_CriacaoUsuarioRequest(buffer_arg) {
+  return messages_pb.CriacaoUsuarioRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_protos_ListaUsuariosResponse(arg) {
+  if (!(arg instanceof messages_pb.ListaUsuariosResponse)) {
+    throw new Error('Expected argument of type protos.ListaUsuariosResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_protos_ListaUsuariosResponse(buffer_arg) {
+  return messages_pb.ListaUsuariosResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_protos_LoginRequest(arg) {
   if (!(arg instanceof messages_pb.LoginRequest)) {
     throw new Error('Expected argument of type protos.LoginRequest');
@@ -105,11 +138,61 @@ var UsuarioService = exports.UsuarioService = {
     responseSerialize: serialize_protos_UsuarioResponse,
     responseDeserialize: deserialize_protos_UsuarioResponse,
   },
-  // rpc ObtemListaUsuarios (UsuarioRequest) returns (ListaUsuariosResponse);
-// rpc AtualizarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
-// rpc CriarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
-// rpc DeletarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
-// rpc AlternarStatusUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+  obtemListaUsuarios: {
+    path: '/protos.Usuario/ObtemListaUsuarios',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.UsuarioResponse,
+    responseType: messages_pb.ListaUsuariosResponse,
+    requestSerialize: serialize_protos_UsuarioResponse,
+    requestDeserialize: deserialize_protos_UsuarioResponse,
+    responseSerialize: serialize_protos_ListaUsuariosResponse,
+    responseDeserialize: deserialize_protos_ListaUsuariosResponse,
+  },
+  deletarUsuario: {
+    path: '/protos.Usuario/DeletarUsuario',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.UsuarioRequest,
+    responseType: messages_pb.AlteracaoUsuarioResponse,
+    requestSerialize: serialize_protos_UsuarioRequest,
+    requestDeserialize: deserialize_protos_UsuarioRequest,
+    responseSerialize: serialize_protos_AlteracaoUsuarioResponse,
+    responseDeserialize: deserialize_protos_AlteracaoUsuarioResponse,
+  },
+  alternarStatusUsuario: {
+    path: '/protos.Usuario/AlternarStatusUsuario',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.UsuarioRequest,
+    responseType: messages_pb.AlteracaoUsuarioResponse,
+    requestSerialize: serialize_protos_UsuarioRequest,
+    requestDeserialize: deserialize_protos_UsuarioRequest,
+    responseSerialize: serialize_protos_AlteracaoUsuarioResponse,
+    responseDeserialize: deserialize_protos_AlteracaoUsuarioResponse,
+  },
+  atualizarUsuario: {
+    path: '/protos.Usuario/AtualizarUsuario',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.CriacaoUsuarioRequest,
+    responseType: messages_pb.AlteracaoUsuarioResponse,
+    requestSerialize: serialize_protos_CriacaoUsuarioRequest,
+    requestDeserialize: deserialize_protos_CriacaoUsuarioRequest,
+    responseSerialize: serialize_protos_AlteracaoUsuarioResponse,
+    responseDeserialize: deserialize_protos_AlteracaoUsuarioResponse,
+  },
+  criarUsuario: {
+    path: '/protos.Usuario/CriarUsuario',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.CriacaoUsuarioRequest,
+    responseType: messages_pb.AlteracaoUsuarioResponse,
+    requestSerialize: serialize_protos_CriacaoUsuarioRequest,
+    requestDeserialize: deserialize_protos_CriacaoUsuarioRequest,
+    responseSerialize: serialize_protos_AlteracaoUsuarioResponse,
+    responseDeserialize: deserialize_protos_AlteracaoUsuarioResponse,
+  },
 };
 
 exports.UsuarioClient = grpc.makeGenericClientConstructor(UsuarioService);

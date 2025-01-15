@@ -7,10 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "protos": "npx grpc_tools_node_protoc -I ../../protos --js_out=import_style=commonjs,binary:./protos --grpc_out=grpc_js:./protos ../../protos/*.proto && ..\\..\\.venv\\Scripts\\python.exe -m grpc_tools.protoc --plugin=protoc-gen-ts=\"..\\..\\frontend\\frontend-next\\node_modules\\.bin\\protoc-gen-ts.cmd\" --ts_out=grpc_js:\"..\\..\\frontend\\frontend-next\\protos\" -I ../../protos ../../protos/*.proto"
+    "protos": "npx grpc_tools_node_protoc -I ../../protos --js_out=import_style=commonjs,binary:./protos --grpc_out=grpc_js:./protos ../../protos/*.proto && ..\\..\\.venv\\Scripts\\python.exe -m grpc_tools.protoc --plugin=protoc-gen-ts=\"..\\..\\frontend\\frontend-next\\node_modules\\.bin\\protoc-gen-ts.cmd\" --ts_out=grpc_js:\"..\\..\\frontend\\frontend-next\\protos\" -I ../../protos ../../protos/*.proto",
+    "proto:ts": "protoc --plugin=protoc-gen-ts=.\\node_modules\\.bin\\protoc-gen-ts.cmd --ts_out=grpc_js:.\\protos --proto_path=../../protos -I . .\\..\\..\\protos\\*.proto"
   },
   "dependencies": {
-    "@ant-design/charts": "^2.2.3",
+    "@ant-design/charts": "^2.2.1",
     "@grpc/grpc-js": "^1.12.4",
     "@grpc/proto-loader": "^0.7.13",
     "@hookform/resolvers": "^3.10.0",
@@ -38,7 +39,7 @@
     "jose": "^5.9.6",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.464.0",
-    "next": "14.2.18",
+    "next": "^14.2.23",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.54.2",

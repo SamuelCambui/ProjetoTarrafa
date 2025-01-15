@@ -8,9 +8,9 @@ service Usuario {
   rpc Login (LoginRequest) returns (LoginResponse);
   rpc Logout (LogoutRequest) returns (LogoutResponse);
   rpc ObtemUsuario (UsuarioRequest) returns (UsuarioResponse);
-  // rpc ObtemListaUsuarios (UsuarioRequest) returns (ListaUsuariosResponse);
-  // rpc AtualizarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
-  // rpc CriarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
-  // rpc DeletarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
-  // rpc AlternarStatusUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+  rpc ObtemListaUsuarios (UsuarioResponse) returns (ListaUsuariosResponse);
+  rpc DeletarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+  rpc AlternarStatusUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+  rpc AtualizarUsuario (CriacaoUsuarioRequest) returns (AlteracaoUsuarioResponse);
+  rpc CriarUsuario (CriacaoUsuarioRequest) returns (AlteracaoUsuarioResponse);
 }
