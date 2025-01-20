@@ -10,6 +10,9 @@ const nextConfig = {
         pathname: "/wspessoa/servletrecuperafoto/**",
       }
     ]
-  }
+  },
+  env: {
+    secretKey: "H_eYjpvJahXtSMfRIrmCkdQJMCAisriug3OF765x89c",
+  },
 };
 export default nextConfig;
