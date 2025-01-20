@@ -16,9 +16,7 @@ class Usuario(usuarios_pb2_grpc.UsuarioServicer):
         try:
             usuario = tarefa_autentica_usuario.apply(kwargs={'username':request.username , 'password':request.password}).get()
 
-            if not usuario:
-                raise
-            elif not usuario.is_active:
+            if not usuario or not usuario.is_active:
                 raise
             
             loginResponse = messages_pb2.LoginResponse(usuario=ParseDict(usuario.dict(), messages_pb2.UsuarioDadosFront()), erro=False)

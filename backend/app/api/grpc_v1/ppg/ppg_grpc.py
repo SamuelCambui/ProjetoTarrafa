@@ -107,7 +107,7 @@ class PPG(ppg_pb2_grpc.PPGServicer):
             print(e)
             return None
 
-    # @cache_grpc_ppg()
+    @cache_grpc_ppg()
     def ObtemDocentes(self, request, context):
         print("ObtemDocentes chamada...")
         try:
