@@ -423,7 +423,7 @@ class QueriesDisciplinas():
                 semestre,
                 cast(ROUND(100 * SUM(CASE WHEN h.percentual_freq < (SELECT * from freq_min) THEN 1 ELSE 0 END)/COUNT(*), 2) as float)
                     as evasao,
-                cast(ROUND(100 * SUM(CASE WHEN h.percentual_freq >= (SELECT * from freq_min) THEN 1 ELSE 0 END)/COUNT(*), 2) as float)
+                100 - cast(ROUND(100 * SUM(CASE WHEN h.percentual_freq < (SELECT * from freq_min) THEN 1 ELSE 0 END)/COUNT(*), 2) as float)
                     as nao_evasao
             from historico as h
             where h.cod_disc = %(id_disc)s and h.id_ies = %(id_ies)s
@@ -554,11 +554,11 @@ class QueriesDisciplinas():
             query_quartis as (
                 select
                     id_prof,
-                    max(case when quartil = 1 then nota end) as primeiro_quartil,
-                    max(case when quartil = 2 then nota end) as segundo_quartil,
-                    max(case when quartil = 3 then nota end) as terceiro_quartil,
-                    round(stddev_pop(nota), 2) as desvio_padrao,
-                    round(avg(nota), 2) as media
+                    cast(max(case when quartil = 1 then nota end) as float) as primeiro_quartil,
+                    cast(max(case when quartil = 2 then nota end) as float) as segundo_quartil,
+                    cast(max(case when quartil = 3 then nota end) as float) as terceiro_quartil,
+                    cast(round(stddev_pop(nota), 2) as float) as desvio_padrao,
+                    cast(round(avg(nota), 2) as float) as media
                 from query_notas
                 group by id_prof
                 having MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL

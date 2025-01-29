@@ -4,8 +4,6 @@
     // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
-
         {
             "name": "Python: Flask",
             "type": "debugpy",
@@ -82,6 +80,30 @@
             "envFile": "${workspaceFolder}/.env.desenvolvimento",
             "args": []
         },
+        {
+            "name": "Python: SERVER LOGIN",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/app/api/api_login.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento",
+            "args": []
+        },
+      
+        {
+            "name": "Next.js: debug full stack",
+            "type": "node-terminal",
+            "cwd": "${workspaceFolder}/frontend/frontend-next",
+            "request": "launch",
+            "command": "npm run dev",
+            "serverReadyAction": {
+              "pattern": "- Local:.+(https?://.+)",
+              "uriFormat": "%s",
+              "action": "debugWithChrome"
+            }
+          },
+      
     ]
 
 }

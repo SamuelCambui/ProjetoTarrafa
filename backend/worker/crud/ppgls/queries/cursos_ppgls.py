@@ -220,27 +220,34 @@ class QueriesCursos():
                     AND h.cod_disc IN (SELECT cod_disc FROM disciplinas_curso)
                     AND cast(ano_letivo as integer) between %(anoi)s and %(anof)s
                 GROUP BY h.id_prof, dis.cod_disc, dis.nome, dis.abreviacao
+                ORDER BY h.id_prof, MAX(ano_letivo) DESC
             )
             SELECT 
                 id_prof,
                 prof.nome,
                 prof.qualificacao,
                 prof.sexo,
+                COALESCE(dep.nome, 'NÃO ESPECIFICADO') as departamento,
+                COALESCE(prof.vinculo, 'NÃO ESPECIFICADO') as vinculo,
                 JSON_AGG(
                     JSON_BUILD_OBJECT(
                         'id_disc', cod_disc,
                         'nome', disciplina,
-                        'abreviacao', abreviacao,
+                        'abreviacao', historico_curso.abreviacao,
                         'ultima_vez_lecionada', ano_letivo
                     )
                 ) AS disciplinas
             FROM historico_curso
             INNER JOIN professores AS prof ON prof.id = id_prof
+            LEFT JOIN departamentos AS dep ON dep.id_dep = prof.id_dep
             GROUP BY 
                 id_prof, 
                 prof.nome,
                 prof.qualificacao,
+                dep.nome,
+                prof.vinculo,
                 prof.sexo;
+
 
         """
         ret = db.fetch_all(
@@ -550,6 +557,85 @@ class QueriesCursos():
         ret = db.fetch_all(query, id=id, id_ies=id_ies, anoi=anoi, anof=anof)
         dados = [dict(r) for r in ret]
         return dados
+    
+    @tratamento_excecao_com_db(tipo_banco='grad')
+    def grades(self, id_curso: str, id_ies: str, db: DBConnectorGRAD = None):
+        """
+        Retorna todas as grades de um curso.
+
+        :param id_curso(str): Código do curso.
+        :param id_ies(str): Código da universidade.
+        """
+        query = """
+            select id_grade, ano || '/' || semestre as semestre_letivo from grades 
+            where id_curso = %(id_curso)s and id_ies = %(id_ies)s
+            order by semestre_letivo desc
+        """
+        ret = db.fetch_all(query, id_curso=id_curso, id_ies=id_ies)
+        return ret
+    
+    @tratamento_excecao_com_db(tipo_banco='grad')
+    def taxa_matriculas(
+        self,
+        id_ies: str,
+        anoi: int,
+        anof: int,
+        db: DBConnectorGRAD = None,
+    ):
+        query = """
+            select alunos.sexo, date_part('year', data_matricula) as ano_ingresso, count(*) as quantidade 
+            from aluno_curso
+            inner join alunos on aluno_curso.matricula_aluno = alunos.matricula and aluno_curso.id_ies = alunos.id_ies
+            where date_part('year', data_matricula) between %(anoi)s and %(anof)s
+            and alunos.id_ies = %(id_ies)s
+            group by sexo, date_part('year', data_matricula)
+            order by date_part('year', data_matricula)
+        """
+
+        ret = db.fetch_all(
+            query=query,
+            id_ies=id_ies,
+            anoi=anoi,
+            anof=anof,
+        )
+
+        return ret
+    
+    @tratamento_excecao_com_db(tipo_banco='grad')
+    def taxa_matriculas_por_cota(
+        self,
+        id_ies: str,
+        anoi: int,
+        anof: int,
+        db: DBConnectorGRAD = None,
+    ):
+        query = """
+            select
+                formasingresso.cota, 
+                date_part('year', data_matricula) || '/' ||
+                (CASE
+                    when date_part('month', data_matricula) <= 6 THEN 1
+                    else 2
+                END) as semestre_letivo,
+                count(*) as quantidade
+            from aluno_curso
+            left join formasingresso on formasingresso.id = aluno_curso.id_forma_ing and formasingresso.id_ies = aluno_curso.id_ies
+            where date_part('year', data_matricula) between %(anoi)s and %(anof)s
+            and aluno_curso.id_ies = %(id_ies)s
+            and cota is not null
+            group by cota, date_part('year', data_matricula), semestre_letivo
+            order by date_part('year', data_matricula)
+        """
+        ret = db.fetch_all(
+            query=query,
+            id_ies=id_ies,
+            anoi=anoi,
+            anof=anof,
+        )
+        return ret
+
+
+
 
     
     # @tratamento_excecao_com_db(tipo_banco='grad')

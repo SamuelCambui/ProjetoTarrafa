@@ -322,3 +322,7 @@ getDisciplina: {
 };
 
 exports.DadosPosGraduacaoLSClient = grpc.makeGenericClientConstructor(DadosPosGraduacaoLSService);
+<<<<<<< HEAD
+=======
+
+>>>>>>> c3ff0cc (implementação do front-end primeira parte)

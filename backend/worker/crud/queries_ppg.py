@@ -1,14 +1,14 @@
 from backend.db.db import DBConnector
 import jellyfish
 from backend.core import utils
-from backend.core.utils import tratamento_excecao_com_db, tratamento_excecao
+from backend.core.utils import tratamento_excecao_com_db, tratamento_excecao, tratamento_excecao_db_ppg
 from datetime import datetime
 from typing import List
 import time
 
 class QueriesPPG():
-
-    @tratamento_excecao_com_db()
+    
+    @tratamento_excecao_db_ppg()
     def retorna_id_ies(self, id: str, db: DBConnector = None):
         query = "select id_ies from programas where codigo_programa = %(id)s"
         row = db.fetch_one(query, id=id)
@@ -16,13 +16,13 @@ class QueriesPPG():
             return row[0]
         return None
     
-    @tratamento_excecao
+    @tratamento_excecao_db_ppg()
     def retorna_link_avatar_lattes(self, ids: str, idlattes: bool, db: DBConnector = None):
         """
         Retorna o link do avatar do currículo Lattes
         """
         avatar = ''
-
+        print(ids)
         if idlattes:
             query = f"""select linkavatar from lattes_docentes where num_identificador = '{ids}'"""
             row = db.fetch_one(query)
@@ -45,7 +45,7 @@ class QueriesPPG():
         return avatar
 
 
-    @tratamento_excecao
+    @tratamento_excecao_db_ppg()
     def retorna_lista_de_permanentes_do_ppg(self, id: str, ano: int, db: DBConnector = None):
         """
         Retorna uma lista com os docentes permantes do ppg (id == codigo_do_programa)
@@ -57,7 +57,7 @@ class QueriesPPG():
             return row[0]
         return None
     
-    @tratamento_excecao
+    @tratamento_excecao_db_ppg()
     def retorna_ultimo_ano_coleta(self, db:DBConnector = None):
         """
         Retorna o ultimo ano de coleta da tabela programa_históricos
@@ -69,7 +69,7 @@ class QueriesPPG():
             return row[0]
         return None
 
-    @tratamento_excecao
+    @tratamento_excecao_db_ppg()
     def retorna_contagem_de_qualis_do_lattes(self, id: str, anof: int, anocoleta: int, db: DBConnector = None):
         """
         Retornar o quantitativo de artigos com qualis considerando a base de dados lattes
@@ -143,7 +143,7 @@ class QueriesPPG():
         products_atual = [dict(r) for r in row]
         return products_atual
     
-    @tratamento_excecao
+    @tratamento_excecao_db_ppg()
     def retorna_contagem_de_qualis_do_lattes_anonimo(self, id: str, anof: int, ano_coleta: int, db: DBConnector = None):
         """
         Retornar o quantitativo de artigos com qualis considerando a base de dados lattes
@@ -280,7 +280,7 @@ class QueriesPPG():
 
         return products_atual, artigos
 
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_contagem_de_qualis_com_listanegra(self, id: str, anoi: int, anof: int, listanegra: List, db: DBConnector = None):
         """
         Retornar o quantitativo de artigos com qualis por docente (id_pessoa) para que o filtro do simulador de parâmetros da página funcione
@@ -443,7 +443,7 @@ class QueriesPPG():
         
         return {'produtos': artigos_total, 'artigos': artigos}
   
-    @tratamento_excecao_com_db
+    @tratamento_excecao_db_ppg()
     def retorna_contagem_de_indprodart_com_listanegra(self, id: str, anoi: int, anof: int, listanegra: List, db: DBConnector = None):
         """
         Retornar o quantitativo de indprodart por docente (id_pessoa) para que o filtro do simulador de parâmetros da página funcione
@@ -657,7 +657,7 @@ class QueriesPPG():
 
         return {'indprod':retorno, 'indicadores':indicadores}
     
-    @tratamento_excecao
+    @tratamento_excecao_db_ppg()
     def retorna_indprods_medios_extratificados(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
         IndProds extratificados

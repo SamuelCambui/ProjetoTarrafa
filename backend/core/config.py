@@ -48,6 +48,7 @@ class Settings(BaseSettings):
     RABBITMQ_DEFAULT_PASS=os.getenv('RABBITMQ_DEFAULT_PASS', "guest")
 
     GRPC_SERVER_HOST=os.getenv('GRPC_SERVER_HOST', "localhost")
+    GRPC_SERVER_LOGIN=os.getenv('GRPC_SERVER_LOGIN', "localhost")
     GRPC_SERVER_PPGLS = os.getenv('GRPC_SERVER_PPGLS', "localhost:50054")
     
     FILA_TAREFAS_CRITICAS = os.getenv('FILA_TAREFAS_CRITICAS', 'tarefas_criticas')

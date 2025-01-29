@@ -154,24 +154,6 @@ async def get_grafo_name(path):
         list_grafo_name = split_path[7:9]
     return " ".join(list_grafo_name).title()
 
-def tratamento_excecao_com_db(func):
-    def wrapper(*args, **kwargs):
-        try:
-            if 'db' not in kwargs:
-                db = DBConnectorPPG()
-                kwargs['db'] = db
-            else:
-                db = kwargs['db']
-            return func(*args, **kwargs)
-        except Exception as error:
-            nome_funcao = func.__name__
-            print(f"A exceção foi gerada na função: {nome_funcao}")
-            print(f"Erro: {str(error)}")
-            raise error
-        finally:
-            db.close()
-    return wrapper
-
 def tratamento_excecao(func):
     def wrapper(*args, **kwargs):
         try:
@@ -208,3 +190,6 @@ def tratamento_excecao_com_db(tipo_banco : Literal['ppg'] | Literal['grad']= 'pp
                 db.close()
         return wrapper
     return decorator
+
+def tratamento_excecao_db_ppg():
+    return tratamento_excecao_com_db(tipo_banco=DBConnectorPPG)

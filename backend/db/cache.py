@@ -1,15 +1,11 @@
 from redis import Redis
 from functools import wraps
-from google.protobuf.json_format import ParseDict, MessageToJson, MessageToDict
-from protos.out import ppg_pb2, ppg_pb2_grpc, ppgls_pb2_grpc, messages_pb2
+from google.protobuf.json_format import ParseDict, MessageToDict
+from protos.out import messages_pb2
 import json
-import pickle
 from grpc import ServicerContext
-
-from backend.core import utils
 from backend.worker import crud
 from backend.core.config import settings
-
 
 def cache_grpc(response_type):
    def decorator(func):
@@ -19,20 +15,16 @@ def cache_grpc(response_type):
          
          cache_key = f"{func.__name__}_" + "_".join(str(value) for _, value in request.ListFields())
 
-         # Criar uma chave única para o cache
-         # cache_key = f"{func.__name__}_{request.id}_{request.anoi}_{request.anof}"
-
          print(cache_key)
-         universidade = request.id_ies
-        
+         universidade = request.id_ies        
          
          try:
-            # Tentar obter o resultado do cache
+            print("id_ies: ", universidade)
             cached_result = redis.existsField(universidade, cache_key)
             if cached_result:
                print('Cache hit')
                res = redis.getField(universidade, cache_key)
-               return ParseDict(res, response_type())#(cached_result)
+               return ParseDict(res, response_type())
          except Exception as e:
             print(f"Error retrieving from cache: {e}")
 
@@ -50,11 +42,17 @@ def cache_grpc(response_type):
       return wrapper
    return decorator
 
+def cache_grpc_ppg():
+   return cache_grpc(messages_pb2.PpgResponse)
 
-def cache_grpc_ppgls(*args):
+def cache_grpc_ppg_home():
+   return cache_grpc(messages_pb2.HomeResponse)
+
+def cache_grpc_ppgls():
    return cache_grpc(messages_pb2.PPGLSResponse)
    
-   
+def cache_grpc_grad():
+   return cache_grpc(messages_pb2.GradResponse)
 
 def cache_redis_sync(func):
    @wraps(func)
@@ -108,28 +106,6 @@ def cache_redis_async(func):
             kwargs['redis'].setField(universidade, path, ret)
          
          return ret
-      except Exception as err:
-         raise err
-   return wrapper
-
-def log_users(func):
-   @wraps(func)
-   async def wrapper(*args, **kwargs):
-      """
-      Anotação responsável por inserir o log no banco de dados
-      """
-      path = kwargs['request'].url.path
-      current_user = kwargs['current_user']
-      db = kwargs['db']
-      try:
-         if 'coautores' in path:
-            if 'sucupira' in path:
-               await utils.log_grafos(db,'log_grafos', idlattes = current_user.idlattes, ppg_id = 'Home', anoi = kwargs['anoi'], anof = kwargs['anof'], grafo_name = kwargs['produto'])
-            else:
-               await utils.log_grafos(db,'log_grafos', idlattes = current_user.idlattes, ppg_id = kwargs['id'], anoi = kwargs['anoi'], anof = kwargs['anof'], grafo_name = kwargs['autor'])
-         else:
-            await utils.log_acessos(db,'log_acessos', idlattes = current_user.idlattes, ppg_id = kwargs['id'], anoi = kwargs['anoi'], anof = kwargs['anof'])  
-         return await func(*args, **kwargs)
       except Exception as err:
          raise err
    return wrapper
@@ -399,5 +375,3 @@ class RedisConnector:
          self.redisconn.close()
       except Exception as err:
          return err
-
-

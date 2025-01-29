@@ -17,8 +17,8 @@ def tarefa_verifica_usuario(username):
 @app_celery_queries.task
 def tarefa_autentica_usuario(username, password):
     try:   
-        user, useravatar = crud.user.authenticate(password=password, email=username)     
-        return user, useravatar
+        user = crud.user.authenticate(password=password, email=username)     
+        return user
     except Exception as e:
         print(e)
         return None, None
