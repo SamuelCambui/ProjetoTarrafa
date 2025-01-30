@@ -2,7 +2,7 @@ import {
   DadosPosGraduacaoLSClient,
   IndicadoresPosGraduacaoLSClient,
   DadosFormularioPosGraduacaoLSClient,
-} from "@/protos/ppgls_grpc_pb.d";
+} from "@/protos/ppgls_grpc_pb";
 import * as grpc from "@grpc/grpc-js";
 
 export const stubIndicadoresPPGLS = new IndicadoresPosGraduacaoLSClient(

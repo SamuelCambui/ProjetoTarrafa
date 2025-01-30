@@ -150,7 +150,6 @@ getAbaProfessores: {
 // id(string) - Código do curso.\n
 // anoi(int) - Ano Inicial.\n
 // anof(int) - Ano Final.\n
-// teste
 getIndicadoresDisciplina: {
     path: '/protos.IndicadoresPosGraduacaoLS/GetIndicadoresDisciplina',
     requestStream: false,
@@ -322,7 +321,3 @@ getDisciplina: {
 };
 
 exports.DadosPosGraduacaoLSClient = grpc.makeGenericClientConstructor(DadosPosGraduacaoLSService);
-<<<<<<< HEAD
-=======
-
->>>>>>> c3ff0cc (implementação do front-end primeira parte)
