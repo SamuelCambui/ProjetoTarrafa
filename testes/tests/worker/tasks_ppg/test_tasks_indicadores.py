@@ -3,6 +3,10 @@ from unittest.mock import patch
 
 import pytest
 
+"""
+def a():
+    b()
+"""
 
 @pytest.fixture
 def params_tasks():
