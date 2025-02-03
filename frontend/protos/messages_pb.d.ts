@@ -6,6 +6,23 @@
 
 import * as jspb from "google-protobuf";
 
+export class Empty extends jspb.Message { 
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Empty.AsObject;
+    static toObject(includeInstance: boolean, msg: Empty): Empty.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Empty, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Empty;
+    static deserializeBinaryFromReader(message: Empty, reader: jspb.BinaryReader): Empty;
+}
+
+export namespace Empty {
+    export type AsObject = {
+    }
+}
+
 export class HomeRequest extends jspb.Message { 
 
     hasIdIes(): boolean;
@@ -534,6 +551,63 @@ export class ListaUsuariosResponse extends jspb.Message {
 export namespace ListaUsuariosResponse {
     export type AsObject = {
         itemList: Array<UsuarioResponse.AsObject>,
+    }
+}
+
+export class Universidade extends jspb.Message { 
+
+    hasIdIes(): boolean;
+    clearIdIes(): void;
+    getIdIes(): string | undefined;
+    setIdIes(value: string): Universidade;
+
+    hasNome(): boolean;
+    clearNome(): void;
+    getNome(): string | undefined;
+    setNome(value: string): Universidade;
+
+    hasSigla(): boolean;
+    clearSigla(): void;
+    getSigla(): string | undefined;
+    setSigla(value: string): Universidade;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Universidade.AsObject;
+    static toObject(includeInstance: boolean, msg: Universidade): Universidade.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Universidade, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Universidade;
+    static deserializeBinaryFromReader(message: Universidade, reader: jspb.BinaryReader): Universidade;
+}
+
+export namespace Universidade {
+    export type AsObject = {
+        idIes?: string,
+        nome?: string,
+        sigla?: string,
+    }
+}
+
+export class ListaUniversidadesResponse extends jspb.Message { 
+    clearItemList(): void;
+    getItemList(): Array<Universidade>;
+    setItemList(value: Array<Universidade>): ListaUniversidadesResponse;
+    addItem(value?: Universidade, index?: number): Universidade;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ListaUniversidadesResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: ListaUniversidadesResponse): ListaUniversidadesResponse.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: ListaUniversidadesResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ListaUniversidadesResponse;
+    static deserializeBinaryFromReader(message: ListaUniversidadesResponse, reader: jspb.BinaryReader): ListaUniversidadesResponse;
+}
+
+export namespace ListaUniversidadesResponse {
+    export type AsObject = {
+        itemList: Array<Universidade.AsObject>,
     }
 }
 

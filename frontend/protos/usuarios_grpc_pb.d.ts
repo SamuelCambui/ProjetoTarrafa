@@ -17,6 +17,7 @@ interface IUsuarioService extends grpc.ServiceDefinition<grpc.UntypedServiceImpl
     alternarStatusUsuario: IUsuarioService_IAlternarStatusUsuario;
     atualizarUsuario: IUsuarioService_IAtualizarUsuario;
     criarUsuario: IUsuarioService_ICriarUsuario;
+    obtemListaUniversidades: IUsuarioService_IObtemListaUniversidades;
 }
 
 interface IUsuarioService_ILogin extends grpc.MethodDefinition<messages_pb.LoginRequest, messages_pb.LoginResponse> {
@@ -91,6 +92,15 @@ interface IUsuarioService_ICriarUsuario extends grpc.MethodDefinition<messages_p
     responseSerialize: grpc.serialize<messages_pb.AlteracaoUsuarioResponse>;
     responseDeserialize: grpc.deserialize<messages_pb.AlteracaoUsuarioResponse>;
 }
+interface IUsuarioService_IObtemListaUniversidades extends grpc.MethodDefinition<messages_pb.Empty, messages_pb.ListaUniversidadesResponse> {
+    path: "/protos.Usuario/ObtemListaUniversidades";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<messages_pb.Empty>;
+    requestDeserialize: grpc.deserialize<messages_pb.Empty>;
+    responseSerialize: grpc.serialize<messages_pb.ListaUniversidadesResponse>;
+    responseDeserialize: grpc.deserialize<messages_pb.ListaUniversidadesResponse>;
+}
 
 export const UsuarioService: IUsuarioService;
 
@@ -103,6 +113,7 @@ export interface IUsuarioServer extends grpc.UntypedServiceImplementation {
     alternarStatusUsuario: grpc.handleUnaryCall<messages_pb.UsuarioRequest, messages_pb.AlteracaoUsuarioResponse>;
     atualizarUsuario: grpc.handleUnaryCall<messages_pb.CriacaoUsuarioRequest, messages_pb.AlteracaoUsuarioResponse>;
     criarUsuario: grpc.handleUnaryCall<messages_pb.CriacaoUsuarioRequest, messages_pb.AlteracaoUsuarioResponse>;
+    obtemListaUniversidades: grpc.handleUnaryCall<messages_pb.Empty, messages_pb.ListaUniversidadesResponse>;
 }
 
 export interface IUsuarioClient {
@@ -130,6 +141,9 @@ export interface IUsuarioClient {
     criarUsuario(request: messages_pb.CriacaoUsuarioRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.AlteracaoUsuarioResponse) => void): grpc.ClientUnaryCall;
     criarUsuario(request: messages_pb.CriacaoUsuarioRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.AlteracaoUsuarioResponse) => void): grpc.ClientUnaryCall;
     criarUsuario(request: messages_pb.CriacaoUsuarioRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.AlteracaoUsuarioResponse) => void): grpc.ClientUnaryCall;
+    obtemListaUniversidades(request: messages_pb.Empty, callback: (error: grpc.ServiceError | null, response: messages_pb.ListaUniversidadesResponse) => void): grpc.ClientUnaryCall;
+    obtemListaUniversidades(request: messages_pb.Empty, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.ListaUniversidadesResponse) => void): grpc.ClientUnaryCall;
+    obtemListaUniversidades(request: messages_pb.Empty, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.ListaUniversidadesResponse) => void): grpc.ClientUnaryCall;
 }
 
 export class UsuarioClient extends grpc.Client implements IUsuarioClient {
@@ -158,4 +172,7 @@ export class UsuarioClient extends grpc.Client implements IUsuarioClient {
     public criarUsuario(request: messages_pb.CriacaoUsuarioRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.AlteracaoUsuarioResponse) => void): grpc.ClientUnaryCall;
     public criarUsuario(request: messages_pb.CriacaoUsuarioRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.AlteracaoUsuarioResponse) => void): grpc.ClientUnaryCall;
     public criarUsuario(request: messages_pb.CriacaoUsuarioRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.AlteracaoUsuarioResponse) => void): grpc.ClientUnaryCall;
+    public obtemListaUniversidades(request: messages_pb.Empty, callback: (error: grpc.ServiceError | null, response: messages_pb.ListaUniversidadesResponse) => void): grpc.ClientUnaryCall;
+    public obtemListaUniversidades(request: messages_pb.Empty, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.ListaUniversidadesResponse) => void): grpc.ClientUnaryCall;
+    public obtemListaUniversidades(request: messages_pb.Empty, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.ListaUniversidadesResponse) => void): grpc.ClientUnaryCall;
 }

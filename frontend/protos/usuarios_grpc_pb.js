@@ -26,6 +26,28 @@ function deserialize_protos_CriacaoUsuarioRequest(buffer_arg) {
   return messages_pb.CriacaoUsuarioRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_protos_Empty(arg) {
+  if (!(arg instanceof messages_pb.Empty)) {
+    throw new Error('Expected argument of type protos.Empty');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_protos_Empty(buffer_arg) {
+  return messages_pb.Empty.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_protos_ListaUniversidadesResponse(arg) {
+  if (!(arg instanceof messages_pb.ListaUniversidadesResponse)) {
+    throw new Error('Expected argument of type protos.ListaUniversidadesResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_protos_ListaUniversidadesResponse(buffer_arg) {
+  return messages_pb.ListaUniversidadesResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_protos_ListaUsuariosResponse(arg) {
   if (!(arg instanceof messages_pb.ListaUsuariosResponse)) {
     throw new Error('Expected argument of type protos.ListaUsuariosResponse');
@@ -192,6 +214,17 @@ var UsuarioService = exports.UsuarioService = {
     requestDeserialize: deserialize_protos_CriacaoUsuarioRequest,
     responseSerialize: serialize_protos_AlteracaoUsuarioResponse,
     responseDeserialize: deserialize_protos_AlteracaoUsuarioResponse,
+  },
+  obtemListaUniversidades: {
+    path: '/protos.Usuario/ObtemListaUniversidades',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.Empty,
+    responseType: messages_pb.ListaUniversidadesResponse,
+    requestSerialize: serialize_protos_Empty,
+    requestDeserialize: deserialize_protos_Empty,
+    responseSerialize: serialize_protos_ListaUniversidadesResponse,
+    responseDeserialize: deserialize_protos_ListaUniversidadesResponse,
   },
 };
 
