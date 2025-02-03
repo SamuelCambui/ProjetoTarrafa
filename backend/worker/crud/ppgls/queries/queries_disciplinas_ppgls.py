@@ -20,7 +20,7 @@ class QueriesDisciplinas():
                 cast(carga_horaria as float),
                 dep.nome as departamento
             FROM disciplinas AS dis 
-            INNER JOIN departamentos AS dep ON dep.id_dep = dis.id_dep AND dep.id_ies = dis.id_ies
+            LEFT JOIN departamentos AS dep ON dep.id_dep = dis.id_dep AND dep.id_ies = dis.id_ies
             WHERE cod_disc = %(id_disc)s and dis.id_ies = %(id_ies)s
         """
 
@@ -53,7 +53,7 @@ class QueriesDisciplinas():
                     cast(carga_horaria as float),
                     dep.nome as departamento 
                 FROM disciplinas AS dis
-                INNER JOIN departamentos AS dep ON dep.id_dep = dis.id_dep AND dep.id_ies = dis.id_ies
+                LEFT JOIN departamentos AS dep ON dep.id_dep = dis.id_dep AND dep.id_ies = dis.id_ies
                 WHERE dis.cod_disc in 
                     (select cod_disc from grad_dis where id_curso = %(id_curso)s and id_ies = %(id_ies)s and id_grade = %(id_grade)s)
                 order by nome

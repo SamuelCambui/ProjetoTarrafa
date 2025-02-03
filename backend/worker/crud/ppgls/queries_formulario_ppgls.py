@@ -10,7 +10,7 @@ from typing import List
 
 #db = deps.get_db_grad()
 
-class QueriesPPGLS():
+class QueriesFormularioPPGLS():
 
     @tratamento_excecao_com_db(tipo_banco='grad')
     def inserir_usuarios_formulario(self, db: DBConnectorGRAD = None, **kwargs):
@@ -521,4 +521,4 @@ class QueriesPPGLS():
 
     
    
-queries_PPGLS = QueriesPPGLS()
+queries_formulario_ppgls = QueriesFormularioPPGLS()

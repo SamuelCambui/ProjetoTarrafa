@@ -341,7 +341,7 @@ class QueriesCursos():
         )
         return ret
 
-    #   TESTE
+  
     @tratamento_excecao_com_db(tipo_banco='grad')
     def boxplot_idade(
         self,
@@ -354,7 +354,7 @@ class QueriesCursos():
         """
         Distribuição de idade dos ingressantes no curso.
 
-        :param id_curso(str): Código do curso.
+        :param id_curso(str): Código da do curso.
         :param id_ies(str): Código da instituição.
         :param anoi(int): Ano inicial.
         :param anof(int): Ano final.
@@ -373,10 +373,10 @@ class QueriesCursos():
             query_quartis as (
                 select
                     ano_ingresso,
-                    max(case when quartil = 1 then idade end) as primeiro_quartil,
-                    max(case when quartil = 2 then idade end) as segundo_quartil,
-                    max(case when quartil = 3 then idade end) as terceiro_quartil,
-                    round(avg(idade), 2) as media
+                    cast(max(case when quartil = 1 then idade end) as float) as primeiro_quartil,
+                    cast(max(case when quartil = 2 then idade end) as float) as segundo_quartil,
+                    cast(max(case when quartil = 3 then idade end) as float) as terceiro_quartil,
+                    cast(round(avg(idade), 2) as float) as media
                 from query_idades
                 group by ano_ingresso
                 having MAX(CASE WHEN quartil = 1 THEN idade END) IS NOT NULL
@@ -389,10 +389,11 @@ class QueriesCursos():
             from query_quartis
             order by ano_ingresso;
         """
-
+        
         ret = db.fetch_all(
-            query=query, id_curso=id_curso, id_ies=id_ies, anoi=anoi, anof=anof
+            query=query, id_curso=id_curso,id_ies=id_ies, anoi=anoi, anof=anof
         )
+        
         return ret
 
 

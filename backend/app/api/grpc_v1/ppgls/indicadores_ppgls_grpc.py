@@ -1,5 +1,5 @@
 from protos.out import ppgls_pb2_grpc
-from backend.worker.tasks_ppgls import tasks_disciplinas_ppgls, tasks_cursos_ppgls
+from backend.worker.tasks_ppgls import tasks_disciplinas_ppgls, tasks_cursos_ppgls, tasks_ppgls
 from protos.out.messages_pb2 import PPGLSRequest, PPGLSResponse
 import json
 from backend.db.cache import cache_grpc_ppgls
@@ -177,7 +177,7 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
         )
         consultas.append(
             tasks_cursos_ppgls.get_boxplot_idade.s(
-                id_curso=request.id,
+                id_curso=request.id_curso,
                 id_ies=request.id_ies,
                 anoi=request.anoi,
                 anof=request.anof,
@@ -242,38 +242,36 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
     def GetIndicadoresGlobais(self, request: PPGLSRequest, context):
         consultas = []
         consultas.append(
-            tasks_cursos_ppgls.get_naturalidade_alunos.s(
+            tasks_ppgls.get_naturalidade_alunos.s(
                 id_ies=request.id_ies,
-                id_curso=request.id_curso,
                 anoi=request.anoi,
                 anof=request.anof,
             )
         )
         consultas.append(
-            tasks_cursos_ppgls.get_quantidade_alunos_por_sexo.s(
+            tasks_ppgls.get_quantidade_alunos_por_sexo.s(
                 id_ies=request.id_ies,
-                id_curso=request.id_curso,
                 anoi=request.anoi,
                 anof=request.anof,
             )
         )
     
         consultas.append(
-            tasks_cursos_ppgls.get_boxplot_idade.s(
+            tasks_ppgls.get_boxplot_idade.s(
                 id_ies=request.id_ies,
                 anoi=request.anoi,
                 anof=request.anof,
             )
         )
         consultas.append(
-            tasks_cursos_ppgls.get_taxa_matriculas.s(
+            tasks_ppgls.get_taxa_matriculas.s(
                 id_ies=request.id_ies,
                 anoi=request.anoi,
                 anof=request.anof
             )
         )
         consultas.append(
-            tasks_cursos_ppgls.get_taxa_matriculas_por_cota.s(
+            tasks_ppgls.get_taxa_matriculas_por_cota.s(
                 id_ies=request.id_ies,
                 anoi=request.anoi,
                 anof=request.anof

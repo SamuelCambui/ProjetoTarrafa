@@ -82,9 +82,11 @@ const carregaGraficoMapaBrasil = (
         .style("border-radius", "5px")
         .style("pointer-events", "none")
         .style("opacity", 0);
-
+      
+      const maxRadius = 50;
       svg
         .selectAll<SVGCircleElement, DadosMapa>("circle")
+        .data(dados.filter(d => d.quantidade_alunos !== undefined)) // Filtra valores inválidos
         .data(dados)
         .enter()
         .append("circle")
@@ -93,12 +95,13 @@ const carregaGraficoMapaBrasil = (
         .attr("r", (d) => radiusScale(d.quantidade_alunos))
         .attr("fill", "blue")
         .attr("stroke", "white")
-        .attr("fill-opacity", 0.4)
+        .attr("fill-opacity", 0.8)
         .on("mouseover", function (event: MouseEvent, d: DadosMapa) {
-          d3.select<SVGCircleElement, DadosMapa>(this).attr(
-            "r",
-            radiusScale(d.quantidade_alunos) * 1.2,
-          );
+          d3.select<SVGCircleElement, DadosMapa>(this)
+            .transition()
+            .duration(200)
+            .attr("r", Math.min(radiusScale(d.quantidade_alunos) * 1.2, maxRadius));
+            
           tooltip
             .style("opacity", 1)
             .html(
@@ -107,12 +110,18 @@ const carregaGraficoMapaBrasil = (
             .style("left", `${event.pageX - 80}px`)
             .style("top", `${event.pageY - 80}px`);
         })
-        .on("mouseout", function (d) {
-          d3.select<SVGCircleElement, DadosMapa>(this).attr(
-            "r",
-            radiusScale(d.quantidade_alunos) * 1,
-          );
-          tooltip.style("opacity", 0);
+        .on("mouseout", function (event, d) {  
+          console.log("Mouse saiu da marcação:", d);
+        
+          if (!d || d.quantidade_alunos === undefined) return;
+        
+          d3.select<SVGCircleElement, DadosMapa>(this)
+            .transition()
+            .duration(200)
+            .attr("r", Math.max(radiusScale(d.quantidade_alunos), 3)) 
+            .attr("fill-opacity", 0.8);
+        
+          tooltip.style("opacity", 0); 
         });
 
       function zoomed(event: d3.D3ZoomEvent<SVGSVGElement, unknown>) {

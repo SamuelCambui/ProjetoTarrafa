@@ -1,10 +1,9 @@
 from protos.out.messages_pb2 import PPGLSJson
 from google.protobuf.json_format import MessageToDict
 import json
-import re
 
-from backend.schemas.grafico import DadosGrafico, DataSet, Grafico
-from backend.worker.crud.ppgls.queries.disciplinas_ppgls import queries_disciplinas
+
+from backend.worker.crud.ppgls.queries.queries_disciplinas_ppgls import queries_disciplinas
 from backend.worker.celery_start_queries import app_celery_queries
 
 

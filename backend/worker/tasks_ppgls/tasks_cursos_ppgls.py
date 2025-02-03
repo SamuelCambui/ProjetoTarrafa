@@ -1,19 +1,14 @@
 from google.protobuf.json_format import MessageToDict
 import json
-import re
-from celery import group
-from celery import chain
-from protos.out.messages_pb2 import PPGLSResponse
 from protos.out.messages_pb2 import PPGLSJson
-from backend.schemas.grafico import DadosGrafico, DataSet, Grafico
-from backend.worker.crud.ppgls.queries.cursos_ppgls import queries_cursos
+from backend.worker.crud.ppgls.queries.queries_cursos_ppgls import queries_cursos
 from backend.worker.celery_start_queries import app_celery_queries
 
 
 @app_celery_queries.task
 def get_cursos(id_ies: str):
     """
-    Retorna todos os cursos de graduação(Bacharelado, Licenciatura).
+    Retorna todos os cursos de pós graduação latu sensu.
 
     :param id_ies(str): Código da Instituição
     """
@@ -213,12 +208,13 @@ def get_quantidade_alunos_por_semestre(id_curso: str, id_ies: str, anoi: int, an
 @app_celery_queries.task
 def get_boxplot_idade(id_curso: str, id_ies: str, anoi: int, anof: int):
     """
-    Retorna a distribuição de idades dos ingressantes no curso para cálculo de boxplot.\n
+    Retorna as medidas do boxplot para a variável idade de todos os cursos de Graduação ou Licenciatura.
 
-    :param id_curso(str): Código do curso.
-    :param id_ies(str): Código da instituição.
-    :param anoi(int): Ano inicial.
-    :param anof(int): Ano final.
+    :param id_curso(str): Código da do curso.
+    :param id_ies(str): Código da Instituição.
+    :param anoi(int): Ano Inicial.
+    :param anof(int): Ano Final.
+
     """
     try:
         resultado = queries_cursos.boxplot_idade(
