@@ -13,4 +13,5 @@ service Usuario {
   rpc AlternarStatusUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
   rpc AtualizarUsuario (CriacaoUsuarioRequest) returns (AlteracaoUsuarioResponse);
   rpc CriarUsuario (CriacaoUsuarioRequest) returns (AlteracaoUsuarioResponse);
+  rpc ObtemListaUniversidades (Empty) returns (ListaUniversidadesResponse);
 }

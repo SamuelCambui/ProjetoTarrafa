@@ -44,3 +44,12 @@ def tarefa_retorna_lista_usuarios(privilegio : bool, id_lattes : str, id_ies : s
     except Exception as e:
         print(e)
         return []
+    
+@app_celery_queries.task
+def tarefa_retorna_lista_universidades() -> list[Optional[dict]]:
+    try:
+        universidades = crud.user.retorna_lista_universidades()
+        return universidades
+    except Exception as e:
+        print(e)
+        return []

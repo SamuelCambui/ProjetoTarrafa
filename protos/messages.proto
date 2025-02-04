@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package protos;
 
+message Empty {}
+
 message HomeRequest {
   optional string id_ies = 1;
   optional int32 anoi = 2;
@@ -94,6 +96,16 @@ message AlteracaoUsuarioResponse {
 
 message ListaUsuariosResponse {
   repeated UsuarioResponse item = 1;
+}
+
+message Universidade {
+  optional string id_ies = 1;
+  optional string nome = 2;
+  optional string sigla = 3;
+}
+
+message ListaUniversidadesResponse {
+  repeated Universidade item = 1;
 }
 
 message PPGLSRequest{

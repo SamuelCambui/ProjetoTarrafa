@@ -97,3 +97,16 @@ class Usuario(usuarios_pb2_grpc.UsuarioServicer):
         except Exception as e:
             print(e)
             return messages_pb2.AlteracaoUsuarioResponse()
+        
+    def ObtemListaUniversidades(self, request, context) -> messages_pb2.ListaUniversidadesResponse:
+        print('ObtemListaUniversidades chamada...')
+        try:
+            universidades = user.retorna_lista_universidades()
+            lista_universidades = messages_pb2.ListaUniversidadesResponse()
+            for universidade in universidades:
+                universidade_response = messages_pb2.Universidade(**universidade)
+                lista_universidades.item.append(universidade_response)
+            return lista_universidades
+        except Exception as e:
+            print(e)
+            return messages_pb2.ListaUniversidadesResponse()

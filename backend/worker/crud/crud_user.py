@@ -173,11 +173,11 @@ class CRUDUser():
             if privilegio:
                 query = "SELECT * FROM usuarios order by full_name"
                 rows = db.fetch_all(query)
-                return [User(**row, id_lattes=row['idlattes'], nome = row['full_name']) for row in rows]
+                return [Usuario(**row, id_lattes=row['idlattes'], nome = row['full_name']) for row in rows]
 
             query = "SELECT * FROM usuarios where id_ies = %(id_ies)s  and is_superuser = false and (is_admin = false or idlattes = %(idlattes)s) order by full_name"
             rows = db.fetch_all(query, id_ies = id_ies, idlattes=idlattes)
-            return [User(**row, id_lattes=row['idlattes'], nome = row['full_name']) for row in rows]
+            return [Usuario(**row, id_lattes=row['idlattes'], nome = row['full_name']) for row in rows]
         except Exception as e:
             print(e)
             return []
@@ -192,5 +192,18 @@ class CRUDUser():
         if deletado:
             return True, "Usuário deletado com sucesso!"
         return False, "Não foi possível deletar o usuário!"
+    
+    @tratamento_excecao_db_ppg()
+    def retorna_lista_universidades(self, db: DBConnector = None) -> list[Optional[dict]]:
+        """
+        Retorna a lista de universidades
+        """
+        try:
+            query = "SELECT id_ies, nome, sigla FROM instituicoes order by nome"
+            rows = db.fetch_all(query)
+            return [dict(row) for row in rows]
+        except Exception as e:
+            print(e)
+            return []
 
 user = CRUDUser()
