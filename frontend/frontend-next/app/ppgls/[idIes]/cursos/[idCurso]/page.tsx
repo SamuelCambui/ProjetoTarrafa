@@ -8,7 +8,7 @@ import { TabDisciplinas } from "./(components)/(tab-disciplinas)/TabDisciplinas"
 import { TabRegressos } from "./(components)/(tab-regressos)/TabRegressos";
 import { TabIndicadores } from "./(components)/(tab-indicadores-curso)/TabIndicadores";
 import { TabProfessores } from "./(components)/(tab-professores)/TabProfessores";
-import { PPGLSContext } from "@/app/ppgls/PPGLSContext";
+
 
 type Abas = "indicadores" | "disciplinas" | "regressos" | "professores";
 

@@ -25,6 +25,7 @@ export const TabIndicadores = ({ value, idCurso, idIes }: TabProps) => {
     anoFinal: periodo.anoFinal,
   });
 
+  
   return (
     <TabsContent value={value}>
       <Filtro
@@ -35,7 +36,7 @@ export const TabIndicadores = ({ value, idCurso, idIes }: TabProps) => {
 
       <div className="space-y-4">
         <GraficoQuantidadeAlunos data={data?.graficoQuantidadeAlunosSexo} />
-        <GraficoBoxplotIdade data={data?.boxplotIdade} />
+        <GraficoBoxplotIdade data={data?.GraficoBoxplotIdade} />
         <GraficoFormaIngresso data={data?.graficoFormaIngresso} />
         <GraficoNecessidadeEspecial data={data?.graficoNecessidadeEspecial} />
         <GraficoNaturalidade data={data?.municipios} />

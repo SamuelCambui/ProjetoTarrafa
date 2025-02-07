@@ -9,6 +9,7 @@ import {
   import { LoadingCard } from "../../../../../(components)/LoadingCard";
   import { GraficoProps } from "@/app/ppgls/(components)/types";
   
+
   export const GraficoQuantidaderegressos = ({
     data,
     isLoading,
@@ -16,15 +17,13 @@ import {
     if (!data || isLoading) {
       return <LoadingCard />;
     }
-  
+    console.log("Dados recebidos:", data);
     const config = {
-      data: data?.map(({ ano_matricula, quantidade_matriculas, curso }: any) => {
-        return {
-          anoMatricula: ano_matricula, // Eixo X
-          quantidade: quantidade_matriculas, // Eixo Y
-          curso: curso, // Série que será empilhada
-        };
-      }),
+      data: data?.map(({ ano_matricula, quantidade_matriculas, nome_curso_graduacao }: any) => ({
+        anoMatricula: String(ano_matricula), // Converter número para string
+        quantidade: quantidade_matriculas, // Eixo Y
+        curso: nome_curso_graduacao, // Nome correto do curso
+      })),
       xField: "anoMatricula",
       yField: "quantidade",
       seriesField: "curso", // Cada barra será dividida pelos valores únicos de 'curso'
@@ -35,7 +34,9 @@ import {
             <div key={title}>
               <h4 className="mb-2">{title}</h4>
               {items.map((item) => {
-                const { name, value, color } = item;
+                const { name, color, data } = item;
+                const valor = data ? data.quantidade : "N/A"; // Ajuste aqui para pegar o valor correto
+                
                 return (
                   <div key={name}>
                     <div className="m-0 flex justify-between">
@@ -46,7 +47,7 @@ import {
                         ></span>
                         <span className="mr-6 capitalize">{name}</span>
                       </div>
-                      <span>{value}</span>
+                      <span>{valor}</span> {/* Exibe o valor absoluto */}
                     </div>
                   </div>
                 );
@@ -67,9 +68,9 @@ import {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Gráfico de Barras Empilhadas</CardTitle>
+          <CardTitle>Regressos</CardTitle>
           <CardDescription>
-            Quantidade de matrículas por ano e curso.
+            Quantidade de alunos que cursaram ou não um curso de graduação da Unimontes antes de ingressarem neste curso, agrupados por ano de matrícula na pós-graduação.
           </CardDescription>
         </CardHeader>
         <CardContent>

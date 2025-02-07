@@ -53,7 +53,8 @@ const Login = () => {
       setError("root", { message: "Usuário ou senha inválidos" });
       return;
     }
-    await login(response.usuario);
+    const usuario = JSON.parse(JSON.stringify(response.usuario));
+    await login(usuario);
     setVariablesStore(
       response.usuario.idIes!,
       response.usuario.idIes!,

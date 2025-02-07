@@ -72,7 +72,12 @@ class UsuarioServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def ObtemUsuario(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """rpc ObtemListaUsuarios (UsuarioRequest) returns (ListaUsuariosResponse);
+        rpc AtualizarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+        rpc CriarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+        rpc DeletarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+        rpc AlternarStatusUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')

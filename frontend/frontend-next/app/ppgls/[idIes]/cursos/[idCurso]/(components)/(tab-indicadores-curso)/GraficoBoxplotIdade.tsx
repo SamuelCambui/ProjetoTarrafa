@@ -7,9 +7,10 @@ import {
   } from "@/components/ui/card";
   import { Box } from "@ant-design/plots";
   import { LoadingCard } from "../../../../../(components)/LoadingCard";
-  import { GraficoProps } from "@/app/ppgls/(components)/types";
+  import { GraficoProps } from "../../../../../../../app/ppgls/(components)/types";
   
   export const GraficoBoxplotIdade = ({ data, isLoading }: GraficoProps) => {
+    console.log(data)
     if (!data || isLoading) {
       return <LoadingCard />;
     }

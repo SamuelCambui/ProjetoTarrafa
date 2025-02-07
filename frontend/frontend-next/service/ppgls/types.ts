@@ -58,10 +58,8 @@ export type AbaDisciplinasParams = {
   export type IndicadoresGlobaisResponse = {
     municipios?: Array<any>;
     graficoSexoAlunos?: Array<any>;
-    graficoEgressos?: Array<any>;
     boxplotIdade?: Array<any>;
     taxaMatriculas?: Array<any>;
-    graficoEgressosCota?: Array<any>;
     taxaMatriculasCota?: Array<any>;
   };
 

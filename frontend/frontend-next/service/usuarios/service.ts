@@ -12,6 +12,7 @@ export async function autenticarUsuario(email: string, senha: string) {
       (resolve, reject) => {
         stubUsuarios.login(usuarioRequest, (error, usuario) => {
           if (error) {
+            console.log("ERROR STUB")
             reject(error); // Rejeita a promise em caso de erro
           } else {
             const data = usuario.toObject();

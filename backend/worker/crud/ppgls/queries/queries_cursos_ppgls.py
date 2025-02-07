@@ -543,7 +543,7 @@ class QueriesCursos():
         )
         SELECT 
             pc.ano_matricula,
-            COALESCE(cg.nome_curso_graduacao, 'Não Há') AS nome_curso_graduacao,
+            COALESCE(cg.nome_curso_graduacao, 'Não Fizeram Nenhum Curso de Graduação na Unimontes') AS nome_curso_graduacao,
             COUNT(pc.matricula) AS quantidade_matriculas -- Contagem de matrículas por curso
         FROM 
             primeira_consulta pc
