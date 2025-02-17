@@ -5,6 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python Debugger: FastAPI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "backend.app.api.api_login:app",
+                "--reload",
+                "--port",
+                "8002"
+            ],
+            "jinja": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento"
+        },
+        {
             "name": "Python: Flask",
             "type": "debugpy",
             "request": "launch",
@@ -101,18 +115,17 @@
             "envFile": "${workspaceFolder}/.env.desenvolvimento",
             "args": []
         },
-        
-	{
-	      "name": "Next.js: debug full stack",
-	      "type": "node-terminal",
-	      "cwd": "${workspaceFolder}/frontend",
-	      "request": "launch",
-	      "command": "npm run dev",
-	      "serverReadyAction": {
-		"pattern": "- Local:.+(https?://.+)",
-		"uriFormat": "%s",
-		"action": "debugWithChrome"
-	      }
-    }	
+        {
+            "name": "Next.js: debug full stack",
+            "type": "node-terminal",
+            "cwd": "${workspaceFolder}/frontend",
+            "request": "launch",
+            "command": "npm run dev",
+            "serverReadyAction": {
+                "pattern": "- Local:.+(https?://.+)",
+                "uriFormat": "%s",
+                "action": "debugWithChrome"
+            }
+        }
     ]
 }

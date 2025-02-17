@@ -26,7 +26,7 @@ def tarefa_autentica_usuario(username : str, password : str) -> Optional[Usuario
         nome_ies, sigla_ies = crud.user.dados_complementares(user.id_ies)
         if not user:
             raise
-        usuario_front = UsuarioFront(**user.dict())
+        usuario_front = UsuarioFront(**user.model_dump())
         usuario_front.nome_ies = nome_ies
         usuario_front.sigla_ies = sigla_ies
         usuario_front.link_avatar = useravatar
