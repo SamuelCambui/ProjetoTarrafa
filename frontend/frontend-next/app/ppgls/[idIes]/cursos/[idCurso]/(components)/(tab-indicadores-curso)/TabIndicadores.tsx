@@ -25,7 +25,7 @@ export const TabIndicadores = ({ value, idCurso, idIes }: TabProps) => {
     anoFinal: periodo.anoFinal,
   });
 
-  
+  console.log(data);
   return (
     <TabsContent value={value}>
       <Filtro
@@ -33,10 +33,9 @@ export const TabIndicadores = ({ value, idCurso, idIes }: TabProps) => {
         setPeriodo={setPeriodo}
         isFetching={isLoading}
       />
-
       <div className="space-y-4">
         <GraficoQuantidadeAlunos data={data?.graficoQuantidadeAlunosSexo} />
-        <GraficoBoxplotIdade data={data?.GraficoBoxplotIdade} />
+        <GraficoBoxplotIdade data={data?.graficoBoxplotIdade} />
         <GraficoFormaIngresso data={data?.graficoFormaIngresso} />
         <GraficoNecessidadeEspecial data={data?.graficoNecessidadeEspecial} />
         <GraficoNaturalidade data={data?.municipios} />

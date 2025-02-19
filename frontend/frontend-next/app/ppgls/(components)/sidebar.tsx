@@ -5,6 +5,7 @@ import {
   ChevronsUpDown,
   Home,
   LogOut,
+  FileText,
 } from "lucide-react";
 
 import { getCurrentUser, logout } from "@/app/login/actions";
@@ -62,6 +63,11 @@ export function AppSidebar() {
       title: "Departamentos",
       url: `/ppgls/${currentUser?.idIes}/departamentos`,
       icon: Building,
+    },
+    {
+      title: "Formulário",
+      url: `/ppgls/${currentUser?.idIes}/formulario`,
+      icon: FileText,
     },
   ];
 

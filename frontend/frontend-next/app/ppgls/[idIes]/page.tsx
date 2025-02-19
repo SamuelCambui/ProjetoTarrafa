@@ -24,21 +24,16 @@ export const Home = () => {
     anoFinal: periodo.anoFinal,
   });
 
-  return (
+  return error ? (<div className="flex justify-center items-center">
+    <span className="text-red-500">Houve um erro ao carregar os dados.</span>
+    </div>
+  ):(
     <div className="space-y-2">
       <Filtro
         periodo={periodo}
         setPeriodo={setPeriodo}
         isFetching={isLoading}
       />
-      {error ? (
-        <div className="flex justify-center items-center">
-          <span className="text-red-500">
-            Houve um erro ao carregar os dados.
-          </span>
-        </div>
-      ) : (
-        <>
           <GraficoTaxaMatriculas
             data={data?.taxaMatriculas}
             isLoading={isLoading}
@@ -56,8 +51,6 @@ export const Home = () => {
             isLoading={isLoading}
           />
           <GraficoNaturalidade data={data?.municipios} />
-        </>
-      )}
     </div>
   );
 };

@@ -374,3 +374,5 @@ def get_histograma_desempenho_cotistas(
     except Exception as err:
         message = PPGLSJson(nome="histogramaDesempenhoCotistas", json=None)
         return MessageToDict(message)
+    
+

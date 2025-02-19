@@ -60,7 +60,7 @@ const Login = () => {
       response.usuario.idIes!,
       response.usuario.nomeIes!
     );
-    router.replace(`/ppgls/${response.usuario.idIes}`);
+    router.replace('/ppgls/${response.usuario.idIes}');
   };
 
   return (

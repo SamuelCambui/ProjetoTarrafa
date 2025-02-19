@@ -5,20 +5,23 @@ import { decrypt } from "./lib/session";
 const publicRoutes = ["/", "/login"];
 
 export default async function middleware(req: NextRequest) {
-  const path = req.nextUrl.pathname;
-  const isProtectedRoute = !publicRoutes.includes(path);
+  // const path = req.nextUrl.pathname;
+  // const isProtectedRoute = !publicRoutes.includes(path);
 
-  const cookie = cookies().get("session")?.value;
-  const session = await decrypt(cookie);
-  if (isProtectedRoute && !session?.user) {
-    return NextResponse.redirect(new URL("/login", req.nextUrl));
-  }
+  // const cookie = cookies().get("session")?.value;
+  // const session = await decrypt(cookie);
+  // if (isProtectedRoute && !session?.user) {
+  //   return NextResponse.redirect(new URL("/login", req.nextUrl));
+  // }
 
-  if (!isProtectedRoute && session?.user) {
-    return NextResponse.redirect(
-      new URL(`/ppgls/${session.user.idIes}`, req.nextUrl)
-    );
-  }
+  
+
+  // if (!isProtectedRoute && session?.user) {
+  //   return NextResponse.redirect(
+  //     new URL(`/ppgls/${session.user.idIes}`, req.nextUrl)
+  //     // new URL(`/ppgls/3727`, req.nextUrl)
+  //   );
+  // }
 
   return NextResponse.next();
 }

@@ -917,3 +917,4 @@ export namespace FormularioPPGLSResponse {
         itemList: Array<FormularioPPGLSJson.AsObject>,
     }
 }
+

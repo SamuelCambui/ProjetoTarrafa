@@ -35,14 +35,30 @@ export const useSearchRegistrosFormulario = ({ masp, tipo }: SearchRegistrosForm
 };
 
 // Hook para inserir um novo formulário
-export const useInsertFormulario = ({ item }: InsertFormularioParams) => {
-  const { data, isLoading, error } = useFetcher({
-    callback: () => insertFormulario({ item }),
-    depencencies: [item],
-  });
+export const useInsertFormulario = ({ item }: InsertFormularioParams): { 
+  data: any | null; 
+  isLoading: boolean; 
+  error: any | null; 
+} => {
+  try {
+    const { data, isLoading, error } = useFetcher({
+      callback: () => insertFormulario({ item }),
+      depencencies: [item],
+    });
 
-  return { data, isLoading, error };
+    if (error) {
+      console.error("Erro ao inserir formulário:", error);
+    }
+
+    return { data, isLoading, error };
+
+  } catch (err) {
+    console.error("Erro inesperado em useInsertFormulario:", err);
+    return { data: null, isLoading: false, error: err };
+  }
 };
+
+
 
 
 export const useUpdateFormulario = ({ item }: UpdateFormularioParams) => {

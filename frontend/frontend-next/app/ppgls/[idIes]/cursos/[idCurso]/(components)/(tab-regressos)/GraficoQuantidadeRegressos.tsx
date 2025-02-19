@@ -19,43 +19,20 @@ import {
     }
     console.log("Dados recebidos:", data);
     const config = {
-      data: data?.map(({ ano_matricula, quantidade_matriculas, nome_curso_graduacao }: any) => ({
-        anoMatricula: String(ano_matricula), // Converter número para string
-        quantidade: quantidade_matriculas, // Eixo Y
-        curso: nome_curso_graduacao, // Nome correto do curso
-      })),
+      data: Array.isArray(data) 
+      ? data.map(({ ano_matricula, quantidade_matriculas, nome_curso_graduacao }: any) => ({
+          anoMatricula: String(ano_matricula),
+          quantidade: quantidade_matriculas,
+          curso: nome_curso_graduacao,
+        }))
+      : [],
+
       xField: "anoMatricula",
       yField: "quantidade",
       seriesField: "curso", // Cada barra será dividida pelos valores únicos de 'curso'
-      isStack: true, // Habilita o empilhamento
-      tooltip: {
-        customContent: (title: string, items: any[]) => {
-          return (
-            <div key={title}>
-              <h4 className="mb-2">{title}</h4>
-              {items.map((item) => {
-                const { name, color, data } = item;
-                const valor = data ? data.quantidade : "N/A"; // Ajuste aqui para pegar o valor correto
-                
-                return (
-                  <div key={name}>
-                    <div className="m-0 flex justify-between">
-                      <div>
-                        <span
-                          className="mr-1 inline-block h-2 w-2 rounded"
-                          style={{ backgroundColor: color }}
-                        ></span>
-                        <span className="mr-6 capitalize">{name}</span>
-                      </div>
-                      <span>{valor}</span> {/* Exibe o valor absoluto */}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          );
-        },
-      },
+      isStack: false, // Habilita o empilhamento
+      tooltip: false,
+      
       legend: {
         position: "top", // Coloca a legenda no topo
       },

@@ -786,4 +786,5 @@ class QueriesDisciplinas():
 
 
 
+
 queries_disciplinas = QueriesDisciplinas()

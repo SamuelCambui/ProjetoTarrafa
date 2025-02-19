@@ -550,7 +550,7 @@ class QueriesCursos():
         LEFT JOIN 
             curso_graduacao cg ON pc.matricula = cg.matricula
         GROUP BY 
-            pc.ano_matricula, COALESCE(cg.nome_curso_graduacao, 'Não Há')
+            pc.ano_matricula, COALESCE(cg.nome_curso_graduacao, 'Não Fizeram Nenhum Curso de Graduação na Unimontes')
         ORDER BY 
             pc.ano_matricula, quantidade_matriculas DESC;
         """
