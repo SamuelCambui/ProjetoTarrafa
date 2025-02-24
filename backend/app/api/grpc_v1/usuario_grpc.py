@@ -1,11 +1,13 @@
 from __future__ import print_function
 
 # from backend.worker.queries import *
+from backend.db.cache import RedisConnector
 from protos.out import messages_pb2, usuarios_pb2_grpc
 from backend.worker.task_users import tarefa_autentica_usuario, tarefa_verifica_usuario, tarefa_retorna_lista_usuarios
 from backend.worker.crud.crud_user import user
 from google.protobuf.json_format import ParseDict, MessageToDict
-
+from backend.core.security import generate_jwt_token, decode_jwt_token, ACCESS_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_EXPIRATION_TIME
+import uuid
 
 # Implementação do serviço gRPC
 class Usuario(usuarios_pb2_grpc.UsuarioServicer):
@@ -30,7 +32,25 @@ class Usuario(usuarios_pb2_grpc.UsuarioServicer):
                 sigla_ies=user.sigla_ies,
                 link_avatar=useravatar,
             )
-            loginResponse = messages_pb2.LoginResponse(usuario=usuario, erro=False)
+            access_token = generate_jwt_token(MessageToDict(usuario), time=ACCESS_TOKEN_EXPIRATION_TIME)
+            refresh_token = generate_jwt_token(
+                {"id_lattes": usuario.id_lattes, "token_id": str(uuid.uuid4())}, 
+                time=REFRESH_TOKEN_EXPIRATION_TIME
+            )
+            
+            redis = RedisConnector()
+            redis.setJson(
+                f"user:{usuario.id_lattes}", 
+                {"refresh_token": refresh_token, "user": MessageToDict(usuario)}, 
+                60 * 60 * 24
+            )
+
+            loginResponse = messages_pb2.LoginResponse(
+                usuario=usuario, 
+                erro=False, 
+                access_token=access_token, 
+                refresh_token=refresh_token
+            )
 
             return loginResponse
 
@@ -64,6 +84,27 @@ class Usuario(usuarios_pb2_grpc.UsuarioServicer):
         except Exception as e:
             print(e)
             return messages_pb2.UsuarioResponse()
+    
+    def VerificarSessao(self, request: messages_pb2.VerificarSessaoRequest, context):
+        try:
+            payload = decode_jwt_token(request.refresh_token)
+
+            redis = RedisConnector()
+            user_data = redis.getJson(f"user:{payload.get('id_lattes')}")
+
+            stored_payload = decode_jwt_token(user_data["refresh_token"])
+
+            if stored_payload["token_id"] != payload["token_id"]:
+                redis.delete(f"user:{payload.get('id_lattes')}")  # Invalida a sessão
+                raise Exception()
+            
+            new_access_token = generate_jwt_token(payload=user_data["user"], time=ACCESS_TOKEN_EXPIRATION_TIME)
+            message = messages_pb2.VerificarSessaoResponse(access_token=new_access_token, erro=False)
+
+            return message
+        except:
+            return messages_pb2.VerificarSessaoResponse(erro=True, access_token=None)
+
         
     # def ObtemListaUsuarios(self, request, context) -> messages_pb2.ListaUsuariosResponse:
     #     print('ObtemListaUsuarios chamada...')

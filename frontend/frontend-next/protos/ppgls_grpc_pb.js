@@ -195,7 +195,7 @@ getIndicadoresFormulario: {
   //
 // Retorna o dados de professor ou de coordenador da pós-graduação latu sensu.
 // Parâmetros:
-// masp(int) - Código MASP do professor
+// cpf(str) - Código CPF do professor
 // tipo(int) - Professor ou coordenador
 searchRegistrosFormualario: {
     path: '/protos.DadosFormularioPosGraduacaoLS/SearchRegistrosFormualario',

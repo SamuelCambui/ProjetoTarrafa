@@ -1,7 +1,7 @@
 from backend.db.db import DBConnectorGRAD, DBConnectorGRADForm
 from backend.core.utils import tratamento_excecao_com_db
 import json
-import datetime
+from datetime import datetime, date
 
 
 
@@ -28,42 +28,7 @@ class QueriesFormularioPPGLS():
             return False
         return True
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
-    def busca_professor_coordenador_ppgls(self, masp: int, tipo: int, db: DBConnectorGRADForm = None):
-        """
-        Retorna os dados de um professor específico
 
-        Parâmetros:
-            masp(int): Código MASP do professor.
-            tipo(int): 1 = professor, 2 = coordenador.
-        """
-        try:
-            if tipo == 1:
-                # Log antes de executar a consulta SQL para coordenador
-                print(f"Executando consulta para coordenador com masp={masp}")
-                query = """
-                select * from professor_planilha where id = %(masp)s
-                """
-                ret = db.fetch_one(query, masp=masp)
-                # Log do resultado da consulta
-                print(f"Resultado da consulta coordenador: {ret}")
-                return ret
-            
-            if tipo == 2:
-                # Log antes de executar a consulta SQL para professor
-                print(f"Executando consulta para professor com masp={masp}")
-                query = """
-                select * from coordenador_planilha where id = %(masp)s
-                """
-                ret = db.fetch_one(query, masp=masp)
-                # Log do resultado da consulta
-                print(f"Resultado da consulta professor: {ret}")
-                return ret
-    
-        except Exception as e:
-            # Log de exceção em caso de erro no banco de dados
-            print(f"Erro ao executar busca_professor_coordenador_ppgls: {e}")
-            raise
 
     @tratamento_excecao_com_db(tipo_banco='grad_formularios')   
     def inserir_formulario_ppgls(self, db: DBConnectorGRADForm = None, **kwargs):
@@ -88,437 +53,309 @@ class QueriesFormularioPPGLS():
 
             data_preenchimento = json_data.get('data_preenchimento')
 
-            query_verificar = """
-            SELECT 1 FROM residencia_especializacao_professor_planilha 
-            WHERE nome_formulario = %(nome_formulario)s 
-            AND data_preenchimento = %(data_preenchimento)s
-            """
-            existe = db.fetch_one(query_verificar, nome_formulario=nome_formulario, data_preenchimento=data_preenchimento)
-            
-            if existe:
-                raise ValueError("Formulário já existe para este nome e data de preenchimento.")
-            else:
-                residencia = json_data.get('residencia_especializacao', {})
-                residencia_id = residencia.get('id', 0)
-                # Criar o dicionário com os dados extraídos
-                residencia_dados = {
-                    'id': int(residencia.get('id', 0)),
-                    'nome': str(residencia.get('nome', '')),
-                    'data_inicio': residencia.get('data_inicio', ''),
-                    'data_termino': residencia.get('data_termino', ''),
-                    'vagas_ofertadas': int(residencia.get('vagas_ofertadas', 0)),
-                    'vagas_preenchidas': int(residencia.get('vagas_preenchidas', 0)),
-                    'categoria_profissional': str(residencia.get('categoria_profissional', '')),
-                    'centro': str(residencia.get('centro', '')),
-                    'r1': residencia.get('r1', ''),
-                    'r2': residencia.get('r2', ''),
-                    'r3': residencia.get('r3', ''),
-                    'especialista': residencia.get('especialista', '')
-                }
-
-                try:
-                    # Criar a query de inserção
-                    residencia_query = """
-                        INSERT INTO residencia_especializacao_planilha (
-                            id, nome, data_inicio, data_termino, vagas_ofertadas, 
-                            vagas_preenchidas, categoria_profissional, centro, r1, r2, r3, especialista
-                        )
-                        VALUES (
-                            %(id)s, %(nome)s, %(data_inicio)s, %(data_termino)s, %(vagas_ofertadas)s, 
-                            %(vagas_preenchidas)s, %(categoria_profissional)s, %(centro)s, %(r1)s, %(r2)s, %(r3)s, %(especialista)s
-                        )
-                    """
-                    try:
-                        # Executar a inserção
-                        db.insert(residencia_query, **residencia_dados)
-                        # Confirmar a transação
-                        db.commit()
-                        print("Dados da residência/especialização que estão sendo inseridos:", residencia_dados)
-                    except Exception as e:
-                        print(f"Erro ao inserir residência/especialização: {e}")
-
-
-
-                except Exception as e:
-                    # Captura e tratamento de erro
-                    print(f"Erro ao inserir residência/especialização: {e}")
-                    # Reverter as mudanças em caso de erro
-                    db.rollback()
-
-
-                coordenador = json_data.get('coordenador', {})
-                coordenador_masp = int(coordenador.get('coordenador_masp'))
-                coordenador_nome = coordenador.get('coordenador_nome')
-                coordenador_carga_horaria = int(coordenador.get('carga_horaria'))
-
-                # Query para verificar se o coordenador já existe
-                verificar_query = """
-                    SELECT id FROM coordenador_planilha WHERE id =  %(coordenador_masp)s
-                """
-
-                existe = db.fetch_one(verificar_query, coordenador_masp=coordenador_masp)
-                
-                
-                coordenador_dados = {
-                    'id': int(coordenador.get('coordenador_masp')),
-                    'nome': coordenador_nome,
-                    'carga_horaria': coordenador_carga_horaria
-                }
-
-                if existe:
-                    # Se o coordenador já existe, faça um UPDATE
-                    coordenador_query = """
-                        UPDATE coordenador_planilha
-                        SET nome = %(nome)s, carga_horaria = %(carga_horaria)s
-                        WHERE id = %(id)s
-                    """
-                    db.update(coordenador_query, **coordenador_dados)
-                    db.commit()
-                else:
-                    coordenador_query = """
-                        INSERT INTO coordenador_planilha (
-                            id, nome, carga_horaria
-                        )VALUES(
-                            %(id)s, %(nome)s, %(carga_horaria)s
-                        )
-                    """
-                    db.insert(coordenador_query, **coordenador_dados)
-                    db.commit()
-
-
-                professores = json_data.get('professores', [])
-                for professor in professores:
-                    professor_masp = professor.get('id')
-                    professor_nome = professor.get('nome')
-                    professor_vinculo = professor.get('vinculo')
-                    professor_titulacao = professor.get('titulacao')
-                    professor_carga_horaria_jornada_extendida = int(professor.get('carga_horaria_jornada_extendida'))
-                    professor_carga_horaria_projeto_extencao = int(professor.get('carga_horaria_projeto_extencao'))
-                    professor_carga_horaria_projeto_pesquisa = int(professor.get('carga_horaria_projeto_pesquisa'))
-                    professor_carga_horaria_total = int(professor.get('carga_horaria_total'))
-
-
-                    # Query para verificar se o professor já existe
-                    verificar_professor_query = f"""
-                        SELECT id FROM professor_planilha WHERE id = '{professor_masp}'
-                    """
-                    resultado_professor = db.fetch_one(verificar_professor_query)
-                    db.commit()
-
-                    professor_dados = {
-                        'id': professor_masp,
-                        'nome': professor_nome,
-                        'vinculo': professor_vinculo,
-                        'titulacao': professor_titulacao,
-                        'carga_horaria_jornada_extendida': professor_carga_horaria_jornada_extendida,
-                        'carga_horaria_projeto_extencao': professor_carga_horaria_projeto_extencao,
-                        'carga_horaria_projeto_pesquisa': professor_carga_horaria_projeto_pesquisa,
-                        'carga_horaria_total': professor_carga_horaria_total
-                    }
-
-                    if resultado_professor:
-                        # Se o professor já existe, fazer update
-                        professor_query = """
-                            UPDATE professor_planilha
-                            SET nome = %(nome)s,
-                                vinculo = %(vinculo)s,
-                                titulacao = %(titulacao)s,
-                                carga_horaria_jornada_extendida = %(carga_horaria_jornada_extendida)s,
-                                carga_horaria_projeto_extencao = %(carga_horaria_projeto_extencao)s,
-                                carga_horaria_projeto_pesquisa = %(carga_horaria_projeto_pesquisa)s,
-                                carga_horaria_total = %(carga_horaria_total)s
-                            WHERE id = %(id)s
-                        """
-                        db.update(professor_query, **professor_dados)
-                    else:
-                        professor_query = """
-                            INSERT INTO professor_planilha(
-                                id, nome, vinculo, titulacao, carga_horaria_jornada_extendida, carga_horaria_projeto_extencao, 
-                                carga_horaria_projeto_pesquisa, carga_horaria_total 
-                            )
-                            VALUES(
-                                %(id)s, %(nome)s, %(vinculo)s, %(titulacao)s, %(carga_horaria_jornada_extendida)s, 
-                                %(carga_horaria_projeto_extencao)s, %(carga_horaria_projeto_pesquisa)s, %(carga_horaria_total)s
-                            )
-                        """
-                        db.insert(professor_query, **professor_dados)
-                        db.commit()
-
-                    # Inserir relação entre residência/especialização, professor e coordenador
-                    relacao_query = """
-                        INSERT INTO residencia_especializacao_professor_planilha(
-                            nome_formulario, data_preenchimento, residencia_especializacao_id, professor_id, coordenador_id  
-                        )
-                        VALUES(
-                            %(nome_formulario)s, %(data_preenchimento)s, %(residencia_id)s, %(professor_id)s, %(coordenador_masp)s
-                        )
-                    """
-                    relacao_dados = {
-                        'nome_formulario': nome_formulario,
-                        'data_preenchimento': data_preenchimento,
-                        'residencia_id': residencia_id,
-                        'professor_id': professor_masp,
-                        'coordenador_masp': coordenador_masp
-                    }
-                    db.insert(relacao_query, **relacao_dados)
-                    db.commit()
-        
-            return True
-    
-
-    
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
-    def alterar_formulario_ppgls(self, db: DBConnectorGRADForm = None, **kwargs):
-       
-        print("Conteúdo de kwargs da query:", kwargs)
-
-        itens = kwargs.get('item', [])
-        print("Conteúdo de kwargs na forma de lista:", itens)
-
-        for item in itens:
-            # Extraia o campo 'nome' do item
-            nome_formulario = item.get('nome')
-
-            # Extraia o campo 'json', que é uma string JSON
-            json_str = item.get('json')
-            if json_str:
-                # Converta a string JSON para um dicionário Python
-                json_data = json.loads(json_str)
-            else:
-                print("Campo 'json' não encontrado ou está vazio.")
-                json_data = {}
-
-            # Extraia os campos desejados do dicionário json_data
-            data_inicio = json_data.get('data_inicio')
-            data_preenchimento = json_data.get('data_preenchimento')
-
-            # Verificar se o formulário existe
-            query_verificar = """
-            SELECT 1 FROM residencia_especializacao_professor_planilha 
-            WHERE nome_formulario = %(nome_formulario)s 
-            AND data_preenchimento = %(data_preenchimento)s
-            """
-            existe = db.fetch_one(query_verificar, nome_formulario=nome_formulario, data_preenchimento=data_preenchimento)
-
-            if not existe:
-                raise ValueError("Formulário não encontrado para este nome e data de início.")
-            
-        
             residencia = json_data.get('residencia_especializacao', {})
             residencia_dados = {
-                    'id': int(residencia.get('id', 0)),
-                    'nome': str(residencia.get('nome', '')),
-                    'data_inicio': residencia.get('data_inicio', ''),
-                    'data_termino': residencia.get('data_termino', ''),
-                    'vagas_ofertadas': int(residencia.get('vagas_ofertadas', 0)),
-                    'vagas_preenchidas': int(residencia.get('vagas_preenchidas', 0)),
-                    'categoria_profissional': str(residencia.get('categoria_profissional', '')),
-                    'centro': str(residencia.get('centro', '')),
-                    'r1': residencia.get('r1', ''),
-                    'r2': residencia.get('r2', ''),
-                    'r3': residencia.get('r3', ''),
-                    'especialista': residencia.get('especialista', '')
+                'nome': str(residencia.get('nome', '')),
+                'data_inicio': residencia.get('data_inicio', ''),
+                'data_termino': residencia.get('data_termino', ''),
+                'vagas_ofertadas': int(residencia.get('vagas_ofertadas', 0)),
+                'vagas_preenchidas': int(residencia.get('vagas_preenchidas', 0)),
+                'categoria_profissional': str(residencia.get('categoria_profissional', '')),
+                'centro': str(residencia.get('centro', '')),
+                'r1': residencia.get('r1', ''),
+                'r2': residencia.get('r2', ''),
+                'r3': residencia.get('r3', ''),
+                'especialista': residencia.get('especialista', '')
             }
 
             try:
-                # Criar a query de atualização
+                # Inserir residência/especialização
                 residencia_query = """
-                    UPDATE residencia_especializacao_planilha 
-                    SET nome = %(nome)s, data_inicio = %(data_inicio)s, data_termino = %(data_termino)s,
-                        vagas_ofertadas = %(vagas_ofertadas)s, vagas_preenchidas = %(vagas_preenchidas)s,
-                        categoria_profissional = %(categoria_profissional)s, centro = %(centro)s, r1 = %(r1)s, r2 = %(r2)s, r3 = %(r3)s, especialista = %(especialista)s
-                    WHERE id = %(id)s
+                    INSERT INTO residencia_especializacao_planilha (
+                        nome, data_inicio, data_termino, vagas_ofertadas, 
+                        vagas_preenchidas, categoria_profissional, centro, r1, r2, r3, especialista
+                    )
+                    VALUES (
+                        %(nome)s, %(data_inicio)s, %(data_termino)s, %(vagas_ofertadas)s, 
+                        %(vagas_preenchidas)s, %(categoria_profissional)s, %(centro)s, %(r1)s, %(r2)s, %(r3)s, %(especialista)s
+                    )
                 """
-                # Executar a atualização
-                db.update(residencia_query, **residencia_dados)
-                db.commit()
 
+                db.insert(residencia_query, **residencia_dados)
+
+                # Consultar o último ID inserido
+                id_query = "SELECT currval('residencia_especializacao_planilha_id_seq') AS id;"
+                result = db.fetch_all(id_query)
+
+                residencia_especializacao_id = result[0]['id'] if result else None
+
+                db.commit()
+                print("Dados da residência/especialização que estão sendo inseridos:", residencia_dados)
             except Exception as e:
-                print(f"Erro ao atualizar residência/especialização: {e}")
+                print(f"Erro ao inserir residência/especialização: {e}")
                 db.rollback()
 
-            # Atualizar Coordenador
             coordenador = json_data.get('coordenador', {})
             coordenador_dados = {
-                'id': int(coordenador.get('coordenador_masp')),
-                'nome': coordenador.get('coordenador_nome'),
-                'carga_horaria': int(coordenador.get('carga_horaria'))
+                'id': str(coordenador.get('id')),
+                'nome': str(coordenador.get('nome'))
             }
 
+            coordenador_query = """
+                INSERT INTO coordenador_planilha (id, nome)
+                VALUES (%(id)s, %(nome)s)
+                ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome
+            """
+            db.insert(coordenador_query, **coordenador_dados)
+
+            coordenador_carga_horaria_dados = {
+                'coordenador_id': coordenador['id'],
+                'carga_horaria': int(coordenador.get('carga_horaria')),
+                'ano': int(coordenador.get('ano')),
+                'semestre': int(coordenador.get('semestre')),
+                'nome_formulario': item.get('nome'),
+                'data_preenchimento': json_data.get('data_preenchimento')
+            }
+
+            coordenador_query = """
+                INSERT INTO coordenador_carga_horaria (
+                    coordenador_id, carga_horaria, ano, semestre, nome_formulario, data_preenchimento 
+                )VALUES(
+                    %(coordenador_id)s, %(carga_horaria)s, %(ano)s, %(semestre)s, %(nome_formulario)s, %(data_preenchimento)s
+                )
+            """
+
             try:
-                # Atualizar os dados do coordenador
-                coordenador_query = """
-                    UPDATE coordenador_planilha
-                    SET nome = %(nome)s, carga_horaria = %(carga_horaria)s
-                    WHERE id = %(id)s
-                """
-                db.update(coordenador_query, **coordenador_dados)
+                db.insert(coordenador_query, **coordenador_carga_horaria_dados)
+                id_query = "SELECT currval('coordenador_carga_horaria_id_seq') AS id;"
+                result = db.fetch_all(id_query)
+                coordenador_carga_horaria_id = result[0]['id'] if result else None
+
                 db.commit()
-
             except Exception as e:
-                print(f"Erro ao atualizar coordenador: {e}")
-                db.rollback()
+                print(f"Erro ao inserir coordenador carga horária: {e}")
 
-            # Atualizar Professores
             professores = json_data.get('professores', [])
             for professor in professores:
                 professor_dados = {
                     'id': professor.get('id'),
-                    'nome': professor.get('nome'),
+                    'nome': professor.get('nome')      
+                }
+
+                professor_query = """
+                INSERT INTO professor_planilha (id, nome)
+                VALUES (%(id)s, %(nome)s)
+                ON CONFLICT (id) DO UPDATE SET nome = EXCLUDED.nome
+                """
+
+                db.insert(professor_query, **professor_dados)
+
+                professor_carga_dados = {
+                    'professor_id': professor.get('id'),
                     'vinculo': professor.get('vinculo'),
-                    'titulacao': professor.get('titulacao'),
+                    'titulacao' : professor.get('titulacao'),
                     'carga_horaria_jornada_extendida': int(professor.get('carga_horaria_jornada_extendida')),
                     'carga_horaria_projeto_extencao': int(professor.get('carga_horaria_projeto_extencao')),
                     'carga_horaria_projeto_pesquisa': int(professor.get('carga_horaria_projeto_pesquisa')),
-                    'carga_horaria_total': int(professor.get('carga_horaria_total'))
+                    'carga_horaria_total': int(professor.get('carga_horaria_total')),
+                    'ano': int(professor.get('ano')),
+                    'semestre': int(professor.get('semestre')),
+                    'nome_formulario': item.get('nome'),
+                    'data_preenchimento': json_data.get('data_preenchimento')
                 }
 
-                try:
-                    # Atualizar professor
-                    professor_query = """
-                        UPDATE professor_planilha
-                        SET nome = %(nome)s, vinculo = %(vinculo)s, titulacao = %(titulacao)s,
-                            carga_horaria_jornada_extendida = %(carga_horaria_jornada_extendida)s,
-                            carga_horaria_projeto_extencao = %(carga_horaria_projeto_extencao)s,
-                            carga_horaria_projeto_pesquisa = %(carga_horaria_projeto_pesquisa)s,
-                            carga_horaria_total = %(carga_horaria_total)s
-                        WHERE id = %(id)s
-                    """
-                    db.update(professor_query, **professor_dados)
-                    db.commit()
+                professor_query = """
+                    INSERT INTO professor_carga_horaria(
+                        professor_id, vinculo, titulacao, carga_horaria_jornada_extendida, carga_horaria_projeto_extencao, 
+                        carga_horaria_projeto_pesquisa, carga_horaria_total, ano, semestre, nome_formulario, data_preenchimento
+                    )
+                    VALUES(
+                        %(professor_id)s, %(vinculo)s, %(titulacao)s, %(carga_horaria_jornada_extendida)s, 
+                        %(carga_horaria_projeto_extencao)s, %(carga_horaria_projeto_pesquisa)s, %(carga_horaria_total)s,
+                        %(ano)s, %(semestre)s, %(nome_formulario)s, %(data_preenchimento)s
+                    )
+                """
 
-                except Exception as e:
-                    print(f"Erro ao atualizar professor: {e}")
-                    db.rollback()
+                db.insert(professor_query, **professor_carga_dados)
+                id_query = "SELECT currval('professor_carga_horaria_id_seq') AS id;"
+                result = db.fetch_all(id_query)
+                professor_carga_horaria_id = result[0]['id'] if result else None
+                db.commit()
 
-                # Atualizar relação entre residência/especialização, professor e coordenador
-                try:
-                    relacao_query = """
-                        UPDATE residencia_especializacao_professor_planilha
-                        SET nome_formulario = %(nome_formulario)s, data_preenchimento = %(data_preenchimento)s,
-                            professor_id = %(professor_id)s, coordenador_id = %(coordenador_masp)s
-                        WHERE residencia_especializacao_id = %(residencia_id)s
-                        AND professor_id = %(professor_id)s
-                    """
-                    relacao_dados = {
-                        'nome_formulario': nome_formulario,
-                        'data_preenchimento': data_preenchimento,
-                        'residencia_id': int(residencia.get('id', 0)),
-                        'professor_id': professor.get('id'),
-                        'coordenador_masp': coordenador.get('coordenador_masp')
-                    }
-                    db.update(relacao_query, **relacao_dados)
-                    db.commit()
 
-                except Exception as e:
-                    print(f"Erro ao atualizar relação: {e}")
-                    db.rollback()
+                # Inserir relação entre residência/especialização, professor e coordenador
+                relacao_query = """
+                    INSERT INTO residencia_especializacao_professor_planilha  (
+                        nome_formulario, data_preenchimento, residencia_especializacao_id, professor_carga_horaria_id, coordenador_carga_horaria_id   
+                    )
+                    VALUES(
+                        %(nome_formulario)s, %(data_preenchimento)s, %(residencia_especializacao_id)s, %(professor_carga_horaria_id)s,  %(coordenador_carga_horaria_id)s
+                    )
+                """
+                relacao_dados = {
+                    'nome_formulario': nome_formulario,
+                    'data_preenchimento': data_preenchimento,
+                    'residencia_especializacao_id': residencia_especializacao_id,
+                    'professor_carga_horaria_id': professor_carga_horaria_id,
+                    'coordenador_carga_horaria_id':coordenador_carga_horaria_id
+                }
 
+                db.insert(relacao_query, **relacao_dados)
+                db.commit()
 
         return True
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
-    def buscar_formulario_ppgls(self, nome_formulario:str , data_inicio:str, db: DBConnectorGRADForm = None):
-        
+    
 
+
+
+    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
+    def buscar_formulario_ppgls(self, nome_formulario: str, data_inicio: str, db: DBConnectorGRADForm = None):
         if not nome_formulario or not data_inicio:
             raise ValueError("Os parâmetros 'nome_formulario' e 'data_inicio' são obrigatórios.")
 
-        # Buscar dados na tabela residencia_especializacao_planilha
+        # Buscar todos os dados relacionados ao formulário, conforme a consulta SQL
         query_residencia = """
         SELECT 
-            re.id AS residencia_id
-        FROM residencia_especializacao_professor_planilha rep
-        JOIN residencia_especializacao_planilha re 
-            ON rep.residencia_especializacao_id = re.id
-        JOIN coordenador_planilha c 
-            ON rep.coordenador_id = c.id
-        JOIN professor_planilha p 
-            ON rep.professor_id = p.id
-        WHERE rep.nome_formulario = %(nome_formulario)s
-        AND re.data_inicio = %(data_inicio)s
-        LIMIT 1;
+            resp.id AS formulario_id,
+            resp.nome_formulario,
+            resp.data_preenchimento,
+            resp.residencia_especializacao_id,
+            resp.professor_carga_horaria_id,
+            resp.coordenador_carga_horaria_id,
+            resp.unique_identifier,
+            
+            -- Dados da tabela residencia_especializacao_planilha
+            re.nome AS nome_residencia,
+            re.data_inicio,
+            re.data_termino,
+            re.vagas_ofertadas,
+            re.vagas_preenchidas,
+            re.categoria_profissional,
+            re.centro,
+            re.r1,
+            re.r2,
+            re.r3,
+            re.especialista,
+
+            -- Dados da tabela professor_carga_horaria
+            ph.professor_id,
+            ph.vinculo,
+            ph.titulacao,
+            ph.carga_horaria_jornada_extendida,
+            ph.carga_horaria_projeto_extencao,
+            ph.carga_horaria_projeto_pesquisa,
+            ph.carga_horaria_total,
+            ph.ano AS ano_professor,
+            ph.semestre AS semestre_professor
+
+            -- Dados da tabela coordenador_carga_horaria
+            ch.coordenador_id,
+            ch.carga_horaria AS carga_horaria_coordenador,
+            ch.ano AS ano_coordenador,
+            ch.semestre AS semestre_coordenador
+    
+            -- Dados dos professores e coordenadores (nomes)
+            p.nome AS nome_professor,
+            c.nome AS nome_coordenador
+            FROM 
+                residencia_especializacao_professor_planilha resp
+            JOIN 
+                residencia_especializacao_planilha re ON re.id = resp.residencia_especializacao_id
+            JOIN 
+                professor_carga_horaria ph ON ph.id = resp.professor_carga_horaria_id
+            JOIN 
+                coordenador_carga_horaria ch ON ch.id = resp.coordenador_carga_horaria_id
+            JOIN 
+                professor_planilha p ON p.id = ph.professor_id
+            JOIN 
+                coordenador_planilha c ON c.id = ch.coordenador_id
+            WHERE 
+                resp.nome_formulario = %(nome_formulario)s
+                AND resp.data_preenchimento::DATE = %(data_inicio)s;
         """
-        residencia = db.fetch_one(query_residencia, nome_formulario=nome_formulario, data_inicio=data_inicio)
         
-        if not residencia:
-            raise ValueError("Formulário não encontrado.")
+        # Executar a consulta para obter os dados
+        resultado = db.fetch_one(query_residencia, nome_formulario=nome_formulario, data_inicio=data_inicio)
 
-        residencia_id = residencia['residencia_id']
-
-        # Buscar coordenador relacionado
-        query_coordenador_id = """
-        SELECT coordenador_id FROM residencia_especializacao_professor_planilha
-        WHERE residencia_especializacao_id = %(residencia_id)s
-        LIMIT 1
-        """
-        coordenador_relacao = db.fetch_one(query_coordenador_id, residencia_id=residencia_id)
+        # Se não encontrar o formulário
+        if not resultado:
+            raise ValueError(f"Formulário não encontrado para o nome '{nome_formulario}' e a data '{data_inicio}'.")
         
-        coordenador = None
-        if coordenador_relacao:
-            coordenador_id = coordenador_relacao['coordenador_id']
-            query_coordenador = """
-            SELECT * FROM coordenador_planilha
-            WHERE id = %(coordenador_id)s
-            """
-            coordenador = db.fetch_one(query_coordenador, coordenador_id=coordenador_id)
+        for chave, valor in resultado.items():
+            if isinstance(valor, (datetime, date)):
+                resultado[chave] = valor.strftime("%Y-%m-%d")
 
-        # Buscar professores relacionados
-        query_professores_id = """
-        SELECT professor_id FROM residencia_especializacao_professor_planilha
-        WHERE residencia_especializacao_id = %(residencia_id)s
-        """
-        professores_relacao = db.fetch_all(query_professores_id, residencia_id=residencia_id)
-
-        professores = []
-        for relacao in professores_relacao:
-            professor_id = relacao['professor_id']
-            query_professor = """
-            SELECT * FROM professor_planilha
-            WHERE id = %(professor_id)s
-            """
-            professor = db.fetch_one(query_professor, professor_id=professor_id)
-            professores.append(professor)
-
-        # Montar o resultado final
-        resultado = {
-            'residencia': residencia,
-            'coordenador': coordenador,
-            'professores': professores
-        }
-        
         return resultado
 
+
     
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
-    def excluir_formulario_ppgls(self, nome_formulario:str , data_inicio:str, db: DBConnectorGRADForm = None):    
-        if not nome_formulario or not data_inicio:
-            raise ValueError("Os parâmetros 'nome_formulario' e 'data_inicio' são obrigatórios.")
+    @tratamento_excecao_com_db(tipo_banco='grad_formularios')  
+    def excluir_formulario_ppgls(self, nome_formulario: str, data_inicio: str, db: DBConnectorGRADForm = None):
+        print(f"Excluindo formulário com nome: {nome_formulario} e data_inicio: {data_inicio}")
 
-        # Verificar se o formulário existe
-        query_verificar_formulario = """
-        SELECT 1 FROM residencia_especializacao_professor_planilha
-        WHERE nome_formulario = %(nome_formulario)s
-        AND data_preenchimento = %(data_inicio)s
-        LIMIT 1;
-        """
-        formulario_existe = db.fetch_one(query_verificar_formulario, nome_formulario=nome_formulario, data_inicio=data_inicio)
-        
-        if not formulario_existe:
-            raise ValueError("Formulário não encontrado.")
+        try:
+            # Excluir a relação entre residência/especialização, professor e coordenador
+            relacao_query = """
+                DELETE FROM residencia_especializacao_professor_planilha
+                WHERE nome_formulario = %(nome_formulario)s
+                AND data_preenchimento::DATE = %(data_inicio)s;
+            """
+            db.delete(relacao_query, nome_formulario=nome_formulario, data_inicio=data_inicio)
 
-        # Excluir as relações na tabela residencia_especializacao_professor_planilha
-        query_delete_relacao = """
-        DELETE FROM residencia_especializacao_professor_planilha
-        WHERE nome_formulario = %(nome_formulario)s
-        AND data_preenchimento = %(data_inicio)s;
-        """
-        db.delete(query_delete_relacao, nome_formulario=nome_formulario, data_inicio=data_inicio)
-        db.commit()
+            # Excluir carga horária dos professores
+            professor_carga_query = """
+                DELETE FROM professor_carga_horaria
+                WHERE nome_formulario = %(nome_formulario)s
+                AND data_preenchimento::DATE = %(data_inicio)s;
+            """
+            db.delete(professor_carga_query, nome_formulario=nome_formulario, data_inicio=data_inicio)
+
+            # Excluir carga horária do coordenador
+            coordenador_carga_query = """
+                DELETE FROM coordenador_carga_horaria
+                WHERE nome_formulario = %(nome_formulario)s
+                AND data_preenchimento::DATE = %(data_inicio)s;
+            """
+            db.delete(coordenador_carga_query, nome_formulario=nome_formulario, data_inicio=data_inicio)
+
+            # Excluir professor (considerando que a exclusão pode ocorrer apenas se não houver dependência)
+            professor_query = """
+                DELETE FROM professor_planilha
+                WHERE id IN (
+                    SELECT professor_id FROM professor_carga_horaria
+                    WHERE nome_formulario = %(nome_formulario)s
+                    AND data_preenchimento::DATE = %(data_inicio)s
+                );
+            """
+            db.delete(professor_query, nome_formulario=nome_formulario, data_inicio=data_inicio)
+
+            # Excluir coordenador
+            coordenador_query = """
+                DELETE FROM coordenador_planilha
+                WHERE id IN (
+                    SELECT coordenador_id FROM coordenador_carga_horaria
+                    WHERE nome_formulario = %(nome_formulario)s
+                    AND data_preenchimento::DATE = %(data_inicio)s
+                );
+            """
+            db.delete(coordenador_query, nome_formulario=nome_formulario, data_inicio=data_inicio)
+
+            # Excluir residência/especialização
+            residencia_query = """
+                DELETE FROM residencia_especializacao_planilha
+                WHERE nome = %(nome_formulario)s
+                AND data_inicio = %(data_inicio)s;
+            """
+            db.delete(residencia_query, nome_formulario=nome_formulario, data_inicio=data_inicio)
+
+            db.commit()
+            print(f"Formulário com nome {nome_formulario} e data_inicio {data_inicio} excluído com sucesso.")
+        except Exception as e:
+            print(f"Erro ao excluir o formulário: {e}")
+            db.rollback()
 
         return True
-
-
     
-   
+  
 queries_formulario_ppgls = QueriesFormularioPPGLS()

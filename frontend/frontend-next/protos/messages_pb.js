@@ -5729,7 +5729,7 @@ proto.protos.FormularioSerchPPGLSRequest.prototype.toObject = function(opt_inclu
  */
 proto.protos.FormularioSerchPPGLSRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    masp: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    cpf: jspb.Message.getFieldWithDefault(msg, 1, 0),
     tipo: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 

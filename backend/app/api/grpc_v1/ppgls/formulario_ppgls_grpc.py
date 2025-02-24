@@ -7,36 +7,7 @@ import json
 
 class FormularioPPGLSServicer(ppgls_pb2_grpc.DadosFormularioPosGraduacaoLSServicer):
     
-    def SearchRegistrosFormualario(self, request: FormularioSerchPPGLSRequest, context):
-        #exemplo de requisição:
-        #{
-        # "masp": 123456,
-        # "tipo": 2
-        # }
-
-        # Cria uma lista de tarefas
-        consultas = [
-            tasks_formulario_ppgls.tarefa_tarefa_buscar_registros_formulario_ppgls.s(masp=request.masp, tipo=request.tipo)
-        ]
-        
-        # Cria um grupo de tarefas
-        job = group(consultas)
-        
-        # Executa as tarefas e obtém o resultado
-        result = job.apply_async()
-        
-        try:
-            # Obtém o resultado das tarefas
-            result = result.get()
-            # Prepare a resposta
-            response = [item for item in result]
-        except Exception as e:
-            # Log de erro se ocorrer uma exceção
-            print(f"Erro ao obter resultados das tarefas: {e}")
-            response = []  # ou qualquer outro valor padrão que faça sentido
-        
-        # Retorna a resposta
-        return FormularioPPGLSResponse(item=response)
+    
      
     def InsertFormulario(self, request: FormularioPPGLSRequest, context):
 

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package protos;
+
+import "messages.proto";
+
+service Usuario {
+  rpc Login (LoginRequest) returns (LoginResponseFormulario);
+  rpc Logout (LogoutRequest) returns (LogoutResponse);
+  rpc ObtemUsuario (UsuarioRequest) returns (UsuarioFormularioResponse);
+  rpc ObtemListaUsuarios (UsuarioFormularioResponse) returns (ListaUsuariosFormularioResponse);
+  rpc DeletarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+  rpc AlternarStatusUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+  rpc AtualizarUsuario (CriacaoUsuarioFormularioRequest) returns (AlteracaoUsuarioResponse);
+  rpc CriarUsuario (CriacaoUsuarioFormularioRequest) returns (AlteracaoUsuarioResponse);
+}
+

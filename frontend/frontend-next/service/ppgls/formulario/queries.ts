@@ -25,10 +25,10 @@ export const useGetIndicadoresFormulario = ({ nome_formulario, data_inicio }: Ge
 };
 
 
-export const useSearchRegistrosFormulario = ({ masp, tipo }: SearchRegistrosFormularioParams) => {
+export const useSearchRegistrosFormulario = ({ cpf, tipo }: SearchRegistrosFormularioParams) => {
   const { data, isLoading, error } = useFetcher({
-    callback: () => searchRegistrosFormulario({ masp, tipo }),
-    depencencies: [masp, tipo],
+    callback: () => searchRegistrosFormulario({ cpf, tipo }),
+    depencencies: [cpf, tipo],
   });
 
   return { data, isLoading, error };

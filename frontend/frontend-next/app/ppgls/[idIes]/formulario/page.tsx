@@ -47,8 +47,8 @@ const formSchema = z.object({
   especialista: z.coerce.number().min(0),
   nome_coord: z.string(),
   carg_hor_coord: z.coerce.number().min(0),
-  cod_masp_coord: z.coerce.number().min(0),
-  cod_masp_prof: z.coerce.number().min(0),
+  cod_cpf_coord: z.string(),
+  cod_cpf_prof: z.string(),
   nome_cor: z.string(),
   nome_prof: z.string(),
   titulacao: z.string(),
@@ -74,6 +74,32 @@ const opcoesVinculo = [
   { valor: "CONTRATADO", rotulo: "Contratado" },
 ];
 
+const validarCPF = (cpf: string): boolean => {
+  cpf = cpf.replace(/\D/g, ""); // Remove caracteres não numéricos
+
+  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) {
+    return false; // CPF deve ter 11 dígitos e não pode ser repetido (ex: 111.111.111-11)
+  }
+
+  let soma = 0, resto;
+
+  for (let i = 0; i < 9; i++) {
+    soma += parseInt(cpf.charAt(i)) * (10 - i);
+  }
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  if (resto !== parseInt(cpf.charAt(9))) return false;
+
+  soma = 0;
+  for (let i = 0; i < 10; i++) {
+    soma += parseInt(cpf.charAt(i)) * (11 - i);
+  }
+  resto = (soma * 10) % 11;
+  if (resto === 10 || resto === 11) resto = 0;
+  
+  return resto === parseInt(cpf.charAt(10));
+};
+
 export const MyForm = () => {
 
   const form = useForm({
@@ -93,8 +119,8 @@ export const MyForm = () => {
       especialista:0,
       nome_coord: "",
       carg_hor_coord:0,
-      cod_masp_coord:0,
-      cod_masp_prof:0,
+      cod_cpf_coord:"",
+      cod_cpf_prof:"",
       nome_cor:"",
       nome_prof:"",
       titulacao:"",
@@ -149,7 +175,7 @@ export const MyForm = () => {
       const jsonFormulario: JsonFormulario = {
         data_preenchimento: new Date().toISOString(),
         coordenador: {
-          coordenador_masp: valoresFormulario.cod_masp_coord,
+          coordenador_cpf: valoresFormulario.cod_cpf_coord,
           coordenador_nome: valoresFormulario.nome_cor,
           carga_horaria: valoresFormulario.carg_hor_coord,
         },
@@ -210,7 +236,7 @@ export const MyForm = () => {
     const valoresAtuais = form.getValues(); // Obtém os valores dos campos
     
     // Verifica se os campos obrigatórios estão preenchidos
-    if (!valoresAtuais.cod_masp_prof || !valoresAtuais.nome_prof || !valoresAtuais.titulacao) {
+    if (!valoresAtuais.cod_cpf_prof || !valoresAtuais.nome_prof || !valoresAtuais.titulacao) {
       alert("Preencha todos os campos obrigatórios!");
       return;
     }
@@ -247,8 +273,8 @@ export const MyForm = () => {
       form.setValue("especialista", data.especialista || "");
       form.setValue("nome_coord", data.nome_coord || "");
       form.setValue("carg_hor_coord", data.carg_hor_coord || "");
-      form.setValue("cod_masp_prof", data.cod_masp_prof || "");
-      form.setValue("cod_masp_coord", data.cod_masp_coord || "");
+      form.setValue("cod_cpf_prof", data.cod_cpf_prof || "");
+      form.setValue("cod_cpf_coord", data.cod_cpf_coord || "");
       form.setValue("nome_cor", data.nome_cor || "");
       form.setValue("nome_prof", data.nome_prof || "");
       form.setValue("titulacao", data.titulacao || "");
@@ -627,24 +653,38 @@ export const MyForm = () => {
 
             <FormField
               control={form.control}
-              name="cod_masp_coord"
+              name="cod_cpf_coord"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Código MASP</FormLabel>
+                  <FormLabel>CPF</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type="number"
-                      min="0"
-                      step="1"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={14} // Inclui pontos e traço na exibição
                       required
-                      value={field.value === 0 ? "" : field.value}
-                      onInput={(e) => {
-                        const input = e.target as HTMLInputElement;
-                        if (input.value.length < 6) {
-                          input.setCustomValidity("O Código MASP deve ter pelo menos 6 dígitos");
+                      value={field.value
+                        ? field.value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4")
+                        : ""}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, ""); // Remove caracteres não numéricos
+
+                        if (value.length > 11) {
+                          value = value.slice(0, 11); // Limita a 11 dígitos numéricos
+                        }
+
+                        field.onChange(value); // Armazena apenas os números no estado do formulário
+
+                        if (value.length === 11 && !validarCPF(value)) {
+                          e.target.setCustomValidity("CPF inválido. Verifique os dígitos.");
+                          e.target.reportValidity(); // Exibe a mensagem imediatamente
+                        } else if (value.length !== 11) {
+                          e.target.setCustomValidity("O CPF deve ter exatamente 11 dígitos numéricos.");
+                          e.target.reportValidity();
                         } else {
-                          input.setCustomValidity("");
+                          e.target.setCustomValidity("");
+                          e.target.reportValidity();
                         }
                       }}
                     />
@@ -653,6 +693,7 @@ export const MyForm = () => {
                 </FormItem>
               )}
             />
+
     
             </div>
           </div>
@@ -716,24 +757,33 @@ export const MyForm = () => {
 
             <FormField
               control={form.control}
-              name="cod_masp_prof"
+              name="cod_cpf_prof"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Código MASP</FormLabel>
+                  <FormLabel>CPF</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type="number"
-                      min="0"
-                      step="1"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={14} // Considerando os pontos e traço
                       required
-                      value={field.value === 0 ? "" : field.value}
-                      onInput={(e) => {
-                        const input = e.target as HTMLInputElement;
-                        if (input.value.length < 6) {
-                          input.setCustomValidity("O Código MASP deve ter pelo menos 6 dígitos");
+                      value={field.value
+                        ? field.value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4")
+                        : ""}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, ""); // Remove caracteres não numéricos
+
+                        if (value.length > 11) {
+                          value = value.slice(0, 11); // Limita a 11 dígitos numéricos
+                        }
+
+                        field.onChange(value); // Armazena apenas os números no estado do formulário
+
+                        if (value.length !== 11) {
+                          e.target.setCustomValidity("O CPF deve ter exatamente 11 dígitos numéricos.");
                         } else {
-                          input.setCustomValidity("");
+                          e.target.setCustomValidity("");
                         }
                       }}
                     />
@@ -742,6 +792,9 @@ export const MyForm = () => {
                 </FormItem>
               )}
             />
+
+
+
     
             </div>
           </div>
@@ -920,7 +973,7 @@ export const MyForm = () => {
               <table className="min-w-full table-fixed border border-gray-300">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="border px-4 py-2 text-xs w-[50px]">Código MASP</th>
+                    <th className="border px-4 py-2 text-xs w-[50px]">Código CPF</th>
                     <th className="border px-4 py-2 text-xs w-[50px]">Nome do Professor</th>
                     <th className="border px-4 py-2 text-xs w-[50px]">Vínculo</th>
                     <th className="border px-4 py-2 text-xs w-[50px]">Titulação</th>
@@ -937,7 +990,7 @@ export const MyForm = () => {
                       className={`cursor-pointer ${linhaSelecionada === index ? "bg-blue-100" : ""}`} // Destacar a linha selecionada
                       onClick={() => handleSelecionarLinha(index)} // Definir a linha como selecionada
                     >
-                      <td className="border px-4 py-2 text-xs text-center w-[50px] overflow-auto whitespace-nowrap max-w-[100px]">{prof.cod_masp_prof}</td>
+                      <td className="border px-4 py-2 text-xs text-center w-[50px] overflow-auto whitespace-nowrap max-w-[100px]">{prof.cod_cpf_prof}</td>
                       <td className="border px-4 py-2 text-xs text-center w-[50px] overflow-auto whitespace-nowrap max-w-[100px]">{prof.nome_prof}</td>
                       <td className="border px-4 py-2 text-xs text-center w-[50px] overflow-auto whitespace-nowrap max-w-[100px]">{prof.vinculo}</td>
                       <td className="border px-4 py-2 text-xs text-center w-[50px] overflow-auto whitespace-nowrap max-w-[100px]">{prof.titulacao}</td>

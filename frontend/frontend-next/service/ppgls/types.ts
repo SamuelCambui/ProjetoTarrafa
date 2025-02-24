@@ -64,7 +64,7 @@ export type AbaDisciplinasParams = {
   };
 
   export type Coordenador = {
-    coordenador_masp: number;
+    coordenador_cpf: string;
     coordenador_nome: string;
     carga_horaria: number;
   };
@@ -125,6 +125,6 @@ export type AbaDisciplinasParams = {
   }
 
   export type SearchRegistrosFormularioParams = {
-    masp: any;
+    cpf: any;
     tipo: any;
   }

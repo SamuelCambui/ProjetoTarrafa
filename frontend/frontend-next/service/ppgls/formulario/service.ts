@@ -5,7 +5,6 @@ import {
   GetIndicadoresFormularioParams,
   DeleteFormularioParams,
   SearchRegistrosFormularioParams,
-
 } from "../types";
 import { stubFormularioPPGLS, toApiResponse } from "../utils";
 import { FormularioSerchPPGLSRequest, FormularioPPGLSRequest, FormularioIndicadoresRequest } from "@/protos/messages_pb";
@@ -35,33 +34,6 @@ export async function GetIndicadoresFormulario({
   } catch (e) {
     console.error(e);
     throw new Error("Erro ao buscar indicadores do formulário.");
-  }
-}
-
-export async function searchRegistrosFormulario({ 
-    masp, 
-    tipo 
-}: SearchRegistrosFormularioParams) {
-  try {
-    const request = new FormularioSerchPPGLSRequest();
-    request.setMasp(masp);
-    request.setTipo(tipo);
-
-    const response = await new Promise((resolve, reject) => {
-        stubFormularioPPGLS.searchRegistrosFormualario(request, (error, registros) => {
-        if (error) {
-          reject(error);
-        } else {
-          const data = registros.toObject();
-          resolve(toApiResponse(data));
-        }
-      });
-    });
-
-    return response;
-  } catch (e) {
-    console.error(e);
-    throw new Error("Erro ao buscar registros do formulário.");
   }
 }
 
