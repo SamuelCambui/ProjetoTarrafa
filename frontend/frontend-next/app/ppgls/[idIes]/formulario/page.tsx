@@ -24,13 +24,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import Calendar from "@/components/ui/calendar";
 import { Calendar as CalendarIcon } from "lucide-react";
 import {
-  UpdateFormularioParams,
   DeleteFormularioParams,
   InsertFormularioParams,
-  UpdateFormularioItem,
   JsonFormulario
 } from "../../../../service/ppgls/types";
-import { useInsertFormulario } from "../../../../service/ppgls/formulario/queries";
+import { insertFormularioData } from "../../../../service/ppgls/formulario/queries";
 
 const formSchema = z.object({
   nome_espec: z.string(),

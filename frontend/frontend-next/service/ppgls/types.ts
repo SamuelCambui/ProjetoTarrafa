@@ -67,40 +67,50 @@ export type AbaDisciplinasParams = {
     coordenador_cpf: string;
     coordenador_nome: string;
     carga_horaria: number;
+    ano: number;
+    semestre: number;
+    nome_formulario: string;
+    data_preenchimento: string;
   };
   
   export type ResidenciaEspecializacao = {
     id: number;
     nome: string;
-    data_inicio: string; 
-    data_termino: string; 
+    data_inicio: string;
+    data_termino: string;
     vagas_ofertadas: number;
     vagas_preenchidas: number;
     categoria_profissional: string;
     centro: string;
-    r1: number; 
-    r2: number; 
-    r3: number; 
+    r1: number;
+    r2: number;
+    r3: number;
     especialista: number;
   };
   
   export type Professor = {
-    id: number;
+    professor_cpf: string;
     nome: string;
     vinculo: string;
     titulacao: string;
-    carga_horaria_jornada_extendida: number;
-    carga_horaria_projeto_extencao: number;
-    carga_horaria_projeto_pesquisa: number;
+    carga_horaria_jornada_extendida?: number;
+    carga_horaria_projeto_extencao?: number;
+    carga_horaria_projeto_pesquisa?: number;
     carga_horaria_total: number;
+    ano: number;
+    semestre: number;
+    nome_formulario: string;
+    data_preenchimento: string;
   };
   
   export type JsonFormulario = {
     data_preenchimento: string;
+    nome_formulario: string;
     coordenador: Coordenador;
     residencia_especializacao: ResidenciaEspecializacao;
     professores: Professor[];
   };
+  
   
   export type UpdateFormularioItem = {
     nome: string;
@@ -111,7 +121,7 @@ export type AbaDisciplinasParams = {
     item: UpdateFormularioItem;
   };
   
-  export type UpdateFormularioParams = FormularioParams;
+  
   export type InsertFormularioParams = FormularioParams;
 
   export type GetIndicadoresFormularioParams = {
@@ -124,7 +134,4 @@ export type AbaDisciplinasParams = {
     data_inicio: any;
   }
 
-  export type SearchRegistrosFormularioParams = {
-    cpf: any;
-    tipo: any;
-  }
+  
