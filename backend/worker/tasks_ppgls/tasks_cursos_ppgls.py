@@ -286,19 +286,7 @@ def get_quant_alunos_vieram_gradu_e_nao_vieram_por_curso(id_curso: str, id_ies: 
         message = PPGLSJson(nome="graficoQuantAlunosVieramGraduENaoVieramPorCurso",json=None)
         return MessageToDict(message)
 
-@app_celery_queries.task
-def get_grades(id_curso: str, id_ies: str):
-    try:
-        grades = queries_cursos.grades(id_curso=id_curso, id_ies=id_ies)
 
-        message = PPGLSJson(
-            nome="grades",
-            json=json.dumps([dict(grade) for grade in grades]),
-        )
-        return MessageToDict(message)
-    except Exception as erro:
-        message = PPGLSJson(nome="grades", json=None)
-        return MessageToDict(message)
 
 @app_celery_queries.task
 def get_taxa_matriculas(

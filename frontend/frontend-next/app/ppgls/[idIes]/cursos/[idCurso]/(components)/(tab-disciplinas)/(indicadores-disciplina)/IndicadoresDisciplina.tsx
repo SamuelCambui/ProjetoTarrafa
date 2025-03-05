@@ -1,3 +1,4 @@
+import { Filtro } from "@/app/ppgls/(components)/Filtro";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -5,32 +6,26 @@ import {
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { useIndicadoresDisciplina } from "@/service/ppgls/indicadores/queries";
 import { Search } from "lucide-react";
 import { useState } from "react";
-import { Filtro } from "../../../../../../(components)/Filtro";
 import { Disciplina, SecaoIndicadoresDisciplina } from "../types";
+
 import { BoxplotCotistas } from "./BoxplotCotistas";
 import { BoxplotEvasao } from "./BoxplotEvasao";
+import { BoxplotNotas } from "./BoxplotNotas";
 import { GraficoDesempenhoProf } from "./GraficoDesempenhoProf";
 import { GraficoEvasao } from "./GraficoEvasao";
 import { GraficoQuantidadeAlunos } from "./GraficoQuantidadeAlunos";
 import { GraficoReprovacoesDisciplina } from "./GraficoReprovacoesDisciplina";
 import { HistogramaCotistas } from "./HistogramaCotistas";
-import { BoxplotNotas } from "./BoxplotNotas";
 import { HistogramaNotas } from "./HistogramaNotas";
+import { PopoverBusca } from "./PopoverBusca";
 
 export const IndicadoresDisciplina = ({
   idCurso,
   idIes,
-  idGrade,
   disciplinas,
 }: SecaoIndicadoresDisciplina) => {
   const [periodo, setPeriodo] = useState<{
@@ -53,18 +48,11 @@ export const IndicadoresDisciplina = ({
   const { data, error, isLoading } = useIndicadoresDisciplina({
     idCurso,
     idIes,
-    idGrade,
     anoFinal: periodo.anoFinal,
     anoInicial: periodo.anoInicial,
     idDisc: fetchedDiscipline?.cod_disc,
   });
 
-  const handleSelect = (e: string) => {
-    const disciplina = disciplinas?.filter(
-      (disciplina) => disciplina.cod_disc === e,
-    )[0];
-    setDisciplinaSelect(disciplina);
-  };
 
   const handleClick = () => {
     setFetchedDiscipline(disciplinaSelect);
@@ -82,25 +70,11 @@ export const IndicadoresDisciplina = ({
           </CardDescription>
         </CardHeader>
         <CardContent className="flex gap-2">
-          <Select
-            value={disciplinaSelect?.cod_disc}
-            onValueChange={(e) => handleSelect(e)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Escolha uma Disciplina" />
-            </SelectTrigger>
-            <SelectContent>
-              {disciplinas?.map((disciplina) => (
-                <SelectItem
-                  key={disciplina.cod_disc}
-                  value={disciplina.cod_disc}
-                  className="capitalize"
-                >
-                  {disciplina.abreviacao} - {disciplina.nome}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <PopoverBusca
+            disciplinas={disciplinas}
+            disciplina={disciplinaSelect}
+            setDisciplina={setDisciplinaSelect}
+          />
           <Button onClick={() => handleClick()} disabled={isLoading}>
             Buscar
             <Search />

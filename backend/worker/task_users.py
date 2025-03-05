@@ -3,7 +3,7 @@ from google.protobuf.json_format import MessageToDict
 
 from .crud.crud_user import crud
 from backend.worker.celery_start_queries import app_celery_queries
-from protos.out import messages_pb2
+
 
 @app_celery_queries.task
 def tarefa_verifica_usuario(email : str):

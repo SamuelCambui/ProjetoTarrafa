@@ -1,7 +1,6 @@
 export type AbaDisciplinasParams = {
     idDisc?: any;
     idCurso: any;
-    idGrade?: any;
     idIes: any;
     anoInicial?: any;
     anoFinal?: any;
@@ -64,8 +63,8 @@ export type AbaDisciplinasParams = {
   };
 
   export type Coordenador = {
-    coordenador_cpf: string;
-    coordenador_nome: string;
+    id: string;
+    nome: string;
     carga_horaria: number;
     ano: number;
     semestre: number;
@@ -85,11 +84,10 @@ export type AbaDisciplinasParams = {
     r1: number;
     r2: number;
     r3: number;
-    especialista: number;
   };
   
   export type Professor = {
-    professor_cpf: string;
+    id: string;
     nome: string;
     vinculo: string;
     titulacao: string;
@@ -105,7 +103,6 @@ export type AbaDisciplinasParams = {
   
   export type JsonFormulario = {
     data_preenchimento: string;
-    nome_formulario: string;
     coordenador: Coordenador;
     residencia_especializacao: ResidenciaEspecializacao;
     professores: Professor[];

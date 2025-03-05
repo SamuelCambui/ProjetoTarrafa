@@ -25,6 +25,7 @@ export const insertFormularioData = async ({ item }: InsertFormularioParams) => 
     return await insertFormulario({ item });
   } catch (error) {
     console.error("Erro ao inserir formulário:", error);
+    alert(`Erro ao submeter o formulário: ${error instanceof Error ? error.message : JSON.stringify(error)}`);
     throw error;
   }
 };

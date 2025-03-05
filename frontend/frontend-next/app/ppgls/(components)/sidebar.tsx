@@ -96,7 +96,7 @@ export function AppSidebar() {
                   <Link href={`/grad/${currentUser?.idIes}`}>Graduação</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link href={`/ppgls/${currentUser?.idIes}`}>Lato Sensu</Link>
+                  <Link href={`/ppgls/${currentUser?.idIes}`}>Lato Sensu e Stricto Sensu</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

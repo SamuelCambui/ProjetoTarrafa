@@ -37,17 +37,6 @@ function deserialize_protos_FormularioPPGLSResponse(buffer_arg) {
   return messages_pb.FormularioPPGLSResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_protos_FormularioSerchPPGLSRequest(arg) {
-  if (!(arg instanceof messages_pb.FormularioSerchPPGLSRequest)) {
-    throw new Error('Expected argument of type protos.FormularioSerchPPGLSRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_protos_FormularioSerchPPGLSRequest(buffer_arg) {
-  return messages_pb.FormularioSerchPPGLSRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_protos_PPGLSRequest(arg) {
   if (!(arg instanceof messages_pb.PPGLSRequest)) {
     throw new Error('Expected argument of type protos.PPGLSRequest');
@@ -150,6 +139,7 @@ getAbaProfessores: {
 // id(string) - Código do curso.\n
 // anoi(int) - Ano Inicial.\n
 // anof(int) - Ano Final.\n
+// teste
 getIndicadoresDisciplina: {
     path: '/protos.IndicadoresPosGraduacaoLS/GetIndicadoresDisciplina',
     requestStream: false,
@@ -193,45 +183,12 @@ getIndicadoresFormulario: {
     responseDeserialize: deserialize_protos_FormularioPPGLSResponse,
   },
   //
-// Retorna o dados de professor ou de coordenador da pós-graduação latu sensu.
-// Parâmetros:
-// cpf(str) - Código CPF do professor
-// tipo(int) - Professor ou coordenador
-searchRegistrosFormualario: {
-    path: '/protos.DadosFormularioPosGraduacaoLS/SearchRegistrosFormualario',
-    requestStream: false,
-    responseStream: false,
-    requestType: messages_pb.FormularioSerchPPGLSRequest,
-    responseType: messages_pb.FormularioPPGLSResponse,
-    requestSerialize: serialize_protos_FormularioSerchPPGLSRequest,
-    requestDeserialize: deserialize_protos_FormularioSerchPPGLSRequest,
-    responseSerialize: serialize_protos_FormularioPPGLSResponse,
-    responseDeserialize: deserialize_protos_FormularioPPGLSResponse,
-  },
-  //
 // Insere um novo formulário da pós-graduação latu sensu.
 // Parâmetros:
 // nome(string) - Nome do formulário.
 // data_inicio(string) - Data de início.
 insertFormulario: {
     path: '/protos.DadosFormularioPosGraduacaoLS/InsertFormulario',
-    requestStream: false,
-    responseStream: false,
-    requestType: messages_pb.FormularioPPGLSRequest,
-    responseType: messages_pb.FormularioPPGLSResponse,
-    requestSerialize: serialize_protos_FormularioPPGLSRequest,
-    requestDeserialize: deserialize_protos_FormularioPPGLSRequest,
-    responseSerialize: serialize_protos_FormularioPPGLSResponse,
-    responseDeserialize: deserialize_protos_FormularioPPGLSResponse,
-  },
-  //
-// Atualiza os dados de um formulário existente.
-// Parâmetros:
-// id(int) - ID do formulário.
-// nome(string) - Nome do formulário.
-// data_inicio(string) - Data de início.
-updateFormulario: {
-    path: '/protos.DadosFormularioPosGraduacaoLS/UpdateFormulario',
     requestStream: false,
     responseStream: false,
     requestType: messages_pb.FormularioPPGLSRequest,

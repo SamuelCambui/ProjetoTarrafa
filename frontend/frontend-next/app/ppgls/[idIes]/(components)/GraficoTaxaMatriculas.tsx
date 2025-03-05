@@ -5,16 +5,17 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card";
-  import { Line } from "@ant-design/plots";
+  import { Chart, Line } from "@ant-design/plots";
   import { LoadingCard } from "../../(components)/LoadingCard";
   import { GraficoProps } from "../../(components)/types";
   import { Grafico } from "../../(components)/Grafico";
+  import { useRef } from "react";
   
   export const GraficoTaxaMatriculas = ({ data, isLoading }: GraficoProps) => {
     if (!data || isLoading) {
       return <LoadingCard />;
     }
-  
+    const chartRef = useRef<Chart>(null);
     const config = {
       data,
       xField: "semestre_letivo",
@@ -67,8 +68,9 @@ import {
       <Grafico
         titulo="Taxa de Matrículas"
         descricao="Quantidade de alunos que ingressaram na universidade por sexo."
+        chartRef={chartRef}
       >
-        <Line {...config} />
+        <Line {...config} ref={chartRef} />
       </Grafico>
     );
   };

@@ -32,7 +32,6 @@ class QueriesDisciplinas():
     @tratamento_excecao_com_db(tipo_banco='grad')
     def disciplinas_grade(
         self,
-        id_grade: str,
         id_curso: str,
         id_ies: str,
         db: DBConnectorGRAD = None,
@@ -40,56 +39,54 @@ class QueriesDisciplinas():
         """
         Retorna todas as disciplinas de um curso.
 
-        :param id_grade(str): Código da Grade Curricular.
         :param id_curso(str): Código do curso.
         :param id_ies(str): Código da Universidade.
         """
-        if id_grade:
-            query = """
+    
+        query = """
+            SELECT 
+                STRING_AGG(cod_disc, ',') AS cod_disc,
+                MIN(nome) AS nome,  -- Usamos MIN para pegar um único valor de nome no grupo
+                STRING_AGG(DISTINCT abreviacao, ',') AS abreviacao,
+                STRING_AGG(DISTINCT CAST(carga_horaria AS VARCHAR), ',') AS carga_horaria,
+                STRING_AGG(DISTINCT departamento, ',') AS departamento  -- Usamos DISTINCT para evitar repetições
+            FROM (
                 SELECT 
                     cod_disc, 
                     dis.nome, 
                     dis.abreviacao, 
-                    cast(carga_horaria as float),
-                    dep.nome as departamento 
+                    CAST(carga_horaria AS float) AS carga_horaria,
+                    dep.nome AS departamento,
+                    -- Normaliza os nomes, removendo pontuação e convertendo para maiúsculas
+                    UPPER(REGEXP_REPLACE(dis.nome, '[^A-Z0-9 ]', '', 'g')) AS nome_normalizado,
+                    -- Usamos a função de similaridade para comparar os nomes
+                    ROW_NUMBER() OVER (PARTITION BY UPPER(REGEXP_REPLACE(dis.nome, '[^A-Z0-9 ]', '', 'g')) ORDER BY cod_disc) AS rn
                 FROM disciplinas AS dis
-                LEFT JOIN departamentos AS dep ON dep.id_dep = dis.id_dep AND dep.id_ies = dis.id_ies
-                WHERE dis.cod_disc in 
-                    (select cod_disc from grad_dis where id_curso = %(id_curso)s and id_ies = %(id_ies)s and id_grade = %(id_grade)s)
-                order by nome
-            """
-
-            ret = db.fetch_all(
-                query, id_ies=id_ies, id_grade=id_grade, id_curso=id_curso
-            )
-            return ret
-
-        query = """
-            with ultima_grade as (
-                select id_grade from grades where id_curso = %(id_curso)s
-                and id_ies = %(id_ies)s
-                order by ano desc, semestre desc
-                limit 1
-            )
-            SELECT 
-                cod_disc, 
-                dis.nome, 
-                dis.abreviacao, 
-                cast(carga_horaria as float),
-                dep.nome as departamento 
-            FROM disciplinas AS dis
-            INNER JOIN departamentos AS dep ON dep.id_dep = dis.id_dep AND dep.id_ies = dis.id_ies
-            WHERE dis.cod_disc in 
-                (
-                    select cod_disc from grad_dis 
-                    where id_curso = %(id_curso)s and id_ies = %(id_ies)s and id_grade = (select * from ultima_grade)
+                LEFT JOIN departamentos AS dep 
+                    ON dep.id_dep = dis.id_dep 
+                    AND dep.id_ies = dis.id_ies
+                WHERE dis.cod_disc IN (
+                    SELECT DISTINCT h.cod_disc
+                    FROM historico h
+                    JOIN aluno_curso ac ON h.matricula_aluno = ac.matricula_aluno
+                    JOIN grad_dis gd ON h.cod_disc = gd.cod_disc
+                    WHERE ac.id_curso =  %(id_curso)s
+                    AND ac.id_ies = %(id_ies)s
+                    AND h.cod_disc IS NOT NULL
                 )
-            order by nome
+            ) subquery
+            -- Agora agrupamos por nome normalizado
+            GROUP BY nome_normalizado
+            HAVING MAX(similarity(nome_normalizado, nome_normalizado)) > 0.70
+            ORDER BY nome_agrupado;
         """
-        ret = db.fetch_all(query, id_ies=id_ies, id_curso=id_curso)
+
+        ret = db.fetch_all(
+            query, id_ies=id_ies, id_curso=id_curso
+        )
         return ret
 
-    
+
 
 
     @tratamento_excecao_com_db(tipo_banco='grad')
@@ -133,20 +130,39 @@ class QueriesDisciplinas():
             anof(int): Ano final. 
             id_ies(str): Código da Universidade.
         """
-        query = """
-            SELECT foo.ano_letivo, foo.semestre, COUNT(foo.ano_letivo) AS quantidade FROM ( 
-                SELECT historico.ano_letivo, historico.semestre FROM historico 
-                INNER JOIN disciplinas ON disciplinas.cod_disc = historico.cod_disc	
-                AND CAST(historico.ano_letivo AS integer) BETWEEN %(anoi)s AND %(anof)s
-                AND historico.cod_disc= %(id_disc)s
-                AND disciplinas.id_ies = %(id_ies)s
-                GROUP BY matricula_aluno, historico.ano_letivo, historico.semestre
-                ORDER BY historico.ano_letivo, historico.semestre
-            ) AS foo
-            GROUP BY foo.ano_letivo, foo.semestre
-        """
-        ret = db.fetch_all(query, id_disc=id_disc, anoi=anoi, anof=anof, id_ies=id_ies)
-        return ret
+        try:
+            query = """
+                SELECT foo.ano_letivo, foo.semestre, COUNT(foo.ano_letivo) AS quantidade FROM ( 
+                    SELECT historico.ano_letivo, historico.semestre FROM historico 
+                    INNER JOIN disciplinas ON disciplinas.cod_disc = historico.cod_disc    
+                    AND CAST(historico.ano_letivo AS integer) BETWEEN %(anoi)s AND %(anof)s
+                    AND historico.cod_disc= %(id_disc)s
+                    AND disciplinas.id_ies = %(id_ies)s
+                    GROUP BY matricula_aluno, historico.ano_letivo, historico.semestre
+                    ORDER BY historico.ano_letivo, historico.semestre
+                ) AS foo
+                GROUP BY foo.ano_letivo, foo.semestre
+            """
+            ret = db.fetch_all(query, id_disc=id_disc, anoi=anoi, anof=anof, id_ies=id_ies)
+
+            if not ret:
+                raise ValueError("Nenhum dado encontrado para os parâmetros fornecidos.")
+
+            print("---------------------------------------")
+            print("Resultado da consulta:")
+            print(ret)
+            print("---------------------------------------")
+            return ret
+
+        except ValueError as e:
+            print(f"Erro: {e}")
+            # Trate a exceção conforme necessário, como retornar um valor padrão ou logar o erro
+            return {"erro": str(e)}
+
+        except Exception as e:
+            print(f"Erro inesperado: {e}")
+            # Trate outros tipos de erro aqui, como problemas de banco de dados
+            return {"erro": "Erro na execução da consulta."}
 
 
     @tratamento_excecao_com_db(tipo_banco='grad')
@@ -277,123 +293,114 @@ class QueriesDisciplinas():
         )
         return ret
 
-
     @tratamento_excecao_com_db(tipo_banco='grad')
     def boxplot_notas_grade(
         self,
         id_curso: str,
-        id_grade: str | None,
         id_ies: str,
         serie: int,
         db: DBConnectorGRAD = None,
     ):
         """
-        Retorna as medidas do boxplot das disciplinas de uma grade em uma série.\n
 
         :param id_curso(str): Código do curso.
-        :param id_grade(str): Código da grade.
         :param id_ies(str): Código da instituição.
         :param serie(int): Série.
         """
-        if id_grade:
-            query = """
-                with disciplinas_serie as (
-                    select cod_disc from grad_dis
-                    where id_curso = %(id_curso)s
-                    and id_ies = %(id_ies)s
-                    and serie = %(serie)s
-                    and id_grade = %(id_grade)s
+    
+        query = """
+
+                DROP TABLE IF EXISTS disciplinas_soun;
+                CREATE TEMP TABLE disciplinas_soun AS
+                SELECT 
+                    cod_disc,
+                    SOUNDEX(nome) AS soundex_nome,
+                    nome,
+                    -- Gerando abreviação a partir do nome da disciplina
+                    array_to_string(
+                        ARRAY(
+                            SELECT UPPER(SUBSTRING(word, 1, 1)) 
+                            FROM unnest(string_to_array(nome, ' ')) AS word
+                        ), 
+                        ''  -- Usando uma string vazia para separar as letras, assim não haverá vírgula
+                    ) AS abreviacao
+                FROM disciplinas;
+
+                WITH disciplinas_serie AS (
+					SELECT distinct h.cod_disc
+					FROM historico h
+					JOIN aluno_curso ac ON h.matricula_aluno = ac.matricula_aluno
+					JOIN grad_dis gd ON h.cod_disc = gd.cod_disc
+					WHERE ac.id_curso = %(id_curso)s
+					AND ac.id_ies = %(id_ies)s
+					and h.cod_disc is not null
+					and gd.serie = %(serie)s
                 ), 
-                query_notas as (
-                    select d.nome, d.abreviacao, nota,
-                    ntile(4) over (partition by d.nome order by nota) as quartil
-                    from historico as h 
-                    inner join disciplinas as d on d.cod_disc = h.cod_disc
-                    where h.cod_disc in (select * from disciplinas_serie) and h.id_ies = %(id_ies)s
-                    and ano_letivo >= (select ano from grades where id_grade = %(id_grade)s and id_ies = %(id_ies)s and id_curso = %(id_curso)s)
-                    and nota is not null
+                query_notas AS (
+                    SELECT 
+                        ds.soundex_nome AS soundex_nome, 
+                        ds.nome, 
+                        ds.abreviacao,  -- Incluindo a abreviação gerada
+                        h.nota,
+                        NTILE(4) OVER (PARTITION BY ds.soundex_nome ORDER BY h.nota) AS quartil
+                    FROM historico AS h 
+                    INNER JOIN disciplinas_soun AS ds ON ds.cod_disc = h.cod_disc
+                    WHERE h.cod_disc IN (SELECT * FROM disciplinas_serie) 
+                    AND h.id_ies = %(id_ies)s
+                    AND h.nota IS NOT NULL
                 ), 
-                query_quartis as (
-                    select
+                query_quartis AS (
+                    SELECT
                         nome,
-                        abreviacao,
-                        cast(max(case when quartil = 1 then nota end) as float) as primeiro_quartil,
-                        cast(max(case when quartil = 2 then nota end) as float) as segundo_quartil,
-                        cast(max(case when quartil = 3 then nota end) as float) as terceiro_quartil,
-                        cast(round(stddev_pop(nota), 2) as float) as desvio_padrao,
-                        cast(round(avg(nota), 2) as float) as media
-                    from query_notas
-                    group by nome, abreviacao
-                    having MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
+                        abreviacao,  -- Incluindo a abreviação gerada
+                        CAST(MAX(CASE WHEN quartil = 1 THEN nota END) AS FLOAT) AS primeiro_quartil,
+                        CAST(MAX(CASE WHEN quartil = 2 THEN nota END) AS FLOAT) AS segundo_quartil,
+                        CAST(MAX(CASE WHEN quartil = 3 THEN nota END) AS FLOAT) AS terceiro_quartil,
+                        CAST(ROUND(STDDEV_POP(nota), 2) AS FLOAT) AS desvio_padrao,
+                        CAST(ROUND(AVG(nota), 2) AS FLOAT) AS media
+                    FROM query_notas
+                    GROUP BY nome, abreviacao  -- Incluindo abreviação no GROUP BY
+                    HAVING MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
                     AND MAX(CASE WHEN quartil = 2 THEN nota END) IS NOT NULL
                     AND MAX(CASE WHEN quartil = 3 THEN nota END) IS NOT NULL
+                ), 
+                abreviacao_unica AS (
+                    SELECT nome,
+                        abreviacao,
+                        primeiro_quartil,
+                        segundo_quartil,
+                        terceiro_quartil,
+                        desvio_padrao,
+                        media,
+                        ROW_NUMBER() OVER (PARTITION BY abreviacao ORDER BY nome) AS numero
+                    FROM query_quartis
                 )
-                select *,
-                    GREATEST(primeiro_quartil - (1.5 * (terceiro_quartil - primeiro_quartil)), 0) as limite_inferior,
-                    LEAST(terceiro_quartil + (1.5 * (terceiro_quartil - primeiro_quartil)), 100) as limite_superior
-                from query_quartis
-                order by nome;
-            """
-
-            ret = db.fetch_all(
-                query=query,
-                id_curso=id_curso,
-                id_ies=id_ies,
-                serie=serie,
-                id_grade=id_grade,
-            )
-            return ret
-
-        query = """
-            with ultima_grade as (
-                select id_grade, ano from grades where id_curso = %(id_curso)s
-                and id_ies = %(id_ies)s
-                order by ano desc, semestre desc
-                limit 1
-            ),
-            disciplinas_serie as (
-                select cod_disc from grad_dis
-                where id_curso = %(id_curso)s
-                and id_ies = %(id_ies)s
-                and serie = %(serie)s
-                and id_grade = (select id_grade from ultima_grade)
-            ),
-            query_notas as (
-                select d.nome, d.abreviacao, nota,
-                ntile(4) over (partition by d.nome order by nota) as quartil
-                from historico as h 
-                inner join disciplinas as d on d.cod_disc = h.cod_disc
-                where h.cod_disc in (select * from disciplinas_serie) and h.id_ies = %(id_ies)s
-                and ano_letivo >= (select ano from ultima_grade)
-                and nota is not null
-            ), 
-            query_quartis as (
-                select
+                SELECT 
                     nome,
-                    abreviacao,
-                    cast(max(case when quartil = 1 then nota end) as float) as primeiro_quartil,
-                    cast(max(case when quartil = 2 then nota end) as float) as segundo_quartil,
-                    cast(max(case when quartil = 3 then nota end) as float) as terceiro_quartil,
-                    cast(round(stddev_pop(nota), 2) as float) as desvio_padrao,
-                    cast(round(avg(nota), 2) as float) as media
-                from query_notas
-                group by nome, abreviacao
-                having MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
-                AND MAX(CASE WHEN quartil = 2 THEN nota END) IS NOT NULL
-                AND MAX(CASE WHEN quartil = 3 THEN nota END) IS NOT NULL
-            )
-            select *,
-                GREATEST(primeiro_quartil - (1.5 * (terceiro_quartil - primeiro_quartil)), 0) as limite_inferior,
-                LEAST(terceiro_quartil + (1.5 * (terceiro_quartil - primeiro_quartil)), 100) as limite_superior
-            from query_quartis;
+                    CASE 
+                        WHEN numero > 1 THEN abreviacao || CAST(numero AS TEXT)  -- Se houver colisão, adiciona um número
+                        ELSE abreviacao
+                    END AS abreviacao,
+                    primeiro_quartil,
+                    segundo_quartil,
+                    terceiro_quartil,
+                    desvio_padrao,
+                    media,
+                    GREATEST(primeiro_quartil - (1.5 * (terceiro_quartil - primeiro_quartil)), 0) AS limite_inferior,
+                    LEAST(terceiro_quartil + (1.5 * (terceiro_quartil - primeiro_quartil)), 100) AS limite_superior
+                FROM abreviacao_unica
+                ORDER BY nome;
         """
 
-        ret = db.fetch_all(query=query, id_curso=id_curso, id_ies=id_ies, serie=serie)
+        ret = db.fetch_all(
+            query=query,
+            id_curso=id_curso,
+            id_ies=id_ies,
+            serie=serie
+        )
         return ret
 
 
-
-    
     @tratamento_excecao_com_db(tipo_banco='grad')
     def evasao_disciplina(
         self,
@@ -578,13 +585,13 @@ class QueriesDisciplinas():
         )
 
         return ret
-
+    
+ 
     @tratamento_excecao_com_db(tipo_banco='grad')
     def taxa_aprovacao_reprovacao_serie(
         self,
         id_curso: str,
         id_ies: str,
-        id_grade: str | None,
         serie: int,
         db: DBConnectorGRAD = None,
     ):
@@ -593,111 +600,79 @@ class QueriesDisciplinas():
 
         :param id_curso(str): Código do Curso
         :param id_ies(str): Código da Instituição
-        :param id_grade(str): Código da Grade Curricular
         :param serie(int): Série/Período
         """
 
-        # Executa essa consulta se tiver sido passado uma grade pelos parâmetros
-        if id_grade:
-            query = """
-                with nota_min as (
-                    select nota_min_aprovacao from cursos where id = %(id_curso)s and id_ies = %(id_ies)s	
-                ),
-                disciplinas_grade as (
-                    select cod_disc 
-                    from grad_dis 
-                    where id_curso = %(id_curso)s and id_ies = %(id_ies)s
-                    and id_grade = %(id_grade)s and serie = %(serie)s
-                ),
-                notas_historico as (
-                    select 
-                        cod_disc,
-                        id_ies,
-                        nota 
-                    from historico 
-                    where cod_disc in (select * from disciplinas_grade) 
-                    and id_ies = %(id_ies)s
-                    and ano_letivo >= (
-                        select ano from grades where id_grade = %(id_grade)s and id_ies = %(id_ies)s and id_curso = %(id_curso)s
-                    )
-                    and nota is not null
-                )
-                select
-                    disciplinas.nome,
-                    disciplinas.abreviacao,
-                    cast(round(100.0 * SUM(CASE WHEN nota >= (select * from nota_min) THEN 1 ELSE 0 END) / COUNT(*), 2) as float) AS taxa_aprovacao,
-                    cast(round(100.0 * SUM(CASE WHEN nota < (select * from nota_min) THEN 1 ELSE 0 END) / COUNT(*), 2) as float) AS taxa_reprovacao
-                from notas_historico
-                inner join disciplinas on 
-                    disciplinas.cod_disc = notas_historico.cod_disc 
-                    and disciplinas.id_ies = notas_historico.id_ies 
-                group by
-                    disciplinas.nome,
-                    disciplinas.abreviacao
-                order by disciplinas.nome;
-            """
-
-            ret = db.fetch_all(
-                query=query,
-                id_curso=id_curso,
-                id_grade=id_grade,
-                id_ies=id_ies,
-                serie=serie,
-            )
-
-            return ret
-
+        
         query = """
-            with nota_min as (
-                select nota_min_aprovacao from cursos where id = %(id_curso)s and id_ies = %(id_ies)s	
-            ),
-            ultima_grade as (
-                select id_grade, ano from grades where id_curso = %(id_curso)s
-                and id_ies = %(id_ies)s
-                order by ano desc, semestre desc
-                limit 1
-            ),
-            disciplinas_grade as (
-                select cod_disc 
-                from grad_dis 
-                where id_curso = %(id_curso)s and id_ies = %(id_ies)s
-                and id_grade = (select id_grade from ultima_grade) and serie = %(serie)s
-            ),
-            notas_historico as (
-                select 
-                    cod_disc,
-                    id_ies,
-                    nota 
-                from historico 
-                where cod_disc in (select * from disciplinas_grade) 
-                and id_ies = %(id_ies)s
-                and ano_letivo >= (select ano from ultima_grade)
-                and nota is not null
-            )
-            select
-                notas_historico.cod_disc,
-                disciplinas.nome,
-                disciplinas.abreviacao,
-                cast(round(100.0 * SUM(CASE WHEN nota >= (select * from nota_min) THEN 1 ELSE 0 END) / COUNT(*), 2) as float) AS taxa_aprovacao,
-                cast(round(100.0 * SUM(CASE WHEN nota < (select * from nota_min) THEN 1 ELSE 0 END) / COUNT(*), 2) as float) AS taxa_reprovacao
-            from notas_historico
-            inner join disciplinas on 
-                disciplinas.cod_disc = notas_historico.cod_disc 
-                and disciplinas.id_ies = notas_historico.id_ies 
-            group by notas_historico.cod_disc,
-                disciplinas.nome,
-                disciplinas.abreviacao;
+
+  
+                WITH nota_min AS (
+                    SELECT nota_min_aprovacao 
+                    FROM cursos 
+                    WHERE id =  %(id_curso)s AND id_ies = %(id_ies)s
+                ),
+                notas_historico AS (
+					SELECT distinct h.cod_disc, h.id_ies, h.nota
+					FROM historico h
+					JOIN aluno_curso ac ON h.matricula_aluno = ac.matricula_aluno
+					JOIN grad_dis gd ON h.cod_disc = gd.cod_disc
+					WHERE ac.id_curso =  %(id_curso)s
+					AND ac.id_ies = %(id_ies)s
+					and h.cod_disc is not null
+					and gd.serie = %(serie)s
+                ),
+                abreviacoes_geradas AS (
+                    SELECT
+                        MIN(ds.nome) AS disciplina_representativa, -- Escolhe um nome qualquer do grupo
+                        CAST(ROUND(100.0 * SUM(CASE WHEN nh.nota >= (SELECT * FROM nota_min) THEN 1 ELSE 0 END) / COUNT(*), 2) AS FLOAT) AS taxa_aprovacao,
+                        CAST(ROUND(100.0 * SUM(CASE WHEN nh.nota < (SELECT * FROM nota_min) THEN 1 ELSE 0 END) / COUNT(*), 2) AS FLOAT) AS taxa_reprovacao,
+                        -- Gerando a abreviação para cada grupo de disciplinas com o mesmo SOUNDEX
+                        array_to_string(
+                            ARRAY(
+                                SELECT UPPER(SUBSTRING(word, 1, 1)) 
+                                FROM unnest(string_to_array(MIN(ds.nome), ' ')) AS word
+                            ), 
+                            ''  -- Usando uma string vazia para separar as letras, assim não haverá vírgula
+                        ) AS abreviacao,
+                        SOUNDEX(ds.nome) AS soundex_nome
+                    FROM notas_historico nh
+                    INNER JOIN disciplinas ds 
+                        ON ds.cod_disc = nh.cod_disc 
+                        AND ds.id_ies = nh.id_ies 
+                    GROUP BY SOUNDEX(ds.nome)  -- Agrupa nomes semelhantes foneticamente
+                ),
+                abreviacao_unica AS (
+                    SELECT
+                        disciplina_representativa,
+                        taxa_aprovacao,
+                        taxa_reprovacao,
+                        abreviacao,
+                        ROW_NUMBER() OVER (PARTITION BY abreviacao ORDER BY disciplina_representativa) AS numero
+                    FROM abreviacoes_geradas
+                )
+                SELECT 
+                    disciplina_representativa as nome,
+                    taxa_aprovacao,
+                    taxa_reprovacao,
+                    CASE 
+                        WHEN numero > 1 THEN abreviacao || CAST(numero AS TEXT)  -- Se houver colisão, adiciona um número
+                        ELSE abreviacao
+                    END AS abreviacao
+                FROM abreviacao_unica
+                
         """
 
         ret = db.fetch_all(
-            query=query,
-            id_curso=id_curso,
-            id_ies=id_ies,
-            serie=serie,
+                query=query,
+                id_curso=id_curso,
+                id_ies=id_ies,
+                serie=serie,
         )
 
         return ret
 
+    
     @tratamento_excecao_com_db(tipo_banco='grad')
     def boxplot_desempenho_cotistas(
         self,
@@ -782,6 +757,77 @@ class QueriesDisciplinas():
         ret = db.fetch_all(query=query, id_disc=id_disc, id_ies=id_ies)
 
         return ret
+    
+    @tratamento_excecao_com_db(tipo_banco='grad')
+    def classificacao_disciplinas(
+        self, 
+        id_curso: str, 
+        id_ies: str, 
+        db: DBConnectorGRAD = None,
+    ):
+        """
+        Retorna as informações para fazer a classificação(fácil, médio e difícil) das disciplinas de um curso.
+        """
+        
+        query = """
+                WITH query_disciplinas AS (
+                    SELECT cod_disc 
+                    FROM historico h
+                    JOIN aluno_curso ac ON h.matricula_aluno = ac.matricula_aluno
+                    WHERE ac.id_curso = %(id_curso)s
+                    AND ac.id_ies = %(id_ies)s
+                ),
+                nota_min_aprovacao AS (
+                    SELECT nota_min_aprovacao 
+                    FROM cursos 
+                    WHERE id = %(id_curso)s
+                    AND id_ies = %(id_ies)s
+                ),
+                query_quartis AS (
+                    SELECT h.cod_disc, d.nome, d.abreviacao, nota,
+                        ntile(4) OVER (PARTITION BY d.cod_disc ORDER BY nota) AS quartil
+                    FROM historico AS h 
+                    INNER JOIN disciplinas AS d ON d.cod_disc = h.cod_disc
+                    INNER JOIN query_disciplinas AS qd ON qd.cod_disc = h.cod_disc
+                    WHERE h.cod_disc IN (SELECT cod_disc FROM query_disciplinas)
+                    AND nota IS NOT NULL
+                ),
+                agrupamento_nomes AS (
+                    SELECT 
+                        MIN(nome) AS disciplina_representativa, -- Escolhe um nome qualquer do grupo
+                        SOUNDEX(nome) AS soundex_nome
+                    FROM query_quartis
+                    GROUP BY SOUNDEX(nome)
+                ),
+                disciplinas_com_abreviacao AS (
+                    SELECT 
+                        an.disciplina_representativa,
+                        qq.nota,
+                        qq.quartil,
+                        SOUNDEX(an.disciplina_representativa) AS soundex_nome
+                    FROM query_quartis qq
+                    INNER JOIN agrupamento_nomes an ON SOUNDEX(qq.nome) = an.soundex_nome
+                )
+                SELECT 
+                    disciplina_representativa AS nome, 
+                    MAX(CASE WHEN quartil = 1 THEN nota END) AS primeiro_quartil,
+                    MAX(CASE WHEN quartil = 2 THEN nota END) AS segundo_quartil,
+                    MAX(CASE WHEN quartil = 3 THEN nota END) AS terceiro_quartil,
+                    ROUND(AVG(nota), 2) AS media,
+                    ROUND(100.0 * SUM(CASE WHEN nota >= (SELECT * FROM nota_min_aprovacao) THEN 1 ELSE 0 END) / COUNT(*), 2) AS taxa_aprovacao,
+                    COUNT(*) AS total_alunos
+                FROM disciplinas_com_abreviacao
+                GROUP BY disciplina_representativa
+                HAVING 
+                    MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
+                    AND MAX(CASE WHEN quartil = 2 THEN nota END) IS NOT NULL
+                    AND MAX(CASE WHEN quartil = 3 THEN nota END) IS NOT NULL
+                ORDER BY disciplina_representativa;
+            """
+
+        ret = db.fetch_all(query=query, id_curso=id_curso, id_ies=id_ies)
+        return ret
+    
 
 
 

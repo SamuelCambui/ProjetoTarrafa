@@ -35,12 +35,11 @@ export const useAbaIndicadoresCurso = ({
 
 export const useAbaDisciplinas = ({
   idCurso,
-  idGrade,
   idIes,
 }: AbaDisciplinasParams) => {
   const { data, isLoading, error } = useFetcher({
-    callback: () => getAbaDisciplinas({ idCurso, idIes, idGrade }),
-    depencencies: [idGrade],
+    callback: () => getAbaDisciplinas({ idCurso, idIes}),
+    depencencies: [],
   });
 
   return { data, isLoading, error };
@@ -77,7 +76,6 @@ export const useAbaProfessores = ({
 export const useIndicadoresDisciplina = ({
   idDisc,
   idCurso,
-  idGrade,
   idIes,
   anoInicial,
   anoFinal,
@@ -87,7 +85,6 @@ export const useIndicadoresDisciplina = ({
       getIndicadoresDisciplina({
         idDisc,
         idCurso,
-        idGrade,
         idIes,
         anoInicial,
         anoFinal,

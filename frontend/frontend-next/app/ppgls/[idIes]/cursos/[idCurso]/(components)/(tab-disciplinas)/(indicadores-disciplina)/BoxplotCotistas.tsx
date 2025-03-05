@@ -44,6 +44,18 @@ import {
       xField: "x",
       yField: "y",
       scale: { x: { paddingInner: 0.6, paddingOuter: 0.3 } },
+      annotations: [
+        {
+          type: "lineY",
+          yField: 70,
+          style: {
+            stroke: "#222222",
+            strokeOpacity: 0.1,
+            lineWidth: 0.5,
+            lineDash: [4, 4],
+          },
+        },
+      ],  
       tooltip: {
         items: [
           { name: "Limite Inferior", channel: "y" },

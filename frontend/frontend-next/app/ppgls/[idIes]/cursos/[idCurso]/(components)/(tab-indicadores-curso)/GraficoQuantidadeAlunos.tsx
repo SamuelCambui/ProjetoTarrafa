@@ -10,6 +10,10 @@ import { LoadingCard } from "@/app/ppgls/(components)/LoadingCard";
 import { GraficoProps } from "@/app/ppgls/(components)/types";
 import { useRef } from "react";
 import { Grafico } from "@/app/ppgls/(components)/Grafico";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
+
+
 
 export const GraficoQuantidadeAlunos = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {

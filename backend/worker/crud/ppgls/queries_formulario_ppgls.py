@@ -65,7 +65,6 @@ class QueriesFormularioPPGLS():
                 'r1': residencia.get('r1', ''),
                 'r2': residencia.get('r2', ''),
                 'r3': residencia.get('r3', ''),
-                'especialista': residencia.get('especialista', '')
             }
 
             try:
@@ -73,11 +72,11 @@ class QueriesFormularioPPGLS():
                 residencia_query = """
                     INSERT INTO residencia_especializacao_planilha (
                         nome, data_inicio, data_termino, vagas_ofertadas, 
-                        vagas_preenchidas, categoria_profissional, centro, r1, r2, r3, especialista
+                        vagas_preenchidas, categoria_profissional, centro, r1, r2, r3
                     )
                     VALUES (
                         %(nome)s, %(data_inicio)s, %(data_termino)s, %(vagas_ofertadas)s, 
-                        %(vagas_preenchidas)s, %(categoria_profissional)s, %(centro)s, %(r1)s, %(r2)s, %(r3)s, %(especialista)s
+                        %(vagas_preenchidas)s, %(categoria_profissional)s, %(centro)s, %(r1)s, %(r2)s, %(r3)s
                     )
                 """
 
@@ -90,7 +89,7 @@ class QueriesFormularioPPGLS():
                 residencia_especializacao_id = result[0]['id'] if result else None
 
                 db.commit()
-                print("Dados da residência/especialização que estão sendo inseridos:", residencia_dados)
+                # print("Dados da residência/especialização que estão sendo inseridos:", residencia_dados)
             except Exception as e:
                 print(f"Erro ao inserir residência/especialização: {e}")
                 db.rollback()
@@ -236,7 +235,6 @@ class QueriesFormularioPPGLS():
             re.r1,
             re.r2,
             re.r3,
-            re.especialista,
 
             -- Dados da tabela professor_carga_horaria
             ph.professor_id,

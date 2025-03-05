@@ -1,7 +1,5 @@
 import { GraficoProps, TabProps } from "../types";
 
-export type Grade = { id_grade: string; semestre_letivo: string };
-
 export type Disciplina = {
   cod_disc: string;
   nome: string;
@@ -38,6 +36,5 @@ export type SecaoIndicadoresDisciplina = {
   idCurso?: any;
   idIes?: any;
   disciplinas?: Disciplina[];
-  idGrade?: any;
 };
 

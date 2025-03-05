@@ -60,6 +60,18 @@ import {
           { name: "Desvio Padrão", channel: "y6", color: "red" },
         ],
       },
+      annotations: [
+        {
+          type: "lineY",
+          yField: 70,
+          style: {
+            stroke: "#222222",
+            strokeOpacity: 0.1,
+            lineWidth: 0.5,
+            lineDash: [4, 4],
+          },
+        },
+      ],  
       interaction: {
         tooltip: {
           render: (_: any, { title, items }: any) => {

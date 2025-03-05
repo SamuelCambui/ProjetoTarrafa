@@ -17,23 +17,23 @@ export const HistogramaNotas = ({ data, isLoading }: GraficoProps) => {
   const config = {
     data: data?.flatMap((data: any) => [
       {
-        intervalo: "[0-50)",
+        intervalo: "0 até 50",
         quantidade: data["[0_50)"],
       },
       {
-        intervalo: "[50-70)",
+        intervalo: "50 até 70",
         quantidade: data["[50_70)"],
       },
       {
-        intervalo: "[70-80)",
+        intervalo: "70 até 80",
         quantidade: data["[70_80)"],
       },
       {
-        intervalo: "[80-90)",
+        intervalo: "80 até 90",
         quantidade: data["[80_90)"],
       },
       {
-        intervalo: "[90-100]",
+        intervalo: "90 até 100",
         quantidade: data["[90_100]"],
       },
     ]),

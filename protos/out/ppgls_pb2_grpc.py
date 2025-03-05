@@ -93,7 +93,6 @@ class IndicadoresPosGraduacaoLSServicer(object):
         id_ies(string) - Código da Instituição. \
         id_disciplina(string) - Código do curso.\n
         id_curso(string) - Código do curso.\n
-        id_grade(string) - Código do curso.\n
         anoi(int) - Ano Inicial.\n
         anof(int) - Ano Final.\n
         """

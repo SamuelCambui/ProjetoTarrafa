@@ -1,4 +1,4 @@
-import { GraficoProps } from "../../types";
+import { GraficoProps } from "@/app/ppgls/(components)/types";
 import {
   Card,
   CardHeader,
@@ -18,27 +18,27 @@ export const HistogramaCotistas = ({ data, isLoading }: GraficoProps) => {
     data: data?.flatMap((data: any) => [
       {
         cota: data.cota ? "Cotista" : "Ampla Concorrência",
-        intervalo: "[0-50)",
+        intervalo: "0 até 50",
         value: data["[0_50)"],
       },
       {
         cota: data.cota ? "Cotista" : "Ampla Concorrência",
-        intervalo: "[50-70)",
+        intervalo: "50 até 70",
         value: data["[50_70)"],
       },
       {
         cota: data.cota ? "Cotista" : "Ampla Concorrência",
-        intervalo: "[70-80)",
+        intervalo: "70 até 80",
         value: data["[70_80)"],
       },
       {
         cota: data.cota ? "Cotista" : "Ampla Concorrência",
-        intervalo: "[80-90)",
+        intervalo: "80 até 90",
         value: data["[80_90)"],
       },
       {
         cota: data.cota ? "Cotista" : "Ampla Concorrência",
-        intervalo: "[90-100]",
+        intervalo: "90 até 100",
         value: data["[90_100]"],
       },
     ]),
@@ -46,6 +46,21 @@ export const HistogramaCotistas = ({ data, isLoading }: GraficoProps) => {
     yField: "value",
     colorField: "cota",
     seriesField: "cota",
+    annotations: [
+      {
+        type: "rangeX",
+        data: [
+          {
+            intervalo: ["50 até 70", "50 até 70"],
+            event: "Dependência",
+          },
+        ],
+        xField: "intervalo",
+        yField: "value",
+        scale: { color: { independent: true, range: ["#FAAD14", "#30BF78"] } },
+        style: { fillOpacity: 0.1 },
+      },
+    ],
     interaction: {
       tooltip: {
         render: (_: any, { title, items }: any) => {

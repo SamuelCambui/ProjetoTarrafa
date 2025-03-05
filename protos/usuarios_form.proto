@@ -4,10 +4,10 @@ package protos;
 
 import "messages.proto";
 
-service Usuario {
-  rpc Login (LoginRequest) returns (LoginResponseFormulario);
-  rpc Logout (LogoutRequest) returns (LogoutResponse);
-  rpc ObtemUsuario (UsuarioRequest) returns (UsuarioFormularioResponse);
+service UsuarioFormulario  {
+  rpc LoginForm (LoginRequest) returns (LoginResponseFormulario);
+  rpc LogoutForm (LogoutRequest) returns (LogoutResponse);
+  rpc ObtemUsuarioForm (UsuarioRequest) returns (UsuarioFormularioResponse);
   rpc ObtemListaUsuarios (UsuarioFormularioResponse) returns (ListaUsuariosFormularioResponse);
   rpc DeletarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
   rpc AlternarStatusUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);

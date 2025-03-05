@@ -39,18 +39,18 @@ class UsuarioStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Login = channel.unary_unary(
-                '/protos.Usuario/Login',
+        self.LoginForm = channel.unary_unary(
+                '/protos.Usuario/LoginForm',
                 request_serializer=messages__pb2.LoginRequest.SerializeToString,
                 response_deserializer=messages__pb2.LoginResponseFormulario.FromString,
                 _registered_method=True)
-        self.Logout = channel.unary_unary(
-                '/protos.Usuario/Logout',
+        self.LogoutForm = channel.unary_unary(
+                '/protos.Usuario/LogoutForm',
                 request_serializer=messages__pb2.LogoutRequest.SerializeToString,
                 response_deserializer=messages__pb2.LogoutResponse.FromString,
                 _registered_method=True)
-        self.ObtemUsuario = channel.unary_unary(
-                '/protos.Usuario/ObtemUsuario',
+        self.ObtemUsuarioForm = channel.unary_unary(
+                '/protos.Usuario/ObtemUsuarioForm',
                 request_serializer=messages__pb2.UsuarioRequest.SerializeToString,
                 response_deserializer=messages__pb2.UsuarioFormularioResponse.FromString,
                 _registered_method=True)
@@ -84,19 +84,19 @@ class UsuarioStub(object):
 class UsuarioServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def Login(self, request, context):
+    def LoginForm(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Logout(self, request, context):
+    def LogoutForm(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ObtemUsuario(self, request, context):
+    def ObtemUsuarioForm(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -135,18 +135,18 @@ class UsuarioServicer(object):
 
 def add_UsuarioServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Login': grpc.unary_unary_rpc_method_handler(
-                    servicer.Login,
+            'LoginForm': grpc.unary_unary_rpc_method_handler(
+                    servicer.LoginForm,
                     request_deserializer=messages__pb2.LoginRequest.FromString,
                     response_serializer=messages__pb2.LoginResponseFormulario.SerializeToString,
             ),
-            'Logout': grpc.unary_unary_rpc_method_handler(
-                    servicer.Logout,
+            'LogoutForm': grpc.unary_unary_rpc_method_handler(
+                    servicer.LogoutForm,
                     request_deserializer=messages__pb2.LogoutRequest.FromString,
                     response_serializer=messages__pb2.LogoutResponse.SerializeToString,
             ),
-            'ObtemUsuario': grpc.unary_unary_rpc_method_handler(
-                    servicer.ObtemUsuario,
+            'ObtemUsuarioForm': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemUsuarioForm,
                     request_deserializer=messages__pb2.UsuarioRequest.FromString,
                     response_serializer=messages__pb2.UsuarioFormularioResponse.SerializeToString,
             ),
@@ -187,7 +187,7 @@ class Usuario(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def Login(request,
+    def LoginForm(request,
             target,
             options=(),
             channel_credentials=None,
@@ -200,7 +200,7 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/Login',
+            '/protos.Usuario/LoginForm',
             messages__pb2.LoginRequest.SerializeToString,
             messages__pb2.LoginResponseFormulario.FromString,
             options,
@@ -214,7 +214,7 @@ class Usuario(object):
             _registered_method=True)
 
     @staticmethod
-    def Logout(request,
+    def LogoutForm(request,
             target,
             options=(),
             channel_credentials=None,
@@ -227,7 +227,7 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/Logout',
+            '/protos.Usuario/LogoutForm',
             messages__pb2.LogoutRequest.SerializeToString,
             messages__pb2.LogoutResponse.FromString,
             options,
@@ -241,7 +241,7 @@ class Usuario(object):
             _registered_method=True)
 
     @staticmethod
-    def ObtemUsuario(request,
+    def ObtemUsuarioForm(request,
             target,
             options=(),
             channel_credentials=None,
@@ -254,7 +254,7 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/ObtemUsuario',
+            '/protos.Usuario/ObtemUsuarioForm',
             messages__pb2.UsuarioRequest.SerializeToString,
             messages__pb2.UsuarioFormularioResponse.FromString,
             options,

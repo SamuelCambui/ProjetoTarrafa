@@ -49,14 +49,12 @@ export async function getAbaDisciplinas({
   idDisc,
   idCurso,
   idIes,
-  idGrade,
 }: AbaDisciplinasParams) {
   try {
     const gradRequest = new PPGLSRequest();
 
     gradRequest.setIdDisc(idDisc);
     gradRequest.setIdCurso(idCurso);
-    gradRequest.setIdGrade(idGrade);
     gradRequest.setIdIes(idIes);
 
     const response = await new Promise((resolve, reject) => {
@@ -82,7 +80,6 @@ export async function getIndicadoresDisciplina({
   idDisc,
   idCurso,
   idIes,
-  idGrade,
   anoInicial,
   anoFinal,
 }: IndicadoresDisciplinaParams) {
@@ -91,7 +88,6 @@ export async function getIndicadoresDisciplina({
 
     gradRequest.setIdDisc(idDisc);
     gradRequest.setIdCurso(idCurso);
-    gradRequest.setIdGrade(idGrade);
     gradRequest.setIdIes(idIes);
     gradRequest.setAnoi(anoInicial && Number(anoInicial));
     gradRequest.setAnof(anoFinal && Number(anoFinal));

@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetCurso } from "@/service/ppgls/dados/queries";
 import { useParams } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { TabDisciplinas } from "./(components)/(tab-disciplinas)/TabDisciplinas";
 import { TabRegressos } from "./(components)/(tab-regressos)/TabRegressos";
 import { TabIndicadores } from "./(components)/(tab-indicadores-curso)/TabIndicadores";

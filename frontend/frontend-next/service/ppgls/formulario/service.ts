@@ -64,8 +64,6 @@ export async function insertFormulario({ item }: InsertFormularioParams) {
     }
   }
 
-
-
   export async function deleteFormulario({
     nome_formulario,
     data_inicio,

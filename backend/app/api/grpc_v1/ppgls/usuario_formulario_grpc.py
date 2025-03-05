@@ -11,22 +11,6 @@ from backend.schemas.user_form import UsuarioCriacao, UsuarioAtualizacao
 # Implementação do serviço gRPC
 class UsuarioFormulario(usuarios_form_pb2_grpc.UsuarioServicer):
 
-    # def Login(self, request, context) -> messages_pb2.LoginResponseFormulario:
-    #     print('Login chamada...')
-    #     try:
-    #         usuario = tarefa_autentica_usuario.apply(kwargs={'username':request.username , 'password':request.password}).get()
-
-    #         if not usuario or not usuario.is_active:
-    #             raise
-            
-    #         loginResponse = messages_pb2.LoginResponseFormulario(usuario=ParseDict(usuario.dict(), messages_pb2.UsuarioDadosFront()), erro=False)
-
-    #         return loginResponse
-
-    #     except Exception as e:
-    #         print(e)
-    #         loginResponse = messages_pb2.LoginResponseFormulario(erro=True)
-    #         return loginResponse
 
     def ObtemUsuario(self, request, context) -> messages_pb2.UsuarioFormularioResponse:
         print('ObtemUsuario chamada...')

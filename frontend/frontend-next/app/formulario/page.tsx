@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -24,11 +23,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import Calendar from "@/components/ui/calendar";
 import { Calendar as CalendarIcon } from "lucide-react";
 import {
-  DeleteFormularioParams,
   InsertFormularioParams,
-  JsonFormulario
-} from "../../../../service/ppgls/types";
-import { insertFormularioData } from "../../../../service/ppgls/formulario/queries";
+  JsonFormulario,
+  FormularioParams,
+  UpdateFormularioItem,
+} from "../../service/ppgls/types";
+import { insertFormularioData } from "../../service/ppgls/formulario/queries";
 
 const formSchema = z.object({
   nome_espec: z.string(),
@@ -42,7 +42,6 @@ const formSchema = z.object({
   r1: z.coerce.number().min(0),
   r2: z.coerce.number().min(0),
   r3: z.coerce.number().min(0),
-  especialista: z.coerce.number().min(0),
   nome_coord: z.string(),
   carg_hor_coord: z.coerce.number().min(0),
   cod_cpf_coord: z.string(),
@@ -68,8 +67,22 @@ const opcoesCentro = [
 const opcoesVinculo = [
   { valor: "EFETIVO COM DE", rotulo: "Efetivo com DE" },
   { valor: "EFETIVO SEM DE", rotulo: "Efetivo sem DE" },
-  { valor: "DESIGNADO", rotulo: "Designado" },
-  { valor: "CONTRATADO", rotulo: "Contratado" },
+  { valor: "DESIGNADO/CONTRATADO", rotulo: "Designado/Contratado" },
+];
+
+const opcoesCategoriaProfissional = [
+  { valor: "ENFERMEIRO", rotulo: "Enfermeiro(a)" },
+  { valor: "ODONTÓLOGO", rotulo: "Odontólago(a)" },
+  { valor: "MEDICO", rotulo: "Médico(a)" },
+  { valor: "FARMACEUTICO", rotulo: "Farmacêutico(a)" },
+  { valor: "FISIOTERAPEUTA", rotulo: "Fisioterapelta" },
+  { valor: "PSICOLOGO", rotulo: "Psicólogo" },
+];
+
+const opcoesTitulacao = [
+  { valor: "ESPECIALISTA", rotulo: "Especialista" },
+  { valor: "MESTRE", rotulo: "Mestre" },
+  { valor: "DOUTOR", rotulo: "Doutor" },
 ];
 
 const validarCPF = (cpf: string): boolean => {
@@ -114,7 +127,6 @@ export const MyForm = () => {
       r1:0,
       r2:0,
       r3:0,
-      especialista:0,
       nome_coord: "",
       carg_hor_coord:0,
       cod_cpf_coord:"",
@@ -150,32 +162,29 @@ export const MyForm = () => {
 
   type FormValues = z.infer<typeof formSchema>;
 
-  // Inicialize o item com um valor vazio, mas do tipo correto
-  const [item, setItem] = useState<InsertFormularioParams | null>(null);
-
-  // Passando o item para o hook
-  const { data, isLoading, error } = useInsertFormulario({
-    item: item as InsertFormularioParams, // Passa o item somente se for válido
-  });
 
   async function onSubmit() {
     try {
       const valoresFormulario = form.getValues();
 
-      const dataInicioISO = valoresFormulario.data_ini instanceof Date 
-        ? valoresFormulario.data_ini.toISOString() 
-        : new Date(valoresFormulario.data_ini).toISOString();
+      const dataInicioISO = new Date(valoresFormulario.data_ini).toISOString().replace("T", " ").split(".")[0];
 
-      const dataTerminoISO = valoresFormulario.data_ter instanceof Date 
-        ? valoresFormulario.data_ter.toISOString() 
-        : new Date(valoresFormulario.data_ter).toISOString();
-
+      const dataTerminoISO = new Date(valoresFormulario.data_ter).toISOString().replace("T", " ").split(".")[0];
+      
+      const ano = new Date(valoresFormulario.data_pren).getFullYear();
+      const semestre = new Date(valoresFormulario.data_pren).getMonth() < 6 ? 1 : 2;
+      const data_preenchimento = new Date(valoresFormulario.data_pren).toISOString();
       const jsonFormulario: JsonFormulario = {
-        data_preenchimento: new Date().toISOString(),
+        data_preenchimento: new Date().toISOString().replace('T', ' ').split('.')[0],
         coordenador: {
-          coordenador_cpf: valoresFormulario.cod_cpf_coord,
-          coordenador_nome: valoresFormulario.nome_cor,
+          id: valoresFormulario.cod_cpf_coord,
+          nome: valoresFormulario.nome_cor,
           carga_horaria: valoresFormulario.carg_hor_coord,
+          ano: ano,
+          semestre: semestre,
+          nome_formulario: valoresFormulario.nome_espec,
+          data_preenchimento: data_preenchimento,
+          
         },
         residencia_especializacao: {
           id: 0,
@@ -189,39 +198,33 @@ export const MyForm = () => {
           r1: valoresFormulario.r1,
           r2: valoresFormulario.r2,
           r3: valoresFormulario.r3,
-          especialista: valoresFormulario.especialista,
         },
         professores: dadosTabela.map((prof, index) => ({
-          id: index + 1,
+          id: prof.cod_cpf_prof,
           nome: prof.nome_prof,
           vinculo: prof.vinculo,
           titulacao: prof.titulacao,
-          carga_horaria_jornada_extendida: prof.carga_hor_JE,
-          carga_horaria_projeto_extencao: prof.carga_hor_PE,
-          carga_horaria_projeto_pesquisa: prof.carga_hor_PP,
-          carga_horaria_total: prof.carga_hor_tot,
+          carga_horaria_jornada_extendida: Number(prof.carga_hor_JE),
+          carga_horaria_projeto_extencao: Number(prof.carga_hor_PE),
+          carga_horaria_projeto_pesquisa: Number(prof.carga_hor_PP),
+          carga_horaria_total: Number(prof.carga_hor_tot),
+          ano: ano,
+          semestre: semestre,
+          nome_formulario: valoresFormulario.nome_espec,
+          data_preenchimento: data_preenchimento,
         })),
       };
-
-      // Atualiza o item com os dados estruturados
-      setItem({ item: { nome: valoresFormulario.nome_espec, json: jsonFormulario } });
-
-      const { data, isLoading, error } = useInsertFormulario({ item: jsonFormulario });
-
-      if (error) {
-        console.error("Erro ao inserir formulário:", error);
-        alert("Erro ao inserir o formulário");
+      const updateFormularioItem: UpdateFormularioItem = {
+        nome: valoresFormulario.nome_espec,
+        json : jsonFormulario,
       }
-  
-      if (isLoading) {
-        console.log("Enviando formulário...");
-      }
-  
-      if (data) {
-        console.log("Dados enviados com sucesso:", data);
-        // Aqui você pode tratar a resposta ou dar um feedback ao usuário
+      const formularioParams: InsertFormularioParams  = {
+        item: updateFormularioItem,
       }
 
+      await insertFormularioData(formularioParams);
+      alert("Formulário inserido com sucesso!");
+      
     } catch (error) {
       alert("Erro ao submeter o formulário.");
       console.error("Erro no envio do formulário", error);
@@ -268,7 +271,6 @@ export const MyForm = () => {
       form.setValue("r1", data.r1 || "");
       form.setValue("r2", data.r2 || "");
       form.setValue("r3", data.r3 || "");
-      form.setValue("especialista", data.especialista || "");
       form.setValue("nome_coord", data.nome_coord || "");
       form.setValue("carg_hor_coord", data.carg_hor_coord || "");
       form.setValue("cod_cpf_prof", data.cod_cpf_prof || "");
@@ -306,7 +308,7 @@ export const MyForm = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
         <div className="flex items-center justify-center space-x-4 text-center mb-16">
           <img
-            src="/images/logo_unimonetes.png"
+            src="/images/logo_unimontes.png"
             alt="Logo Unimonetes"
             className="w-26 h-14 object-contain"
           />
@@ -316,7 +318,7 @@ export const MyForm = () => {
             <h3 className="text-base">Coordenadoria de Pós Graduação</h3>
           </div>
         </div>
-        <p className="text-sm font-medium -mb-2">Expecialização ou Residência</p>
+        <p className="text-sm font-medium -mb-2">Especialização ou Residência</p>
         <div className="border border-gray-300 p-6 rounded-md space-y-6 !mt-0">
           <div className="grid grid-cols-12 gap-4 items-center">
             <div className="col-span-6 flex flex-col">
@@ -462,10 +464,14 @@ export const MyForm = () => {
                 <FormItem>
                   <FormLabel>Categoria profissional</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      required
-                    />
+                    <CampoSelecao
+                        options={opcoesCategoriaProfissional}
+                        value={field.value}
+                        onChange={(valorSelecionado) => {
+                          console.log("🔹 Selecionado:", valorSelecionado);
+                          field.onChange(valorSelecionado);
+                        }}
+                      />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -597,7 +603,7 @@ export const MyForm = () => {
 
             {/* Linha 2 com r3 e especialista lado a lado */}
             <div className="flex space-x-4">
-              <div className="flex-1">
+              <div className="w-1/2">
                 <FormField
                   control={form.control}
                   name="r3"
@@ -619,32 +625,10 @@ export const MyForm = () => {
                   )}
                 />
               </div>
-              <div className="flex-1">
-                <FormField
-                  control={form.control}
-                  name="especialista"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Especialista</FormLabel>
-                      <FormControl>
-                        <Input 
-                          {...field} 
-                          type="number" 
-                          min="0" 
-                          step="1" 
-                          required 
-                          value={field.value === 0 ? "" : field.value}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
             </div>
           </div>
         </div>
-        <p className="text-sm font-medium -mb-0">Coordenador</p>
+        <p className="text-sm font-medium -mb-0">Coordenador da Especialização ou Residência</p>
         <div className="border border-gray-300 p-6 rounded-md space-y-6 !mt-0">
           <div className="grid grid-cols-12 gap-4 items-center">
             <div className="col-span-6 flex flex-col">
@@ -778,10 +762,15 @@ export const MyForm = () => {
 
                         field.onChange(value); // Armazena apenas os números no estado do formulário
 
-                        if (value.length !== 11) {
+                        if (value.length === 11 && !validarCPF(value)) {
+                          e.target.setCustomValidity("CPF inválido. Verifique os dígitos.");
+                          e.target.reportValidity(); // Exibe a mensagem imediatamente
+                        } else if (value.length !== 11) {
                           e.target.setCustomValidity("O CPF deve ter exatamente 11 dígitos numéricos.");
+                          e.target.reportValidity();
                         } else {
                           e.target.setCustomValidity("");
+                          e.target.reportValidity();
                         }
                       }}
                     />
@@ -828,9 +817,13 @@ export const MyForm = () => {
                 <FormItem>
                   <FormLabel>Titulação</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      required
+                    <CampoSelecao
+                        options={opcoesTitulacao}
+                        value={field.value}
+                        onChange={(valorSelecionado) => {
+                          console.log("🔹 Selecionado:", valorSelecionado);
+                          field.onChange(valorSelecionado);
+                        }}
                     />
                   </FormControl>
                   <FormMessage />

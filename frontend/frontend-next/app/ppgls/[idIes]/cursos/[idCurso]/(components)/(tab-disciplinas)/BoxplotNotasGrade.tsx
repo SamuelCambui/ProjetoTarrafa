@@ -6,16 +6,18 @@ export const BoxplotNotasGrade = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {
     return <Skeleton className="h-full w-full" />;
   }
+
   const map = new Map();
 
   data.forEach(({ nome, abreviacao, media, desvio_padrao }: any) =>
-    map.set(abreviacao, { nome, media, desvio_padrao }),
+    map.set(nome, { nome, media, desvio_padrao })
   );
 
   const config = {
     data: {
       value: data.map(
         ({
+          nome,
           abreviacao,
           primeiro_quartil,
           segundo_quartil,
@@ -26,7 +28,7 @@ export const BoxplotNotasGrade = ({ data, isLoading }: GraficoProps) => {
           desvio_padrao,
         }: any) => {
           return {
-            x: abreviacao,
+            x: nome, // Usar o nome completo no eixo X
             y: [
               limite_inferior,
               primeiro_quartil,
@@ -37,12 +39,24 @@ export const BoxplotNotasGrade = ({ data, isLoading }: GraficoProps) => {
               desvio_padrao,
             ],
           };
-        },
+        }
       ),
     },
-    xField: "x",
+    xField: "x", // Eixo X agora usa o nome completo
     yField: "y",
     scale: { x: { paddingInner: 0.6, paddingOuter: 0.3 } },
+    annotations: [
+      {
+        type: "lineY",
+        yField: 70,
+        style: {
+          stroke: "#222222",
+          strokeOpacity: 0.1,
+          lineWidth: 0.5,
+          lineDash: [4, 4],
+        },
+      },
+    ],
     tooltip: {
       items: [
         { name: "Limite Inferior", channel: "y" },
@@ -84,6 +98,8 @@ export const BoxplotNotasGrade = ({ data, isLoading }: GraficoProps) => {
         },
       },
     },
+    height: 800, // Defina um valor maior para aumentar a altura do gráfico
   };
+
   return <Box {...config} />;
 };

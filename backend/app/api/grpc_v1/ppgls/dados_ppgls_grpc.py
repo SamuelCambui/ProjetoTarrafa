@@ -21,7 +21,7 @@ class DadosPPGLSServicer(ppgls_pb2_grpc.DadosPosGraduacaoLSServicer):
 
  
     def GetDisciplinas(self, request: PPGLSRequest, context):
-        disciplinas = tasks_disciplinas_ppgls.get_disciplinas.delay(id_grade=request.id_grade, id_curso=request.id_curso,id_ies=request.id_ies).get()
+        disciplinas = tasks_disciplinas_ppgls.get_disciplinas.delay(id_curso=request.id_curso,id_ies=request.id_ies).get()
         return PPGLSResponse(item=[disciplinas])
 
 

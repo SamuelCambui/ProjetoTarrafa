@@ -180,20 +180,18 @@ class ListaUsuariosResponse(_message.Message):
     def __init__(self, item: _Optional[_Iterable[_Union[UsuarioResponse, _Mapping]]] = ...) -> None: ...
 
 class PPGLSRequest(_message.Message):
-    __slots__ = ("id_disc", "id_ies", "id_curso", "id_grade", "anoi", "anof")
+    __slots__ = ("id_disc", "id_ies", "id_curso", "anoi", "anof")
     ID_DISC_FIELD_NUMBER: _ClassVar[int]
     ID_IES_FIELD_NUMBER: _ClassVar[int]
     ID_CURSO_FIELD_NUMBER: _ClassVar[int]
-    ID_GRADE_FIELD_NUMBER: _ClassVar[int]
     ANOI_FIELD_NUMBER: _ClassVar[int]
     ANOF_FIELD_NUMBER: _ClassVar[int]
     id_disc: str
     id_ies: str
     id_curso: str
-    id_grade: str
     anoi: int
     anof: int
-    def __init__(self, id_disc: _Optional[str] = ..., id_ies: _Optional[str] = ..., id_curso: _Optional[str] = ..., id_grade: _Optional[str] = ..., anoi: _Optional[int] = ..., anof: _Optional[int] = ...) -> None: ...
+    def __init__(self, id_disc: _Optional[str] = ..., id_ies: _Optional[str] = ..., id_curso: _Optional[str] = ..., anoi: _Optional[int] = ..., anof: _Optional[int] = ...) -> None: ...
 
 class PPGLSJson(_message.Message):
     __slots__ = ("nome", "json")

@@ -58,6 +58,7 @@ export const GraficoFormaIngresso = ({ data, isLoading }: GraficoProps) => {
     },
   };
 
+
   const alunosPorCota = [true, false].map((cotista) => ({
     categoria: cotista ? "Cotista" : "Ampla Concorrência",
     quantidade: data

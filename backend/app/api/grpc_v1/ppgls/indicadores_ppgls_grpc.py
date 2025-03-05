@@ -17,25 +17,22 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
         consultas = []
         consultas.append(
             tasks_disciplinas_ppgls.get_disciplinas.s(
-                id_grade=request.id_grade,
                 id_curso=request.id_curso,
                 id_ies=request.id_ies,
             )
         )
         consultas.append(
-            tasks_cursos_ppgls.get_grades.s(
+            tasks_disciplinas_ppgls.get_classificacao_disciplinas.s(
                 id_curso=request.id_curso, 
-                id_ies=request.id_ies
+                id_ies=request.id_ies, 
             )
         )
-
         for serie in range(serie_inicial, serie_final + 1):
             consultas.append(
                 tasks_disciplinas_ppgls.get_boxplot_notas_grade.s(
                     id_curso=request.id_curso,
                     id_ies=request.id_ies,
                     serie=serie,
-                    id_grade=request.id_grade,
                 )
             )
             consultas.append(
@@ -43,7 +40,6 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
                     id_curso=request.id_curso,
                     id_ies=request.id_ies,
                     serie=serie,
-                    id_grade=request.id_grade,
                 )
             )
 
@@ -52,7 +48,8 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
         result = result.get()
         response = [item for item in result]
 
-
+        print("-------------------------------Resultado final:----------------------------------")
+        print(response)
         return PPGLSResponse(item=response)
     
     @cache_grpc_ppgls()

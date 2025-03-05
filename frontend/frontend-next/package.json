@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "protos": "npx grpc_tools_node_protoc -I ../../protos --js_out=import_style=commonjs,binary:./protos --grpc_out=grpc_js:./protos ../../protos/*.proto && ..\\..\\.venv\\Scripts\\python.exe -m grpc_tools.protoc --plugin=protoc-gen-ts=\"..\\..\\frontend\\frontend-next\\node_modules\\.bin\\protoc-gen-ts.cmd\" --ts_out=grpc_js:\"..\\..\\frontend\\frontend-next\\protos\" -I ../../protos ../../protos/*.proto"
+    
   },
   "dependencies": {
     "@ant-design/charts": "^2.2.3",

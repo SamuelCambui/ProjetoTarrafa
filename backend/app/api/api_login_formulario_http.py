@@ -70,19 +70,6 @@ def Login(request : UserLogin) -> dict:
             "refresh_token" : None 
             }
 
-# @app.get("/obter_usuario")
-# def ObtemUsuario(idlattes : str) -> dict:
-#     print('ObtemUsuario chamada...')
-#     try:
-#         usuario = tarefa_verifica_usuario.apply(kwargs={'idlattes':idlattes}).get()
-#         if usuario:
-            
-#             return usuario.model_dump()
-        
-#         return {}
-#     except Exception as e:
-#         print(e)
-#         return {}
     
 @app.post("/verificar_token")
 def VerificarSessao(token : Token):
