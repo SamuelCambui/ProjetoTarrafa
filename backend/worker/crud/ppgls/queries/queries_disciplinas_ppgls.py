@@ -78,7 +78,7 @@ class QueriesDisciplinas():
             -- Agora agrupamos por nome normalizado
             GROUP BY nome_normalizado
             HAVING MAX(similarity(nome_normalizado, nome_normalizado)) > 0.70
-            ORDER BY nome_agrupado;
+            ORDER BY nome;
         """
 
         ret = db.fetch_all(
@@ -125,25 +125,29 @@ class QueriesDisciplinas():
         Retorna a quantidade de alunos de uma disciplina por semestre em um período determinado.\n
 
         Parâmetros:\n
-            id(str): Código da disciplina.
-            anoi(int): Ano inicial.
-            anof(int): Ano final. 
-            id_ies(str): Código da Universidade.
+            id_disc (str): Códigos da disciplina separados por vírgula.
+            anoi (int): Ano inicial.
+            anof (int): Ano final. 
+            id_ies (str): Código da Universidade.
         """
         try:
+            # Transforma id_disc em uma tupla de strings para a cláusula IN
+            id_disc_tuple = tuple(id_disc.split(","))
+
             query = """
                 SELECT foo.ano_letivo, foo.semestre, COUNT(foo.ano_letivo) AS quantidade FROM ( 
-                    SELECT historico.ano_letivo, historico.semestre FROM historico 
+                    SELECT historico.ano_letivo, historico.semestre 
+                    FROM historico 
                     INNER JOIN disciplinas ON disciplinas.cod_disc = historico.cod_disc    
                     AND CAST(historico.ano_letivo AS integer) BETWEEN %(anoi)s AND %(anof)s
-                    AND historico.cod_disc= %(id_disc)s
+                    AND historico.cod_disc IN %(id_disc)s
                     AND disciplinas.id_ies = %(id_ies)s
                     GROUP BY matricula_aluno, historico.ano_letivo, historico.semestre
                     ORDER BY historico.ano_letivo, historico.semestre
                 ) AS foo
                 GROUP BY foo.ano_letivo, foo.semestre
             """
-            ret = db.fetch_all(query, id_disc=id_disc, anoi=anoi, anof=anof, id_ies=id_ies)
+            ret = db.fetch_all(query, id_disc=id_disc_tuple, anoi=anoi, anof=anof, id_ies=id_ies)
 
             if not ret:
                 raise ValueError("Nenhum dado encontrado para os parâmetros fornecidos.")
@@ -156,19 +160,17 @@ class QueriesDisciplinas():
 
         except ValueError as e:
             print(f"Erro: {e}")
-            # Trate a exceção conforme necessário, como retornar um valor padrão ou logar o erro
             return {"erro": str(e)}
 
         except Exception as e:
             print(f"Erro inesperado: {e}")
-            # Trate outros tipos de erro aqui, como problemas de banco de dados
             return {"erro": "Erro na execução da consulta."}
 
 
     @tratamento_excecao_com_db(tipo_banco='grad')
     def aprovacoes_reprovacoes_por_semestre(
         self,
-        id_disc: int,
+        id_disc: str,
         id_curso: str,
         id_ies: str,
         anoi: int,
@@ -178,32 +180,36 @@ class QueriesDisciplinas():
         """
         Retorna aprovações e reprovações de uma disciplina por semestre de um determinado período.\n
 
-        :param id_disc(str): Código da disciplina.
-        :param id_curso(str): Código do curso.
-        :param id_ies(str): Código da universidade.
-        :param anoi(int): Ano inicial.
-        :param anof(int): Ano Final.
+        :param id_disc (str): Códigos das disciplinas separados por vírgula.
+        :param id_curso (str): Código do curso.
+        :param id_ies (str): Código da universidade.
+        :param anoi (int): Ano inicial.
+        :param anof (int): Ano Final.
         """
+        # Transforma id_disc em uma tupla para a cláusula IN
+        id_disc_tuple = tuple(id_disc.split(",")) if "," in id_disc else (id_disc,)
+
         query = """
-            with nota_min as (
-                select nota_min_aprovacao from cursos 
-                where id = %(id_curso)s and id_ies = %(id_ies)s
+            WITH nota_min AS (
+                SELECT nota_min_aprovacao FROM cursos 
+                WHERE id = %(id_curso)s AND id_ies = %(id_ies)s
             )
-            select 
+            SELECT 
                 ano_letivo, 
                 semestre, 
-                cast(round(100.0 * SUM(CASE WHEN nota >= (select * from nota_min) THEN 1 ELSE 0 END) / COUNT(*), 2) as float) AS taxa_aprovacao,
-                cast(round(100.0 * SUM(CASE WHEN nota < (select * from nota_min) THEN 1 ELSE 0 END) / COUNT(*), 2) as float) AS taxa_reprovacao
-            from historico
-            where cod_disc = %(id_disc)s
-            and id_ies = %(id_ies)s
-            and cast(ano_letivo as integer) between %(anoi)s and %(anof)s
-            and nota is not null
-            group by ano_letivo, semestre;
+                CAST(ROUND(100.0 * SUM(CASE WHEN nota >= (SELECT * FROM nota_min) THEN 1 ELSE 0 END) / COUNT(*), 2) AS FLOAT) AS taxa_aprovacao,
+                CAST(ROUND(100.0 * SUM(CASE WHEN nota < (SELECT * FROM nota_min) THEN 1 ELSE 0 END) / COUNT(*), 2) AS FLOAT) AS taxa_reprovacao
+            FROM historico
+            WHERE cod_disc IN %(id_disc)s
+            AND id_ies = %(id_ies)s
+            AND CAST(ano_letivo AS INTEGER) BETWEEN %(anoi)s AND %(anof)s
+            AND nota IS NOT NULL
+            GROUP BY ano_letivo, semestre;
         """
+        
         ret = db.fetch_all(
             query,
-            id_disc=id_disc,
+            id_disc=id_disc_tuple,
             id_curso=id_curso,
             anoi=anoi,
             anof=anof,
@@ -212,10 +218,11 @@ class QueriesDisciplinas():
         return ret
 
 
+
     @tratamento_excecao_com_db(tipo_banco='grad')
     def boxplot_notas_disciplina(
         self,
-        id_disc: int,
+        id_disc: str,
         id_ies: str,
         anoi: str,
         anof: str,
@@ -224,52 +231,76 @@ class QueriesDisciplinas():
         """
         Retorna as medidas do boxplot de uma disciplina.\n
 
-        :param id(str): Código da disciplina.
-        :param id_ies(str): Código da universidade.
-        :param anoi(int): Ano inicial.
-        :param anof(int): Ano Final.
+        :param id_disc (str): Códigos das disciplinas separados por vírgula.
+        :param id_ies (str): Código da universidade.
+        :param anoi (int): Ano inicial.
+        :param anof (int): Ano Final.
         """
+        # Transforma id_disc em uma tupla para a cláusula IN
+        id_disc_tuple = tuple(id_disc.split(",")) if "," in id_disc else (id_disc,)
+
         query = """
-            with query_notas as (
-                select d.nome, nota,
-                ntile(4) over (partition by d.nome order by nota) as quartil
-                from historico as h 
-                inner join disciplinas as d on d.cod_disc = h.cod_disc
-                where h.cod_disc = %(id_disc)s and h.id_ies = %(id_ies)s
-                and cast(h.ano_letivo as integer) between %(anoi)s and %(anof)s
-                and nota is not null
+            WITH query_notas AS (
+                SELECT d.nome, nota,
+                    ntile(4) OVER (PARTITION BY d.nome ORDER BY nota) AS quartil
+                FROM historico AS h 
+                INNER JOIN disciplinas AS d ON d.cod_disc = h.cod_disc
+                WHERE h.cod_disc IN %(id_disc)s 
+                AND h.id_ies = %(id_ies)s
+                AND CAST(h.ano_letivo AS INTEGER) BETWEEN %(anoi)s AND %(anof)s
+                AND nota IS NOT NULL
             ), 
-            query_quartis as (
-                select 
-                    cast(max(case when quartil = 1 then nota end) as float) as primeiro_quartil,
-                    cast(max(case when quartil = 2 then nota end) as float) as segundo_quartil,
-                    cast(max(case when quartil = 3 then nota end) as float) as terceiro_quartil,
-                    cast(round(stddev_pop(nota), 2) as float) as desvio_padrao,
-                    cast(round(avg(nota), 2) as float) as media
-                from query_notas
-                having MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
+            query_quartis AS (
+                SELECT 
+                    CAST(MAX(CASE WHEN quartil = 1 THEN nota END) AS FLOAT) AS primeiro_quartil,
+                    CAST(MAX(CASE WHEN quartil = 2 THEN nota END) AS FLOAT) AS segundo_quartil,
+                    CAST(MAX(CASE WHEN quartil = 3 THEN nota END) AS FLOAT) AS terceiro_quartil,
+                    CAST(ROUND(STDDEV_POP(nota), 2) AS FLOAT) AS desvio_padrao,
+                    CAST(ROUND(AVG(nota), 2) AS FLOAT) AS media
+                FROM query_notas
+                HAVING MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
                 AND MAX(CASE WHEN quartil = 2 THEN nota END) IS NOT NULL
                 AND MAX(CASE WHEN quartil = 3 THEN nota END) IS NOT NULL
             )
-            select *,
-                GREATEST(primeiro_quartil - (1.5 * (terceiro_quartil - primeiro_quartil)), 0) as limite_inferior,
-                LEAST(terceiro_quartil + (1.5 * (terceiro_quartil - primeiro_quartil)), 100) as limite_superior
-            from query_quartis;
+            SELECT *,
+                GREATEST(primeiro_quartil - (1.5 * (terceiro_quartil - primeiro_quartil)), 0) AS limite_inferior,
+                LEAST(terceiro_quartil + (1.5 * (terceiro_quartil - primeiro_quartil)), 100) AS limite_superior
+            FROM query_quartis;
         """
-        ret = db.fetch_all(query, id_disc=id_disc, anoi=anoi, anof=anof, id_ies=id_ies)
+        
+        ret = db.fetch_all(
+            query,
+            id_disc=id_disc_tuple,
+            id_ies=id_ies,
+            anoi=anoi,
+            anof=anof,
+        )
         return ret
 
 
-    # TESTE
+
+   
     @tratamento_excecao_com_db(tipo_banco='grad')
-    def histograma_notas_disciplina( self, id_disc: int, anoi: str, anof: str, id_ies: str, db: DBConnectorGRAD = None):
+    def histograma_notas_disciplina(self, id_disc: str, anoi: str, anof: str, id_ies: str, db: DBConnectorGRAD = None):
+        """
+        Retorna um histograma de notas de uma ou mais disciplinas.
+
+        :param id_disc (str): Códigos das disciplinas separados por vírgula.
+        :param anoi (str): Ano inicial.
+        :param anof (str): Ano final.
+        :param id_ies (str): Código da universidade.
+        :param db (DBConnectorGRAD): Conexão com o banco de dados.
+        """
+        # Transforma id_disc em uma tupla para a cláusula IN
+        id_disc_tuple = tuple(id_disc.split(",")) if "," in id_disc else (id_disc,)
+
         query = """
             WITH notas AS (
                 SELECT nota 
                 FROM historico 
-                WHERE cod_disc = %(id_disc)s 
+                WHERE cod_disc IN %(id_disc)s 
                 AND id_ies = %(id_ies)s
-                AND CAST(ano_letivo AS integer) BETWEEN %(anoi)s and %(anof)s
+                AND CAST(ano_letivo AS INTEGER) BETWEEN %(anoi)s AND %(anof)s
                 AND nota IS NOT NULL
             )
             SELECT
@@ -286,12 +317,11 @@ class QueriesDisciplinas():
             FROM notas;
         """
         
-        
-
         ret = db.fetch_all(
-            query=query, id_disc=id_disc, id_ies=id_ies, anoi=anoi, anof=anof
+            query=query, id_disc=id_disc_tuple, id_ies=id_ies, anoi=anoi, anof=anof
         )
         return ret
+
 
     @tratamento_excecao_com_db(tipo_banco='grad')
     def boxplot_notas_grade(
@@ -412,36 +442,45 @@ class QueriesDisciplinas():
         db: DBConnectorGRAD = None,
     ):
         """
-        Retorna a taxa de evasão e não evasão de uma disciplina por semestre.
+        Retorna a taxa de evasão e não evasão de uma ou mais disciplinas por semestre.
 
-        :param id_disc(str): Código da Disciplina
-        :param id_curso(str): Código do Curso
-        :param id_ies(str): Código da Instituição
-        :param anoi(int): Ano Inicial
-        :param anof(int): Ano Final
+        :param id_disc (str): Códigos das disciplinas separados por vírgula.
+        :param id_curso (str): Código do curso.
+        :param id_ies (str): Código da instituição.
+        :param anoi (int): Ano inicial.
+        :param anof (int): Ano final.
+        :param db (DBConnectorGRAD): Conexão com o banco de dados.
         """
+        
+        # Transforma id_disc em uma tupla para a cláusula IN
+        id_disc_tuple = tuple(id_disc.split(",")) if "," in id_disc else (id_disc,)
 
         query = """
-            with freq_min as (
-                select freq_min_aprovacao from cursos where id = %(id_curso)s and id_ies = %(id_ies)s
+            WITH freq_min AS (
+                SELECT freq_min_aprovacao FROM cursos WHERE id = %(id_curso)s AND id_ies = %(id_ies)s
             )
-            select
-                ano_letivo,
-                semestre,
-                cast(ROUND(100 * SUM(CASE WHEN h.percentual_freq < (SELECT * from freq_min) THEN 1 ELSE 0 END)/COUNT(*), 2) as float)
-                    as evasao,
-                100 - cast(ROUND(100 * SUM(CASE WHEN h.percentual_freq < (SELECT * from freq_min) THEN 1 ELSE 0 END)/COUNT(*), 2) as float)
-                    as nao_evasao
-            from historico as h
-            where h.cod_disc = %(id_disc)s and h.id_ies = %(id_ies)s
-            and cast(ano_letivo as integer) between %(anoi)s and %(anof)s
-            and percentual_freq is not null
-            group by ano_letivo, semestre;
+            SELECT
+                h.ano_letivo,
+                h.semestre,
+                CAST(
+                    ROUND(100 * SUM(CASE WHEN h.percentual_freq < (SELECT * FROM freq_min) THEN 1 ELSE 0 END) / COUNT(*), 2) 
+                    AS FLOAT
+                ) AS evasao,
+                100 - CAST(
+                    ROUND(100 * SUM(CASE WHEN h.percentual_freq < (SELECT * FROM freq_min) THEN 1 ELSE 0 END) / COUNT(*), 2) 
+                    AS FLOAT
+                ) AS nao_evasao
+            FROM historico AS h
+            WHERE h.cod_disc IN %(id_disc)s 
+            AND h.id_ies = %(id_ies)s
+            AND CAST(h.ano_letivo AS INTEGER) BETWEEN %(anoi)s AND %(anof)s
+            AND h.percentual_freq IS NOT NULL
+            GROUP BY h.ano_letivo, h.semestre;
         """
 
         ret = db.fetch_all(
             query=query,
-            id_disc=id_disc,
+            id_disc=id_disc_tuple,
             id_curso=id_curso,
             id_ies=id_ies,
             anoi=anoi,
@@ -449,6 +488,7 @@ class QueriesDisciplinas():
         )
 
         return ret
+
 
     @tratamento_excecao_com_db(tipo_banco='grad')
     def boxplot_notas_evasao(
@@ -461,64 +501,63 @@ class QueriesDisciplinas():
         db: DBConnectorGRAD = None,
     ):
         """
-        Retorna as medidas do boxplot de notas para os alunos que evadiram de uma disciplina.
+        Retorna as medidas do boxplot de notas para os alunos que evadiram de uma ou mais disciplinas.
 
-        :param id_disc(str): Código da Disciplina
-        :param id_curso(str): Código do Curso
-        :param id_ies(str): Código da Instituição
-        :param anoi(int): Ano Inicial
-        :param anof(int): Ano Final
+        :param id_disc (str): Códigos das disciplinas separados por vírgula.
+        :param id_curso (str): Código do curso.
+        :param id_ies (str): Código da instituição.
+        :param anoi (int): Ano inicial.
+        :param anof (int): Ano final.
+        :param db (DBConnectorGRAD): Conexão com o banco de dados.
         """
 
+        # Transforma id_disc em uma tupla para a cláusula IN
+        id_disc_tuple = tuple(id_disc.split(",")) if "," in id_disc else (id_disc,)
+
         query = """
-            with freq_min as (
-                select freq_min_aprovacao from cursos where id = %(id_curso)s and id_ies = %(id_ies)s
+            WITH freq_min AS (
+                SELECT freq_min_aprovacao FROM cursos WHERE id = %(id_curso)s AND id_ies = %(id_ies)s
             ),
-            query_notas as (
-                select nota,
-                (
-                    CASE
-                        WHEN percentual_freq < (select * from freq_min) THEN true ELSE false 
-                    END
-                ) 
-                as evasao,
-                ntile(4) over (
-                    partition by (
-                        CASE
-                            WHEN percentual_freq < (select * from freq_min) THEN true ELSE false 
-                        END
-                    ) 
-                    order by nota
-                ) as quartil
-                from historico as h 
-                where h.cod_disc = %(id_disc)s and h.id_ies = %(id_ies)s
-                and cast(ano_letivo as integer) between %(anoi)s and %(anof)s
-                and nota is not null
-                and percentual_freq is not null
+            query_notas AS (
+                SELECT 
+                    h.nota,
+                    (CASE WHEN h.percentual_freq < (SELECT * FROM freq_min) THEN true ELSE false END) AS evasao,
+                    ntile(4) OVER (
+                        PARTITION BY (
+                            CASE WHEN h.percentual_freq < (SELECT * FROM freq_min) THEN true ELSE false END
+                        ) 
+                        ORDER BY h.nota
+                    ) AS quartil
+                FROM historico AS h 
+                WHERE h.cod_disc IN %(id_disc)s 
+                AND h.id_ies = %(id_ies)s
+                AND CAST(h.ano_letivo AS INTEGER) BETWEEN %(anoi)s AND %(anof)s
+                AND h.nota IS NOT NULL
+                AND h.percentual_freq IS NOT NULL
             ), 
-            query_quartis as (
-                select
-                    evasao,
-                    cast(max(case when quartil = 1 then nota end) as float) as primeiro_quartil,
-                    cast(max(case when quartil = 2 then nota end) as float) as segundo_quartil,
-                    cast(max(case when quartil = 3 then nota end) as float) as terceiro_quartil,
-                    cast(round(stddev_pop(nota), 2) as float) as desvio_padrao,
-                    cast(round(avg(nota), 2) as float) as media
-                from query_notas
-                group by evasao
-                having MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
-                AND MAX(CASE WHEN quartil = 2 THEN nota END) IS NOT NULL
-                AND MAX(CASE WHEN quartil = 3 THEN nota END) IS NOT NULL
+            query_quartis AS (
+                SELECT
+                    qn.evasao,
+                    CAST(MAX(CASE WHEN qn.quartil = 1 THEN qn.nota END) AS FLOAT) AS primeiro_quartil,
+                    CAST(MAX(CASE WHEN qn.quartil = 2 THEN qn.nota END) AS FLOAT) AS segundo_quartil,
+                    CAST(MAX(CASE WHEN qn.quartil = 3 THEN qn.nota END) AS FLOAT) AS terceiro_quartil,
+                    CAST(ROUND(STDDEV_POP(qn.nota), 2) AS FLOAT) AS desvio_padrao,
+                    CAST(ROUND(AVG(qn.nota), 2) AS FLOAT) AS media
+                FROM query_notas AS qn
+                GROUP BY qn.evasao
+                HAVING MAX(CASE WHEN qn.quartil = 1 THEN qn.nota END) IS NOT NULL
+                AND MAX(CASE WHEN qn.quartil = 2 THEN qn.nota END) IS NOT NULL
+                AND MAX(CASE WHEN qn.quartil = 3 THEN qn.nota END) IS NOT NULL
             )
-            select *,
-                GREATEST(primeiro_quartil - (1.5 * (terceiro_quartil - primeiro_quartil)), 0) as limite_inferior,
-                LEAST(terceiro_quartil + (1.5 * (terceiro_quartil - primeiro_quartil)), 100) as limite_superior
-            from query_quartis;
+            SELECT *,
+                GREATEST(primeiro_quartil - (1.5 * (terceiro_quartil - primeiro_quartil)), 0) AS limite_inferior,
+                LEAST(terceiro_quartil + (1.5 * (terceiro_quartil - primeiro_quartil)), 100) AS limite_superior
+            FROM query_quartis;
         """
 
         ret = db.fetch_all(
             query=query,
-            id_disc=id_disc,
+            id_disc=id_disc_tuple,
             id_curso=id_curso,
             id_ies=id_ies,
             anoi=anoi,
@@ -526,6 +565,7 @@ class QueriesDisciplinas():
         )
 
         return ret
+
 
     @tratamento_excecao_com_db(tipo_banco='grad')
     def boxplot_desempenho_alunos_professor(
@@ -540,51 +580,55 @@ class QueriesDisciplinas():
         Retorna as medidas do boxplot de notas para cada professor em uma disciplina.
         Compara o desempenho dos alunos por cada professor em uma disciplina.
 
-        :param id_disc(str): Código da Disciplina
+        :param id_disc(str): Códigos das Disciplinas separados por vírgula.
         :param id_ies(str): Código da Instituição
         :param anoi(int): Ano Inicial
         :param anof(int): Ano Final
         """
 
+        # Transforma id_disc em uma tupla para a cláusula IN
+        id_disc_tuple = tuple(id_disc.split(",")) if "," in id_disc else (id_disc,)
+
         query = """
-            with query_notas as (
-                select 
+            WITH query_notas AS (
+                SELECT 
                     id_prof, 
                     nota,
-                    ntile(4) over (partition by id_prof order by nota) as quartil
-                from historico as h 
-                inner join disciplinas as d on d.cod_disc = h.cod_disc
-                where h.cod_disc = %(id_disc)s and h.id_ies = %(id_ies)s
-                and cast(h.ano_letivo as integer) between %(anoi)s and %(anof)s
-                and nota is not null
+                    NTILE(4) OVER (PARTITION BY id_prof ORDER BY nota) AS quartil
+                FROM historico AS h 
+                INNER JOIN disciplinas AS d ON d.cod_disc = h.cod_disc
+                WHERE h.cod_disc IN %(id_disc)s 
+                    AND h.id_ies = %(id_ies)s
+                    AND CAST(h.ano_letivo AS integer) BETWEEN %(anoi)s AND %(anof)s
+                    AND nota IS NOT NULL
             ), 
-            query_quartis as (
-                select
+            query_quartis AS (
+                SELECT
                     id_prof,
-                    cast(max(case when quartil = 1 then nota end) as float) as primeiro_quartil,
-                    cast(max(case when quartil = 2 then nota end) as float) as segundo_quartil,
-                    cast(max(case when quartil = 3 then nota end) as float) as terceiro_quartil,
-                    cast(round(stddev_pop(nota), 2) as float) as desvio_padrao,
-                    cast(round(avg(nota), 2) as float) as media
-                from query_notas
-                group by id_prof
-                having MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
+                    CAST(MAX(CASE WHEN quartil = 1 THEN nota END) AS float) AS primeiro_quartil,
+                    CAST(MAX(CASE WHEN quartil = 2 THEN nota END) AS float) AS segundo_quartil,
+                    CAST(MAX(CASE WHEN quartil = 3 THEN nota END) AS float) AS terceiro_quartil,
+                    CAST(ROUND(STDDEV_POP(nota), 2) AS float) AS desvio_padrao,
+                    CAST(ROUND(AVG(nota), 2) AS float) AS media
+                FROM query_notas
+                GROUP BY id_prof
+                HAVING MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
                 AND MAX(CASE WHEN quartil = 2 THEN nota END) IS NOT NULL
                 AND MAX(CASE WHEN quartil = 3 THEN nota END) IS NOT NULL
             )
-            select qq.*,
-                GREATEST(primeiro_quartil - (1.5 * (terceiro_quartil - primeiro_quartil)), 0) as limite_inferior,
-                LEAST(terceiro_quartil + (1.5 * (terceiro_quartil - primeiro_quartil)), 100) as limite_superior,
+            SELECT qq.*,
+                GREATEST(primeiro_quartil - (1.5 * (terceiro_quartil - primeiro_quartil)), 0) AS limite_inferior,
+                LEAST(terceiro_quartil + (1.5 * (terceiro_quartil - primeiro_quartil)), 100) AS limite_superior,
                 p.nome
-            from query_quartis as qq
-            inner join professores as p on p.id = qq.id_prof
+            FROM query_quartis AS qq
+            INNER JOIN professores AS p ON p.id = qq.id_prof
         """
 
-        ret = db.fetch_all(
-            query=query, id_disc=id_disc, id_ies=id_ies, anoi=anoi, anof=anof
-        )
+        # Executa a consulta
+        ret = db.fetch_all(query=query, id_disc=id_disc_tuple, id_ies=id_ies, anoi=anoi, anof=anof)
 
         return ret
+
     
  
     @tratamento_excecao_com_db(tipo_banco='grad')
@@ -683,44 +727,54 @@ class QueriesDisciplinas():
         """
         Retorna as medidas do boxplot para alunos cotistas e não cotistas.
 
-        :param id_disc(str): Código da Disciplina
+        :param id_disc(str): Códigos das Disciplinas separados por vírgula.
         :param id_ies(str): Código da Instituição
         """
+        # Transforma id_disc em uma tupla para a cláusula IN
+        id_disc_tuple = tuple(id_disc.split(",")) if "," in id_disc else (id_disc,)
+
         query = """
-            with query_notas as (
-                select 
+            WITH query_notas AS (
+                SELECT 
                     nota,
                     fi.cota,
-                    ntile(4) over (partition by fi.cota order by nota) as quartil
-                from historico as h
-                inner join aluno_curso as ac on ac.matricula_aluno = h.matricula_aluno and ac.id_ies = h.id_ies
-                inner join formasingresso as fi on fi.id = ac.id_forma_ing and fi.id_ies = ac.id_ies
-                where h.cod_disc = %(id_disc)s and h.id_ies = %(id_ies)s
-                and nota is not null
+                    NTILE(4) OVER (PARTITION BY fi.cota ORDER BY nota) AS quartil
+                FROM historico AS h
+                INNER JOIN aluno_curso AS ac 
+                    ON ac.matricula_aluno = h.matricula_aluno 
+                    AND ac.id_ies = h.id_ies
+                INNER JOIN formasingresso AS fi 
+                    ON fi.id = ac.id_forma_ing
+                    AND fi.id_ies = ac.id_ies
+                WHERE h.cod_disc IN %(id_disc)s 
+                    AND h.id_ies = %(id_ies)s
+                    AND nota IS NOT NULL
             ),
-            query_quartis as (
-                select
+            query_quartis AS (
+                SELECT
                     cota,
-                    cast(max(case when quartil = 1 then nota end) as float) as primeiro_quartil,
-                    cast(max(case when quartil = 2 then nota end) as float) as segundo_quartil,
-                    cast(max(case when quartil = 3 then nota end) as float) as terceiro_quartil,
-                    cast(round(stddev_pop(nota), 2) as float) as desvio_padrao,
-                    cast(round(avg(nota), 2) as float) as media
-                from query_notas
-                group by cota
-                having MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
+                    CAST(MAX(CASE WHEN quartil = 1 THEN nota END) AS FLOAT) AS primeiro_quartil,
+                    CAST(MAX(CASE WHEN quartil = 2 THEN nota END) AS FLOAT) AS segundo_quartil,
+                    CAST(MAX(CASE WHEN quartil = 3 THEN nota END) AS FLOAT) AS terceiro_quartil,
+                    CAST(ROUND(STDDEV_POP(nota), 2) AS FLOAT) AS desvio_padrao,
+                    CAST(ROUND(AVG(nota), 2) AS FLOAT) AS media
+                FROM query_notas
+                GROUP BY cota
+                HAVING MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
                 AND MAX(CASE WHEN quartil = 2 THEN nota END) IS NOT NULL
                 AND MAX(CASE WHEN quartil = 3 THEN nota END) IS NOT NULL
             )
-            select *,
-                GREATEST(primeiro_quartil - (1.5 * (terceiro_quartil - primeiro_quartil)), 0) as limite_inferior,
-                LEAST(terceiro_quartil + (1.5 * (terceiro_quartil - primeiro_quartil)), 100) as limite_superior
-            from query_quartis;
+            SELECT *,
+                GREATEST(primeiro_quartil - (1.5 * (terceiro_quartil - primeiro_quartil)), 0) AS limite_inferior,
+                LEAST(terceiro_quartil + (1.5 * (terceiro_quartil - primeiro_quartil)), 100) AS limite_superior
+            FROM query_quartis;
         """
 
-        ret = db.fetch_all(query=query, id_disc=id_disc, id_ies=id_ies)
+        # Executa a consulta
+        ret = db.fetch_all(query=query, id_disc=id_disc_tuple, id_ies=id_ies)
 
         return ret
+
 
     @tratamento_excecao_com_db(tipo_banco='grad')
     def histograma_desempenho_cotistas(
@@ -732,31 +786,42 @@ class QueriesDisciplinas():
         """
         Retorna os dados para montagem do histograma de cotistas e não cotistas.
 
-        :param id_disc(str): Código da Disciplina
+        :param id_disc(str): Códigos das Disciplinas separados por vírgula.
         :param id_ies(str): Código da Instituição
         """
+        # Transforma id_disc em uma tupla para a cláusula IN
+        id_disc_tuple = tuple(id_disc.split(",")) if "," in id_disc else (id_disc,)
+
         query = """
-            with notas as (
-                select nota, cota from historico as h
-                inner join aluno_curso as ac on ac.id = h.id_aluno_curso and ac.id_ies = h.id_ies
-                inner join formasingresso as fi on fi.id = ac.id_forma_ing and fi.id_ies = ac.id_ies
-                where cod_disc = %(id_disc)s and h.id_ies = %(id_ies)s
-                and nota is not null
+            WITH notas AS (
+                SELECT nota, cota
+                FROM historico AS h
+                INNER JOIN aluno_curso AS ac 
+                    ON ac.id = h.id_aluno_curso 
+                    AND ac.id_ies = h.id_ies
+                INNER JOIN formasingresso AS fi 
+                    ON fi.id = ac.id_forma_ing 
+                    AND fi.id_ies = ac.id_ies
+                WHERE h.cod_disc IN %(id_disc)s 
+                    AND h.id_ies = %(id_ies)s
+                    AND nota IS NOT NULL
             )
-            select
+            SELECT
                 cota,
-                sum((case when nota >= 0 and nota < 50 then 1 end)) as "[0_50)",
-                sum((case when nota >= 50 and nota < 70 then 1 end)) as "[50_70)",
-                sum((case when nota >= 70 and nota < 80 then 1 end)) as "[70_80)",
-                sum((case when nota >= 80 and nota < 90 then 1 end)) as "[80_90)",
-                sum((case when nota >= 90 and nota <= 100 then 1 end)) as "[90_100]"
-            from notas
-            group by cota
+                SUM(CASE WHEN nota >= 0 AND nota < 50 THEN 1 END) AS "[0_50)",
+                SUM(CASE WHEN nota >= 50 AND nota < 70 THEN 1 END) AS "[50_70)",
+                SUM(CASE WHEN nota >= 70 AND nota < 80 THEN 1 END) AS "[70_80)",
+                SUM(CASE WHEN nota >= 80 AND nota < 90 THEN 1 END) AS "[80_90)",
+                SUM(CASE WHEN nota >= 90 AND nota <= 100 THEN 1 END) AS "[90_100]"
+            FROM notas
+            GROUP BY cota
         """
 
-        ret = db.fetch_all(query=query, id_disc=id_disc, id_ies=id_ies)
+        # Executa a consulta
+        ret = db.fetch_all(query=query, id_disc=id_disc_tuple, id_ies=id_ies)
 
         return ret
+
     
     @tratamento_excecao_com_db(tipo_banco='grad')
     def classificacao_disciplinas(

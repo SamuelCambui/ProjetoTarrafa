@@ -84,7 +84,7 @@ def get_quantidade_alunos_disciplina(id_disc: str, id_ies: str, anoi: str, anof:
         )
         return MessageToDict(message)
     except:
-        message = PPGLSJson(nome="graficoQuantidadeAlunosDisciplina", json=None)
+        message = PPGLSJson(nome="graficoQuantidadeAlunosDisciplina", json="[]")
         return MessageToDict(message)
 
 
@@ -132,7 +132,7 @@ def get_taxa_aprovacao_reprovacao_serie(
 
 @app_celery_queries.task
 def get_aprovacoes_reprovacoes_por_semestre(
-    id_disc: int,
+    id_disc: str,
     id_curso: str,
     id_ies: str,
     anoi: int,
@@ -169,7 +169,7 @@ def get_aprovacoes_reprovacoes_por_semestre(
 
 @app_celery_queries.task
 def get_boxplot_notas_disciplina(
-    id_disc: int,
+    id_disc: str,
     id_ies: str,
     anoi: str,
     anof: str,
@@ -194,7 +194,7 @@ def get_boxplot_notas_disciplina(
 
 @app_celery_queries.task
 def get_histograma_notas_disciplina(
-    id_disc: int,
+    id_disc: str,
     id_ies: str,
     anoi: str,
     anof: str,

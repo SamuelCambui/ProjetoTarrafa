@@ -29,7 +29,7 @@ export const Filtro = ({ periodo, setPeriodo, isFetching }: FiltroProps) => {
   const [tempPeriodo, setTempPeriodo] = useState(periodo);
   const anoAtual = new Date().getFullYear();
   const listaAnos: number[] = [];
-  for (let ano = anoAtual - 10; ano <= anoAtual; ano++) listaAnos.push(ano);
+  for (let ano = anoAtual - 25; ano <= anoAtual; ano++) listaAnos.push(ano);
 
   const handleSelect = (e: string, type: "anoInicial" | "anoFinal") => {
     if (type === "anoInicial" && Number(e) <= tempPeriodo.anoFinal) {

@@ -17,6 +17,9 @@ type PopoverBuscaProps = {
   disciplinas?: Disciplina[] | undefined;
 };
 
+
+
+
 export const PopoverBusca = ({
   disciplina,
   setDisciplina,
@@ -27,11 +30,15 @@ export const PopoverBusca = ({
   >(disciplinas);
 
   const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!Array.isArray(disciplinas)) return; // Evita erro se disciplinas for undefined ou não for array
+
     const filtered = disciplinas?.filter((disciplina) =>
       disciplina.nome.toLowerCase().startsWith(e.target.value.toLowerCase())
     );
     setFilteredDisciplines(filtered);
   };
+  
+  console.log("disciplinas recebido:", disciplinas); // Log dos dados recebidos
 
   return (
     <Popover>
@@ -41,7 +48,7 @@ export const PopoverBusca = ({
           className="font-medium w-full flex items-center justify-between"
         >
           {disciplina
-            ? `${disciplina.abreviacao} - ${disciplina.nome}`
+            ? `${disciplina.abreviacao.split(",")[0]} - ${disciplina.nome}`
             : "Selecione uma disciplina..."}
           <ChevronsUpDownIcon className="opacity-40" />
         </Button>
@@ -56,13 +63,15 @@ export const PopoverBusca = ({
           />
         </div>
         <ScrollArea className="h-60 p-1">
-          {filteredDisciplines?.map((disciplina) => (
+          {(filteredDisciplines || []).map((disciplina) => (
             <div
               key={disciplina.cod_disc}
               className="hover:bg-slate-100 cursor-default"
               onClick={() => setDisciplina(disciplina)}
             >
-              <PopoverClose className="h-full w-full text-start text-sm p-2">{`${disciplina.abreviacao} - ${disciplina.nome}`}</PopoverClose>
+              <PopoverClose className="h-full w-full text-start text-sm p-2">
+                {`${disciplina.abreviacao.split(",")[0]} - ${disciplina.nome}`}
+              </PopoverClose>
             </div>
           ))}
         </ScrollArea>

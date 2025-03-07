@@ -4,7 +4,7 @@ export type Disciplina = {
   cod_disc: string;
   nome: string;
   abreviacao: string;
-  carga_horaria: number;
+  carga_horaria: string;
   departamento: string;
 };
 

@@ -6,7 +6,7 @@ from backend.db.cache import cache_grpc_ppgls
 from celery import group
 
 class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer):
-    # @cache_grpc_ppgls()
+    @cache_grpc_ppgls()
     def GetAbaDisciplinas(self, request: PPGLSRequest, context):
         curso = tasks_cursos_ppgls.get_curso.delay(
             id_curso=request.id_curso, id_ies=request.id_ies
@@ -52,7 +52,7 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
         print(response)
         return PPGLSResponse(item=response)
     
-    @cache_grpc_ppgls()
+    # @cache_grpc_ppgls()
     def GetIndicadoresDisciplina(self, request: PPGLSRequest, context):
 
         consultas = []

@@ -19,7 +19,7 @@ export const TabDisciplinas = ({
     idIes,
   });
 
-
+  console.log("disciplinas recebido/arquivo TabDisciplinas:", data); // Log dos dados recebidos
   return (
     <TabsContent value={value}>
       <div className="space-y-4">

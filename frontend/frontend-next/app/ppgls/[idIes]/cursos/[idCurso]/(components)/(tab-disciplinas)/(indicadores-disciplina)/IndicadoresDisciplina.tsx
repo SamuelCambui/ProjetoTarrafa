@@ -32,7 +32,7 @@ export const IndicadoresDisciplina = ({
     anoInicial: number;
     anoFinal: number;
   }>({
-    anoInicial: new Date().getFullYear() - 10,
+    anoInicial: new Date().getFullYear() - 25,
     anoFinal: new Date().getFullYear(),
   });
   // Disciplina selecionada e buscada no banco
