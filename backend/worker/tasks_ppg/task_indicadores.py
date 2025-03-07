@@ -27,9 +27,9 @@ def tarefa_retorna_contagem_de_qualis_com_listanegra(id : str, anoi : int, anof 
         return MessageToDict(messages_pb2.PpgJson(nome='dadosQualis', json=None))
     
 @app_celery_queries.task
-def tarefa_retorna_contagem_de_qualis_do_lattes(id : str, anoi : int, anof : int):
+def tarefa_retorna_contagem_de_qualis_do_lattes(id : str, anof : int):
     try:
-        respostaDict = crud.queries_ppg.retorna_contagem_de_qualis_do_lattes(id, anoi, anof)
+        respostaDict = crud.queries_ppg.retorna_contagem_de_qualis_do_lattes(id, anof)
         retorno = messages_pb2.PpgJson(nome='contagemQualisLattes', json=json.dumps(respostaDict))
         return MessageToDict(retorno)
     except Exception as e:
@@ -253,13 +253,63 @@ def tarefa_retorna_indcoautoria(id : str, anoi : int, anof : int, nota : str):
     except Exception as e:
         print(e)
         return MessageToDict(messages_pb2.PpgJson(nome='indcoautoria', json=None))
+    
+@app_celery_queries.task
+def tarefa_retorna_contagem_artigos_lattes_docentes(id : str, anoi : int, anof : int):
+    try:
+        respostaDict = crud.queries_ppg.retorna_contagem_artigos_lattes_docentes(id, anoi, anof)
+        retorno = messages_pb2.PpgJson(nome='contagemArtigosLattesDocentes', json=json.dumps(respostaDict))
+        return MessageToDict(retorno)
+    except Exception as e:
+        print(e)
+        return MessageToDict(messages_pb2.PpgJson(nome='contagemArtigosLattesDocentes', json=None))
+
+@app_celery_queries.task
+def tarefa_retorna_fatimpacto(id : str, anoi : int, anof : int):
+    try:
+        respostaDict = crud.queries_ppg.retorna_fatimpacto(id, anoi, anof)
+        retorno = messages_pb2.PpgJson(nome='fatorImpacto', json=json.dumps(respostaDict))
+        return MessageToDict(retorno)
+    except Exception as e:
+        print(e)
+        return MessageToDict(messages_pb2.PpgJson(nome='fatorImpacto', json=None))
+
+@app_celery_queries.task
+def tarefa_retorna_citbases(id : str, anoi : int, anof : int):
+    try:
+        respostaDict = crud.queries_ppg.retorna_citbases(id, anoi, anof)
+        retorno = messages_pb2.PpgJson(nome='citacaoBases', json=json.dumps(respostaDict))
+        return MessageToDict(retorno)
+    except Exception as e:
+        print(e)
+        return MessageToDict(messages_pb2.PpgJson(nome='citacaoBases', json=None))
+
+@app_celery_queries.task
+def tarefa_retorna_fatimpacto_permanentes(id : str, anoi : int, anof : int):
+    try:
+        respostaDict = crud.queries_ppg.retorna_fatimpacto_permanentes(id, anoi, anof)
+        retorno = messages_pb2.PpgJson(nome='fatImpactoPermanentes', json=json.dumps(respostaDict))
+        return MessageToDict(retorno)
+    except Exception as e:
+        print(e)
+        return MessageToDict(messages_pb2.PpgJson(nome='fatImpactoPermanentes', json=None))
+
+@app_celery_queries.task
+def tarefa_retorna_citacoes_permanentes(id : str, anoi : int, anof : int):
+    try:
+        respostaDict = crud.queries_ppg.retorna_citacoes_permanentes(id, anoi, anof)
+        retorno = messages_pb2.PpgJson(nome='citacoesPermanentes', json=json.dumps(respostaDict))
+        return MessageToDict(retorno)
+    except Exception as e:
+        print(e)
+        return MessageToDict(messages_pb2.PpgJson(nome='citacoesPermanentes', json=None))
 
 def agrupar_tarefas_indicadores(id : str, anoi : int, anof : int, nota : str):
     tarefas = []
     print('Acumulando unica tarefas Indicadores padronizado...')
     tarefas.append(tarefa_retorna_contagem_de_indprodart_com_listanegra.s(id, anoi, anof, []))
     tarefas.append(tarefa_retorna_contagem_de_qualis_com_listanegra.s(id, anoi, anof, []))
-    tarefas.append(tarefa_retorna_contagem_de_qualis_do_lattes.s(id, anoi, anof))
+    tarefas.append(tarefa_retorna_contagem_de_qualis_do_lattes.s(id, anof))
     tarefas.append(tarefa_retorna_contagem_de_qualis_discentes.s(id, anoi, anof))
     tarefas.append(tarefa_retorna_estatisticas_de_artigos.s(id, anoi, anof))
     tarefas.append(tarefa_retorna_estatisticas_de_artigos_ppgs_correlatos.s(id, anoi, anof))
@@ -274,5 +324,10 @@ def agrupar_tarefas_indicadores(id : str, anoi : int, anof : int, nota : str):
     tarefas.append(tarefa_retorna_inddis.s(id, anoi, anof, nota))
     tarefas.append(tarefa_retorna_partdis.s(id, anoi, anof, nota))
     tarefas.append(tarefa_retorna_indcoautoria.s(id, anoi, anof, nota))
+    tarefas.append(tarefa_retorna_contagem_artigos_lattes_docentes.s(id, anoi, anof))
+    tarefas.append(tarefa_retorna_fatimpacto.s(id, anoi, anof))
+    tarefas.append(tarefa_retorna_citbases.s(id, anoi, anof))
+    tarefas.append(tarefa_retorna_fatimpacto_permanentes.s(id, anoi, anof))
+    tarefas.append(tarefa_retorna_citacoes_permanentes.s(id, anoi, anof))
     print(f'{len(tarefas)} tarefas foram acumuladas...')
     return tarefas

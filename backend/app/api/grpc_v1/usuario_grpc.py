@@ -11,22 +11,22 @@ from backend.schemas.usuario import UsuarioCriacao, UsuarioAtualizacao
 # Implementação do serviço gRPC
 class Usuario(usuarios_pb2_grpc.UsuarioServicer):
 
-    def Login(self, request, context) -> messages_pb2.LoginResponse:
-        print('Login chamada...')
-        try:
-            usuario = tarefa_autentica_usuario.apply(kwargs={'username':request.username , 'password':request.password}).get()
+    # def Login(self, request, context) -> messages_pb2.LoginResponse:
+    #     print('Login chamada...')
+    #     try:
+    #         usuario = tarefa_autentica_usuario.apply(kwargs={'username':request.username , 'password':request.password}).get()
 
-            if not usuario or not usuario.is_active:
-                raise
+    #         if not usuario or not usuario.is_active:
+    #             raise
             
-            loginResponse = messages_pb2.LoginResponse(usuario=ParseDict(usuario.dict(), messages_pb2.UsuarioDadosFront()), erro=False)
+    #         loginResponse = messages_pb2.LoginResponse(usuario=ParseDict(usuario.dict(), messages_pb2.UsuarioDadosFront()), erro=False)
 
-            return loginResponse
+    #         return loginResponse
 
-        except Exception as e:
-            print(e)
-            loginResponse = messages_pb2.LoginResponse(erro=True)
-            return loginResponse
+    #     except Exception as e:
+    #         print(e)
+    #         loginResponse = messages_pb2.LoginResponse(erro=True)
+    #         return loginResponse
 
     def ObtemUsuario(self, request, context) -> messages_pb2.UsuarioResponse:
         print('ObtemUsuario chamada...')

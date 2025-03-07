@@ -79,6 +79,11 @@ class UsuarioStub(object):
                 request_serializer=messages__pb2.CriacaoUsuarioRequest.SerializeToString,
                 response_deserializer=messages__pb2.AlteracaoUsuarioResponse.FromString,
                 _registered_method=True)
+        self.ObtemListaUniversidades = channel.unary_unary(
+                '/protos.Usuario/ObtemListaUniversidades',
+                request_serializer=messages__pb2.Empty.SerializeToString,
+                response_deserializer=messages__pb2.ListaUniversidadesResponse.FromString,
+                _registered_method=True)
 
 
 class UsuarioServicer(object):
@@ -132,6 +137,12 @@ class UsuarioServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ObtemListaUniversidades(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_UsuarioServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -174,6 +185,11 @@ def add_UsuarioServicer_to_server(servicer, server):
                     servicer.CriarUsuario,
                     request_deserializer=messages__pb2.CriacaoUsuarioRequest.FromString,
                     response_serializer=messages__pb2.AlteracaoUsuarioResponse.SerializeToString,
+            ),
+            'ObtemListaUniversidades': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemListaUniversidades,
+                    request_deserializer=messages__pb2.Empty.FromString,
+                    response_serializer=messages__pb2.ListaUniversidadesResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -392,6 +408,33 @@ class Usuario(object):
             '/protos.Usuario/CriarUsuario',
             messages__pb2.CriacaoUsuarioRequest.SerializeToString,
             messages__pb2.AlteracaoUsuarioResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemListaUniversidades(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.Usuario/ObtemListaUniversidades',
+            messages__pb2.Empty.SerializeToString,
+            messages__pb2.ListaUniversidadesResponse.FromString,
             options,
             channel_credentials,
             insecure,

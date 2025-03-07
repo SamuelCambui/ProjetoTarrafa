@@ -195,3 +195,13 @@ class DBConnectorGRADForm(DBConnector):
                db_pass=settings.POSTGRES_PASSWORD
               ):
     super().__init__(db_name, db_host, db_port, db_user, db_pass)
+
+class DBConnectorViews(DBConnector):
+  def __init__(self, 
+               db_name=settings.POSTGRES_DB_VIEWS, 
+               db_host=settings.POSTGRES_HOST_2, 
+               db_port=settings.POSTGRES_PORT, 
+               db_user=settings.POSTGRES_USER, 
+               db_pass=settings.POSTGRES_PASSWORD
+              ):
+    super().__init__(db_name, db_host, db_port, db_user, db_pass)

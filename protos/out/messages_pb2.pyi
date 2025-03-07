@@ -5,6 +5,10 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class Empty(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
+
 class HomeRequest(_message.Message):
     __slots__ = ("id_ies", "anoi", "anof", "produto", "fonte", "aresta")
     ID_IES_FIELD_NUMBER: _ClassVar[int]
@@ -160,6 +164,22 @@ class ListaUsuariosResponse(_message.Message):
     ITEM_FIELD_NUMBER: _ClassVar[int]
     item: _containers.RepeatedCompositeFieldContainer[UsuarioResponse]
     def __init__(self, item: _Optional[_Iterable[_Union[UsuarioResponse, _Mapping]]] = ...) -> None: ...
+
+class Universidade(_message.Message):
+    __slots__ = ("id_ies", "nome", "sigla")
+    ID_IES_FIELD_NUMBER: _ClassVar[int]
+    NOME_FIELD_NUMBER: _ClassVar[int]
+    SIGLA_FIELD_NUMBER: _ClassVar[int]
+    id_ies: str
+    nome: str
+    sigla: str
+    def __init__(self, id_ies: _Optional[str] = ..., nome: _Optional[str] = ..., sigla: _Optional[str] = ...) -> None: ...
+
+class ListaUniversidadesResponse(_message.Message):
+    __slots__ = ("item",)
+    ITEM_FIELD_NUMBER: _ClassVar[int]
+    item: _containers.RepeatedCompositeFieldContainer[Universidade]
+    def __init__(self, item: _Optional[_Iterable[_Union[Universidade, _Mapping]]] = ...) -> None: ...
 
 class PPGLSRequest(_message.Message):
     __slots__ = ("id_disc", "id_ies", "id_curso", "id_grade", "anoi", "anof")

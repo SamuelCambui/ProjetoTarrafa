@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     POSTGRES_DB_GRAD_FORM: str = os.getenv('POSTGRES_DB_GRAD_FORM', '')
     POSTGRES_DB_GRAD: str = os.getenv('POSTGRES_DB_GRAD', '')
     POSTGRES_PORT: str = os.getenv('POSTGRES_PORT', '')
+    POSTGRES_DB_VIEWS: str = os.getenv('POSTGRES_DB_VIEWS', '')
     
     #* Email
     # Senha email tarrafa : #sistema@tarrafa#2024

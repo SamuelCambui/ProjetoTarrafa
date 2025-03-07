@@ -1,7 +1,7 @@
 from backend.db.db import DBConnector
 import jellyfish
 from backend.core import utils
-from backend.core.utils import tratamento_excecao_db_ppg
+from backend.core.utils import tratamento_excecao_db_ppg, tratamento_excecao_db_ppg_views, tratamento_excecao_db_views
 from datetime import datetime, timedelta
 from typing import List
 import time
@@ -92,8 +92,8 @@ class QueriesPPG():
             return row[0]
         return None
 
-    @tratamento_excecao_db_ppg()
-    def retorna_contagem_de_qualis_do_lattes(self, id: str, anof: int, anocoleta: int, db: DBConnector = None):
+    @tratamento_excecao_db_views()
+    def retorna_contagem_de_qualis_do_lattes(self, id: str, anof: int, db_views: DBConnector = None):
         """
         Retornar o quantitativo de artigos com qualis considerando a base de dados lattes
 
@@ -103,54 +103,13 @@ class QueriesPPG():
             db(class): DataBase
         """
 
-        query = """with query_qualis as (
-	            with query_ids as (
-                    with query_qualis as (
-                    select ld.num_identificador, 
-                        issn, 
-                        titulo, 
-                        (select qualis from capes_qualis_periodicos as cqp 
-                                where cqp.issn = artigos_total.issn and 
-                                cqp.area ilike  ANY (
-			 						select '%%' || nome_area_avaliacao || '%%' from programas where codigo_programa = %(id)s )
-                                     group by qualis
-                        ) as qualis, 
-                        ano, 
-                        count(*) as quantidade 
-                        from (select CONCAT(SUBSTRING(d."DETALHAMENTO-DO-ARTIGO"->>'@ISSN', 1, 4), '-', SUBSTRING(d."DETALHAMENTO-DO-ARTIGO"->>'@ISSN', 5)) as issn, 
-                                    d."DADOS-BASICOS-DO-ARTIGO"->>'@TITULO-DO-ARTIGO' as titulo,
-                                    cast(d."DADOS-BASICOS-DO-ARTIGO"->>'@ANO-DO-ARTIGO' as integer) as ano,
-                                    num_identificador
-                                from lattes_producao_bibliografica as lpb
-                                join lateral jsonb_to_recordset(lpb.dados) as d("DETALHAMENTO-DO-ARTIGO" jsonb, "DADOS-BASICOS-DO-ARTIGO" jsonb) on true    
-                                where lpb.tipo = 'ARTIGO-PUBLICADO' and 
-                                    d."DETALHAMENTO-DO-ARTIGO"->>'@ISSN' != '' and 									  
-                                    d."DADOS-BASICOS-DO-ARTIGO"->>'@ANO-DO-ARTIGO' = '%(anof)s' 
-                            ) as artigos_total
-                        inner join lattes_docentes as ld on (ld.num_identificador = artigos_total.num_identificador)
-                        group by ld.num_identificador, issn, titulo, qualis, ano
-                    )
-                        
-                    select  qq.ano,
-                            issn,
-                            titulo,
-                            qualis,
-                            quantidade,
-                            STRING_AGG(num_identificador, ',') as ids
-                        from query_qualis as qq
-                        where qualis is not null
-                        group by qq.ano,
-                                issn,
-                                titulo,
-                                qualis,
-                                quantidade
-                                order by titulo)
-			select qids.ano, dp.id_pessoa, qids.issn, qids.titulo, qids.qualis, qids.ids, qids.quantidade from query_ids as qids
-					inner join pessoas as p on ids like '%%'||p.lattes||'%%'
-                    inner join coleta_docentes as dp on dp.id_pessoa = p.id_pessoa and dp.tipo_categoria = 3 and dp.ano = %(anocoleta)s and dp.id_programa = (select id_programa from programas where codigo_programa = %(id)s)
-                    group by qids.ano, dp.id_pessoa, qids.issn, qids.titulo, qids.qualis, qids.ids, qids.quantidade)
-			select  qq.ano, qq.id_pessoa, 
-                    SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
+        query = """with lattes_ as (
+                SELECT distinct ano, issn, titulo as nome_producao, qualis  FROM public.view_artigos_lattes
+                where codigo_programa = %(id)s and ano = %(anof)s and tipo_categoria = 3 and qualis is not null
+                ORDER BY qualis ASC, titulo ASC
+            )
+
+            select ano,  SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
                         SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
                         SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
                         SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
@@ -159,15 +118,10 @@ class QueriesPPG():
                         SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
                         SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
                         SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
-                from query_qualis as qq
-                group by qq.ano, qq.id_pessoa"""
+                    from lattes_
+                    group by ano"""
         
-        # print("Query retorna_contagem_de_qualis_do_lattes: ", query)
-        # print(f"id = {id}, anof = {anof}, anocoleta = {anocoleta}")
-        # q = query.replace('%(id)s', f"'{id}'").replace('%(anocoleta)s', str(anocoleta)).replace('%(anof)s', str(anof))
-        row = db.fetch_all(query, id=id, anof=anof, anocoleta=anocoleta)
-        # row = db.fetch_all(q)
-        # print("ROW: ", row)
+        row = db_views.fetch_all(query, id=id, anof=anof)
         products_atual = [dict(r) for r in row]
         return products_atual
     
@@ -307,365 +261,7 @@ class QueriesPPG():
                                 art1['duplicado'] = art2['duplicado'] = similarity
 
         return products_atual, artigos
-
-    @tratamento_excecao_db_ppg()
-    def retorna_contagem_de_qualis_com_listanegra(self, id: str, anoi: int, anof: int, listanegra: List, db: DBConnector = None):
-        """
-        Retornar o quantitativo de artigos com qualis por docente (id_pessoa) para que o filtro do simulador de parâmetros da página funcione
-
-        Parametros:
-            id(str): Id do PPG
-            anoi(int): ano de início
-            anof(int): ano de fim
-            db(class): DataBase
-        Returno:
-            produtos(dicionario)
-        """
-
-    
-        permanentes = {}
-
-        ano_atual = datetime.now().year
-        
-        ultimo_ano_coleta = self.retorna_ultimo_ano_coleta()
-
-        diferenca_anos = ano_atual - ultimo_ano_coleta
-        
-        for a in range(anoi, ultimo_ano_coleta+diferenca_anos+1):
-            if a > ultimo_ano_coleta:
-                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, ultimo_ano_coleta)
-            else:
-                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, a)
-            if lista_permanente:
-                permanentes[a] = eval(lista_permanente)
-        
-        if listanegra:
-            query = """with qqualis as(
-                                                with qtotal as (select cp.nome_producao, cd.id_pessoa, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
-                                                from coleta_detalhamento_producao as cdp 
-                                                inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
-                                                inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
-                                                inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
-                                                inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
-                                                where item ilike '%%ISSN%%'
-                                                group by cp.nome_producao, cd.id_pessoa, cp.ano, issn, p.nome_area_avaliacao
-                                                order by cp.ano)
-
-                                                select nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
-                                                inner join qtotal on (qtotal.issn = cqp.issn and trim(cqp.area) = trim(nome_area_avaliacao))
-                                                group by nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis
-                                                order by qualis ASC)
-
-                                                select ano, id_pessoa, SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
-                                                                                        SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
-                                                                                        SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
-                                                                                        SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
-                                                                                        SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
-                                                                                        SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
-                                                                                        SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
-                                                                                        SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
-                                                                                        SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
-                                                from qqualis
-                                                group by ano, id_pessoa
-                                                order by ano"""
-            
-        else:
-            query = """with qqualis as(
-                                                with qtotal as (select cp.nome_producao, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
-                                                from coleta_detalhamento_producao as cdp 
-                                                inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
-                                                inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
-                                                inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
-                                                inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
-                                                where item ilike '%%ISSN%%'
-                                                group by cp.nome_producao, cp.ano, issn, p.nome_area_avaliacao
-                                                order by cp.ano)
-
-                                                select nome_producao, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
-                                                inner join qtotal on (qtotal.issn = cqp.issn and trim(cqp.area) = trim(nome_area_avaliacao))
-                                                group by nome_producao, ano, qtotal.issn, nome_area_avaliacao, qualis
-                                                order by qualis ASC)
-
-                                                select ano, SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
-                                                                                        SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
-                                                                                        SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
-                                                                                        SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
-                                                                                        SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
-                                                                                        SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
-                                                                                        SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
-                                                                                        SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
-                                                                                        SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
-                                                from qqualis
-                                                group by ano
-                                                order by ano"""
-        
-        query_artigos = """with qtotal as (select cp.nome_producao, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
-                                                from coleta_detalhamento_producao as cdp 
-                                                inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
-                                                inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
-                                                inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
-                                                inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
-                                                where item ilike '%%ISSN%%'
-                                                group by cp.nome_producao, cp.ano, issn, p.nome_area_avaliacao
-                                                order by cp.ano)
-
-                                                select nome_producao, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
-                                                inner join qtotal on (qtotal.issn = cqp.issn and trim(cqp.area) = trim(nome_area_avaliacao))
-                                                group by nome_producao, ano, qtotal.issn, nome_area_avaliacao, qualis
-                                                order by qualis ASC"""
-
-        
-
-        
-        row = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
-        products = [dict(r) for r in row]
-
-        row = db.fetch_all(query_artigos, id=id, anoi=anoi, anof=anof)
-        artigos = [dict(r) for r in row]
-
-        for art in artigos:
-            art['duplicado'] = 0
-
-        for art1 in artigos:
-            if art1['duplicado'] == 0:
-                for art2 in artigos:
-                    if art2['duplicado'] == 0:
-                        if art1 != art2:
-                            similarity = jellyfish.jaro_winkler_similarity(art1['nome_producao'], art2['nome_producao'])
-                            if similarity > 0.9 and (art1['ano'] == art2['ano'] and art1['issn'] == art2['issn']):
-                                art1['duplicado'] = art2['duplicado'] = similarity
-
-        lista_qualis = []
-
-        for a in range(ultimo_ano_coleta+1, ultimo_ano_coleta+diferenca_anos+1):
-            products_atual, artigos_lattes = self.retorna_contagem_de_qualis_do_lattes_anonimo(id, a, ultimo_ano_coleta)
-
-            artigos.extend(artigos_lattes)
-
-            if products_atual and len(products_atual) > 0:
-                products.extend(products_atual)
-        
-        products = sorted(products, key=lambda k: k['ano'])
-
-        if not listanegra:
-            listanegra = []
-
-            lista_qualis = products
-
-        else:
-            for prod in products:
-                if prod['id_pessoa'] in permanentes[prod['ano']] and prod['id_pessoa'] not in listanegra:
-                    lista_qualis.append(prod)
-
-        artigos_total = {}
-        for a in range(anoi, anof+1):
-            artigos_total[a] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
-
-        for a in range(ultimo_ano_coleta+1, ultimo_ano_coleta+diferenca_anos+1):
-            artigos_total[a] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
-        
-        for l in  lista_qualis:
-            for tipo in l.keys():
-                if tipo != 'ano' and tipo != 'id_pessoa':
-                    artigos_total[l['ano']][tipo] += l[tipo]
-        
-        return {'produtos': artigos_total, 'artigos': artigos}
   
-    @tratamento_excecao_db_ppg()
-    def retorna_contagem_de_indprodart_com_listanegra(self, id: str, anoi: int, anof: int, listanegra: List, db: DBConnector = None):
-        """
-        Retornar o quantitativo de indprodart por docente (id_pessoa) para que o filtro do simulador de parâmetros da página funcione
-
-        Parametros:
-            id(str): Id do PPG
-            anoi(int): ano de início
-            anof(int): ano de fim
-            db(class): DataBase
-        Returno:
-            produtos(dicionario)
-        """
-
-    
-
-        start_time = time.time()
-        query = """select * from metricas_indicadores_areas_avaliacao
-                    where nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
-                        and metrica = 'indprodart'"""
-        row = db.fetch_one(query, id=id, anof=anof, anoi=anoi)
-        if row:
-            indicadores = dict(row)
-        else:
-            indicadores = {'mbom':0, 'bom':0,'regular':0, 'fraco':0}
-
-        end_time = time.time()  # Tempo final
-        print(f"Tempo metricas: {end_time - start_time} segundos")
-
-        permanentes = {}
-
-        start_time = time.time()
-        ano_atual = datetime.now().year
-        
-        ultimo_ano_coleta = self.retorna_ultimo_ano_coleta()
-
-        diferenca_anos = ano_atual - ultimo_ano_coleta
-        
-        for a in range(anoi, ultimo_ano_coleta+diferenca_anos+1):
-            if a > ultimo_ano_coleta:
-                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, ultimo_ano_coleta, )
-            else:
-                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, a, )
-            if lista_permanente:
-                permanentes[a] = eval(lista_permanente)
-
-        end_time = time.time()  # Tempo final
-        print(f"Tempo lista_permanentes: {end_time - start_time} segundos")
-        
-        
-        if listanegra:
-            query = """with qqualis as(
-                                            with qtotal as (select cp.nome_producao, cd.id_pessoa, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
-                                            from coleta_detalhamento_producao as cdp 
-                                            inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
-                                            inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
-                                            inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
-                                            inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
-                                            where item ilike '%%ISSN%%'
-                                            group by cp.nome_producao, cd.id_pessoa, cp.ano, issn, p.nome_area_avaliacao
-                                            order by cp.ano)
-
-                                            select nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
-                                            inner join qtotal on (qtotal.issn = cqp.issn and trim(cqp.area) = trim(nome_area_avaliacao))
-                                            group by nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis
-                                            order by qualis ASC)
-
-                                            select ano, id_pessoa, SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
-                                                                                    SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
-                                                                                    SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
-                                                                                    SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
-                                                                                    SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
-                                                                                    SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
-                                                                                    SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
-                                                                                    SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
-                                                                                    SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
-                                            from qqualis
-                                            group by ano, id_pessoa
-                                            order by ano"""
-        else:
-            query = """with qqualis as(
-                                            with qtotal as (select cp.nome_producao, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
-                                            from coleta_detalhamento_producao as cdp 
-                                            inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
-                                            inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
-                                            inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
-                                            inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
-                                            where item ilike '%%ISSN%%'
-                                            group by cp.nome_producao, cp.ano, issn, p.nome_area_avaliacao
-                                            order by cp.ano)
-
-                                            select nome_producao, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
-                                            inner join qtotal on (qtotal.issn = cqp.issn and trim(cqp.area) = trim(nome_area_avaliacao))
-                                            group by nome_producao, ano, qtotal.issn, nome_area_avaliacao, qualis
-                                            order by qualis ASC)
-
-                                            select ano, SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
-                                                                                    SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
-                                                                                    SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
-                                                                                    SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
-                                                                                    SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
-                                                                                    SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
-                                                                                    SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
-                                                                                    SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
-                                                                                    SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
-                                            from qqualis
-                                            group by ano
-                                            order by ano"""
-
-        start_time = time.time()
-        row = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
-        products = [dict(r) for r in row]
-        end_time = time.time()  # Tempo final
-        print(f"Tempo 1: {end_time - start_time} segundos")
-
-        lista_qualis = []
-
-        indprods = {}
-        for a in range(anoi, anof+1):
-            indprods[a] = 0.0
-
-        start_time = time.time()
-        # adiciona resultado do ano atual com os dados do lattes
-        for a in range(ultimo_ano_coleta+1, ultimo_ano_coleta+diferenca_anos+1):
-            products_atual = self.retorna_contagem_de_qualis_do_lattes(id, a, ultimo_ano_coleta)
-
-            if products_atual and len(products_atual) > 0:
-                products.extend(products_atual)
-        end_time = time.time()  # Tempo final
-        print(f"Tempo 2: {end_time - start_time} segundos")
-        
-        start_time = time.time()
-        products = sorted(products, key=lambda k: k['ano'])
-
-        if not listanegra:
-            listanegra = []
-
-            lista_qualis = products
-            
-        else:
-            for prod in products:
-                if prod['id_pessoa'] in permanentes[prod['ano']] and prod['id_pessoa'] not in listanegra:
-                    lista_qualis.append(prod)
-
-        end_time = time.time()  # Tempo final
-        print(f"Tempo 3: {end_time - start_time} segundos")
-
-        start_time = time.time()
-        artigos_total = {}
-        for a in range(anoi, anof+1):
-            artigos_total[a] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
-
-        for a in range(ultimo_ano_coleta+1, ultimo_ano_coleta+diferenca_anos+1):
-            artigos_total[a] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
-
-        for l in  lista_qualis:
-            for tipo in l.keys():
-                if tipo != 'ano' and tipo != 'id_pessoa':
-                    artigos_total[l['ano']][tipo] += l[tipo]
-
-        end_time = time.time()  # Tempo final
-        print(f"Tempo 4: {end_time - start_time} segundos")
-
-        start_time = time.time()
-        qarea = """select pesos.* from pesos_indart_areas_avaliacao as pesos
-                    inner join programas as p on p.nome_area_avaliacao = pesos.nome_area_avaliacao 
-                    where p.codigo_programa = %(id)s"""
-        
-        area = db.fetch_one(qarea, id=id)
-
-        end_time = time.time()  # Tempo final
-        print(f"Tempo 5: {end_time - start_time} segundos")
-
-        retorno = {}
-        formula = None
-
-        start_time = time.time()
-        if area:
-            contagem_permanentes = {}
-            for ano,qualis in artigos_total.items():
-                indProdArt, formula = utils.calcula_indprod(id,qualis,db)
-                indprods[int(ano)] = indProdArt/len(permanentes[ano])
-                contagem_permanentes[int(ano)] = len(permanentes[ano])
-
-            indprods_ext = self.retorna_indprods_medios_extratificados(id, anoi, anof)
-
-            retorno = {'indprods': indprods, 'permanentes': contagem_permanentes, 'formula': formula}
-
-            retorno.update(indprods_ext)
-
-        end_time = time.time()  # Tempo final
-        print(f"Tempo 6: {end_time - start_time} segundos")
-
-        return {'indprod':retorno, 'indicadores':indicadores}
-    
     @tratamento_excecao_db_ppg()
     def retorna_indprods_medios_extratificados(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
@@ -1171,122 +767,6 @@ class QueriesPPG():
         dictindprods['rotulos'] = rotulos
         return dictindprods
     
-
-    @tratamento_excecao_db_ppg()
-    def retorna_contagem_de_indprodart_absoluto(self, id: str, anoi: int, anof: int, db: DBConnector = None):
-        """
-        Retornar o quantitativo de indprodart abosulto
-
-        Parametros:
-            id(str): Id do PPG
-            anoi(int): ano de início
-            anof(int): ano de fim
-            db(class): DataBase
-        Returno:
-            produtos(dicionario)
-        """
-        # print("Parametros: ", id, anoi, anof)
-        permanentes = {}
-
-        ultimo_ano_coleta = self.retorna_ultimo_ano_coleta() + 1
-        
-        for a in range(anoi, ultimo_ano_coleta+1):
-            if a == ultimo_ano_coleta:
-                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, a-1, )
-            else:
-                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, a, )
-            if lista_permanente:
-                permanentes[a] = eval(lista_permanente)
-        
-        
-        query = """with qqualis as(
-                                             with qtotal as (select cp.nome_producao, cd.id_pessoa, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
-                                             from coleta_detalhamento_producao as cdp 
-                                             inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
-                                             inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
-                                             inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
-                                             inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
-                                             where item ilike '%%ISSN%%'
-                                             group by cp.nome_producao, cd.id_pessoa, cp.ano, issn, p.nome_area_avaliacao
-                                            order by cp.ano)
-
-                                             select nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
-                                             inner join qtotal on (qtotal.issn = cqp.issn and trim(cqp.area) = trim(nome_area_avaliacao))
-                                             group by nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis
-                                             order by qualis ASC)
-
-                                              select ano, id_pessoa, SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
-                                                                                     SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
-                                                                                     SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
-                                                                                     SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
-                                                                                     SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
-                                                                                     SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
-                                                                                     SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
-                                                                                     SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
-                                                                                     SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
-                                             from qqualis
-											 group by ano, id_pessoa
-											 order by ano"""
-
-        # print("Query retorna_contagem_de_indprodart_absoluto: ", query)
-        
-        row = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
-        products = [dict(r) for r in row]
-
-        lista_qualis = []
-
-        indprods = {}
-        for a in range(anoi, anof+1):
-            indprods[a] = 0.0
-        
-        products_atual = self.retorna_contagem_de_qualis_do_lattes(id, anof, ultimo_ano_coleta)
-
-        if products_atual and len(products_atual) > 0:
-           products.extend(products_atual)
-        
-        products = sorted(products, key=lambda k: k['ano'])
-
-            
-        for prod in products:
-            if prod['id_pessoa'] in permanentes[prod['ano']]:
-                lista_qualis.append(prod)
-
-        artigos_total = {}
-        for a in range(anoi, anof+1):
-            artigos_total[a] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
-
-        artigos_total[ultimo_ano_coleta] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
-
-        for l in  lista_qualis:
-            for tipo in l.keys():
-                if tipo != 'ano' and tipo != 'id_pessoa':
-                    artigos_total[l['ano']][tipo] += l[tipo]
-
-        
-        qarea = """select pesos.* from pesos_indart_areas_avaliacao as pesos
-                    inner join programas as p on p.nome_area_avaliacao = pesos.nome_area_avaliacao 
-                    where p.codigo_programa = %(id)s"""
-        
-        area = db.fetch_one(qarea, id=id)
-
-        retorno = {}
-
-        if area:
-            contagem_permanentes = {}
-            for ano,qualis in artigos_total.items():
-                indProdArt, formula = utils.calcula_indprod(id,qualis,db)
-                indprods[int(ano)] = indProdArt
-                contagem_permanentes[int(ano)] = len(permanentes[ano])
-
-            indprods_ext = self.retorna_indprods_medios_extratificados_sem_dps(id, anoi, anof)
-
-            retorno = {'indprods': indprods, 'permanentes': contagem_permanentes, 'formula': formula}
-
-            retorno.update(indprods_ext)
-
-
-        return {'indprod':retorno}
-
     @tratamento_excecao_db_ppg()
     def retorna_indprods_extsup_medios_extratificados(self, id: str, anoi: int, anof: int, db: DBConnector = None):
         """
@@ -1411,8 +891,6 @@ class QueriesPPG():
         return dictindprods
 
 
-    @tratamento_excecao_db_ppg()
-    def retorna_contagem_de_indprodart_extrato_superior_com_listanegra(self, id: str, anoi: int, anof: int, listanegra: List, db: DBConnector = None):
         """
         Retornar o quantitativo de indprodart ExtSup por docente (id_pessoa) para que o filtro do simulador de parâmetros da página funcione
 
@@ -1524,7 +1002,7 @@ class QueriesPPG():
 
         # adiciona resultado do ano atual com os dados do lattes
         for a in range(ultimo_ano_coleta+1, ultimo_ano_coleta+diferenca_anos+1):
-            products_atual = self.retorna_contagem_de_qualis_do_lattes(id, a, ultimo_ano_coleta)
+            products_atual = self.retorna_contagem_de_qualis_do_lattes(id, a)
 
             if products_atual and len(products_atual) > 0:
                 products.extend(products_atual)
@@ -2077,202 +1555,6 @@ class QueriesPPG():
                           {'quantidade': datas_lattes['até 2 meses'], 'legenda':'até 2 meses'}]
 
         return dicionario
-
-    @tratamento_excecao_db_ppg()
-    def retorna_lista_de_professores_por_ano(self, id: str, anoi: int, anof: int, db: DBConnector = None):
-        """
-        Retorna lista de professores por ano
-
-        Paramêtros:
-            Id(str): Id do PPG
-            anoi(int): Ano de início
-            anof(int): Ano final
-            db(class): DataBase
-        """
-
-        # FONTE: lattes
-        query = """with query_qualis as (
-	            with query_ids as (
-                    with query_qualis as (
-                    select ld.num_identificador, 
-                        issn, 
-                        titulo, 
-                        (select qualis from capes_qualis_periodicos as cqp 
-                                where cqp.issn = artigos_total.issn and 
-                                cqp.area ilike  ANY (
-			 						select '%%' || nome_area_avaliacao || '%%' from programas where codigo_programa = %(id)s )
-                                     group by qualis
-                        ) as qualis, 
-                        ano, 
-                        count(*) as quantidade 
-                        from (select CONCAT(SUBSTRING(d."DETALHAMENTO-DO-ARTIGO"->>'@ISSN', 1, 4), '-', SUBSTRING(d."DETALHAMENTO-DO-ARTIGO"->>'@ISSN', 5)) as issn, 
-                                    d."DADOS-BASICOS-DO-ARTIGO"->>'@TITULO-DO-ARTIGO' as titulo,
-                                    cast(d."DADOS-BASICOS-DO-ARTIGO"->>'@ANO-DO-ARTIGO' as integer) as ano,
-                                    num_identificador
-                                from lattes_producao_bibliografica as lpb
-                                join lateral jsonb_to_recordset(lpb.dados) as d("DETALHAMENTO-DO-ARTIGO" jsonb, "DADOS-BASICOS-DO-ARTIGO" jsonb) on true    
-                                where lpb.tipo = 'ARTIGO-PUBLICADO' and 
-                                    d."DETALHAMENTO-DO-ARTIGO"->>'@ISSN' != '' and 									  
-                                    d."DADOS-BASICOS-DO-ARTIGO"->>'@ANO-DO-ARTIGO' >= '%(anoi)s'  and
-							        d."DADOS-BASICOS-DO-ARTIGO"->>'@ANO-DO-ARTIGO' <= '%(anof)s'
-                            ) as artigos_total
-                        inner join lattes_docentes as ld on (ld.num_identificador = artigos_total.num_identificador)
-                        group by ld.num_identificador, issn, titulo, qualis, ano
-                    )
-                        
-                    select  qq.ano,
-                            issn,
-                            titulo,
-                            qualis,
-                            quantidade,
-                            STRING_AGG(num_identificador, ',') as ids
-                        from query_qualis as qq
-                        where qualis is not null
-                        group by qq.ano,
-                                issn,
-                                titulo,
-                                qualis,
-                                quantidade
-                                order by titulo)
-			select qids.ano, dp.id_pessoa, p.nome_pessoa, p.lattes, qids.issn, qids.titulo, qids.qualis, qids.ids, qids.quantidade from coleta_docentes as dp 
-	inner join pessoas as p on dp.id_pessoa = p.id_pessoa and dp.ano >= %(anoi)s and dp.ano <= %(anof)s and dp.id_programa = (select id_programa from programas where codigo_programa = %(id)s)
-    left join query_ids as qids on ids like '%%'||p.lattes||'%%'
-                    group by qids.ano, dp.id_pessoa, p.nome_pessoa, p.lattes, qids.issn, qids.titulo, qids.qualis, qids.ids, qids.quantidade)
-			select  qq.id_pessoa as id_sucupira, qq.nome_pessoa as nome, qq.lattes as num_identificador, 
-                    SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
-                        SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
-                        SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
-                        SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
-                        SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
-                        SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
-                        SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
-                        SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
-                        SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
-                from query_qualis as qq
-                where qq.lattes != ''
-                group by qq.id_pessoa, qq.nome_pessoa, qq.lattes
-                order by qq.nome_pessoa"""
-        
-        query_ano_atual = """with query_qualis as (
-	            with query_ids as (
-                    with query_qualis as (
-                    select ld.num_identificador, 
-                        issn, 
-                        titulo, 
-                        (select qualis from capes_qualis_periodicos as cqp 
-                                where cqp.issn = artigos_total.issn and 
-                                cqp.area ilike  ANY (
-			 						select '%%' || nome_area_avaliacao || '%%' from programas where codigo_programa = %(id)s )
-                                     group by qualis
-                        ) as qualis, 
-                        ano, 
-                        count(*) as quantidade 
-                        from (select CONCAT(SUBSTRING(d."DETALHAMENTO-DO-ARTIGO"->>'@ISSN', 1, 4), '-', SUBSTRING(d."DETALHAMENTO-DO-ARTIGO"->>'@ISSN', 5)) as issn, 
-                                    d."DADOS-BASICOS-DO-ARTIGO"->>'@TITULO-DO-ARTIGO' as titulo,
-                                    cast(d."DADOS-BASICOS-DO-ARTIGO"->>'@ANO-DO-ARTIGO' as integer) as ano,
-                                    num_identificador
-                                from lattes_producao_bibliografica as lpb
-                                join lateral jsonb_to_recordset(lpb.dados) as d("DETALHAMENTO-DO-ARTIGO" jsonb, "DADOS-BASICOS-DO-ARTIGO" jsonb) on true    
-                                where lpb.tipo = 'ARTIGO-PUBLICADO' and 
-                                    d."DETALHAMENTO-DO-ARTIGO"->>'@ISSN' != '' and 									  
-                                    d."DADOS-BASICOS-DO-ARTIGO"->>'@ANO-DO-ARTIGO' >= '%(anoi)s'  and
-							        d."DADOS-BASICOS-DO-ARTIGO"->>'@ANO-DO-ARTIGO' <= '%(anof)s'
-                            ) as artigos_total
-                        inner join lattes_docentes as ld on (ld.num_identificador = artigos_total.num_identificador)
-                        group by ld.num_identificador, issn, titulo, qualis, ano
-                    )
-                        
-                    select  qq.ano,
-                            issn,
-                            titulo,
-                            qualis,
-                            quantidade,
-                            STRING_AGG(num_identificador, ',') as ids
-                        from query_qualis as qq
-                        where qualis is not null
-                        group by qq.ano,
-                                issn,
-                                titulo,
-                                qualis,
-                                quantidade
-                                order by titulo)
-			select qids.ano, dp.id_pessoa, p.nome_pessoa, p.lattes, qids.issn, qids.titulo, qids.qualis, qids.ids, qids.quantidade from coleta_docentes as dp 
-                    inner join pessoas as p on dp.id_pessoa = p.id_pessoa and dp.ano >= %(ano_anterior)s and dp.ano <= %(anof)s and dp.id_programa = (select id_programa from programas where codigo_programa = %(id)s)
-                    left join query_ids as qids on ids like '%%'||p.lattes||'%%'
-                    group by qids.ano, dp.id_pessoa, p.nome_pessoa, p.lattes, qids.issn, qids.titulo, qids.qualis, qids.ids, qids.quantidade)
-			select  qq.id_pessoa as id_sucupira, qq.nome_pessoa as nome, qq.lattes as num_identificador, 
-                    SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
-                        SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
-                        SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
-                        SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
-                        SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
-                        SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
-                        SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
-                        SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
-                        SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
-                from query_qualis as qq
-                where qq.lattes != ''
-                group by qq.id_pessoa, qq.nome_pessoa, qq.lattes
-                order by qq.nome_pessoa"""
-        
-        ultimo_ano_coleta = self.retorna_ultimo_ano_coleta() + 1
-        if anoi == anof and anoi == ultimo_ano_coleta:
-            row = db.fetch_all(query_ano_atual, id=id, anof=anof, anoi=anoi, ano_anterior=anoi-1)
-        else:
-            row = db.fetch_all(query, id=id, anof=anof, anoi=anoi)
-        professors = [dict(r) for r in row]
-        for i in professors:
-            for k in i.keys():
-                if i[k] is None:
-                    i[k] = 0
-        producoes = {}
-        orientados = {}
-        avatares = {}
-        datalattes = {}
-        indprods = {}
-        status = {}
-        for p in professors:
-            if 'nome' in p:
-                id_professor = p['num_identificador']
-                datalattes[id_professor] = self.retorna_tempo_de_atualizacao_do_lattes_do_professor(id_professor)
-                # FONTE: lattes
-                producoes[id_professor] = self.retorna_producoes_do_professor(id_professor, anoi, anof)
-                # FONTE: sucupira
-                orientados[id_professor] = self.retorna_orientandos_do_professor(id, p['id_sucupira'], anoi, anof)
-                # FONTE: sucupira
-                status[id_professor] = self.getStatusOfProfessor(id, p['id_sucupira'], anoi, anof)
-                status[id_professor] = list(set(status[id_professor].replace(' ','').split(',')))
-                # query = f"select cast(id as text) from docentes where nome ilike '{id_professor}' limit 1"
-                if id_professor:
-                    avatares[id_professor] = self.retorna_link_avatar_lattes(id_professor, True)
-                    
-
-                indprod_prof, formula = utils.calcula_indprod(id,p,db)
-                p['indprod'] = (indprod_prof/len(range(anoi,anof+1)))
-
-                #indprods[id_professor] = (indprod_prof/len(range(anoi,anof+1)))
-                #indprods[id_professor] = (1 * p['A1'] + 0.875 * p['A2'] + 0.75 * p['A3'] + 0.625 * p['A4'] + 0.5 * p['B1'] + 0.375 * p['B2'] + 0.25 * p['B3'] + 0.125 * p['B4'])/(anof-anoi if anoi<anof else 1)
-        professors = sorted(professors, key=lambda p: p['indprod'], reverse=True)
-        medias = self.retorna_indprods_medios_extratificados(id,anoi, anof)
-        
-
-        medias_uteis = {}
-        if len(medias['uf']) > 0:
-            medias_uteis['PPGs de '+medias['nome_uf']] = self.calcula_medias(medias['uf'])
-        if len(medias['país']) > 0:
-            medias_uteis['PPGs do país'] = self.calcula_medias(medias['país'])
-        if len(medias['região']) > 0:
-            medias_uteis['PPGs da região '+medias['nome_regiao']] = self.calcula_medias(medias['região'])
-        
-        for c in range(int(medias['conceito']), int(medias['maxima'])+1):
-            if len(medias[str(c)]) > 0:
-                medias_uteis['PPGs nota '+str(c)] = self.calcula_medias(medias[str(c)])
-
-
-        medias = dict(sorted(medias_uteis.items(),  key=lambda p: p[1],  reverse=True))
-        medias['menor'] = 0
-
-        return {'professores': professors, 'medias':medias, 'produtos': producoes, 'orientados': orientados, 'avatares': avatares, 'datalattes': datalattes, 'status':status, 'formula': formula}
     
     def calcula_medias(self, lista):
         medias = sum([l['indprodall'] for l in lista])
@@ -3804,6 +3086,899 @@ class QueriesPPG():
             
         row = db.fetch_one(query, anoi=anoi, anof=anof, id=id, nota=nota)
         return row[0]
+    
+    @tratamento_excecao_db_ppg_views()
+    def retorna_contagem_de_qualis_do_lattes_com_lista(self, id: str, anof: int, db: DBConnector = None, db_views : DBConnector = None):
+        """
+        Retornar o quantitativo de artigos com qualis considerando a base de dados lattes
+
+        Parametros:
+            Id(str): Id do PPG (codigo_do_programa)
+            anof(int): ano atual
+            db(class): DataBase
+        """
+
+        query = """with lattes_ as (
+                SELECT distinct ano, issn, titulo as nome_producao, qualis  FROM public.view_artigos_lattes
+                where codigo_programa = %(id)s and ano = %(anof)s and tipo_categoria = 3 and qualis is not null
+                ORDER BY qualis ASC, titulo ASC
+            )
+
+            select ano,  SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
+                        SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
+                        SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
+                        SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
+                        SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
+                        SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
+                        SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
+                        SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
+                        SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
+                    from lattes_
+                    group by ano"""
+        
+        query_artigos = """SELECT distinct ano, issn, titulo as nome_producao, qualis  FROM public.view_artigos_lattes
+                where codigo_programa = %(id)s and ano = %(anof)s and tipo_categoria = 3 and qualis is not null
+                ORDER BY qualis ASC, titulo ASC"""
+        
+        row = db_views.fetch_all(query, id=id, anof=anof)
+        products_atual = [dict(r) for r in row]
+
+        row = db_views.fetch_all(query_artigos, id=id, anof=anof)
+        artigos = [dict(r) for r in row]
+        for art in artigos:
+            art['duplicado'] = 0
+
+        if len(artigos) <= 10000:
+            for art1 in artigos:
+                if art1['duplicado'] == 0:
+                    for art2 in artigos:
+                        if art2['duplicado'] == 0:
+                            if art1 != art2:
+                                similarity = jellyfish.jaro_winkler_similarity(art1['nome_producao'], art2['nome_producao'])
+                                if similarity > 0.9 and (art1['ano'] == art2['ano'] and art1['issn'] == art2['issn']):
+                                    art1['duplicado'] = art2['duplicado'] = similarity
+            
+
+        return products_atual, artigos
+    
+    @tratamento_excecao_db_ppg()
+    def retorna_contagem_de_qualis_com_listanegra(self, id: str, anoi: int, anof: int, listanegra: List, db: DBConnector = None):
+        """
+        Retornar o quantitativo de artigos com qualis por docente (id_pessoa) para que o filtro do simulador de parâmetros da página funcione
+
+        Parametros:
+            id(str): Id do PPG
+            anoi(int): ano de início
+            anof(int): ano de fim
+            db(class): DataBase
+        Returno:
+            produtos(dicionario)
+        """
+
+        permanentes = {}
+
+        ano_atual = datetime.now().year
+        
+        ultimo_ano_coleta = self.retorna_ultimo_ano_coleta()
+
+        diferenca_anos = ano_atual - ultimo_ano_coleta
+        
+        for a in range(anoi, ultimo_ano_coleta+diferenca_anos+1):
+            if a > ultimo_ano_coleta:
+                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, ultimo_ano_coleta)
+            else:
+                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, a)
+            if lista_permanente:
+                permanentes[a] = eval(lista_permanente)
+        
+        if listanegra:
+            query = """with qqualis as(
+                                                with qtotal as (select cp.nome_producao, cd.id_pessoa, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
+                                                from coleta_detalhamento_producao as cdp 
+                                                inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
+                                                inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
+                                                inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
+                                                inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
+                                                where item ilike '%%ISSN%%'
+                                                group by cp.nome_producao, cd.id_pessoa, cp.ano, issn, p.nome_area_avaliacao
+                                                order by cp.ano)
+
+                                                select nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
+                                                inner join qtotal on (qtotal.issn = cqp.issn) -- and trim(cqp.area) = trim(nome_area_avaliacao))
+                                                group by nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis
+                                                order by qualis ASC)
+
+                                                select ano, id_pessoa, SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
+                                                                                        SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
+                                                                                        SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
+                                                                                        SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
+                                                                                        SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
+                                                                                        SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
+                                                                                        SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
+                                                                                        SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
+                                                                                        SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
+                                                from qqualis
+                                                group by ano, id_pessoa
+                                                order by ano"""
+            
+        else:
+            query = """with qqualis as(
+                                                with qtotal as (select cp.nome_producao, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
+                                                from coleta_detalhamento_producao as cdp 
+                                                inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
+                                                inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
+                                                inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
+                                                inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
+                                                where item ilike '%%ISSN%%'
+                                                group by cp.nome_producao, cp.ano, issn, p.nome_area_avaliacao
+                                                order by cp.ano)
+
+                                                select nome_producao, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
+                                                inner join qtotal on (qtotal.issn = cqp.issn) -- and trim(cqp.area) = trim(nome_area_avaliacao))
+                                                group by nome_producao, ano, qtotal.issn, nome_area_avaliacao, qualis
+                                                order by qualis ASC)
+
+                                                select ano, SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
+                                                                                        SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
+                                                                                        SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
+                                                                                        SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
+                                                                                        SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
+                                                                                        SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
+                                                                                        SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
+                                                                                        SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
+                                                                                        SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
+                                                from qqualis
+                                                group by ano
+                                                order by ano"""
+        
+        query_artigos = """with qtotal as (select cp.nome_producao, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
+                                                from coleta_detalhamento_producao as cdp 
+                                                inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
+                                                inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
+                                                inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
+                                                inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
+                                                where item ilike '%%ISSN%%'
+                                                group by cp.nome_producao, cp.ano, issn, p.nome_area_avaliacao
+                                                order by cp.ano)
+
+                                                select nome_producao, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
+                                                inner join qtotal on (qtotal.issn = cqp.issn)-- and trim(cqp.area) = trim(nome_area_avaliacao))
+                                                group by nome_producao, ano, qtotal.issn, nome_area_avaliacao, qualis
+                                                order by qualis ASC"""
+
+        
+        row = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
+        products = [dict(r) for r in row]
+
+        row = db.fetch_all(query_artigos, id=id, anoi=anoi, anof=anof)
+        artigos = [dict(r) for r in row]
+
+        for art in artigos:
+            art['duplicado'] = 0
+
+        for art1 in artigos:
+            if art1['duplicado'] == 0:
+                for art2 in artigos:
+                    if art2['duplicado'] == 0:
+                        if art1 != art2:
+                            similarity = jellyfish.jaro_winkler_similarity(art1['nome_producao'], art2['nome_producao'])
+                            if similarity > 0.9 and (art1['ano'] == art2['ano'] and art1['issn'] == art2['issn']):
+                                art1['duplicado'] = art2['duplicado'] = similarity
+
+        lista_qualis = []
+
+        for a in range(ultimo_ano_coleta+1, ultimo_ano_coleta+diferenca_anos+1):
+            products_atual, artigos_lattes = self.retorna_contagem_de_qualis_do_lattes_com_lista(id, a)
+
+            artigos.extend(artigos_lattes)
+
+            if products_atual and len(products_atual) > 0:
+                products.extend(products_atual)
+        
+        products = sorted(products, key=lambda k: k['ano'])
+
+        if listanegra is None:
+            listanegra = []
+
+            lista_qualis = products
+
+        else:
+            for prod in products:
+                if prod.get('id_pessoa', None) in permanentes[prod['ano']] and prod['id_pessoa'] not in listanegra:
+                    lista_qualis.append(prod)
+
+        artigos_total = {}
+        for a in range(anoi, anof+1):
+            artigos_total[a] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
+
+        for a in range(ultimo_ano_coleta+1, ultimo_ano_coleta+diferenca_anos+1):
+            artigos_total[a] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
+        
+        for l in  lista_qualis:
+            for tipo in l.keys():
+                if tipo != 'ano' and tipo != 'id_pessoa':
+                    artigos_total[l['ano']][tipo] += l[tipo]
+        
+        return {'produtos': artigos_total, 'artigos': artigos}
+    
+    @tratamento_excecao_db_ppg()
+    def retorna_contagem_de_indprodart_com_listanegra(self, id: str, anoi: int, anof: int, listanegra: List, db: DBConnector = None):
+        """
+        Retornar o quantitativo de indprodart por docente (id_pessoa) para que o filtro do simulador de parâmetros da página funcione
+
+        Parametros:
+            id(str): Id do PPG
+            anoi(int): ano de início
+            anof(int): ano de fim
+            db(class): DataBase
+        Returno:
+            produtos(dicionario)
+        """
+
+        query = """select * from metricas_indicadores_areas_avaliacao
+                    where nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
+                        and metrica = 'indprodart'"""
+        row = db.fetch_one(query, id=id, anof=anof, anoi=anoi)
+        if row:
+            indicadores = dict(row)
+        else:
+            indicadores = {'mbom':0, 'bom':0,'regular':0, 'fraco':0}
+
+        permanentes = {}
+
+        ano_atual = datetime.now().year
+        
+        ultimo_ano_coleta = self.retorna_ultimo_ano_coleta()
+
+        diferenca_anos = ano_atual - ultimo_ano_coleta
+        
+        for a in range(anoi, ultimo_ano_coleta+diferenca_anos+1):
+            if a > ultimo_ano_coleta:
+                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, ultimo_ano_coleta)
+            else:
+                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, a)
+            if lista_permanente:
+                permanentes[a] = eval(lista_permanente)
+        
+        if listanegra:
+            query = """with qqualis as(
+                                             with qtotal as (select cp.nome_producao, cd.id_pessoa, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
+                                             from coleta_detalhamento_producao as cdp 
+                                             inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
+                                             inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
+                                             inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
+                                             inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
+                                             where item ilike '%%ISSN%%'
+                                             group by cp.nome_producao, cd.id_pessoa, cp.ano, issn, p.nome_area_avaliacao
+                                            order by cp.ano)
+
+                                             select nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
+                                             inner join qtotal on (qtotal.issn = cqp.issn)-- and trim(cqp.area) = trim(nome_area_avaliacao))
+                                             group by nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis
+                                             order by qualis ASC)
+
+                                              select ano, id_pessoa, SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
+                                                                                     SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
+                                                                                     SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
+                                                                                     SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
+                                                                                     SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
+                                                                                     SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
+                                                                                     SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
+                                                                                     SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
+                                                                                     SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
+                                             from qqualis
+											 group by ano, id_pessoa
+											 order by ano"""
+        else:
+            # QUERY ANTERIOR SUBSTITUÍDA POR UMA "MATERIALIZED VIEW" DO POSTGRES
+            query = "select * from view_contagem_artigos_qualis_por_ppg where ano >= %(anoi)s and ano <= %(anof)s and codigo_programa = %(id)s"
+
+        
+        row = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
+        products = [dict(r) for r in row]
+
+        lista_qualis = []
+
+        indprods = {}
+        for a in range(anoi, anof+1):
+            indprods[a] = 0.0
+
+
+        # adiciona resultado do ano atual com os dados do lattes
+        for a in range(ultimo_ano_coleta+1, ultimo_ano_coleta+diferenca_anos+1):
+            products_atual = self.retorna_contagem_de_qualis_do_lattes(id, a)
+
+            if products_atual and len(products_atual) > 0:
+                products.extend(products_atual)
+        
+        products = sorted(products, key=lambda k: k['ano'])
+
+        if listanegra is None:
+            listanegra = []
+
+            lista_qualis = products
+            
+        else:
+            for prod in products:
+                if prod.get('id_pessoa', None) in permanentes[prod['ano']] and prod['id_pessoa'] not in listanegra:
+                    lista_qualis.append(prod)
+
+        artigos_total = {}
+        for a in range(anoi, anof+1):
+            artigos_total[a] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
+
+        for a in range(ultimo_ano_coleta+1, ultimo_ano_coleta+diferenca_anos+1):
+            artigos_total[a] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
+
+        for l in  lista_qualis:
+            for tipo in l.keys():
+                if tipo != 'ano' and tipo != 'id_pessoa' and tipo != 'codigo_programa' and tipo != 'nome_area_avaliacao':
+                    artigos_total[l['ano']][tipo] += l[tipo]
+
+        
+        qarea = """select pesos.* from pesos_indart_areas_avaliacao as pesos
+                    inner join programas as p on p.nome_area_avaliacao = pesos.nome_area_avaliacao 
+                    where p.codigo_programa = %(id)s"""
+        
+        area = db.fetch_one(qarea, id=id)
+
+        retorno = {}
+
+        if area:
+            contagem_permanentes = {}
+            for ano,qualis in artigos_total.items():
+                indProdArt, formula = utils.calcula_indprod(id,qualis,db)
+                
+                indprods[int(ano)] = indProdArt/len(permanentes[ano])
+                contagem_permanentes[int(ano)] = len(permanentes[ano])
+
+            indprods_ext = self.retorna_indprods_medios_extratificados(id, anoi, anof)
+
+            retorno = {'indprods': indprods, 'permanentes': contagem_permanentes, 'formula': formula}
+
+            retorno.update(indprods_ext)
+
+
+        return {'indprod':retorno, 'indicadores':indicadores}
+    
+    @tratamento_excecao_db_ppg()
+    def retorna_contagem_de_indprodart_extrato_superior_com_listanegra(self, id: str, anoi: int, anof: int, listanegra: List, db: DBConnector = None):
+        """
+        Retornar o quantitativo de indprodart ExtSup por docente (id_pessoa) para que o filtro do simulador de parâmetros da página funcione
+
+        Parametros:
+            id(str): Id do PPG
+            anoi(int): ano de início
+            anof(int): ano de fim
+            db(class): DataBase
+        Returno:
+            produtos(dicionario)
+        """
+
+        query = """select * from metricas_indicadores_areas_avaliacao
+                    where nome_area_avaliacao = (select nome_area_avaliacao from programas where codigo_programa = %(id)s) 
+                        and metrica = 'indprodextsup'"""
+        row = db.fetch_one(query, id=id, anof=anof, anoi=anoi)
+        if row:
+            indicadores = dict(row)
+        else:
+            indicadores = {'mbom':0, 'bom':0,'regular':0, 'fraco':0}
+
+        permanentes = {}
+
+        ano_atual = datetime.now().year
+        
+        ultimo_ano_coleta = self.retorna_ultimo_ano_coleta()
+
+        diferenca_anos = ano_atual - ultimo_ano_coleta
+        
+        for a in range(anoi, ultimo_ano_coleta+diferenca_anos+1):
+            if a > ultimo_ano_coleta:
+                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, ultimo_ano_coleta)
+            else:
+                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, a)
+            if lista_permanente:
+                permanentes[a] = eval(lista_permanente)
+        
+        
+        if listanegra:
+            query = """with qqualis as(
+                                             with qtotal as (select cp.nome_producao, cd.id_pessoa, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
+                                             from coleta_detalhamento_producao as cdp 
+                                             inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
+                                             inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
+                                             inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
+                                             inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
+                                             where item ilike '%%ISSN%%'
+                                             group by cp.nome_producao, cd.id_pessoa, cp.ano, issn, p.nome_area_avaliacao
+                                            order by cp.ano)
+
+                                             select nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
+                                             inner join qtotal on (qtotal.issn = cqp.issn)-- and trim(cqp.area) = trim(nome_area_avaliacao))
+                                             group by nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis
+                                             order by qualis ASC)
+
+                                              select ano, id_pessoa, SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
+                                                                                     SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
+                                                                                     SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
+                                                                                     SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
+                                                                                     SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
+                                                                                     SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
+                                                                                     SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
+                                                                                     SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
+                                                                                     SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
+                                             from qqualis
+											 group by ano, id_pessoa
+											 order by ano"""
+
+
+        else:
+            query = """with qqualis as(
+                                             with qtotal as (select cp.nome_producao, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
+                                             from coleta_detalhamento_producao as cdp 
+                                             inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
+                                             inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
+                                             inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
+                                             inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
+                                             where item ilike '%%ISSN%%'
+                                             group by cp.nome_producao, cp.ano, issn, p.nome_area_avaliacao
+                                            order by cp.ano)
+
+                                             select nome_producao, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
+                                             inner join qtotal on (qtotal.issn = cqp.issn)-- and trim(cqp.area) = trim(nome_area_avaliacao))
+                                             group by nome_producao, ano, qtotal.issn, nome_area_avaliacao, qualis
+                                             order by qualis ASC)
+
+                                              select ano, SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
+                                                                                     SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
+                                                                                     SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
+                                                                                     SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
+                                                                                     SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
+                                                                                     SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
+                                                                                     SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
+                                                                                     SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
+                                                                                     SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
+                                             from qqualis
+											 group by ano
+											 order by ano"""
+
+        
+        row = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
+        products = [dict(r) for r in row]
+
+        lista_qualis = []
+
+        indprods = {}
+        for a in range(anoi, anof+1):
+            indprods[a] = 0.0
+
+
+        # adiciona resultado do ano atual com os dados do lattes
+        for a in range(ultimo_ano_coleta+1, ultimo_ano_coleta+diferenca_anos+1):
+            products_atual = self.retorna_contagem_de_qualis_do_lattes(id, a)
+
+            if products_atual and len(products_atual) > 0:
+                products.extend(products_atual)
+        
+        products = sorted(products, key=lambda k: k['ano'])
+
+        if listanegra is None:
+            listanegra = []
+
+            lista_qualis = products
+        
+        else:
+            for prod in products:
+                if prod.get('id_pessoa', None) in permanentes[prod['ano']] and prod['id_pessoa'] not in listanegra:
+                    lista_qualis.append(prod)
+
+        artigos_total = {}
+        for a in range(anoi, anof+1):
+            artigos_total[a] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
+
+        for a in range(ultimo_ano_coleta+1, ultimo_ano_coleta+diferenca_anos+1):
+            artigos_total[a] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
+
+        for l in  lista_qualis:
+            for tipo in l.keys():
+                if tipo != 'ano' and tipo != 'id_pessoa':
+                    artigos_total[l['ano']][tipo] += l[tipo]
+
+        
+        qarea = """select pesos.* from pesos_indart_areas_avaliacao as pesos
+                    inner join programas as p on p.nome_area_avaliacao = pesos.nome_area_avaliacao 
+                    where p.codigo_programa = %(id)s"""
+        
+        area = db.fetch_one(qarea, id=id)
+
+        retorno = {}
+
+        if area:
+            contagem_permanentes = {}
+            for ano,qualis in artigos_total.items():
+                indProdArt, formula = utils.calcula_indprod_extsup(id,qualis,db)
+
+                
+                indprods[int(ano)] = indProdArt/len(permanentes[ano])
+                contagem_permanentes[int(ano)] = len(permanentes[ano])
+
+            indprods_ext = self.retorna_indprods_extsup_medios_extratificados(id, anoi, anof)
+
+            retorno = {'indprods': indprods, 'permanentes': contagem_permanentes, 'formula': formula}
+
+            retorno.update(indprods_ext)
+
+
+        return {'indprod':retorno, 'indicadores':indicadores}
+    
+    @tratamento_excecao_db_ppg()
+    def retorna_contagem_de_indprodart_absoluto(self, id: str, anoi: int, anof: int, db: DBConnector = None):
+        """
+        Retornar o quantitativo de indprodart abosulto
+
+        Parametros:
+            id(str): Id do PPG
+            anoi(int): ano de início
+            anof(int): ano de fim
+            db(class): DataBase
+        Returno:
+            produtos(dicionario)
+        """
+
+        permanentes = {}
+
+        ultimo_ano_coleta = self.retorna_ultimo_ano_coleta() + 1
+        
+        for a in range(anoi, ultimo_ano_coleta+1):
+            if a == ultimo_ano_coleta:
+                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, a-1)
+            else:
+                lista_permanente = self.retorna_lista_de_permanentes_do_ppg(id, a)
+            if lista_permanente:
+                permanentes[a] = eval(lista_permanente)
+        
+        
+        query = """with qqualis as(
+                                             with qtotal as (select cp.nome_producao, cd.id_pessoa, cp.ano, substring(cdp.valor,2,9) as issn, p.nome_area_avaliacao 
+                                             from coleta_detalhamento_producao as cdp 
+                                             inner join coleta_producoes as cp on (cdp.id_producao = cp.id_producao and cp.ano >= %(anoi)s and cp.ano <= %(anof)s and cp.id_sub_tipo_producao = 18)
+                                             inner join programas as p on p.id_programa = cp.id_programa and p.codigo_programa = %(id)s
+                                             inner join coleta_autores as ca on (ca.id_producao = cp.id_producao and ca.tipo_vinculo = 3)
+                                             inner join coleta_docentes as cd on (cd.id_pessoa = ca.id_pessoa and cp.ano = cd.ano and cd.tipo_categoria = 3)
+                                             where item ilike '%%ISSN%%'
+                                             group by cp.nome_producao, cd.id_pessoa, cp.ano, issn, p.nome_area_avaliacao
+                                            order by cp.ano)
+
+                                             select nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis from capes_qualis_periodicos as cqp
+                                             inner join qtotal on (qtotal.issn = cqp.issn)-- and trim(cqp.area) = trim(nome_area_avaliacao))
+                                             group by nome_producao, id_pessoa, ano, qtotal.issn, nome_area_avaliacao, qualis
+                                             order by qualis ASC)
+
+                                              select ano, id_pessoa, SUM(CASE WHEN qualis = 'A1' THEN 1 ELSE 0 END) AS "A1",
+                                                                                     SUM(CASE WHEN qualis = 'A2' THEN 1 ELSE 0 END) AS "A2",
+                                                                                     SUM(CASE WHEN qualis = 'A3' THEN 1 ELSE 0 END) AS "A3",
+                                                                                     SUM(CASE WHEN qualis = 'A4' THEN 1 ELSE 0 END) AS "A4",
+                                                                                     SUM(CASE WHEN qualis = 'B1' THEN 1 ELSE 0 END) AS "B1",
+                                                                                     SUM(CASE WHEN qualis = 'B2' THEN 1 ELSE 0 END) AS "B2",
+                                                                                     SUM(CASE WHEN qualis = 'B3' THEN 1 ELSE 0 END) AS "B3",
+                                                                                     SUM(CASE WHEN qualis = 'B4' THEN 1 ELSE 0 END) AS "B4",
+                                                                                     SUM(CASE WHEN qualis = 'C' THEN 1 ELSE 0 END) AS "C"
+                                             from qqualis
+											 group by ano, id_pessoa
+											 order by ano"""
+
+        
+        row = db.fetch_all(query, id=id, anoi=anoi, anof=anof)
+        products = [dict(r) for r in row]
+
+        lista_qualis = []
+
+        indprods = {}
+        for a in range(anoi, anof+1):
+            indprods[a] = 0.0
+
+
+        # adiciona resultado do ano atual com os dados do lattes
+        
+        products_atual = self.retorna_contagem_de_qualis_do_lattes(id, ultimo_ano_coleta)
+
+        if products_atual and len(products_atual) > 0:
+           products.extend(products_atual)
+        
+        products = sorted(products, key=lambda k: k['ano'])
+
+            
+        for prod in products:
+            if prod.get('id_pessoa', None) in permanentes[prod['ano']]:
+                lista_qualis.append(prod)
+
+        artigos_total = {}
+        for a in range(anoi, anof+1):
+            artigos_total[a] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
+
+        artigos_total[ultimo_ano_coleta] = {'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0}
+
+        for l in  lista_qualis:
+            for tipo in l.keys():
+                if tipo != 'ano' and tipo != 'id_pessoa':
+                    artigos_total[l['ano']][tipo] += l[tipo]
+
+        
+        qarea = """select pesos.* from pesos_indart_areas_avaliacao as pesos
+                    inner join programas as p on p.nome_area_avaliacao = pesos.nome_area_avaliacao 
+                    where p.codigo_programa = %(id)s"""
+        
+        area = db.fetch_one(qarea, id=id)
+
+        retorno = {}
+
+        if area:
+            contagem_permanentes = {}
+            for ano,qualis in artigos_total.items():
+                indProdArt, formula = utils.calcula_indprod(id,qualis,db)
+                
+                indprods[int(ano)] = indProdArt
+                contagem_permanentes[int(ano)] = len(permanentes[ano])
+
+            indprods_ext = self.retorna_indprods_medios_extratificados_sem_dps(id, anoi, anof)
+
+            retorno = {'indprods': indprods, 'permanentes': contagem_permanentes, 'formula': formula}
+
+            retorno.update(indprods_ext)
+
+
+        return {'indprod':retorno}
+    
+    @tratamento_excecao_db_ppg_views()
+    def retorna_lista_de_professores_por_ano(self, id: str, anoi: int, anof: int, db: DBConnector = None, db_views: DBConnector = None):
+        """
+        Retorna lista de professores por ano
+
+        Paramêtros:
+            Id(str): Id do PPG
+            anoi(int): Ano de início
+            anof(int): Ano final
+            db(class): DataBase
+        """
+
+        query_docentes_ppg = """select distinct num_identificador_out as num_identificador, nome, p.id_pessoa as id_sucupira from curriculos_por_programa(%(id)s) 
+                                inner join pessoas as p on p.lattes = num_identificador_out
+                                where ano >= %(anoi)s and ano <= %(anof)s and num_identificador_out != ''
+                                order by nome"""
+        
+        rows = db.fetch_all(query_docentes_ppg, id=id, anof=anof, anoi=anoi)
+        professors = [dict(r) for r in rows]
+
+        query_contagem_qualis = """
+            SELECT num_identificador, sum(a1) as "A1", sum(a2) as "A2", 
+                                sum(a3) as "A3", sum(a4) as "A4", 
+                                sum(b1) as "B1", sum(b2) as "B2", 
+                                sum(b3) as "B3", sum(b4) as "B4", sum(c) as "C"
+                                FROM public.view_contagem_qualis_lattes_geral
+                                where codigo_programa = %(id)s and ano >= %(anoi)s and ano <= %(anof)s
+                                group by num_identificador
+                                ORDER BY num_identificador ASC"""
+        
+        rows = db_views.fetch_all(query_contagem_qualis, id=id, anof=anof, anoi=anoi)
+        contagem_qualis = [dict(r) for r in rows]
+
+        for d in professors:
+            existe = False
+            for q in contagem_qualis:
+                if d['num_identificador'] == q['num_identificador']:
+                    d.update(q)
+                    existe = True
+            if not existe:
+                d.update({'A1': 0, 'A2': 0, 'A3': 0, 'A4': 0, 'B1': 0, 'B2': 0, 'B3': 0, 'B4': 0, 'C': 0})
+
+        for i in professors:
+            for k in i.keys():
+                if i[k] is None:
+                    i[k] = 0
+        producoes = {}
+        orientados = {}
+        avatares = {}
+        datalattes = {}
+        status = {}
+        for p in professors:
+            if 'nome' in p:
+                id_professor = p['num_identificador']
+                datalattes[id_professor] = self.retorna_tempo_de_atualizacao_do_lattes_do_professor(id_professor)
+                # FONTE: lattes
+                producoes[id_professor] = self.retorna_producoes_do_professor(id_professor, anoi, anof)
+                # FONTE: sucupira
+                orientados[id_professor] = self.retorna_orientandos_do_professor(id, p['id_sucupira'], anoi, anof)
+                # FONTE: sucupira
+                status[id_professor] = self.getStatusOfProfessor(id, p['id_sucupira'], anoi, anof)
+                status[id_professor] = list(set(status[id_professor].replace(' ','').split(',')))
+                # query = f"select cast(id as text) from docentes where nome ilike '{id_professor}' limit 1"
+                if id_professor:
+                    avatares[id_professor] = self.retorna_link_avatar_lattes(id_professor, True)
+
+                indprod_prof, formula = utils.calcula_indprod(id,p,db)
+                p['indprod'] = (indprod_prof/len(range(anoi,anof+1)))
+
+        professors = sorted(professors, key=lambda p: p['indprod'], reverse=True)
+        medias = self.retorna_indprods_medios_extratificados(id,anoi, anof,db)
+        
+
+        medias_uteis = {}
+        if len(medias['uf']) > 0:
+            medias_uteis['PPGs de '+medias['nome_uf']] = self.calcula_medias(medias['uf'])
+        if len(medias['país']) > 0:
+            medias_uteis['PPGs do país'] = self.calcula_medias(medias['país'])
+        if len(medias['região']) > 0:
+            medias_uteis['PPGs da região '+medias['nome_regiao']] = self.calcula_medias(medias['região'])
+        
+        for c in range(int(medias['conceito']), int(medias['maxima'])+1):
+            if len(medias[str(c)]) > 0:
+                medias_uteis['PPGs nota '+str(c)] = self.calcula_medias(medias[str(c)])
+
+
+        medias = dict(sorted(medias_uteis.items(),  key=lambda p: p[1],  reverse=True))
+        medias['menor'] = 0
+
+        return {'professores': professors, 'medias':medias, 'produtos': producoes, 'orientados': orientados, 'avatares': avatares, 'datalattes': datalattes, 'status':status, 'formula': formula}
+    
+    @tratamento_excecao_db_ppg_views()
+    def retorna_contagem_artigos_lattes_docentes(self, id: str, anoi: int, anof: int, db_views: DBConnector = None, db: DBConnector = None):
+        """
+        Retorna uma lista contendo a contagem qualis e o somatorio das citações das publicações de docentes dentro de um intervalo de anos.
+        Considera apenas os artigos que estão listados no lattes
+
+        Parâmetros:
+            id (str): Id do PPG
+            anoi (int): Ano de início
+            anof (int): Ano final
+            db (class): Conexão com o banco de dados
+        
+        Retorna:
+            list: Lista de dicionários contendo os dados no formato:
+                [
+                    {
+                        "ano": 2020,
+                        "artigos": 
+                            [
+                                {
+                                    "nome": "joao batista",
+                                    "tipo_categoria": 3,
+                                    "num_identificador": 9247293479238749823,
+                                    "A1": 12,
+                                    "A2": 2,
+                                    ...,
+                                    "cit_wos": 13
+                                    "cit_scopus": 34
+                                    "cit_scielo": 2
+                                },
+                                ...
+                            ]
+                    },
+                    ...
+                ]
+        """
+        query_contagem_qualis = """
+            with q as(
+                select num_identificador, ano, coalesce(sum(cit_wos), 0) as cit_wos,
+                coalesce(sum(cit_scopus), 0) as cit_scopus, 
+                coalesce(sum(cit_scielo), 0) as cit_scielo 
+                from view_artigos_lattes 
+                where codigo_programa = %(id)s and ano between %(anoi)s and %(anof)s and tipo_categoria >= 1
+                group by num_identificador, ano
+                )
+                SELECT v.num_identificador, v.ano, sum(v.a1) as "A1", sum(v.a2) as "A2", 
+                                            sum(v.a3) as "A3", sum(v.a4) as "A4", 
+                                            sum(v.b1) as "B1", sum(v.b2) as "B2", 
+                                            sum(v.b3) as "B3", sum(v.b4) as "B4", sum(v.c) as "C",
+                                            q.cit_wos, q.cit_scopus, q.cit_scielo
+                                            FROM public.view_contagem_qualis_lattes_geral as v
+                                            inner join q on q.num_identificador = v.num_identificador and q.ano = v.ano
+                                            where v.codigo_programa = %(id)s and v.ano between %(anoi)s and %(anof)s 
+                                            group by v.num_identificador, v.ano, q.cit_wos, q.cit_scopus, q.cit_scielo
+                                            ORDER BY v.num_identificador ASC, v.ano
+        """
+        
+        rows = db_views.fetch_all(query_contagem_qualis, id=id, anoi=anoi, anof=anof)
+        res = [dict(r) for r in rows]
+
+        query = """select distinct * from curriculos_por_programa(%(id)s)"""
+        rows = db.fetch_all(query, id=id)
+        res_docentes = [dict(r) for r in rows]
+        docentes = {}
+        nomes_docentes = {}
+
+        maior_ano = 0
+
+        for r in res_docentes:
+            if maior_ano < r['ano']:
+                maior_ano = r['ano']
+            if r['ano'] not in docentes:
+                docentes[r['ano']] = {}
+            docentes[r['ano']][r['num_identificador_out']] = {'nome': r['nome'], 'tipo_categoria': r['tipo_categoria']}
+            nomes_docentes[r['num_identificador_out']] = r['nome']
+
+        if maior_ano == anof-1:
+            docentes[anof] = {}
+            for r in res_docentes:
+                if r['ano'] == anof-1:
+                    docentes[anof][r['num_identificador_out']] = {'nome': r['nome'], 'tipo_categoria': r['tipo_categoria']}
+
+        retorno = []
+        for ano in range(anoi, anof+1):
+            d = {'ano': ano, 'artigos': []}
+            for r in res:
+                if r['ano'] == ano:
+                    r['indProdArt'], formula = utils.calcula_indprod(id,r,db)
+                    r.update(docentes[ano][r['num_identificador']])
+                    d['artigos'].append(r)
+            retorno.append(d)
+
+        #acumula indicadores de cada docente para mostrar na aba TODOS
+        d = {'ano': 'Todos', 'artigos': []}
+        dict_num_ids = {}
+        for num_id in nomes_docentes.keys():
+            if num_id not in dict_num_ids:
+                dict_num_ids[num_id] = {'nome': nomes_docentes[num_id], 'num_identificador':num_id, 'A1':0,'A2':0,'A3':0,'A4':0,'B1':0,'B2':0,'B3':0,'B4':0, 'C':0, 'cit_wos':0, 'cit_scopus':0, 'cit_scielo':0, 'indProdArt':0}
+            for r in res:
+                if r['num_identificador'] == num_id:
+                    for k in r.keys():
+                        if k != 'ano' and k!= 'num_identificador' and k!= 'nome' and k!= 'tipo_categoria':
+                            dict_num_ids[num_id][k] += r[k]
+                        
+
+            d['artigos'].append(dict_num_ids[num_id])
+            
+        retorno.append(d)
+
+
+        return retorno
+    
+    @tratamento_excecao_db_views()
+    def retorna_artigos_lattes_docente(self, id: str, num_identificador: str, anoi: int, anof: int, db_views: DBConnector = None):
+        """
+        Retorna uma lista contendo os artigos do curriculo lattes de um docente.
+
+        Parâmetros:
+            id (str): Id do PPG
+            num_identificador (str): identificador lattes
+            anoi (int): Ano de início
+            anof (int): Ano final
+            db (class): Conexão com o banco de dados
+        
+        Retorna:
+            list: lista de dicionários contendo os dados no formato:
+                [
+                    {
+                        "ano": 2017,
+                        "titulo": "Artigo Tal",
+                        "issn": "7364-3746",
+                        "num_identificador": 9247293479238749823,
+                        "qualis": A1
+                        "cit_wos": 13
+                        "cit_scopus": 34
+                        "cit_scielo": 2,
+                        "fator_impacto": 3.2
+                    },
+                    ...
+                ]
+                    
+        """
+        if num_identificador != '*':
+            query = """
+                select distinct ano, titulo, issn, num_identificador, qualis, cit_wos, cit_scopus, cit_scielo, fator_impacto from view_artigos_lattes 
+                where num_identificador = %(num_identificador)s and codigo_programa = %(id)s and ano between %(anoi)s and %(anof)s
+                order by ano, titulo
+            """
+        else:
+            query = """
+                select distinct ano, titulo, issn, qualis, cit_wos, cit_scopus, cit_scielo, fator_impacto from view_artigos_lattes 
+                where codigo_programa = %(id)s and ano between %(anoi)s and %(anof)s
+                order by ano, titulo
+            """
+        
+        rows = db_views.fetch_all(query, num_identificador=num_identificador, id=id, anoi=anoi, anof=anof)
+        res = [dict(r) for r in rows]
+
+        return res
 
     def retorna_popsitions_avg_ppg(self, id : str, anoi : int, anof : int):
         indprods, maior, menor  = self.retorna_ranking_ppgs(id, anoi, anof)
@@ -3814,5 +3989,186 @@ class QueriesPPG():
             if indprods[0]['nota'] != 'A' and int(indprods[0]['nota']) < 7:
                 media_maior[ncount] = self.retorna_indprod_medio_entre_ppgs_dada_nota(id, anoi, anof, str(int(indprods[0]['nota'])+(ncount+1)))
         return {'media':media, 'media_maior':media_maior, 'maior_indprod': maior, 'menor_indprod':menor, 'indprods':indprods}
+
+    @tratamento_excecao_db_views()
+    def retorna_fatimpacto(self, id: str, anoi: int, anof: int, db_views: DBConnector = None):
+        """
+        Retorna um dicionário contendo o nome do artigo e o fator de impacto associado ao periódico,
+        considerando apenas artigos distintos.
+        
+        Parâmetros:
+            id (str): Id do PPG
+            anoi (int): Ano de início
+            anof (int): Ano final
+            db (class): Conexão com o banco de dados
+        
+        Retorna:
+            list: Lista de dicionários contendo o nome do artigo e o fator de impacto.
+        """
+        query = """        
+            SELECT DISTINCT ON (titulo, issn)
+                ano, 
+                titulo AS "artigo", 
+                fator_impacto AS "fator_impacto"
+            FROM
+                view_artigos_lattes
+            WHERE
+                codigo_programa = %(id)s
+                AND fator_impacto IS NOT NULL
+                AND ano BETWEEN %(anoi)s AND %(anof)s
+            ORDER BY 
+                titulo, issn, fator_impacto DESC;
+        """
+        rows = db_views.fetch_all(query, id=id, anoi=anoi, anof=anof)
+        print(len(rows))
+        
+        dados = []
+        for row in rows:
+            dados.append({
+                "artigo": row["artigo"],
+                "fator_impacto": row["fator_impacto"]
+            })
+        
+        print(dados)
+
+        return dados
+    
+    @tratamento_excecao_db_views()
+    def retorna_citbases(self, id: str, anoi: int, anof: int, db_views: DBConnector = None):
+            """
+            Retorna uma lista contendo todos os artigos com suas citações WOS, Scopus e Scielo dentro de um intervalo de anos.
+            
+            Parâmetros:
+                id (str): Id do PPG
+                anoi (int): Ano de início
+                anof (int): Ano final
+                db (class): Conexão com o banco de dados
+            
+            Retorna:
+                list: Lista de dicionários contendo os dados no formato:
+                    [
+                        {
+                            "ano": 2020,
+                            "titulo": "Título do Artigo",
+                            "issn": "1234-5678",
+                            "cit_wos": 10,
+                            "cit_scopus": 8,
+                            "cit_scielo": 5
+                        },
+                        ...
+                    ]
+            """
+            query = """
+                SELECT DISTINCT ON (titulo, issn)
+                    ano,
+                    titulo,
+                    issn,
+                    cit_wos,
+                    cit_scopus,
+                    cit_scielo
+                FROM 
+                    view_artigos_lattes
+                WHERE 
+                    codigo_programa = %(id)s
+                    AND ano BETWEEN %(anoi)s AND %(anof)s
+                ORDER BY 
+                    titulo, issn, ano;
+            """
+            
+            rows = db_views.fetch_all(query, id=id, anoi=anoi, anof=anof)
+            
+            return [
+                {
+                    "ano": row['ano'],
+                    "titulo": row['titulo'],
+                    "cit_wos": row['cit_wos'],
+                    "cit_scopus": row['cit_scopus'],
+                    "cit_scielo": row['cit_scielo']
+                }
+                for row in rows
+            ]
+
+    @tratamento_excecao_db_views()
+    def retorna_fatimpacto_permanentes(self, id: str, anoi: int, anof: int, db_views: DBConnector = None):
+            """
+            Retorna uma lista contendo os fatores de impacto de publicações de docentes permanentes dentro de um intervalo de anos.
+            Considera apenas os artigos listados na Sucupira
+
+            Parâmetros:
+                id (str): Id do PPG
+                anoi (int): Ano de início
+                anof (int): Ano final
+                db (class): Conexão com o banco de dados
+            
+            Retorna:
+                list: Lista de dicionários contendo os dados no formato:
+                    [
+                        {
+                            "ano": 2020,
+                            "qualis": 'A1',
+                            "issn": "1234-5678",
+                            "fator_impacto": 10.0
+                        },
+                        ...
+                    ]
+            """
+            query = """
+                SELECT * FROM lista_fatores_de_impacto_docentes_permanentes(%(id)s, %(anoi)s, %(anof)s) order by ano, qualis
+            """
+
+            
+            rows = db_views.fetch_all(query, id=id, anoi=anoi, anof=anof)
+            
+            return [
+                {
+                    "ano": row['ano'],
+                    "qualis": row['qualis'],
+                    "issn": row['issn'],
+                    "fator_impacto": row['fator_impacto']
+                }
+                for row in rows
+            ]
+        
+    @tratamento_excecao_db_views()
+    def retorna_citacoes_permanentes(self, id: str, anoi: int, anof: int, db_views: DBConnector = None): 
+        """
+        Retorna uma lista contendo o somatorio das citações das publicações de docentes permanentes dentro de um intervalo de anos.
+        Considera apenas os artigos listados na Sucupira
+
+        Parâmetros:
+            id (str): Id do PPG
+            anoi (int): Ano de início
+            anof (int): Ano final
+            db (class): Conexão com o banco de dados
+        
+        Retorna:
+            list: Lista de dicionários contendo os dados no formato:
+                [
+                    {
+                        "ano": 2020,
+                        "qualis": 'A1',
+                        "cit_wos": 40,
+                        "cit_scopus": 10,
+                        "cit_scielo": 2
+                    },
+                    ...
+                ]
+        """
+        query = """
+            SELECT * FROM lista_citacoes_docentes_permanentes(%(id)s, %(anoi)s, %(anof)s);
+        """
+        
+        rows = db_views.fetch_all(query, id=id, anoi=anoi, anof=anof)
+        
+        return [
+            {
+                "ano": row['ano'],
+                "qualis": row['qualis'],
+                "cit_wos": row["cit_wos"],
+                "cit_scopus": row["cit_scopus"],
+                "cit_scielo": row["cit_scielo"]
+            }
+            for row in rows
+        ]
 
 queries_ppg = QueriesPPG()
