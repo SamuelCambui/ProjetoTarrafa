@@ -30,7 +30,7 @@ if _version_not_supported:
     )
 
 
-class UsuarioStub(object):
+class UsuarioFormularioStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -40,48 +40,48 @@ class UsuarioStub(object):
             channel: A grpc.Channel.
         """
         self.LoginForm = channel.unary_unary(
-                '/protos.Usuario/LoginForm',
+                '/protos.UsuarioFormulario/LoginForm',
                 request_serializer=messages__pb2.LoginRequest.SerializeToString,
                 response_deserializer=messages__pb2.LoginResponseFormulario.FromString,
                 _registered_method=True)
         self.LogoutForm = channel.unary_unary(
-                '/protos.Usuario/LogoutForm',
+                '/protos.UsuarioFormulario/LogoutForm',
                 request_serializer=messages__pb2.LogoutRequest.SerializeToString,
                 response_deserializer=messages__pb2.LogoutResponse.FromString,
                 _registered_method=True)
         self.ObtemUsuarioForm = channel.unary_unary(
-                '/protos.Usuario/ObtemUsuarioForm',
+                '/protos.UsuarioFormulario/ObtemUsuarioForm',
                 request_serializer=messages__pb2.UsuarioRequest.SerializeToString,
                 response_deserializer=messages__pb2.UsuarioFormularioResponse.FromString,
                 _registered_method=True)
         self.ObtemListaUsuarios = channel.unary_unary(
-                '/protos.Usuario/ObtemListaUsuarios',
+                '/protos.UsuarioFormulario/ObtemListaUsuarios',
                 request_serializer=messages__pb2.UsuarioFormularioResponse.SerializeToString,
                 response_deserializer=messages__pb2.ListaUsuariosFormularioResponse.FromString,
                 _registered_method=True)
         self.DeletarUsuario = channel.unary_unary(
-                '/protos.Usuario/DeletarUsuario',
+                '/protos.UsuarioFormulario/DeletarUsuario',
                 request_serializer=messages__pb2.UsuarioRequest.SerializeToString,
                 response_deserializer=messages__pb2.AlteracaoUsuarioResponse.FromString,
                 _registered_method=True)
         self.AlternarStatusUsuario = channel.unary_unary(
-                '/protos.Usuario/AlternarStatusUsuario',
+                '/protos.UsuarioFormulario/AlternarStatusUsuario',
                 request_serializer=messages__pb2.UsuarioRequest.SerializeToString,
                 response_deserializer=messages__pb2.AlteracaoUsuarioResponse.FromString,
                 _registered_method=True)
         self.AtualizarUsuario = channel.unary_unary(
-                '/protos.Usuario/AtualizarUsuario',
+                '/protos.UsuarioFormulario/AtualizarUsuario',
                 request_serializer=messages__pb2.CriacaoUsuarioFormularioRequest.SerializeToString,
                 response_deserializer=messages__pb2.AlteracaoUsuarioResponse.FromString,
                 _registered_method=True)
         self.CriarUsuario = channel.unary_unary(
-                '/protos.Usuario/CriarUsuario',
+                '/protos.UsuarioFormulario/CriarUsuario',
                 request_serializer=messages__pb2.CriacaoUsuarioFormularioRequest.SerializeToString,
                 response_deserializer=messages__pb2.AlteracaoUsuarioResponse.FromString,
                 _registered_method=True)
 
 
-class UsuarioServicer(object):
+class UsuarioFormularioServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def LoginForm(self, request, context):
@@ -133,7 +133,7 @@ class UsuarioServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_UsuarioServicer_to_server(servicer, server):
+def add_UsuarioFormularioServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'LoginForm': grpc.unary_unary_rpc_method_handler(
                     servicer.LoginForm,
@@ -177,13 +177,13 @@ def add_UsuarioServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'protos.Usuario', rpc_method_handlers)
+            'protos.UsuarioFormulario', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('protos.Usuario', rpc_method_handlers)
+    server.add_registered_method_handlers('protos.UsuarioFormulario', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class Usuario(object):
+class UsuarioFormulario(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -200,7 +200,7 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/LoginForm',
+            '/protos.UsuarioFormulario/LoginForm',
             messages__pb2.LoginRequest.SerializeToString,
             messages__pb2.LoginResponseFormulario.FromString,
             options,
@@ -227,7 +227,7 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/LogoutForm',
+            '/protos.UsuarioFormulario/LogoutForm',
             messages__pb2.LogoutRequest.SerializeToString,
             messages__pb2.LogoutResponse.FromString,
             options,
@@ -254,7 +254,7 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/ObtemUsuarioForm',
+            '/protos.UsuarioFormulario/ObtemUsuarioForm',
             messages__pb2.UsuarioRequest.SerializeToString,
             messages__pb2.UsuarioFormularioResponse.FromString,
             options,
@@ -281,7 +281,7 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/ObtemListaUsuarios',
+            '/protos.UsuarioFormulario/ObtemListaUsuarios',
             messages__pb2.UsuarioFormularioResponse.SerializeToString,
             messages__pb2.ListaUsuariosFormularioResponse.FromString,
             options,
@@ -308,7 +308,7 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/DeletarUsuario',
+            '/protos.UsuarioFormulario/DeletarUsuario',
             messages__pb2.UsuarioRequest.SerializeToString,
             messages__pb2.AlteracaoUsuarioResponse.FromString,
             options,
@@ -335,7 +335,7 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/AlternarStatusUsuario',
+            '/protos.UsuarioFormulario/AlternarStatusUsuario',
             messages__pb2.UsuarioRequest.SerializeToString,
             messages__pb2.AlteracaoUsuarioResponse.FromString,
             options,
@@ -362,7 +362,7 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/AtualizarUsuario',
+            '/protos.UsuarioFormulario/AtualizarUsuario',
             messages__pb2.CriacaoUsuarioFormularioRequest.SerializeToString,
             messages__pb2.AlteracaoUsuarioResponse.FromString,
             options,
@@ -389,7 +389,7 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/CriarUsuario',
+            '/protos.UsuarioFormulario/CriarUsuario',
             messages__pb2.CriacaoUsuarioFormularioRequest.SerializeToString,
             messages__pb2.AlteracaoUsuarioResponse.FromString,
             options,

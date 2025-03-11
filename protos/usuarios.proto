@@ -7,5 +7,5 @@ import "messages.proto";
 service Usuario {
   rpc Login (LoginRequest) returns (LoginResponse);
   rpc Logout (LogoutRequest) returns (LogoutResponse);
-  rpc ObtemUsuario (UsuarioRequest) returns (UsuarioResponse);
+  rpc VerificarSessao (VerificarSessaoRequest) returns (VerificarSessaoResponse);
 }

@@ -49,10 +49,10 @@ class UsuarioStub(object):
                 request_serializer=messages__pb2.LogoutRequest.SerializeToString,
                 response_deserializer=messages__pb2.LogoutResponse.FromString,
                 _registered_method=True)
-        self.ObtemUsuario = channel.unary_unary(
-                '/protos.Usuario/ObtemUsuario',
-                request_serializer=messages__pb2.UsuarioRequest.SerializeToString,
-                response_deserializer=messages__pb2.UsuarioResponse.FromString,
+        self.VerificarSessao = channel.unary_unary(
+                '/protos.Usuario/VerificarSessao',
+                request_serializer=messages__pb2.VerificarSessaoRequest.SerializeToString,
+                response_deserializer=messages__pb2.VerificarSessaoResponse.FromString,
                 _registered_method=True)
 
 
@@ -71,7 +71,7 @@ class UsuarioServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ObtemUsuario(self, request, context):
+    def VerificarSessao(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -90,10 +90,10 @@ def add_UsuarioServicer_to_server(servicer, server):
                     request_deserializer=messages__pb2.LogoutRequest.FromString,
                     response_serializer=messages__pb2.LogoutResponse.SerializeToString,
             ),
-            'ObtemUsuario': grpc.unary_unary_rpc_method_handler(
-                    servicer.ObtemUsuario,
-                    request_deserializer=messages__pb2.UsuarioRequest.FromString,
-                    response_serializer=messages__pb2.UsuarioResponse.SerializeToString,
+            'VerificarSessao': grpc.unary_unary_rpc_method_handler(
+                    servicer.VerificarSessao,
+                    request_deserializer=messages__pb2.VerificarSessaoRequest.FromString,
+                    response_serializer=messages__pb2.VerificarSessaoResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -161,7 +161,7 @@ class Usuario(object):
             _registered_method=True)
 
     @staticmethod
-    def ObtemUsuario(request,
+    def VerificarSessao(request,
             target,
             options=(),
             channel_credentials=None,
@@ -174,9 +174,9 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/ObtemUsuario',
-            messages__pb2.UsuarioRequest.SerializeToString,
-            messages__pb2.UsuarioResponse.FromString,
+            '/protos.Usuario/VerificarSessao',
+            messages__pb2.VerificarSessaoRequest.SerializeToString,
+            messages__pb2.VerificarSessaoResponse.FromString,
             options,
             channel_credentials,
             insecure,

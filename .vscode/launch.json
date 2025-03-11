@@ -81,27 +81,6 @@
             "args": []
         },
         {
-            "name": "Python: SERVER LOGIN",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/backend/app/api/api_login.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "envFile": "${workspaceFolder}/.env.desenvolvimento",
-            "args": []
-        },
-        {
-            "name": "Python: SERVER LOGIN FORM",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/backend/app/api/api_login_formulario.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "envFile": "${workspaceFolder}/.env.desenvolvimento",
-            "args": []
-        },
-      
-        {
             "name": "Next.js: debug full stack",
             "type": "node-terminal",
             "cwd": "${workspaceFolder}/frontend/frontend-next",
@@ -114,7 +93,7 @@
             }
           },
           {
-            "name": "Python Debugger: FastAPI",
+            "name": "Python Debugger: Login FastAPI",
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
@@ -122,11 +101,25 @@
                 "backend.app.api.api_login:app",
                 "--reload",
                 "--port",
-                "8002"
+                "8004"
             ],
             "jinja": true,
             "envFile": "${workspaceFolder}/.env.desenvolvimento"
         },
+        {
+            "name": "Python Debugger: Login Formulario FastAPI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "backend.app.api.api_login_formulario:app",
+                "--reload",
+                "--port",
+                "8005"
+            ],
+            "jinja": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento"
+        }
 
       
     ]

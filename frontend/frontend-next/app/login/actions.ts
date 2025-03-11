@@ -1,20 +1,37 @@
+
 "use server";
-import { cookies } from "next/headers";
-import { createSession, decrypt, deleteSession } from "@/lib/session";
-import { User } from "@/types/user";
+import { auth, signIn, signOut } from "@/auth";
+import { AuthError, Session } from "next-auth";
+import { isRedirectError } from "next/dist/client/components/redirect";
 import { redirect } from "next/navigation";
-
-export async function login(user: User) {
-  await createSession(user);
+export async function authorize(
+  prevState: string | undefined,
+  formData: FormData
+) {
+  let hasError = false;
+  try {
+    await signIn("credentials", {
+      email: formData.get("email"),
+      password: formData.get("password"),
+      redirect: false,
+    });
+    return;
+  } catch (error) {
+    if (error instanceof AuthError) {
+      hasError = true;
+      switch (error.type) {
+        case "CredentialsSignin":
+          return "Usuário e/ou Senha Incorretos";
+        default:
+          return "Erro ao tentar fazer login";
+      }
+    }
+  } finally {
+    if (!hasError) {
+      redirect("/ppgls");
+    }
+  }
 }
-
 export async function logout() {
-  await deleteSession();
-  redirect("/login");
-}
-
-export async function getCurrentUser() {
-  const cookie = cookies().get("session")?.value;
-  const session = await decrypt(cookie);
-  return session;
+  await signOut({ redirect: true, redirectTo: "/login" });
 }

@@ -231,6 +231,16 @@ export class LoginResponse extends jspb.Message {
     getErro(): boolean;
     setErro(value: boolean): LoginResponse;
 
+    hasAccessToken(): boolean;
+    clearAccessToken(): void;
+    getAccessToken(): string | undefined;
+    setAccessToken(value: string): LoginResponse;
+
+    hasRefreshToken(): boolean;
+    clearRefreshToken(): void;
+    getRefreshToken(): string | undefined;
+    setRefreshToken(value: string): LoginResponse;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): LoginResponse.AsObject;
     static toObject(includeInstance: boolean, msg: LoginResponse): LoginResponse.AsObject;
@@ -245,6 +255,8 @@ export namespace LoginResponse {
     export type AsObject = {
         usuario?: UsuarioDados.AsObject,
         erro: boolean,
+        accessToken?: string,
+        refreshToken?: string,
     }
 }
 
@@ -806,5 +818,51 @@ export class FormularioPPGLSResponse extends jspb.Message {
 export namespace FormularioPPGLSResponse {
     export type AsObject = {
         itemList: Array<FormularioPPGLSJson.AsObject>,
+    }
+}
+
+export class VerificarSessaoRequest extends jspb.Message { 
+    getRefreshToken(): string;
+    setRefreshToken(value: string): VerificarSessaoRequest;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): VerificarSessaoRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: VerificarSessaoRequest): VerificarSessaoRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: VerificarSessaoRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): VerificarSessaoRequest;
+    static deserializeBinaryFromReader(message: VerificarSessaoRequest, reader: jspb.BinaryReader): VerificarSessaoRequest;
+}
+
+export namespace VerificarSessaoRequest {
+    export type AsObject = {
+        refreshToken: string,
+    }
+}
+
+export class VerificarSessaoResponse extends jspb.Message { 
+    getAccessToken(): string;
+    setAccessToken(value: string): VerificarSessaoResponse;
+
+    hasErro(): boolean;
+    clearErro(): void;
+    getErro(): boolean | undefined;
+    setErro(value: boolean): VerificarSessaoResponse;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): VerificarSessaoResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: VerificarSessaoResponse): VerificarSessaoResponse.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: VerificarSessaoResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): VerificarSessaoResponse;
+    static deserializeBinaryFromReader(message: VerificarSessaoResponse, reader: jspb.BinaryReader): VerificarSessaoResponse;
+}
+
+export namespace VerificarSessaoResponse {
+    export type AsObject = {
+        accessToken: string,
+        erro?: boolean,
     }
 }

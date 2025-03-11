@@ -48,26 +48,26 @@ function deserialize_protos_LogoutResponse(buffer_arg) {
   return messages_pb.LogoutResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_protos_UsuarioRequest(arg) {
-  if (!(arg instanceof messages_pb.UsuarioRequest)) {
-    throw new Error('Expected argument of type protos.UsuarioRequest');
+function serialize_protos_VerificarSessaoRequest(arg) {
+  if (!(arg instanceof messages_pb.VerificarSessaoRequest)) {
+    throw new Error('Expected argument of type protos.VerificarSessaoRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_protos_UsuarioRequest(buffer_arg) {
-  return messages_pb.UsuarioRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_protos_VerificarSessaoRequest(buffer_arg) {
+  return messages_pb.VerificarSessaoRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_protos_UsuarioResponse(arg) {
-  if (!(arg instanceof messages_pb.UsuarioResponse)) {
-    throw new Error('Expected argument of type protos.UsuarioResponse');
+function serialize_protos_VerificarSessaoResponse(arg) {
+  if (!(arg instanceof messages_pb.VerificarSessaoResponse)) {
+    throw new Error('Expected argument of type protos.VerificarSessaoResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_protos_UsuarioResponse(buffer_arg) {
-  return messages_pb.UsuarioResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_protos_VerificarSessaoResponse(buffer_arg) {
+  return messages_pb.VerificarSessaoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
@@ -94,16 +94,16 @@ var UsuarioService = exports.UsuarioService = {
     responseSerialize: serialize_protos_LogoutResponse,
     responseDeserialize: deserialize_protos_LogoutResponse,
   },
-  obtemUsuario: {
-    path: '/protos.Usuario/ObtemUsuario',
+  verificarSessao: {
+    path: '/protos.Usuario/VerificarSessao',
     requestStream: false,
     responseStream: false,
-    requestType: messages_pb.UsuarioRequest,
-    responseType: messages_pb.UsuarioResponse,
-    requestSerialize: serialize_protos_UsuarioRequest,
-    requestDeserialize: deserialize_protos_UsuarioRequest,
-    responseSerialize: serialize_protos_UsuarioResponse,
-    responseDeserialize: deserialize_protos_UsuarioResponse,
+    requestType: messages_pb.VerificarSessaoRequest,
+    responseType: messages_pb.VerificarSessaoResponse,
+    requestSerialize: serialize_protos_VerificarSessaoRequest,
+    requestDeserialize: deserialize_protos_VerificarSessaoRequest,
+    responseSerialize: serialize_protos_VerificarSessaoResponse,
+    responseDeserialize: deserialize_protos_VerificarSessaoResponse,
   },
 };
 

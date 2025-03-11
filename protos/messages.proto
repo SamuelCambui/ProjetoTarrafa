@@ -47,6 +47,8 @@ message LoginRequest {
 message LoginResponse {
   optional UsuarioDados usuario = 1;
   bool erro = 2;
+  optional string access_token = 3; 
+  optional string refresh_token = 4;
 }
 
 message LoginResponseFormulario {
@@ -147,4 +149,13 @@ message FormularioPPGLSJson{
 
 message FormularioPPGLSResponse{
   repeated FormularioPPGLSJson item = 1;
+}
+
+message VerificarSessaoRequest {
+  string refresh_token = 1;
+}
+
+message VerificarSessaoResponse {
+  string access_token = 1;
+  optional bool erro = 2;
 }

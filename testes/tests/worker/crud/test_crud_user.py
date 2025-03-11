@@ -9,7 +9,7 @@ sys.path.append(str(diretorio_raiz))
 print(str(diretorio_raiz))
 
 from backend.worker import crud
-from backend.schemas.user import User, UserInDB
+from backend.schemas.usuario import User, UserInDB
 from backend.db.db import DBConnectorPPG
 from dotenv import load_dotenv
 

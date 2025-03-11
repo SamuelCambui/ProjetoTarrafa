@@ -74,12 +74,16 @@ class LoginRequest(_message.Message):
     def __init__(self, username: _Optional[str] = ..., password: _Optional[str] = ...) -> None: ...
 
 class LoginResponse(_message.Message):
-    __slots__ = ("usuario", "erro")
+    __slots__ = ("usuario", "erro", "access_token", "refresh_token")
     USUARIO_FIELD_NUMBER: _ClassVar[int]
     ERRO_FIELD_NUMBER: _ClassVar[int]
+    ACCESS_TOKEN_FIELD_NUMBER: _ClassVar[int]
+    REFRESH_TOKEN_FIELD_NUMBER: _ClassVar[int]
     usuario: UsuarioDados
     erro: bool
-    def __init__(self, usuario: _Optional[_Union[UsuarioDados, _Mapping]] = ..., erro: bool = ...) -> None: ...
+    access_token: str
+    refresh_token: str
+    def __init__(self, usuario: _Optional[_Union[UsuarioDados, _Mapping]] = ..., erro: bool = ..., access_token: _Optional[str] = ..., refresh_token: _Optional[str] = ...) -> None: ...
 
 class LoginResponseFormulario(_message.Message):
     __slots__ = ("usuario", "erro")
@@ -242,3 +246,17 @@ class FormularioPPGLSResponse(_message.Message):
     ITEM_FIELD_NUMBER: _ClassVar[int]
     item: _containers.RepeatedCompositeFieldContainer[FormularioPPGLSJson]
     def __init__(self, item: _Optional[_Iterable[_Union[FormularioPPGLSJson, _Mapping]]] = ...) -> None: ...
+
+class VerificarSessaoRequest(_message.Message):
+    __slots__ = ("refresh_token",)
+    REFRESH_TOKEN_FIELD_NUMBER: _ClassVar[int]
+    refresh_token: str
+    def __init__(self, refresh_token: _Optional[str] = ...) -> None: ...
+
+class VerificarSessaoResponse(_message.Message):
+    __slots__ = ("access_token", "erro")
+    ACCESS_TOKEN_FIELD_NUMBER: _ClassVar[int]
+    ERRO_FIELD_NUMBER: _ClassVar[int]
+    access_token: str
+    erro: bool
+    def __init__(self, access_token: _Optional[str] = ..., erro: bool = ...) -> None: ...

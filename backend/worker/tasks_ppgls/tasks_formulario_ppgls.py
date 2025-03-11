@@ -137,15 +137,6 @@ def tarefa_buscar_formulario_ppgls(nome_formulario:str , data_inicio:str):
 # ---------------------LOGIN------------------------
 
 @app_celery_queries.task
-def tarefa_retorna_lista_usuarios(is_admin : bool) -> list[Optional[Usuario]]:
-    try:
-        users = user.retorna_lista_usuario(is_admin)
-        return users
-    except Exception as e:
-        print(e)
-        return []
-
-@app_celery_queries.task
 def tarefa_verifica_usuario(idlattes : str) -> Optional[UsuarioFront]:
     try:
         users = user.verifica_usuario(idlattes)
@@ -156,7 +147,7 @@ def tarefa_verifica_usuario(idlattes : str) -> Optional[UsuarioFront]:
     except Exception as e:
         print(e)
         return None
-    
+  
 @app_celery_queries.task
 def tarefa_autentica_usuario(username : str, password : str) -> Optional[UsuarioFront]:
     try:   
@@ -171,6 +162,14 @@ def tarefa_autentica_usuario(username : str, password : str) -> Optional[Usuario
         print(e)
         return None
 
+@app_celery_queries.task
+def tarefa_retorna_lista_usuarios(is_admin : bool) -> list[Optional[Usuario]]:
+    try:
+        users = user.retorna_lista_usuario(is_admin)
+        return users
+    except Exception as e:
+        print(e)
+        return []
 
 
 

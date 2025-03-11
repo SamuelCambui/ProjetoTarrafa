@@ -2,7 +2,7 @@ from typing import Optional
 from backend.core.utils import InsertQuery, UpdateQuery
 from backend.core.security import verify_password, get_password_hash
 from backend.schemas.user_form import UsuarioAtualizacao, UsuarioNoBanco, Usuario, UsuarioCriacao, UsuarioFront
-from backend.schemas.user import User, UserInDB
+# from backend.schemas.usuario import User, UserInDB
 from backend.worker import crud
 from backend.db.db import DBConnectorGRADForm
 from backend.core.utils import tratamento_excecao_com_db
@@ -98,7 +98,7 @@ class CRUDUser():
         except Exception as e:
             return False
 
-    
+    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
     def alternar_ativo_usuario (self, id_lattes : str, db: DBConnectorGRADForm = None) -> tuple[bool, str]:
         """
         Atualizando dados dos usuário no banco de dados
@@ -134,11 +134,11 @@ class CRUDUser():
         """ Retorna se o usuário é ativo ou não -> Booleano """
         return user.is_active
 
-    def is_coordenador(self, user: User) -> bool:
+    def is_coordenador(self, user: Usuario) -> bool:
         """Verifica se o usuário é coordenador"""
         return user.is_coordenador
 
-    def is_admin(self, user: User) -> bool:
+    def is_admin(self, user: Usuario) -> bool:
         """Verifica se o usuário é administrador"""
         return user.is_admin
 

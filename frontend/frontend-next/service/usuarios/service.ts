@@ -1,36 +1,22 @@
 "use server";
-import { LoginRequest, LoginResponse } from "@/protos/messages_pb";
-import { stubUsuarios, verificarConexaoGRPC } from "./utils";
 
-export async function autenticarUsuario(email: string, senha: string) {
+export async function verificarSessao(refreshToken: string) {
   try {
-    // Verifica a conexão com o servidor gRPC antes de prosseguir
-    await verificarConexaoGRPC();
-
-    const usuarioRequest = new LoginRequest();
-    usuarioRequest.setUsername(email);
-    usuarioRequest.setPassword(senha);
-
-    const response = await new Promise<LoginResponse.AsObject>(
-      (resolve, reject) => {
-        stubUsuarios.login(usuarioRequest, (error, usuario) => {
-          if (error) {
-            console.error("Erro na comunicação gRPC:", error);
-            reject(new Error("Falha na autenticação. Verifique seus dados."));
-          } else {
-            const usuarioObj = usuario?.toObject ? usuario.toObject() : null;
-            if (!usuarioObj) {
-              reject(new Error("Resposta inválida do servidor gRPC"));
-            }
-            resolve(usuarioObj);
-          }
-        });
-      }
+    const response = await fetch("http://localhost:8002/verificar_token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        refresh_token: refreshToken,
+      }),
+    }).then<{ access_token: string | undefined; erro: boolean }>(
+      async (res) => await res.json()
     );
 
-    return JSON.parse(JSON.stringify(response)); // 🔹 Garante que é um objeto simples
+    return response;
   } catch (e) {
-    console.error("🚨 Erro inesperado na autenticação:", e);
-    return new Error("Erro ao tentar autenticar");
+    console.error(e);
+    return { erro: true, access_token: undefined };
   }
 }
