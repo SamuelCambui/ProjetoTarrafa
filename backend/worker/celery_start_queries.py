@@ -6,7 +6,7 @@ os.environ.setdefault("FORKED_BY_MULTIPROCESSING", "1") #para SO Windows apenas
 
 porta = settings.REDIS_PORT
 backend = 'redis://'+settings.LOCAL_REDIS_URL+':'+porta+'/1'
-broker = 'amqp://'+settings.RABBITMQ_DEFAULT_USER+':'+ settings.RABBITMQ_DEFAULT_PASS+'@'+settings.RABBITMQ_HOST+':5672/'+settings.RABBITMQ_DEFAULT_VHOST
+broker = 'amqp://' + settings.RABBITMQ_DEFAULT_USER+':'+ settings.RABBITMQ_DEFAULT_PASS+'@'+settings.RABBITMQ_HOST+':'+settings.RABBITMQ_PORT + '/' + settings.RABBITMQ_DEFAULT_VHOST
 
 print("BROKER: " + broker)
 

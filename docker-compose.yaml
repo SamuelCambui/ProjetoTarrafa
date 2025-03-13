@@ -1,58 +1,137 @@
-version: '3.8'
+version: '3'
 
 services:
-  frontend:
-    build: ./frontend/flaskmiddle
-    command: >
-      /bin/bash -c "NUM_WORKERS=$$((2 * $$(nproc) + 1)) &&
-      gunicorn -b 0.0.0.0:8001 --worker-class gevent --workers $$NUM_WORKERS --timeout 600 run:app"
-    env_file:
-      - ./.env
-    depends_on:
-      - backend
-    expose:
-      - ${FRONTEND_PORT}
-    ports:
-      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
-    networks:
-      - frontend-backend-net
-
-
-  backend:
+  # FastAPI Login
+  api_login:
     build: ./backend
     command: >
-      /bin/bash -c "NUM_WORKERS=$$((2 * $$(nproc) + 1)) &&
-      gunicorn backend.app.main:app --workers $$NUM_WORKERS --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --timeout 600"
+      /bin/bash -c "uvicorn backend.app.api.api_login:app --host 0.0.0.0 --port 8002 --reload"
     volumes:
-      - .:/app
+      - ./protos:/app/protos
     env_file:
       - ./.env
-    expose:
-      - ${BACKEND_PORT}
     ports:
-      - "${BACKEND_PORT}:${BACKEND_PORT}"
+      - "8002:8002"
     depends_on:
-      - db
-      - redis
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
     networks:
       - backend-net
       - frontend-backend-net
- 
 
-  celery:
+  celery_queries_worker:
     build: ./backend
-    command: celery -A backend.worker.tasks worker --pool=gevent --autoscale=50,300 --loglevel=info
+    command: celery -A backend.worker.celery_start_queries worker -l INFO
+    volumes:
+      - ./protos:/app/protos/
     env_file:
       - ./.env
-    volumes:
-      - .:/app
     depends_on:
-      - db
-      - redis
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
     networks:
       - backend-net
 
+  # Server PPG
+  server_ppg:
+    build: ./backend
+    command: python backend/app/api/api.py
+    volumes:
+      - ./protos:/app/protos/
+    env_file:
+      - ./.env
+    ports:
+      - "${GRPC_SERVER_HOST}:${GRPC_SERVER_HOST}"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - backend-net
 
+  # Server PPGLS
+  server_ppgls:
+    build: ./backend
+    command: python backend/app/api/api_ppgls.py
+    volumes:
+      - ./protos:/app/protos/
+    env_file:
+      - ./.env
+    ports:
+      - "${GRPC_SERVER_PPGLS}:${GRPC_SERVER_PPGLS}"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - backend-net
+
+  # Server GRAD
+  server_grad:
+    build: ./backend
+    command: python backend/app/api/api_grad.py
+    volumes:
+      - ./protos:/app/protos/
+    env_file:
+      - ./.env
+    ports:
+      - "${GRPC_SERVER_GRAD}:${GRPC_SERVER_GRAD}"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - backend-net
+
+  # Server USUARIOS
+  server_usuarios:
+    build: ./backend
+    command: python backend/app/api/api_usuarios.py
+    volumes:
+      - ./protos:/app/protos/
+    env_file:
+      - ./.env
+    ports:
+      - "${GRPC_SERVER_USUARIOS}:${GRPC_SERVER_USUARIOS}"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - backend-net
+
+  # Frontend Next.js
+  # frontend:
+  #   build: ./frontend
+  #   command: npm run dev
+  #   volumes:
+  #     - ./frontend:/app
+  #   ports:
+  #     - "3000:3000"  # Porta padrão do Next.js
+  #   networks:
+  #     - frontend-backend-net
+
+  # Redis
   redis:
     image: 'redis:latest'
     env_file:
@@ -63,7 +142,7 @@ services:
     networks:
       - backend-net
 
-
+  # Banco de dados
   db:
     build: ./backend/db
     env_file:
@@ -72,25 +151,45 @@ services:
     expose:
       - ${POSTGRES_PORT}
     volumes:
-      - ./dados/postgres_data:/var/lib/postgresql/data
+      # - ./dados/postgres_data:/var/lib/postgresql/data
       - ./backend/db/tarrafaDB_2_tables.sql:/docker-entrypoint-initdb.d/tarrafaDB_2_tables.sql
       - ./backend/db/tarrafaDB_grad_tables.sql:/docker-entrypoint-initdb.d/tarrafaDB_grad_tables.sql
-      - ./backup:/backup
+      # - ./backup:/backup
     networks:
       - backend-net
 
+  # PGAdmin
   pgadmin:
     image: dpage/pgadmin4
+    env_file:
+      - ./.env
     environment:
-      PGADMIN_DEFAULT_EMAIL: "admin@tarrafa.unimontes.br"
-      PGADMIN_DEFAULT_PASSWORD: "#pgadmin4@tarrafa.unimontes#2024"
+      PGADMIN_DEFAULT_EMAIL: $PGADMIN_EMAIL
+      PGADMIN_DEFAULT_PASSWORD: $PGADMIN_SENHA
     ports:
-      - "8002:80"
-    restart: "no"  # Importante para não iniciar automaticamente
+      - "8008:80"
+    restart: "no"
     networks:
-      - backend-net  # Acesso à rede onde o DB está disponível
+      - backend-net
+
+  rabbitmq:
+    build:
+      context: ./backend
+      dockerfile: DockerfileRabbitmq
+    hostname: rabbitmq
+    env_file:
+      - ./.env
+    ports:
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_PORT_MANAGEMENT}:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 20s
+      retries: 5
+    networks:
+      - backend-net
 
 networks:
   frontend-backend-net:
   backend-net:
-    

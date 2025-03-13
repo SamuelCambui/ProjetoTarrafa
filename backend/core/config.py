@@ -46,6 +46,7 @@ class Settings(BaseSettings):
     RABBITMQ_DEFAULT_VHOST : str = os.getenv('RABBITMQ_DEFAULT_VHOST', "vhost")
     RABBITMQ_DEFAULT_USER : str = os.getenv('RABBITMQ_DEFAULT_USER', "guest")
     RABBITMQ_DEFAULT_PASS : str = os.getenv('RABBITMQ_DEFAULT_PASS', "guest")
+    RABBITMQ_PORT : str = os.getenv('RABBITMQ_PORT', "5672")
 
     GRPC_SERVER_HOST : str = os.getenv('GRPC_SERVER_HOST', "localhost")
     GRPC_SERVER_USUARIOS : str = os.getenv('GRPC_SERVER_USUARIOS', "localhost")
