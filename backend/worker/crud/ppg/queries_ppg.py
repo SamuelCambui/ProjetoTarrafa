@@ -2460,6 +2460,8 @@ class QueriesPPG():
         datas_lattes = {'até 2 meses': 0, '3 e 6 meses': 0,
                         '6 e 8 meses': 0, '8 e 12 meses': 0, '+12 meses': 0}
 
+        dicionario = []
+
         for data in datas:
             dt = data['dt_atualizacao'][0:2]+'-' + \
                 data['dt_atualizacao'][2:4]+'-'+data['dt_atualizacao'][4:]
@@ -3799,7 +3801,7 @@ class QueriesPPG():
                 p['indprod'] = (indprod_prof/len(range(anoi,anof+1)))
 
         professors = sorted(professors, key=lambda p: p['indprod'], reverse=True)
-        medias = self.retorna_indprods_medios_extratificados(id,anoi, anof,db)
+        medias = self.retorna_indprods_medios_extratificados(id,anoi, anof)
         
 
         medias_uteis = {}
@@ -3908,7 +3910,7 @@ class QueriesPPG():
             for r in res:
                 if r['ano'] == ano:
                     r['indProdArt'], formula = utils.calcula_indprod(id,r,db)
-                    r.update(docentes[ano][r['num_identificador']])
+                    r.update(docentes[ano][r['num_identificador']]) if r['num_identificador'] in docentes[ano] else None
                     d['artigos'].append(r)
             retorno.append(d)
 
