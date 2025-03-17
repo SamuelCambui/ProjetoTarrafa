@@ -34,6 +34,13 @@ class IndicadoresGraduacaoServicer(grad_pb2_grpc.IndicadoresGraduacaoServicer):
                 id_ies=request.id_ies
             )
         )
+        consultas.append(
+            tasks_disciplinas.get_classificacao_disciplinas.s(
+                id_curso=request.id_curso, 
+                id_ies=request.id_ies, 
+                id_grade=request.id_grade
+            )
+        )
 
         for serie in range(serie_inicial, serie_final + 1):
             consultas.append(

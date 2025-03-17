@@ -115,6 +115,30 @@
             "envFile": "${workspaceFolder}/.env.desenvolvimento",
             "args": []
         },
+        // {
+        //     "name": "Python: SERVER LOGIN",
+        //     "type": "debugpy",
+        //     "request": "launch",
+        //     "program": "${workspaceFolder}/backend/app/api/api_login.py",
+        //     "console": "integratedTerminal",
+        //     "justMyCode": true,
+        //     "envFile": "${workspaceFolder}/.env.desenvolvimento",
+        //     "args": []
+        // },
+        {
+            "name": "Python: API LOGIN",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "envFile": "${workspaceFolder}/.env.desenvolvimento",
+            "args": [
+                "backend.app.api.api_login:app",
+                "--reload",
+                "--port",
+                "8002"
+            ],
+            "jinja": true
+        },
         {
             "name": "Next.js: debug full stack",
             "type": "node-terminal",

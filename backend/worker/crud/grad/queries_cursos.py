@@ -27,6 +27,31 @@ class QueriesCursos:
         return ret
 
     @tratamento_excecao_db_grad()
+    def cursos_aleatorios(self, id_ies: str, db: DBConnector = None):
+        """
+        Retorna 5 cursos aletórios para população da sidebar no front-end
+        """
+        query = """
+            SELECT cursos.id, nome, tiposcursos.descricao AS tipo_curso
+            FROM cursos
+            LEFT JOIN curso_tipo ON curso_tipo.id_curso = cursos.id AND curso_tipo.id_ies = cursos.id_ies
+            LEFT JOIN tiposcursos ON tiposcursos.id = curso_tipo.id_tipo
+            WHERE curso_tipo.id_tipo IN (1, 2, 10)
+            AND cursos.id IN (
+                SELECT DISTINCT aluno_curso.id_curso
+                FROM historico AS h
+                INNER JOIN aluno_curso ON aluno_curso.id = h.id_aluno_curso AND aluno_curso.id_ies = h.id_ies
+                WHERE CAST(h.ano_letivo AS INTEGER) BETWEEN date_part('year', CURRENT_DATE) - 10 AND date_part('year', CURRENT_DATE)
+                AND h.id_ies = %(id_ies)s
+            )
+            AND cursos.id_ies = %(id_ies)s
+            ORDER BY RANDOM()
+            LIMIT 5;
+        """
+        ret = db.fetch_all(query=query, id_ies=id_ies)
+        return ret
+
+    @tratamento_excecao_db_grad()
     def retorna_curso(self, id: str, id_ies: str, db: DBConnector = None):
         """
         Retorna dados de um curso em específico.

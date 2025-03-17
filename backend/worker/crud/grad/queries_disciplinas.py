@@ -471,9 +471,99 @@ class QueriesDisciplinas:
         ret = db.fetch_all(query=query, id_curso=id_curso, id_ies=id_ies, serie=serie)
         return ret
 
-    # TODO
     @tratamento_excecao_db_grad()
-    def classificao_disciplinas(self): ...
+    def classificacao_disciplinas(
+        self, 
+        id_curso: str, 
+        id_ies: str, 
+        id_grade: str | None, 
+        db: DBConnector = None,
+    ):
+        """
+        Retorna as informações para fazer a classificação(fácil, médio e difícil) das disciplinas de um curso.
+        """
+        if id_grade:
+            query = """
+                with query_disciplinas as (
+                    select cod_disc, serie from grad_dis where id_curso = %(id_curso)s and id_ies = %(id_ies)s and id_grade = %(id_grade)s
+                ),
+                nota_min_aprovacao as (
+                    select nota_min_aprovacao from cursos where id = %(id_curso)s and id_ies = %(id_ies)s
+                ),
+                query_quartis as (
+                    select h.cod_disc, d.nome, d.abreviacao, qd.serie, nota,
+                    ntile(4) over (partition by d.cod_disc order by nota) as quartil
+                    from historico as h 
+                    inner join disciplinas as d on d.cod_disc = h.cod_disc
+                    inner join query_disciplinas as qd on qd.cod_disc = h.cod_disc
+                    where h.cod_disc in (select cod_disc from query_disciplinas)
+                    and h.ano_letivo >= (
+                        select ano from grades where id_grade = %(id_grade)s and id_ies = %(id_ies)s and id_curso = %(id_curso)s
+                    )
+                    and nota is not null
+                )
+                select 
+                    cod_disc, nome, serie, abreviacao,
+                    max(case when quartil = 1 then nota end) as primeiro_quartil,
+                    max(case when quartil = 2 then nota end) as segundo_quartil,
+                    max(case when quartil = 3 then nota end) as terceiro_quartil,
+                    round(avg(nota), 2) as media,
+                    round(100.0 * SUM(CASE WHEN nota >= (select * from nota_min_aprovacao) THEN 1 ELSE 0 END) / COUNT(*), 2) AS taxa_aprovacao,
+                    count(*)
+                from query_quartis
+                group by cod_disc, nome, serie, abreviacao
+                having MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
+                AND MAX(CASE WHEN quartil = 2 THEN nota END) IS NOT NULL
+                AND MAX(CASE WHEN quartil = 3 THEN nota END) IS NOT NULL
+                order by serie, nome
+            """
+
+            ret = db.fetch_all(query=query, id_curso=id_curso, id_ies=id_ies, id_grade=id_grade)
+            return ret
+    
+        query = """
+            with ultima_grade as (
+                select id_grade, ano from grades where id_curso = %(id_curso)s
+                and id_ies = %(id_ies)s
+                order by ano desc, semestre desc
+                limit 1
+            ),
+            query_disciplinas as (
+                select cod_disc, serie from grad_dis where id_curso = %(id_curso)s and id_ies = %(id_ies)s and id_grade = (select id_grade from ultima_grade)
+            ),
+            nota_min_aprovacao as (
+                select nota_min_aprovacao from cursos where id = %(id_curso)s and id_ies = %(id_ies)s
+            ),
+            query_quartis as (
+                select h.cod_disc, d.nome, d.abreviacao, qd.serie, nota,
+                ntile(4) over (partition by d.cod_disc order by nota) as quartil
+                from historico as h 
+                inner join disciplinas as d on d.cod_disc = h.cod_disc
+                inner join query_disciplinas as qd on qd.cod_disc = h.cod_disc
+                where h.cod_disc in (select cod_disc from query_disciplinas)
+                and h.ano_letivo >= (
+                    select ano from ultima_grade
+                )
+                and nota is not null
+            )
+            select 
+                cod_disc, nome, serie, abreviacao,
+                max(case when quartil = 1 then nota end) as primeiro_quartil,
+                max(case when quartil = 2 then nota end) as segundo_quartil,
+                max(case when quartil = 3 then nota end) as terceiro_quartil,
+                round(avg(nota), 2) as media,
+                round(100.0 * SUM(CASE WHEN nota >= (select * from nota_min_aprovacao) THEN 1 ELSE 0 END) / COUNT(*), 2) AS taxa_aprovacao,
+                count(*)
+            from query_quartis
+            group by cod_disc, nome, serie, abreviacao
+            having MAX(CASE WHEN quartil = 1 THEN nota END) IS NOT NULL
+            AND MAX(CASE WHEN quartil = 2 THEN nota END) IS NOT NULL
+            AND MAX(CASE WHEN quartil = 3 THEN nota END) IS NOT NULL
+            order by serie, nome
+        """
+
+        ret = db.fetch_all(query=query, id_curso=id_curso, id_ies=id_ies)
+        return ret
 
     @tratamento_excecao_db_grad()
     def evasao_disciplina(

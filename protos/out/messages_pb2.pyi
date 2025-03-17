@@ -82,21 +82,24 @@ class LoginRequest(_message.Message):
     def __init__(self, username: _Optional[str] = ..., password: _Optional[str] = ...) -> None: ...
 
 class LoginResponse(_message.Message):
-    __slots__ = ("usuario", "erro")
+    __slots__ = ("usuario", "erro", "access_token", "refresh_token")
     USUARIO_FIELD_NUMBER: _ClassVar[int]
     ERRO_FIELD_NUMBER: _ClassVar[int]
-    usuario: UsuarioDadosFront
+    ACCESS_TOKEN_FIELD_NUMBER: _ClassVar[int]
+    REFRESH_TOKEN_FIELD_NUMBER: _ClassVar[int]
+    usuario: UsuarioDados
     erro: bool
-    def __init__(self, usuario: _Optional[_Union[UsuarioDadosFront, _Mapping]] = ..., erro: bool = ...) -> None: ...
+    access_token: str
+    refresh_token: str
+    def __init__(self, usuario: _Optional[_Union[UsuarioDados, _Mapping]] = ..., erro: bool = ..., access_token: _Optional[str] = ..., refresh_token: _Optional[str] = ...) -> None: ...
 
-class UsuarioDadosFront(_message.Message):
-    __slots__ = ("id_lattes", "email", "nome", "is_superuser", "is_admin", "is_active", "id_ies", "nome_ies", "sigla_ies", "link_avatar")
+class UsuarioDados(_message.Message):
+    __slots__ = ("id_lattes", "email", "nome", "is_superuser", "is_admin", "id_ies", "nome_ies", "sigla_ies", "link_avatar")
     ID_LATTES_FIELD_NUMBER: _ClassVar[int]
     EMAIL_FIELD_NUMBER: _ClassVar[int]
     NOME_FIELD_NUMBER: _ClassVar[int]
     IS_SUPERUSER_FIELD_NUMBER: _ClassVar[int]
     IS_ADMIN_FIELD_NUMBER: _ClassVar[int]
-    IS_ACTIVE_FIELD_NUMBER: _ClassVar[int]
     ID_IES_FIELD_NUMBER: _ClassVar[int]
     NOME_IES_FIELD_NUMBER: _ClassVar[int]
     SIGLA_IES_FIELD_NUMBER: _ClassVar[int]
@@ -106,50 +109,31 @@ class UsuarioDadosFront(_message.Message):
     nome: str
     is_superuser: bool
     is_admin: bool
-    is_active: bool
     id_ies: str
     nome_ies: str
     sigla_ies: str
     link_avatar: str
-    def __init__(self, id_lattes: _Optional[str] = ..., email: _Optional[str] = ..., nome: _Optional[str] = ..., is_superuser: bool = ..., is_admin: bool = ..., is_active: bool = ..., id_ies: _Optional[str] = ..., nome_ies: _Optional[str] = ..., sigla_ies: _Optional[str] = ..., link_avatar: _Optional[str] = ...) -> None: ...
-
-class UsuarioDadosCriacao(_message.Message):
-    __slots__ = ("id_lattes", "email", "nome", "is_superuser", "is_admin", "is_active", "id_ies")
-    ID_LATTES_FIELD_NUMBER: _ClassVar[int]
-    EMAIL_FIELD_NUMBER: _ClassVar[int]
-    NOME_FIELD_NUMBER: _ClassVar[int]
-    IS_SUPERUSER_FIELD_NUMBER: _ClassVar[int]
-    IS_ADMIN_FIELD_NUMBER: _ClassVar[int]
-    IS_ACTIVE_FIELD_NUMBER: _ClassVar[int]
-    ID_IES_FIELD_NUMBER: _ClassVar[int]
-    id_lattes: str
-    email: str
-    nome: str
-    is_superuser: bool
-    is_admin: bool
-    is_active: bool
-    id_ies: str
-    def __init__(self, id_lattes: _Optional[str] = ..., email: _Optional[str] = ..., nome: _Optional[str] = ..., is_superuser: bool = ..., is_admin: bool = ..., is_active: bool = ..., id_ies: _Optional[str] = ...) -> None: ...
+    def __init__(self, id_lattes: _Optional[str] = ..., email: _Optional[str] = ..., nome: _Optional[str] = ..., is_superuser: bool = ..., is_admin: bool = ..., id_ies: _Optional[str] = ..., nome_ies: _Optional[str] = ..., sigla_ies: _Optional[str] = ..., link_avatar: _Optional[str] = ...) -> None: ...
 
 class CriacaoUsuarioRequest(_message.Message):
-    __slots__ = ("usuario", "password")
-    USUARIO_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("usuario_base", "password")
+    USUARIO_BASE_FIELD_NUMBER: _ClassVar[int]
     PASSWORD_FIELD_NUMBER: _ClassVar[int]
-    usuario: UsuarioDadosCriacao
+    usuario_base: UsuarioDados
     password: str
-    def __init__(self, usuario: _Optional[_Union[UsuarioDadosCriacao, _Mapping]] = ..., password: _Optional[str] = ...) -> None: ...
+    def __init__(self, usuario_base: _Optional[_Union[UsuarioDados, _Mapping]] = ..., password: _Optional[str] = ...) -> None: ...
 
 class UsuarioRequest(_message.Message):
-    __slots__ = ("id_lattes",)
-    ID_LATTES_FIELD_NUMBER: _ClassVar[int]
-    id_lattes: str
-    def __init__(self, id_lattes: _Optional[str] = ...) -> None: ...
+    __slots__ = ("email",)
+    EMAIL_FIELD_NUMBER: _ClassVar[int]
+    email: str
+    def __init__(self, email: _Optional[str] = ...) -> None: ...
 
 class UsuarioResponse(_message.Message):
     __slots__ = ("usuario",)
     USUARIO_FIELD_NUMBER: _ClassVar[int]
-    usuario: UsuarioDadosFront
-    def __init__(self, usuario: _Optional[_Union[UsuarioDadosFront, _Mapping]] = ...) -> None: ...
+    usuario: UsuarioDados
+    def __init__(self, usuario: _Optional[_Union[UsuarioDados, _Mapping]] = ...) -> None: ...
 
 class AlteracaoUsuarioResponse(_message.Message):
     __slots__ = ("status", "menssagem")
@@ -164,6 +148,20 @@ class ListaUsuariosResponse(_message.Message):
     ITEM_FIELD_NUMBER: _ClassVar[int]
     item: _containers.RepeatedCompositeFieldContainer[UsuarioResponse]
     def __init__(self, item: _Optional[_Iterable[_Union[UsuarioResponse, _Mapping]]] = ...) -> None: ...
+
+class VerificarSessaoRequest(_message.Message):
+    __slots__ = ("refresh_token",)
+    REFRESH_TOKEN_FIELD_NUMBER: _ClassVar[int]
+    refresh_token: str
+    def __init__(self, refresh_token: _Optional[str] = ...) -> None: ...
+
+class VerificarSessaoResponse(_message.Message):
+    __slots__ = ("access_token", "erro")
+    ACCESS_TOKEN_FIELD_NUMBER: _ClassVar[int]
+    ERRO_FIELD_NUMBER: _ClassVar[int]
+    access_token: str
+    erro: bool
+    def __init__(self, access_token: _Optional[str] = ..., erro: bool = ...) -> None: ...
 
 class Universidade(_message.Message):
     __slots__ = ("id_ies", "nome", "sigla")

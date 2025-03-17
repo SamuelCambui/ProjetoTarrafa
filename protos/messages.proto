@@ -49,44 +49,35 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  optional UsuarioDadosFront usuario = 1;
+  optional UsuarioDados usuario = 1;
   bool erro = 2;
+  optional string access_token = 3; 
+  optional string refresh_token = 4; 
 }
 
-message UsuarioDadosFront {
+message UsuarioDados {
   optional string id_lattes = 1;
   optional string email = 2;
   optional string nome = 3;
   optional bool is_superuser = 4;
   optional bool is_admin = 5;
-  optional bool is_active = 6;
-  optional string id_ies = 7;
-  optional string nome_ies = 8;
-  optional string sigla_ies = 9;
-  optional string link_avatar = 10;
-}
-
-message UsuarioDadosCriacao {
-  optional string id_lattes = 1;
-  optional string email = 2;
-  optional string nome = 3;
-  optional bool is_superuser = 4;
-  optional bool is_admin = 5;
-  optional bool is_active = 6;
-  optional string id_ies = 7;
+  optional string id_ies = 6;
+  optional string nome_ies = 7;
+  optional string sigla_ies = 8;
+  optional string link_avatar = 9;
 }
 
 message CriacaoUsuarioRequest{
-  optional UsuarioDadosCriacao usuario = 1;
+  optional UsuarioDados usuario_base = 1;
   optional string password = 2;
 }
 
 message UsuarioRequest {
-  optional string id_lattes = 1;
+  optional string email = 1;
 }
 
 message UsuarioResponse {
-  optional UsuarioDadosFront usuario = 1;
+  optional UsuarioDados usuario = 1;
 }
 
 message AlteracaoUsuarioResponse {
@@ -96,6 +87,15 @@ message AlteracaoUsuarioResponse {
 
 message ListaUsuariosResponse {
   repeated UsuarioResponse item = 1;
+}
+
+message VerificarSessaoRequest {
+  string refresh_token = 1;
+}
+
+message VerificarSessaoResponse {
+  string access_token = 1;
+  optional bool erro = 2;
 }
 
 message Universidade {

@@ -54,35 +54,10 @@ class UsuarioStub(object):
                 request_serializer=messages__pb2.UsuarioRequest.SerializeToString,
                 response_deserializer=messages__pb2.UsuarioResponse.FromString,
                 _registered_method=True)
-        self.ObtemListaUsuarios = channel.unary_unary(
-                '/protos.Usuario/ObtemListaUsuarios',
-                request_serializer=messages__pb2.UsuarioResponse.SerializeToString,
-                response_deserializer=messages__pb2.ListaUsuariosResponse.FromString,
-                _registered_method=True)
-        self.DeletarUsuario = channel.unary_unary(
-                '/protos.Usuario/DeletarUsuario',
-                request_serializer=messages__pb2.UsuarioRequest.SerializeToString,
-                response_deserializer=messages__pb2.AlteracaoUsuarioResponse.FromString,
-                _registered_method=True)
-        self.AlternarStatusUsuario = channel.unary_unary(
-                '/protos.Usuario/AlternarStatusUsuario',
-                request_serializer=messages__pb2.UsuarioRequest.SerializeToString,
-                response_deserializer=messages__pb2.AlteracaoUsuarioResponse.FromString,
-                _registered_method=True)
-        self.AtualizarUsuario = channel.unary_unary(
-                '/protos.Usuario/AtualizarUsuario',
-                request_serializer=messages__pb2.CriacaoUsuarioRequest.SerializeToString,
-                response_deserializer=messages__pb2.AlteracaoUsuarioResponse.FromString,
-                _registered_method=True)
-        self.CriarUsuario = channel.unary_unary(
-                '/protos.Usuario/CriarUsuario',
-                request_serializer=messages__pb2.CriacaoUsuarioRequest.SerializeToString,
-                response_deserializer=messages__pb2.AlteracaoUsuarioResponse.FromString,
-                _registered_method=True)
-        self.ObtemListaUniversidades = channel.unary_unary(
-                '/protos.Usuario/ObtemListaUniversidades',
-                request_serializer=messages__pb2.Empty.SerializeToString,
-                response_deserializer=messages__pb2.ListaUniversidadesResponse.FromString,
+        self.VerificarSessao = channel.unary_unary(
+                '/protos.Usuario/VerificarSessao',
+                request_serializer=messages__pb2.VerificarSessaoRequest.SerializeToString,
+                response_deserializer=messages__pb2.VerificarSessaoResponse.FromString,
                 _registered_method=True)
 
 
@@ -107,38 +82,13 @@ class UsuarioServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ObtemListaUsuarios(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def DeletarUsuario(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def AlternarStatusUsuario(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def AtualizarUsuario(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def CriarUsuario(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def ObtemListaUniversidades(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+    def VerificarSessao(self, request, context):
+        """rpc ObtemListaUsuarios (UsuarioRequest) returns (ListaUsuariosResponse);
+        rpc AtualizarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+        rpc CriarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+        rpc DeletarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+        rpc AlternarStatusUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -161,35 +111,10 @@ def add_UsuarioServicer_to_server(servicer, server):
                     request_deserializer=messages__pb2.UsuarioRequest.FromString,
                     response_serializer=messages__pb2.UsuarioResponse.SerializeToString,
             ),
-            'ObtemListaUsuarios': grpc.unary_unary_rpc_method_handler(
-                    servicer.ObtemListaUsuarios,
-                    request_deserializer=messages__pb2.UsuarioResponse.FromString,
-                    response_serializer=messages__pb2.ListaUsuariosResponse.SerializeToString,
-            ),
-            'DeletarUsuario': grpc.unary_unary_rpc_method_handler(
-                    servicer.DeletarUsuario,
-                    request_deserializer=messages__pb2.UsuarioRequest.FromString,
-                    response_serializer=messages__pb2.AlteracaoUsuarioResponse.SerializeToString,
-            ),
-            'AlternarStatusUsuario': grpc.unary_unary_rpc_method_handler(
-                    servicer.AlternarStatusUsuario,
-                    request_deserializer=messages__pb2.UsuarioRequest.FromString,
-                    response_serializer=messages__pb2.AlteracaoUsuarioResponse.SerializeToString,
-            ),
-            'AtualizarUsuario': grpc.unary_unary_rpc_method_handler(
-                    servicer.AtualizarUsuario,
-                    request_deserializer=messages__pb2.CriacaoUsuarioRequest.FromString,
-                    response_serializer=messages__pb2.AlteracaoUsuarioResponse.SerializeToString,
-            ),
-            'CriarUsuario': grpc.unary_unary_rpc_method_handler(
-                    servicer.CriarUsuario,
-                    request_deserializer=messages__pb2.CriacaoUsuarioRequest.FromString,
-                    response_serializer=messages__pb2.AlteracaoUsuarioResponse.SerializeToString,
-            ),
-            'ObtemListaUniversidades': grpc.unary_unary_rpc_method_handler(
-                    servicer.ObtemListaUniversidades,
-                    request_deserializer=messages__pb2.Empty.FromString,
-                    response_serializer=messages__pb2.ListaUniversidadesResponse.SerializeToString,
+            'VerificarSessao': grpc.unary_unary_rpc_method_handler(
+                    servicer.VerificarSessao,
+                    request_deserializer=messages__pb2.VerificarSessaoRequest.FromString,
+                    response_serializer=messages__pb2.VerificarSessaoResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -284,7 +209,7 @@ class Usuario(object):
             _registered_method=True)
 
     @staticmethod
-    def ObtemListaUsuarios(request,
+    def VerificarSessao(request,
             target,
             options=(),
             channel_credentials=None,
@@ -297,144 +222,9 @@ class Usuario(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Usuario/ObtemListaUsuarios',
-            messages__pb2.UsuarioResponse.SerializeToString,
-            messages__pb2.ListaUsuariosResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def DeletarUsuario(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/protos.Usuario/DeletarUsuario',
-            messages__pb2.UsuarioRequest.SerializeToString,
-            messages__pb2.AlteracaoUsuarioResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def AlternarStatusUsuario(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/protos.Usuario/AlternarStatusUsuario',
-            messages__pb2.UsuarioRequest.SerializeToString,
-            messages__pb2.AlteracaoUsuarioResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def AtualizarUsuario(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/protos.Usuario/AtualizarUsuario',
-            messages__pb2.CriacaoUsuarioRequest.SerializeToString,
-            messages__pb2.AlteracaoUsuarioResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def CriarUsuario(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/protos.Usuario/CriarUsuario',
-            messages__pb2.CriacaoUsuarioRequest.SerializeToString,
-            messages__pb2.AlteracaoUsuarioResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def ObtemListaUniversidades(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/protos.Usuario/ObtemListaUniversidades',
-            messages__pb2.Empty.SerializeToString,
-            messages__pb2.ListaUniversidadesResponse.FromString,
+            '/protos.Usuario/VerificarSessao',
+            messages__pb2.VerificarSessaoRequest.SerializeToString,
+            messages__pb2.VerificarSessaoResponse.FromString,
             options,
             channel_credentials,
             insecure,

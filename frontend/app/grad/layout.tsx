@@ -1,18 +1,14 @@
-"use client";
-import { AppSidebar } from "@/app/grad/(components)/sidebar";
+import { AppSidebar } from "@/app/grad/_components/sidebar";
+import { auth } from "@/auth";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { PropsWithChildren } from "react";
-import { GradContextProvider } from "./GradContext";
 
-export const Layout = ({ children }: PropsWithChildren) => {
+export default async function Layout({ children }: PropsWithChildren) {
+  const session = await auth();
   return (
-    <GradContextProvider>
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>{children}</SidebarInset>
-      </SidebarProvider>
-    </GradContextProvider>
+    <SidebarProvider>
+      <AppSidebar loggedUser={session?.user} />
+      <SidebarInset>{children}</SidebarInset>
+    </SidebarProvider>
   );
-};
-
-export default Layout;
+}

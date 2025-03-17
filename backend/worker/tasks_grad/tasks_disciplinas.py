@@ -1,9 +1,12 @@
 import json
-from backend.schemas.grafico import DadosGrafico, DataSet, Grafico
 from protos.out.messages_pb2 import GradJson
 from google.protobuf.json_format import MessageToDict
 from backend.worker.crud.grad.queries_disciplinas import queries_disciplinas
 from backend.worker.celery_start_queries import app_celery_queries
+import polars as pl
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+import pandas as pd
 
 
 @app_celery_queries.task
@@ -413,4 +416,97 @@ def get_histograma_desempenho_cotistas(
         return MessageToDict(message)
     except Exception as err:
         message = GradJson(nome="histogramaDesempenhoCotistas", json=None)
+        return MessageToDict(message)
+
+@app_celery_queries.task
+def get_classificacao_disciplinas(
+    id_curso: str, 
+    id_ies: str, 
+    id_grade: str | None, 
+):
+    try:
+        disciplinas = queries_disciplinas.classificacao_disciplinas(
+            id_curso=id_curso, 
+            id_ies=id_ies, 
+            id_grade=id_grade
+        )
+
+        df = pl.DataFrame([dict(disciplina) for disciplina in disciplinas])
+        
+        # Normalizador dos Dados
+        scaler = StandardScaler()
+        
+        df_pandas = df.select(["primeiro_quartil", "segundo_quartil", "terceiro_quartil", "taxa_aprovacao", "media"]).to_pandas()
+
+        # Dataframe normalizado
+        df_scaled = pl.DataFrame(pd.DataFrame(scaler.fit_transform(df_pandas), columns=df_pandas.columns)).with_columns(
+            pl.Series(name="cod_disc", values=df.select(["cod_disc"]).to_series()),
+            pl.Series(name="nome", values=df.select(["nome"]).to_series()),
+            pl.Series(name="abreviacao", values=df.select(["abreviacao"]).to_series()),
+            pl.Series(name="serie", values=df.select(["serie"]).to_series()),
+            pl.Series(name="count", values=df.select(["count"]).to_series()),
+        )
+
+        # Aplicação do K-Means
+        xkmeans = KMeans(n_clusters=3).fit(
+            df_scaled.select(["primeiro_quartil", "segundo_quartil", "terceiro_quartil", "taxa_aprovacao", "media"])\
+            .to_pandas()
+        )
+
+        # Detecção de qual grupo é mais fácil e qual é mais difícil com base na média dos clusters
+        # 
+        # A análise é feita com base na média dos clusters onde o cluster com a menor média é considerado o mais difícil,
+        # pois apresenta os menores valores das variáveis analisadas.
+        media_clusters = pd.DataFrame(xkmeans.cluster_centers_).mean(axis=1).to_list()
+
+        labels = [0, 1, 2]
+        label_dificil = media_clusters.index(min(media_clusters))
+        labels.remove(label_dificil)
+        label_facil = media_clusters.index(max(media_clusters))
+        labels.remove(label_facil)
+        label_medio = labels[0]
+
+        df_classificacao = pl.DataFrame(df_scaled).with_columns(
+            pl.Series(name='cluster', values=xkmeans.labels_)
+        )\
+            .with_columns(
+                pl.when(pl.col("cluster").eq(label_facil))
+                    .then(pl.lit("Fácil"))
+                .when(pl.col("cluster").eq(label_medio))
+                    .then(pl.lit("Médio"))
+                .when(pl.col("cluster").eq(label_dificil))
+                    .then(pl.lit("Difícil"))
+                .alias('cluster')
+            )
+        
+        dict_df = df_classificacao.select(["cod_disc", "nome", "abreviacao", "serie", "count", "cluster"]).to_dicts()
+
+        classification_dict = {
+            "id": "Níveis",
+            "children": [
+                { 
+                    "id": "Fácil", 
+                    "children": [
+                        {"id": f"({disc['abreviacao']}) {disc['nome']}", "parentId": "Fácil"} for disc in dict_df if disc["cluster"] == "Fácil"
+                    ] 
+                }, 
+                { 
+                    "id": "Médio", 
+                    "children": [
+                        {"id": f"({disc['abreviacao']}) {disc['nome']}", "parentId": "Médio"} for disc in dict_df if disc["cluster"] == "Médio"
+                    ] 
+                },  
+                { 
+                    "id": "Difícil", 
+                    "children": [
+                        {"id": f"({disc['abreviacao']}) {disc['nome']}", "parentId": "Difícil"} for disc in dict_df if disc["cluster"] == "Difícil"
+                    ] 
+                }, 
+            ]
+        }
+
+        message = GradJson(nome="classificacaoDisciplinas", json=json.dumps(classification_dict))
+        return MessageToDict(message)
+    except Exception as err:
+        message = GradJson(nome="classificacaoDisciplinas", json=None)
         return MessageToDict(message)

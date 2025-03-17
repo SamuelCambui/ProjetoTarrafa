@@ -1,4 +1,12 @@
 from __future__ import print_function
+import sys
+from pathlib import Path
+
+# Adiciona o diretório raiz do projeto ao sys.path
+# Necessário para que as importações a seguir sejam encontradas no path
+diretorio_raiz = Path(__name__).resolve().parent
+sys.path.append(str(diretorio_raiz))
+
 from backend.db.cache import RedisConnector
 from backend.worker.task_users import tarefa_autentica_usuario, tarefa_verifica_usuario
 from backend.core.security import generate_jwt_token, decode_jwt_token, ACCESS_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_EXPIRATION_TIME
@@ -39,25 +47,12 @@ def Login(request : UserLogin) -> dict:
             raise
         elif not user.is_active:
             raise
-        access_token = generate_jwt_token(user.model_dump(), time=ACCESS_TOKEN_EXPIRATION_TIME)
-        refresh_token = generate_jwt_token(
-            {"id_lattes": user.id_lattes, "token_id": str(uuid.uuid4())}, 
-            time=REFRESH_TOKEN_EXPIRATION_TIME
-        )
         
-        redis = RedisConnector()
-        redis.setJson(
-            f"user:{user.id_lattes}", 
-            {"refresh_token": refresh_token, "user": user.model_dump()}, 
-            60 * 60 * 24
-        )
 
         loginResponse = {
             "usuario" : user, 
             "erro" : False, 
-            "access_token" : access_token, 
-            "refresh_token" : refresh_token 
-            }
+        }
 
         return loginResponse
 
@@ -66,23 +61,21 @@ def Login(request : UserLogin) -> dict:
         return {
             "usuario" : None, 
             "erro" : True, 
-            "access_token" : None, 
-            "refresh_token" : None 
-            }
+        }
 
-# @app.get("/obter_usuario")
-# def ObtemUsuario(idlattes : str) -> dict:
-#     print('ObtemUsuario chamada...')
-#     try:
-#         usuario = tarefa_verifica_usuario.apply(kwargs={'idlattes':idlattes}).get()
-#         if usuario:
+@app.get("/obter_usuario")
+def ObtemUsuario(idlattes : str) -> dict:
+    print('ObtemUsuario chamada...')
+    try:
+        usuario = tarefa_verifica_usuario.apply(kwargs={'idlattes':idlattes}).get()
+        if usuario:
             
-#             return usuario.model_dump()
+            return usuario.model_dump()
         
-#         return {}
-#     except Exception as e:
-#         print(e)
-#         return {}
+        return {}
+    except Exception as e:
+        print(e)
+        return {}
     
 @app.post("/verificar_token")
 def VerificarSessao(token : Token):
