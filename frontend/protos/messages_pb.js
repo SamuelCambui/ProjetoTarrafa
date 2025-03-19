@@ -2834,10 +2834,11 @@ proto.protos.UsuarioDados.toObject = function(includeInstance, msg) {
     nome: jspb.Message.getFieldWithDefault(msg, 3, ""),
     isSuperuser: jspb.Message.getBooleanFieldWithDefault(msg, 4, false),
     isAdmin: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
-    idIes: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    nomeIes: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    siglaIes: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    linkAvatar: jspb.Message.getFieldWithDefault(msg, 9, "")
+    isActive: jspb.Message.getBooleanFieldWithDefault(msg, 6, false),
+    idIes: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    nomeIes: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    siglaIes: jspb.Message.getFieldWithDefault(msg, 9, ""),
+    linkAvatar: jspb.Message.getFieldWithDefault(msg, 10, "")
   };
 
   if (includeInstance) {
@@ -2895,18 +2896,22 @@ proto.protos.UsuarioDados.deserializeBinaryFromReader = function(msg, reader) {
       msg.setIsAdmin(value);
       break;
     case 6:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setIdIes(value);
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsActive(value);
       break;
     case 7:
       var value = /** @type {string} */ (reader.readString());
-      msg.setNomeIes(value);
+      msg.setIdIes(value);
       break;
     case 8:
       var value = /** @type {string} */ (reader.readString());
-      msg.setSiglaIes(value);
+      msg.setNomeIes(value);
       break;
     case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSiglaIes(value);
+      break;
+    case 10:
       var value = /** @type {string} */ (reader.readString());
       msg.setLinkAvatar(value);
       break;
@@ -2974,9 +2979,9 @@ proto.protos.UsuarioDados.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = /** @type {string} */ (jspb.Message.getField(message, 6));
+  f = /** @type {boolean} */ (jspb.Message.getField(message, 6));
   if (f != null) {
-    writer.writeString(
+    writer.writeBool(
       6,
       f
     );
@@ -2999,6 +3004,13 @@ proto.protos.UsuarioDados.serializeBinaryToWriter = function(message, writer) {
   if (f != null) {
     writer.writeString(
       9,
+      f
+    );
+  }
+  f = /** @type {string} */ (jspb.Message.getField(message, 10));
+  if (f != null) {
+    writer.writeString(
+      10,
       f
     );
   }
@@ -3186,19 +3198,19 @@ proto.protos.UsuarioDados.prototype.hasIsAdmin = function() {
 
 
 /**
- * optional string id_ies = 6;
- * @return {string}
+ * optional bool is_active = 6;
+ * @return {boolean}
  */
-proto.protos.UsuarioDados.prototype.getIdIes = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+proto.protos.UsuarioDados.prototype.getIsActive = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 6, false));
 };
 
 
 /**
- * @param {string} value
+ * @param {boolean} value
  * @return {!proto.protos.UsuarioDados} returns this
  */
-proto.protos.UsuarioDados.prototype.setIdIes = function(value) {
+proto.protos.UsuarioDados.prototype.setIsActive = function(value) {
   return jspb.Message.setField(this, 6, value);
 };
 
@@ -3207,7 +3219,7 @@ proto.protos.UsuarioDados.prototype.setIdIes = function(value) {
  * Clears the field making it undefined.
  * @return {!proto.protos.UsuarioDados} returns this
  */
-proto.protos.UsuarioDados.prototype.clearIdIes = function() {
+proto.protos.UsuarioDados.prototype.clearIsActive = function() {
   return jspb.Message.setField(this, 6, undefined);
 };
 
@@ -3216,16 +3228,16 @@ proto.protos.UsuarioDados.prototype.clearIdIes = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.protos.UsuarioDados.prototype.hasIdIes = function() {
+proto.protos.UsuarioDados.prototype.hasIsActive = function() {
   return jspb.Message.getField(this, 6) != null;
 };
 
 
 /**
- * optional string nome_ies = 7;
+ * optional string id_ies = 7;
  * @return {string}
  */
-proto.protos.UsuarioDados.prototype.getNomeIes = function() {
+proto.protos.UsuarioDados.prototype.getIdIes = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
@@ -3234,7 +3246,7 @@ proto.protos.UsuarioDados.prototype.getNomeIes = function() {
  * @param {string} value
  * @return {!proto.protos.UsuarioDados} returns this
  */
-proto.protos.UsuarioDados.prototype.setNomeIes = function(value) {
+proto.protos.UsuarioDados.prototype.setIdIes = function(value) {
   return jspb.Message.setField(this, 7, value);
 };
 
@@ -3243,7 +3255,7 @@ proto.protos.UsuarioDados.prototype.setNomeIes = function(value) {
  * Clears the field making it undefined.
  * @return {!proto.protos.UsuarioDados} returns this
  */
-proto.protos.UsuarioDados.prototype.clearNomeIes = function() {
+proto.protos.UsuarioDados.prototype.clearIdIes = function() {
   return jspb.Message.setField(this, 7, undefined);
 };
 
@@ -3252,16 +3264,16 @@ proto.protos.UsuarioDados.prototype.clearNomeIes = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.protos.UsuarioDados.prototype.hasNomeIes = function() {
+proto.protos.UsuarioDados.prototype.hasIdIes = function() {
   return jspb.Message.getField(this, 7) != null;
 };
 
 
 /**
- * optional string sigla_ies = 8;
+ * optional string nome_ies = 8;
  * @return {string}
  */
-proto.protos.UsuarioDados.prototype.getSiglaIes = function() {
+proto.protos.UsuarioDados.prototype.getNomeIes = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
 };
 
@@ -3270,7 +3282,7 @@ proto.protos.UsuarioDados.prototype.getSiglaIes = function() {
  * @param {string} value
  * @return {!proto.protos.UsuarioDados} returns this
  */
-proto.protos.UsuarioDados.prototype.setSiglaIes = function(value) {
+proto.protos.UsuarioDados.prototype.setNomeIes = function(value) {
   return jspb.Message.setField(this, 8, value);
 };
 
@@ -3279,7 +3291,7 @@ proto.protos.UsuarioDados.prototype.setSiglaIes = function(value) {
  * Clears the field making it undefined.
  * @return {!proto.protos.UsuarioDados} returns this
  */
-proto.protos.UsuarioDados.prototype.clearSiglaIes = function() {
+proto.protos.UsuarioDados.prototype.clearNomeIes = function() {
   return jspb.Message.setField(this, 8, undefined);
 };
 
@@ -3288,16 +3300,16 @@ proto.protos.UsuarioDados.prototype.clearSiglaIes = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.protos.UsuarioDados.prototype.hasSiglaIes = function() {
+proto.protos.UsuarioDados.prototype.hasNomeIes = function() {
   return jspb.Message.getField(this, 8) != null;
 };
 
 
 /**
- * optional string link_avatar = 9;
+ * optional string sigla_ies = 9;
  * @return {string}
  */
-proto.protos.UsuarioDados.prototype.getLinkAvatar = function() {
+proto.protos.UsuarioDados.prototype.getSiglaIes = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
 };
 
@@ -3306,7 +3318,7 @@ proto.protos.UsuarioDados.prototype.getLinkAvatar = function() {
  * @param {string} value
  * @return {!proto.protos.UsuarioDados} returns this
  */
-proto.protos.UsuarioDados.prototype.setLinkAvatar = function(value) {
+proto.protos.UsuarioDados.prototype.setSiglaIes = function(value) {
   return jspb.Message.setField(this, 9, value);
 };
 
@@ -3315,7 +3327,7 @@ proto.protos.UsuarioDados.prototype.setLinkAvatar = function(value) {
  * Clears the field making it undefined.
  * @return {!proto.protos.UsuarioDados} returns this
  */
-proto.protos.UsuarioDados.prototype.clearLinkAvatar = function() {
+proto.protos.UsuarioDados.prototype.clearSiglaIes = function() {
   return jspb.Message.setField(this, 9, undefined);
 };
 
@@ -3324,8 +3336,44 @@ proto.protos.UsuarioDados.prototype.clearLinkAvatar = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.protos.UsuarioDados.prototype.hasLinkAvatar = function() {
+proto.protos.UsuarioDados.prototype.hasSiglaIes = function() {
   return jspb.Message.getField(this, 9) != null;
+};
+
+
+/**
+ * optional string link_avatar = 10;
+ * @return {string}
+ */
+proto.protos.UsuarioDados.prototype.getLinkAvatar = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.protos.UsuarioDados} returns this
+ */
+proto.protos.UsuarioDados.prototype.setLinkAvatar = function(value) {
+  return jspb.Message.setField(this, 10, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.protos.UsuarioDados} returns this
+ */
+proto.protos.UsuarioDados.prototype.clearLinkAvatar = function() {
+  return jspb.Message.setField(this, 10, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.protos.UsuarioDados.prototype.hasLinkAvatar = function() {
+  return jspb.Message.getField(this, 10) != null;
 };
 
 
@@ -3361,7 +3409,7 @@ proto.protos.CriacaoUsuarioRequest.prototype.toObject = function(opt_includeInst
  */
 proto.protos.CriacaoUsuarioRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    usuarioBase: (f = msg.getUsuarioBase()) && proto.protos.UsuarioDados.toObject(includeInstance, f),
+    usuario: (f = msg.getUsuario()) && proto.protos.UsuarioDados.toObject(includeInstance, f),
     password: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
@@ -3402,7 +3450,7 @@ proto.protos.CriacaoUsuarioRequest.deserializeBinaryFromReader = function(msg, r
     case 1:
       var value = new proto.protos.UsuarioDados;
       reader.readMessage(value,proto.protos.UsuarioDados.deserializeBinaryFromReader);
-      msg.setUsuarioBase(value);
+      msg.setUsuario(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
@@ -3437,7 +3485,7 @@ proto.protos.CriacaoUsuarioRequest.prototype.serializeBinary = function() {
  */
 proto.protos.CriacaoUsuarioRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getUsuarioBase();
+  f = message.getUsuario();
   if (f != null) {
     writer.writeMessage(
       1,
@@ -3456,10 +3504,10 @@ proto.protos.CriacaoUsuarioRequest.serializeBinaryToWriter = function(message, w
 
 
 /**
- * optional UsuarioDados usuario_base = 1;
+ * optional UsuarioDados usuario = 1;
  * @return {?proto.protos.UsuarioDados}
  */
-proto.protos.CriacaoUsuarioRequest.prototype.getUsuarioBase = function() {
+proto.protos.CriacaoUsuarioRequest.prototype.getUsuario = function() {
   return /** @type{?proto.protos.UsuarioDados} */ (
     jspb.Message.getWrapperField(this, proto.protos.UsuarioDados, 1));
 };
@@ -3469,7 +3517,7 @@ proto.protos.CriacaoUsuarioRequest.prototype.getUsuarioBase = function() {
  * @param {?proto.protos.UsuarioDados|undefined} value
  * @return {!proto.protos.CriacaoUsuarioRequest} returns this
 */
-proto.protos.CriacaoUsuarioRequest.prototype.setUsuarioBase = function(value) {
+proto.protos.CriacaoUsuarioRequest.prototype.setUsuario = function(value) {
   return jspb.Message.setWrapperField(this, 1, value);
 };
 
@@ -3478,8 +3526,8 @@ proto.protos.CriacaoUsuarioRequest.prototype.setUsuarioBase = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.protos.CriacaoUsuarioRequest} returns this
  */
-proto.protos.CriacaoUsuarioRequest.prototype.clearUsuarioBase = function() {
-  return this.setUsuarioBase(undefined);
+proto.protos.CriacaoUsuarioRequest.prototype.clearUsuario = function() {
+  return this.setUsuario(undefined);
 };
 
 
@@ -3487,7 +3535,7 @@ proto.protos.CriacaoUsuarioRequest.prototype.clearUsuarioBase = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.protos.CriacaoUsuarioRequest.prototype.hasUsuarioBase = function() {
+proto.protos.CriacaoUsuarioRequest.prototype.hasUsuario = function() {
   return jspb.Message.getField(this, 1) != null;
 };
 
@@ -3560,7 +3608,7 @@ proto.protos.UsuarioRequest.prototype.toObject = function(opt_includeInstance) {
  */
 proto.protos.UsuarioRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    email: jspb.Message.getFieldWithDefault(msg, 1, "")
+    idLattes: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -3599,7 +3647,7 @@ proto.protos.UsuarioRequest.deserializeBinaryFromReader = function(msg, reader) 
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setEmail(value);
+      msg.setIdLattes(value);
       break;
     default:
       reader.skipField();
@@ -3641,10 +3689,10 @@ proto.protos.UsuarioRequest.serializeBinaryToWriter = function(message, writer) 
 
 
 /**
- * optional string email = 1;
+ * optional string id_lattes = 1;
  * @return {string}
  */
-proto.protos.UsuarioRequest.prototype.getEmail = function() {
+proto.protos.UsuarioRequest.prototype.getIdLattes = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -3653,7 +3701,7 @@ proto.protos.UsuarioRequest.prototype.getEmail = function() {
  * @param {string} value
  * @return {!proto.protos.UsuarioRequest} returns this
  */
-proto.protos.UsuarioRequest.prototype.setEmail = function(value) {
+proto.protos.UsuarioRequest.prototype.setIdLattes = function(value) {
   return jspb.Message.setField(this, 1, value);
 };
 
@@ -3662,7 +3710,7 @@ proto.protos.UsuarioRequest.prototype.setEmail = function(value) {
  * Clears the field making it undefined.
  * @return {!proto.protos.UsuarioRequest} returns this
  */
-proto.protos.UsuarioRequest.prototype.clearEmail = function() {
+proto.protos.UsuarioRequest.prototype.clearIdLattes = function() {
   return jspb.Message.setField(this, 1, undefined);
 };
 
@@ -3671,7 +3719,7 @@ proto.protos.UsuarioRequest.prototype.clearEmail = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.protos.UsuarioRequest.prototype.hasEmail = function() {
+proto.protos.UsuarioRequest.prototype.hasIdLattes = function() {
   return jspb.Message.getField(this, 1) != null;
 };
 

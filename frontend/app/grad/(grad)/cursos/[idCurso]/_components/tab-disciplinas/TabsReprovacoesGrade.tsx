@@ -39,7 +39,7 @@ export const TabsReprovacoesGrade = ({
           {Array.from({ length: Number(serieFinal) }).map((_, i) => (
             <TabsContent value={(i + 1).toString()} key={i}>
               <GraficoReprovacoesGrade
-                data={data[`aprovacoesReprovacoesSerie${i + 1}`]}
+                data={(data as any)[`aprovacoesReprovacoesSerie${i + 1}`]}
                 isLoading={isLoading}
               />
             </TabsContent>

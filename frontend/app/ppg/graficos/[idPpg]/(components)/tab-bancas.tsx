@@ -2,8 +2,9 @@
 
 import { Loading } from "@/components/loading";
 import useDadosAbaBancas from "@/hooks/ppg/use-aba-bancas";
+import { DadosBancas } from "@/lib/ppg/definitions";
 import { ArtigosViculadosTCCs } from "./(graficos)/bancas/artigos-vinculados-tcc";
-import CardsEstatisticas from "./(graficos)/bancas/cards-estatisticas";
+import { CardsEstatisticas } from "./(graficos)/bancas/cards-estatisticas";
 import { LinhaPesquisaTCCs } from "./(graficos)/bancas/linha-pesquisa-tcc";
 import { PPGsPaticipantesExternos } from "./(graficos)/bancas/participantes-externos";
 import { ProdVinculadosTCCs } from "./(graficos)/bancas/prod-vinculados-tccs";
@@ -28,8 +29,8 @@ export default function TabBancas({
     idIes,
     idPpg,
     anoInicial,
-    anoFinal,
-  );
+    anoFinal
+  ) as { dadosBancas?: DadosBancas; isLoading: boolean };
 
   if (isLoading) {
     return <Loading />;
@@ -38,15 +39,15 @@ export default function TabBancas({
   if (!dadosBancas) {
     return <div>Nenhum dado foi encontrado</div>;
   }
-  
+
   const {
     dadosDeProdutosPorTcc: {
       medias,
       produtos,
-      tccs_com_qualis,
-      tccs_com_producoes,
-      tccs_com_livros,
-    } = {},
+      tccs_com_qualis: TccComQualis,
+      tccs_com_producoes: TccComProd,
+      tccs_com_livros: TccComLivros,
+    },
     dadosDeTccsPorLinhasDePesquisa,
     levantamentoExternosEmBancas,
   } = dadosBancas;
@@ -61,17 +62,18 @@ export default function TabBancas({
           quantidadeInternos={levantamentoExternosEmBancas.quantidade_internos}
         />
         <ProdVinculadosTCCs produtos={produtos} />
-        <ArtigosViculadosTCCs tccsComQualis={tccs_com_qualis} />
+        <ArtigosViculadosTCCs tccsComQualis={TccComQualis} />
         <QuantidadeProdutosTCCs
-          tccsComProducoes={tccs_com_producoes}
+          tccsComProducoes={TccComProd}
           medias={medias}
         />
-        <QuantidadeLivrosTCCs tccsComLivros={tccs_com_livros} />
+        <QuantidadeLivrosTCCs tccsComLivros={TccComLivros} />
         <PPGsPaticipantesExternos
           tipoParticipacao={levantamentoExternosEmBancas.tipo_participacao_ppg}
         />
         <LinhaPesquisaTCCs
-          dadosLinhasPesquisa={dadosDeTccsPorLinhasDePesquisa.links}
+          dadosLinhasPesquisa={dadosDeTccsPorLinhasDePesquisa
+          }
         />
         <TitulacaoPaticipantesExternos
           areaTitulacao={levantamentoExternosEmBancas.area_titulacao}

@@ -8,14 +8,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DualAxes } from "@ant-design/plots";
+import { Any } from "@grpc/grpc-js/build/src/generated/google/protobuf/Any";
+import { any } from "zod";
 
-export const Coautoria = ({dadosCoautoria}) => {
-  // const data = dadosCoautoria.labels.map((ano, index) => ({
-  //   ano: ano.toString(),
-  //   dadosCoatoria: dadosCoautoria.datasets[0].data[index],
-  //   mediaCoautoria: dadosCoautoria.datasets[1].data[index],
-  // }));
-
+export const Coautoria = ({dadosCoautoria}: { dadosCoautoria: any }) => {
+  const data = dadosCoautoria.labels.map((ano : any, index: any) => ({
+    ano: ano.toString(),
+    dadosCoatoria: dadosCoautoria.datasets[0].data[index],
+    mediaCoautoria: dadosCoautoria.datasets[1].data[index],
+  }));
 
   const config = {
       data,

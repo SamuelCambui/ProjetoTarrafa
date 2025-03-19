@@ -1,5 +1,6 @@
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
+import { DadosLattesEgresso, ObjetoDadosEgressos } from "@/lib/ppg/definitions";
 import {
   Label,
   PolarGrid,
@@ -15,7 +16,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function EgressoComMudanca({ informacoesEgressos }) {
+export function EgressoComMudanca({ informacoesEgressos } : {informacoesEgressos: ObjetoDadosEgressos}) {
   const egressosTotais = informacoesEgressos["dados"].length;
 
   const egressosComMudanca = informacoesEgressos["dados"].filter(

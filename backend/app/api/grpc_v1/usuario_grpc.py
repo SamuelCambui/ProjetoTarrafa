@@ -33,7 +33,7 @@ class Usuario(usuarios_pb2_grpc.UsuarioServicer):
         try:
             usuario = tarefa_verifica_usuario.apply(kwargs={'idlattes':request.id_lattes}).get()
             if usuario:
-                usuarioResponse = messages_pb2.UsuarioResponse(usuario=ParseDict(usuario.dict(), messages_pb2.UsuarioDadosFront()))
+                usuarioResponse = messages_pb2.UsuarioResponse(usuario=ParseDict(usuario.dict(), messages_pb2.UsuarioDados()))
                 return usuarioResponse
             
             return messages_pb2.UsuarioResponse()
@@ -51,7 +51,7 @@ class Usuario(usuarios_pb2_grpc.UsuarioServicer):
                 }).get()
             lista_usuarios_response = messages_pb2.ListaUsuariosResponse()
             for usuario in lista_usuarios:
-                usuario_response = messages_pb2.UsuarioResponse(usuario=ParseDict(usuario.dict(), messages_pb2.UsuarioDadosFront()))
+                usuario_response = messages_pb2.UsuarioResponse(usuario=ParseDict(usuario.dict(), messages_pb2.UsuarioDados()))
                 lista_usuarios_response.item.append(usuario_response)
             
             return lista_usuarios_response

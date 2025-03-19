@@ -4,7 +4,6 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
   Select,
@@ -16,19 +15,73 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import YearFilter from "@/components/year-filter";
 import { ListFilter } from "lucide-react";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
-export function DropdownFilter() {
+interface FiltroColabProps {
+  produto: string;
+  setProduto: (value: string) => void;
+  fonte: "sucupira" | "lattes";
+  setFonte: (value: "sucupira" | "lattes") => void;
+  aresta: "ppgs" | "docentes";
+  setAresta: (value: "ppgs" | "docentes") => void;
+  anoInicio: number;
+  setAnoInicio: (value: number) => void;
+  anoFim: number;
+  setAnoFim: (value: number) => void;
+  numConexoes: number;
+  setNumConexoes: (value: number) => void;
+}
+
+export function FiltroColab({
+  produto,
+  setProduto,
+  fonte,
+  setFonte,
+  aresta,
+  setAresta,
+  anoInicio,
+  setAnoInicio,
+  anoFim,
+  setAnoFim,
+  numConexoes,
+  setNumConexoes,
+}: FiltroColabProps) {
+  const [tempProduto, setTempProduto] = useState(produto);
+  const [tempFonte, setTempFonte] = useState(fonte);
+  const [tempAresta, setTempAresta] = useState(aresta);
+  const [tempAnoInicio, setTempAnoInicio] = useState(anoInicio);
+  const [tempAnoFim, setTempAnoFim] = useState(anoFim);
+  const [tempNumConexoes, setTempNumConexoes] = useState(numConexoes);
+  const [open, setOpen] = useState(false);
+
+  const anoAtual = new Date().getFullYear();
+  const primeiroAno = 2017;
+  const anos = Array.from(
+    { length: anoAtual - primeiroAno + 1 },
+    (_, i) => primeiroAno + i
+  );
+
+  const aplicarFiltros = () => {
+    setProduto(tempProduto);
+    setFonte(tempFonte);
+    setAresta(tempAresta);
+    setAnoInicio(tempAnoInicio);
+    setAnoFim(tempAnoFim);
+    setNumConexoes(tempNumConexoes);
+  };
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button> <ListFilter /> Filtros</Button>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger className="w-fit" asChild>
+        <Button>
+          <ListFilter /> Filtros
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64 p-4">
-        <Select>
+        <Select value={tempProduto} onValueChange={setTempProduto}>
           <SelectTrigger className="w-full mt-4">
             <SelectValue placeholder="Selecione o tipo de produto" />
           </SelectTrigger>
@@ -84,20 +137,66 @@ export function DropdownFilter() {
               </SelectItem>
             </SelectGroup>
           </SelectContent>
-        </Select>{" "}
+        </Select>
         <div className="my-4">
-          <YearFilter />
+          <label className="mb-2 block text-sm font-medium">Período</label>
+          <div className="flex items-center space-x-2">
+            <Select
+              value={tempAnoInicio.toString()}
+              onValueChange={(value) => setTempAnoInicio(Number(value))}
+            >
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="Ano Início" />
+              </SelectTrigger>
+              <SelectContent>
+                {anos
+                  .filter((year) => year <= tempAnoFim)
+                  .map((year) => (
+                    <SelectItem key={year} value={year.toString()}>
+                      {year}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+
+            <span className="text-sm font-medium">até</span>
+
+            <Select
+              value={tempAnoFim.toString()}
+              onValueChange={(value) => setTempAnoFim(Number(value))}
+            >
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="Ano Fim" />
+              </SelectTrigger>
+              <SelectContent>
+                {anos
+                  .filter((year) => year >= tempAnoInicio)
+                  .map((year) => (
+                    <SelectItem key={year} value={year.toString()}>
+                      {year}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div className="my-4">
-          <label className="mb-2 block text-sm font-medium">
-            Número de conexões
-          </label>
-          <Slider defaultValue={[50]} max={100} step={1} className="w-full" />
-        </div>
+        {/* <div className="my-4">
+          <label className="mb-2 block text-sm font-medium">Número de conexões</label>
+          <Slider
+            value={[tempNumConexoes]}
+            onValueChange={(value) => setTempNumConexoes(value[0])}
+            max={100}
+            step={1}
+            className="w-full"
+          />
+        </div> */}
         <div className="my-4">
           <label className="mb-2 block text-sm font-medium">Fonte</label>
           <RadioGroup
-            defaultValue="sucupira"
+            value={tempFonte}
+            onValueChange={(value) =>
+              setTempFonte(value as "sucupira" | "lattes")
+            }
             className="grid grid-cols-2 gap-4"
           >
             <div>
@@ -114,7 +213,6 @@ export function DropdownFilter() {
                 Sucupira
               </Label>
             </div>
-
             <div>
               <RadioGroupItem
                 value="lattes"
@@ -131,28 +229,31 @@ export function DropdownFilter() {
             </div>
           </RadioGroup>
         </div>
-
         <div className="my-4">
-          <label className="mb-2 block text-sm font-medium">Tipo das arestas</label>
+          <label className="mb-2 block text-sm font-medium">
+            Tipo das arestas
+          </label>
           <RadioGroup
-            defaultValue="ppgs"
+            value={tempAresta}
+            onValueChange={(value) =>
+              setTempAresta(value as "ppgs" | "docentes")
+            }
             className="grid grid-cols-2 gap-4"
-          >
+          > 
             <div>
               <RadioGroupItem
                 value="ppgs"
-                id="ppgs"
+                id="ppg"
                 className="peer sr-only"
                 aria-label="ppgs"
               />
               <Label
-                htmlFor="ppgs"
+                htmlFor="ppg"
                 className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
               >
                 PPGs
               </Label>
             </div>
-
             <div>
               <RadioGroupItem
                 value="docentes"
@@ -169,6 +270,15 @@ export function DropdownFilter() {
             </div>
           </RadioGroup>
         </div>
+        <Button
+          onClick={() => {
+            aplicarFiltros();
+            setOpen(false);
+          }}
+          className="w-full mt-4"
+        >
+          Aplicar Filtros
+        </Button>
       </DropdownMenuContent>
     </DropdownMenu>
   );

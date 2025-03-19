@@ -1,20 +1,14 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { InfoTitulados } from "@/lib/ppg/definitions";
 import { Line } from "@ant-design/plots";
-
-interface EgressosTituladosPorAno {
-  ano_egresso: number;
-  quantidade: number;
-}
-
-interface EgressosTituladosPorAnoProps {
-  egressosTituladosPorAno: Record<string, EgressosTituladosPorAno[]> | null;
-}
 
 export const EgressosTituladosPorAno = ({
   egressosTituladosPorAno,
-}: EgressosTituladosPorAnoProps) => {
+}: {
+  egressosTituladosPorAno: Record<string, InfoTitulados[]>;
+}) => {
   if (
     !egressosTituladosPorAno ||
     Object.keys(egressosTituladosPorAno).length === 0

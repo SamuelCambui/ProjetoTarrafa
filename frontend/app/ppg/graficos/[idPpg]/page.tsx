@@ -22,10 +22,12 @@ type Abas =
   | "bancas"
   | "egressos";
 
-export default function Page({ idIes }: { idIes: string }) {
-  if (!idIes) idIes = "3727";
-  const { idPpg }: { idPpg: string } = useParams();
-  const { dadosPpg, isLoading } = useDadosPPG(idIes, idPpg);
+export default function Page() {
+  // if (!idIes) idIes = "3727";
+  const { idPpg } = useParams();
+
+  const [idIes, setIdIes] = useState("3727");
+  const { dadosPpg, isLoading } = useDadosPPG(idIes, idPpg as string);
 
   const [activeTab, setActiveTab] = useState<Abas>("indicadores");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -68,19 +70,18 @@ export default function Page({ idIes }: { idIes: string }) {
         </TabsList>
 
         {anoInicio && anoFim && (
-
           <>
-                    <div className="py-4 flex space-x-2 justify-end">
-          <FiltroAno
-            anos={anos}
-            anoInicio={anoInicio || 0}
-            anoFim={anoFim || 0}
-            aplicarFiltroAno={aplicarFiltroAno}
-          />
-          <Button onClick={() => setIsDrawerOpen(true)}>
-            Sobre o PPG <Info />
-          </Button>
-        </div>
+            <div className="py-4 flex space-x-2 justify-end">
+              <FiltroAno
+                anos={anos}
+                anoInicio={anoInicio || 0}
+                anoFim={anoFim || 0}
+                aplicarFiltroAno={aplicarFiltroAno}
+              />
+              <Button onClick={() => setIsDrawerOpen(true)}>
+                Sobre o PPG <Info />
+              </Button>
+            </div>
 
             <TabsContent value="indicadores">
               <TabIndicadores

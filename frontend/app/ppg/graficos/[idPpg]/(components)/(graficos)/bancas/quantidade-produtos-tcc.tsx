@@ -6,9 +6,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { MediasTccs, TccsComProducoes } from "@/lib/ppg/definitions";
 
-export const QuantidadeProdutosTCCs = ({ tccsComProducoes, medias }) => {
-  const transformarDados = (dados: Record<string, Record<string, number>>) => {
+
+interface QuantidadeProdutosTCCsProps {
+  tccsComProducoes: Record<number, TccsComProducoes>;
+  medias: Record<number, MediasTccs>;
+}
+
+export const QuantidadeProdutosTCCs = ({ tccsComProducoes, medias }: QuantidadeProdutosTCCsProps) => {
+  const transformarDados = (dados: Record<number, TccsComProducoes> | Record<number, MediasTccs>) => {
     const resultado = [];
     for (const ano in dados) {
       const valores = dados[ano];
@@ -16,7 +23,7 @@ export const QuantidadeProdutosTCCs = ({ tccsComProducoes, medias }) => {
         if (produto === "Periódicos" || quantidade === 0) continue;
         resultado.push({
           ano,
-          quantidade: parseFloat(quantidade.toFixed(2)),
+          quantidade: parseFloat(Number(quantidade).toFixed(2)),
           produto,
         });
       }

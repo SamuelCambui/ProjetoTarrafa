@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DadosLinhaPesquisa } from "@/lib/ppg/definitions";
 import { Sankey } from "@ant-design/plots";
 
-export const ProdLinhasPesquisa = ({dadosLinhaPesquisa}) => {
+export const ProdLinhasPesquisa = ({dadosLinhaPesquisa} : {dadosLinhaPesquisa : DadosLinhaPesquisa}) => {
   const colors = [
     "#5B8FF9",
     "#61DDAA",

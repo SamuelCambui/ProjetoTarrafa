@@ -4,7 +4,6 @@ import React from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -12,38 +11,28 @@ import {
 } from "@/components/ui/table";
 import { User } from "@/lib/ppg/definitions";
 import { Button } from "@/components/ui/button";
-import {
-  Edit,
-  Pencil,
-  Trash,
-  UserCheck,
-  UserRound,
-  UserRoundCheck,
-  UserRoundX,
-} from "lucide-react";
+import { Pencil, Trash, UserRoundCheck, UserRoundX } from "lucide-react";
+import { obterPerfil } from "@/lib/utils";
 
-type DataTableProps = {
-  data: User[];
-  currentUser: {
-    idlattes: string;
-    is_admin: boolean;
-    is_superuser: boolean;
+type PropsTabelaUsuarios = {
+  dados: User[] | undefined;
+  usuarioAtual: {
+    idLattes: string;
+    isAdmin: boolean;
+    isSuperuser: boolean;
   };
+  aoExcluirUsuario: (usuario: User) => void;
+  aoModificarStatus: (usuario: User) => void;
+  aoEditarUsuario: (usuario: User) => void;
 };
 
-export default function DataTable({ data, currentUser }: DataTableProps) {
-  // Empty handlers
-  const handleModifyStatus = (idlattes: string) => {
-    // Placeholder for modifying user status
-  };
-
-  const handleEditUser = (idlattes: string) => {
-    // Placeholder for editing user
-  };
-
-  const handleDeleteUser = (idlattes: string, fullName: string) => {
-    // Placeholder for deleting user
-  };
+export default function TabelaUsuarios({
+  dados,
+  usuarioAtual,
+  aoExcluirUsuario,
+  aoModificarStatus,
+  aoEditarUsuario,
+}: PropsTabelaUsuarios) {
 
   return (
     <Table>
@@ -54,46 +43,44 @@ export default function DataTable({ data, currentUser }: DataTableProps) {
           <TableHead>E-mail</TableHead>
           <TableHead>Perfil</TableHead>
           <TableHead>Ativo</TableHead>
-          <TableHead>Logado</TableHead>
+          {/* <TableHead>Logado</TableHead> */}
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((user) => (
-          <TableRow key={user.idlattes}>
-            <TableCell>{user.full_name}</TableCell>
-            <TableCell>{user.idlattes}</TableCell>
-            <TableCell>{user.email || ""}</TableCell>
-            <TableCell>{user.perfil}</TableCell>
-            <TableCell>{user.is_active ? "Sim" : "Não"}</TableCell>
-            <TableCell>{user.logado ? "Sim" : "Não"}</TableCell>
+        {dados?.map((usuario) => (
+          <TableRow key={usuario.idLattes}>
+            <TableCell>{usuario.nome}</TableCell>
+            <TableCell>{usuario.idLattes}</TableCell>
+            <TableCell>{usuario.email || ""}</TableCell>
+            <TableCell>{obterPerfil(usuario)}</TableCell>
+            <TableCell>{usuario.isActive ? "Sim" : "Não"}</TableCell>
+            {/* <TableCell>{usuario.logado ? "Sim" : "Não"}</TableCell> */}
             <TableCell>
-              {currentUser.is_admin || currentUser.is_superuser ? (
-                <div className="flex">
+              {usuarioAtual.isAdmin || usuarioAtual.isSuperuser ? (
+                <div className="flex space-x-2">
+                  {/* Botão para ativar/desativar */}
                   <Button
                     variant="ghost"
-                    className="hover:text-slate-700"
-                    title={user.is_active ? "Desativar" : "Ativar"}
-                    onClick={() => handleModifyStatus(user.idlattes)}
+                    title={usuario.isActive ? "Desativar" : "Ativar"}
+                    onClick={() => aoModificarStatus(usuario)}
                   >
-                    {user.is_active ? <UserRoundX /> : <UserRoundCheck />}
-                  </Button>{" "}
+                    {usuario.isActive ? <UserRoundX /> : <UserRoundCheck />}
+                  </Button>
+                  {/* Botão para editar */}
                   <Button
                     variant="ghost"
-                    className="hover:text-amber-700"
                     title="Editar"
-                    onClick={() => handleEditUser(user.idlattes)}
+                    onClick={() => aoEditarUsuario(usuario)}
                   >
                     <Pencil />
                   </Button>
-                  {currentUser.idlattes !== user.idlattes && (
+                  {/* Botão para excluir */}
+                  {usuarioAtual.idLattes !== usuario.idLattes && (
                     <Button
                       variant="ghost"
-                      className="hover:text-red-500 bg-transparent"
                       title="Excluir"
-                      onClick={() =>
-                        handleDeleteUser(user.idlattes, user.full_name)
-                      }
+                      onClick={() => aoExcluirUsuario(usuario)}
                     >
                       <Trash />
                     </Button>

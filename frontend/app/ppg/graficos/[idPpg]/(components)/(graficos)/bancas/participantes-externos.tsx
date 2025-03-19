@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TipoParticipacao } from "@/lib/ppg/definitions";
 import { Column } from "@ant-design/plots";
 
 export const PPGsPaticipantesExternos = ({
-  tipoParticipacao,
-}) => {
+  tipoParticipacao} : { tipoParticipacao : TipoParticipacao},
+) => {
   const formatarDados = (dados: Object) => {
     return Object.entries(dados).map(([categoria, quantidade]) => {
       if (categoria === "Nenhum") {

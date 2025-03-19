@@ -331,6 +331,11 @@ export class UsuarioDados extends jspb.Message {
     getIsAdmin(): boolean | undefined;
     setIsAdmin(value: boolean): UsuarioDados;
 
+    hasIsActive(): boolean;
+    clearIsActive(): void;
+    getIsActive(): boolean | undefined;
+    setIsActive(value: boolean): UsuarioDados;
+
     hasIdIes(): boolean;
     clearIdIes(): void;
     getIdIes(): string | undefined;
@@ -368,6 +373,7 @@ export namespace UsuarioDados {
         nome?: string,
         isSuperuser?: boolean,
         isAdmin?: boolean,
+        isActive?: boolean,
         idIes?: string,
         nomeIes?: string,
         siglaIes?: string,
@@ -377,10 +383,10 @@ export namespace UsuarioDados {
 
 export class CriacaoUsuarioRequest extends jspb.Message { 
 
-    hasUsuarioBase(): boolean;
-    clearUsuarioBase(): void;
-    getUsuarioBase(): UsuarioDados | undefined;
-    setUsuarioBase(value?: UsuarioDados): CriacaoUsuarioRequest;
+    hasUsuario(): boolean;
+    clearUsuario(): void;
+    getUsuario(): UsuarioDados | undefined;
+    setUsuario(value?: UsuarioDados): CriacaoUsuarioRequest;
 
     hasPassword(): boolean;
     clearPassword(): void;
@@ -399,17 +405,17 @@ export class CriacaoUsuarioRequest extends jspb.Message {
 
 export namespace CriacaoUsuarioRequest {
     export type AsObject = {
-        usuarioBase?: UsuarioDados.AsObject,
+        usuario?: UsuarioDados.AsObject,
         password?: string,
     }
 }
 
 export class UsuarioRequest extends jspb.Message { 
 
-    hasEmail(): boolean;
-    clearEmail(): void;
-    getEmail(): string | undefined;
-    setEmail(value: string): UsuarioRequest;
+    hasIdLattes(): boolean;
+    clearIdLattes(): void;
+    getIdLattes(): string | undefined;
+    setIdLattes(value: string): UsuarioRequest;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): UsuarioRequest.AsObject;
@@ -423,7 +429,7 @@ export class UsuarioRequest extends jspb.Message {
 
 export namespace UsuarioRequest {
     export type AsObject = {
-        email?: string,
+        idLattes?: string,
     }
 }
 

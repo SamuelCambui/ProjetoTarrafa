@@ -1,31 +1,27 @@
-import { Column } from "@ant-design/plots";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-interface EgressoData {
-  legenda: string;
-  quantidade: number;
-}
-
-interface CurriculosDesatualizadosEgressosProps {
-  tempoAtualizacaoEgressos: EgressoData[];
-}
+import { TempoAtualizacaoLattesEgressos } from "@/lib/ppg/definitions";
+import { Column } from "@ant-design/plots";
 
 export const CurriculosDesatualizadosEgressos = ({
   tempoAtualizacaoEgressos,
-}: CurriculosDesatualizadosEgressosProps) => {
-  const data = tempoAtualizacaoEgressos || []; 
+}: {
+  tempoAtualizacaoEgressos: TempoAtualizacaoLattesEgressos[];
+}) => {
+  const data = tempoAtualizacaoEgressos || [];
 
   const config = {
     data,
     xField: "legenda",
-    yField: "quantidade", 
-    colorField: "legenda", 
+    yField: "quantidade",
+    colorField: "legenda",
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tempo de atualização dos currículos Lattes dos egressos</CardTitle>
+        <CardTitle>
+          Tempo de atualização dos currículos Lattes dos egressos
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <Column {...config} />

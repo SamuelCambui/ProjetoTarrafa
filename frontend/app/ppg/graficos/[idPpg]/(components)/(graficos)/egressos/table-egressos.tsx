@@ -1,4 +1,12 @@
 "use client";
+import StatusAtualizacao from "@/components/status-atualizacao";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Table,
@@ -10,23 +18,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { CircleAlert } from "lucide-react";
+  InfoProducoes,
+  ObjetoDadosEgressos,
+  TempoAtualizacaoLattesEgressos,
+} from "@/lib/ppg/definitions";
 import { obterCor } from "@/lib/utils";
-import StatusAtualizacao from "@/components/status-atualizacao";
+import { CircleAlert } from "lucide-react";
 import DrawerInfoEgressos from "./drawer-info-egressos";
+
+interface Props {
+  tempoAtualizacao: TempoAtualizacaoLattesEgressos[];
+  informacoesEgressos: ObjetoDadosEgressos;
+  producoesEgressos: Record<string, InfoProducoes[]>;
+}
 
 export default function DataTable({
   tempoAtualizacao,
   informacoesEgressos,
   producoesEgressos,
-}) {
-  const dadosEgressos = informacoesEgressos["dados"];
+}: Props) {
+  const dadosEgressos = informacoesEgressos?.dados ?? [];
 
   const egressosComMudanca = dadosEgressos.filter(
     (egresso) => egresso.mudanca === "Com mudança"

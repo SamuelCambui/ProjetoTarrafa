@@ -8,11 +8,7 @@ import {
 } from "@/components/ui/card";
 import { mapearFormatoGrafico } from "@/lib/utils";
 
-interface QuantidadeLivrosTCCsProps {
-  tccsComLivros: Record<string, number>; 
-}
-
-export const QuantidadeLivrosTCCs = ({ tccsComLivros }: QuantidadeLivrosTCCsProps) => {
+export const QuantidadeLivrosTCCs = ({ tccsComLivros } : {tccsComLivros : Record<number, number>;}) => {
   const config = {
     data: mapearFormatoGrafico(tccsComLivros, "ano", "quantidade"),
     xField: "ano",

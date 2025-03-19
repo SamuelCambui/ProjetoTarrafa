@@ -15,6 +15,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/toaster";
 import { usePathname } from "next/navigation";
 import React, { PropsWithChildren } from "react";
 
@@ -57,6 +58,7 @@ const Layout = ({ children }: PropsWithChildren, nome : string) => {
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
             {children}
         </div>
+            <Toaster />
       </SidebarInset>
     </SidebarProvider>
   );

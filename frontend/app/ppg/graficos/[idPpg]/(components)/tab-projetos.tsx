@@ -3,6 +3,7 @@ import { ProdLinhasPesquisa } from "./(graficos)/projetos/prod-linhas-pesquisa";
 import { ProjDocentes } from "./(graficos)/projetos/projetos-docentes";
 import { ProdProjLinhasPesquisa } from "./(graficos)/projetos/prod-projetos-linhas-pesquisa";
 import useDadosAbaProjetos from "@/hooks/ppg/use-aba-projetos";
+import { DadosProjetos } from "@/lib/ppg/definitions";
 
 interface TabProjetosProps {
   idIes: string;
@@ -22,7 +23,7 @@ export default function TabProjetos({
     idPpg,
     anoInicial,
     anoFinal,
-  );
+  ) as { dadosProjetos?: DadosProjetos; isLoading: boolean };;
 
   if (isLoading) {
     return <Loading />;
@@ -40,7 +41,7 @@ export default function TabProjetos({
         <div className="space-y-4">
           <ProdLinhasPesquisa  dadosLinhaPesquisa={dadosProjetos.dadosDeLinhasDePesquisa} />
           <ProdProjLinhasPesquisa dadosProjLinhaPesquisa={dadosProjetos.dadosDeProjetoseLinhasDePesquisa}/>
-          <ProjDocentes teste={dadosProjetos.dadosDeProjetos} />
+          <ProjDocentes dadosProjetos={dadosProjetos.dadosDeProjetos} />
         </div>
     </div>
   );

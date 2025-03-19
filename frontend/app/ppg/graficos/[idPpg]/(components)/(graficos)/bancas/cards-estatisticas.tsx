@@ -6,7 +6,7 @@ interface PropsCardsEstatistics {
   quantidadeInternos: number
 }
 
-export default function CardsEstatisticas({quantidadeBancas, quantidadeExternos, quantidadeInternos} : PropsCardsEstatistics) {
+export const CardsEstatisticas = ({quantidadeBancas, quantidadeExternos, quantidadeInternos} : PropsCardsEstatistics) => {
   return (
     <div className="col-span-2 grid gap-4 md:grid-cols-2 lg:grid-cols-4 max-w-3xl mx-auto">
       <Card>

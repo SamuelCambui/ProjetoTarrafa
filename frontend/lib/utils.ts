@@ -1,9 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import axios from "axios";
+import { User } from "./ppg/definitions";
 
 export interface ApiResponse {
   [key: string]: any;
@@ -22,10 +20,18 @@ export const toApiResponse = (data: any): ApiResponse => {
   return response;
 };
 
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export const axiosGradInstance = axios.create({
+  baseURL: "/api/grad",
+});
+
 export const mapearFormatoGrafico = (
   obj: Record<string, any>,
   chave: string | number = "tipo",
-  valor: string | number = "quantidade",
+  valor: string | number = "quantidade"
 ) => {
   return Object.entries(obj).map(([key, value]) => ({
     [chave]: key,
@@ -53,4 +59,10 @@ export const obterCor = (legenda: string): string => {
   return cor;
 };
 
+
+export const obterPerfil = (usuario: User) => {
+  if (usuario.isSuperuser) return "Dono";
+  if (usuario.isAdmin) return "Administrador";
+  return "Usuário Comum";
+};
 

@@ -6,9 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { TccsComQualis } from "@/lib/ppg/definitions";
 
 
-export const ArtigosViculadosTCCs = ({tccsComQualis}) => {
+export const ArtigosViculadosTCCs = ({tccsComQualis}: {tccsComQualis : Record<number, TccsComQualis>}) => {
 
   const formatarDados = (dados: Object) => {
     return Object.entries(dados).flatMap(([ano, produto]) => 

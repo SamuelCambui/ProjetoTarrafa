@@ -15,7 +15,7 @@ import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { Docente } from "@/lib/ppg/definitions";
 
 type DataTableProps = {
-  data: Record<string, Docente>;
+  data: Object;
 };
 
 type SortConfig = {

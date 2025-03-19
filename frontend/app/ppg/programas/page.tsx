@@ -1,32 +1,32 @@
 "use client";
 
-import { useState } from "react";
 import { Loading } from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import useDadosProgramas from "@/hooks/ppg/use-dados-programas";
+import { useSearch } from "@/hooks/use-search";
 import { Programa } from "@/lib/ppg/definitions";
 import { Search } from "lucide-react";
 import Link from "next/link";
 
 export default function Page() {
   const { programas, isLoading } = useDadosProgramas("3727");
-  const [searchTerm, setSearchTerm] = useState("");
+
+  const { dadosFiltrados: programasFiltrados, termoBusca, setTermoBusca } = useSearch(
+    programas || [],
+    (programa: Programa, termo: string) =>
+      programa.nome.toLowerCase().includes(termo.toLowerCase()) ||
+      programa.area.toLowerCase().includes(termo.toLowerCase())
+  );
 
   if (isLoading) {
     return <Loading />;
   }
 
-  if (!programas || programas.length === 0) {
+  if (programas.length === 0) {
     return <p>Nenhum programa foi encontrado.</p>;
   }
-
-  const filteredProgramas = programas.filter(
-    (programa) =>
-      programa.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      programa.area.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <>
@@ -37,32 +37,28 @@ export default function Page() {
         <Input
           placeholder="Busque por um programa..."
           className="pl-8"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={termoBusca}
+          onChange={(e) => setTermoBusca(e.target.value)}
         />
       </div>
 
-      {filteredProgramas.length === 0 ? (
+      {programasFiltrados.length === 0 ? (
         <p>Nenhum programa encontrado para a busca atual.</p>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProgramas.map((programa: Programa) => (
+          {programasFiltrados.map((programa: Programa) => (
             <Card key={programa.id}>
               <CardHeader className="space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {programa.area}
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">{programa.area}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-lg font-bold capitalize">
                   {programa.nome.toLowerCase()}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Nota {programa.nota}
-                </p>
+                <p className="text-xs text-muted-foreground">Nota {programa.nota}</p>
                 <Link href={`/ppg/graficos/${programa.id}/`}>
                   <Button className="mt-4 ml-auto block">Gráficos</Button>
-                </Link>{" "}
+                </Link>
               </CardContent>
             </Card>
           ))}

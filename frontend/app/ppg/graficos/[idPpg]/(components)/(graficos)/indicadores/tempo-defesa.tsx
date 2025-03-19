@@ -7,17 +7,29 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export const TempoDefesa = ({dadosTempoDefesa}) => {
+export const TempoDefesa = ({ dadosTempoDefesa }) => {
+  
+  const dadosAgregados = dadosTempoDefesa.reduce((acc, curr) => {
+    const key = `${curr.meses}-${curr.nivel}`;
+    if (!acc[key]) {
+      acc[key] = { meses: curr.meses, nivel: curr.nivel, quantidade: 0 };
+    }
+    acc[key].quantidade += 1;
+    return acc;
+  }, {});
 
+  const data = Object.values(dadosAgregados);
+  
   const config = {
-    data: dadosTempoDefesa,
+    data,
     xField: "meses",
-    legend: true,
-    colorField: "nivel",
-    group: true,
-    style: {
-      inset: 5,
+    yField: "quantidade", 
+    sort: {
+      by: "x",
     },
+    groupBy: "meses",
+    group: true,
+    colorField: 'nivel',
   };
 
   return (

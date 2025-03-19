@@ -1,7 +1,12 @@
 import { Loading } from "@/components/loading";
 import useDadosAbaDocentes from "@/hooks/ppg/use-aba-docentes";
+import {
+  DadosDocentes
+} from "@/lib/ppg/definitions";
+import { MapaCoautoria } from "./(graficos)/docentes/mapa-coautoria";
 import { CurriculosDesatualizados } from "./(graficos)/docentes/qtd-curriculos-desatualizados-docentes";
 import { DocentesCategoria } from "./(graficos)/docentes/qtd-docentes-categoria";
+import { RedeColabPpg } from "./(graficos)/docentes/rede-colab-ppg";
 import DataTable from "./(graficos)/docentes/table-docentes";
 
 interface TabDocentesProps {
@@ -10,7 +15,6 @@ interface TabDocentesProps {
   anoInicial: number;
   anoFinal: number;
 }
-
 export default function TabDocentes({
   idIes,
   idPpg,
@@ -21,8 +25,8 @@ export default function TabDocentes({
     idIes,
     idPpg,
     anoInicial,
-    anoFinal,
-  );
+    anoFinal
+  ) as { dadosDocentes?: DadosDocentes; isLoading: boolean };
 
   if (isLoading) {
     return <Loading />;
@@ -42,11 +46,12 @@ export default function TabDocentes({
         <CurriculosDesatualizados
           dadosAtualizaoLattes={dadosDocentes.atualizacaoLattes}
         />
-        {/* <DiscentesTitulados dadosDiscentesTitulados={dadosDocentes.discentestitulados} /> */}
         <DataTable producoesDocente={dadosDocentes.listaProfessores} />
-        {/* Grafo */}
-        {/* MapadeCoautorias */}
-        {/* Rede de Colaboração Mini */}
+        <MapaCoautoria dadosCoatoria={dadosDocentes.grafoCoautoresdoPpg} />
+        <RedeColabPpg
+          dadosColab={dadosDocentes.grafoCoautoresdoPpg}
+          listaProfessores={dadosDocentes.listaProfessores["professores"]}
+        />
       </div>
     </>
   );

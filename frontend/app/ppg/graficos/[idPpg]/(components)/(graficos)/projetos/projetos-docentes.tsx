@@ -1,7 +1,18 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { DadosDeProjetos } from "@/lib/ppg/definitions";
 import { Sankey } from "@ant-design/plots";
 
-export const ProjDocentes = ({teste}) => {
+export const ProjDocentes = ({
+  dadosProjetos,
+}: {
+  dadosProjetos: DadosDeProjetos;
+}) => {
   const colors = [
     "#5B8FF9",
     "#61DDAA",
@@ -16,7 +27,7 @@ export const ProjDocentes = ({teste}) => {
   ];
 
   const config = {
-    data: teste.links,
+    data: dadosProjetos.links,
     scale: { color: { range: colors } },
     layout: {
       nodeWidth: 0.01,
@@ -34,10 +45,10 @@ export const ProjDocentes = ({teste}) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>  Produção por Linha de Pesquisa  </CardTitle>
+        <CardTitle> Produção por Linha de Pesquisa </CardTitle>
         <CardDescription>
           Fonte: Sucupira {""}
-          Sumariza a produção do PPG por linha de pesquisa no período indicado. 
+          Sumariza a produção do PPG por linha de pesquisa no período indicado.
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -1,6 +1,6 @@
 FROM rabbitmq:3-management
 
-COPY rabbitmq.sh /rabbitmq.sh
-RUN chmod +x /rabbitmq.sh
+# COPY rabbitmq.sh /rabbitmq.sh
+# RUN chmod +x /rabbitmq.sh
 
-ENTRYPOINT ["/rabbitmq.sh"]
+# ENTRYPOINT ["/rabbitmq.sh"]

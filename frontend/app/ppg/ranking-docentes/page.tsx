@@ -18,7 +18,6 @@ import { useSearch } from "@/hooks/use-search";
 
 export default function Page() {
   const { docentes, isLoading, error } = useRankingDocentes("3727");
-
   const [selectedIES, setSelectedIES] = useState<string>("todos");
 
   const iesUnicos = useMemo(() => {
@@ -29,9 +28,9 @@ export default function Page() {
   }, [docentes]);
 
   const {
-    filteredData: docentesFiltrados,
-    searchTerm,
-    setSearchTerm,
+    dadosFiltrados: docentesFiltrados,
+    termoBusca,
+    setTermoBusca,
   } = useSearch(
     Object.values(docentes || []),
     (docente: Docente, termoBusca: string) => {
@@ -48,11 +47,11 @@ export default function Page() {
   }
 
   if (error) {
-    return <p>Ocorreu um erro ao carregar os dados: {error.message}</p>;
+    return <p>Ocorreu um erro ao carregar os dados</p>;
   }
 
   if (!docentes || !Object.keys(docentes).length) {
-    return <p>Nenhum docente foi encontrado.</p>;
+    return <p>Nenhum docente foi encontrado</p>;
   }
 
   return (
@@ -64,8 +63,8 @@ export default function Page() {
           <Input
             placeholder="Busque por um docente..."
             className="pl-8"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={termoBusca}
+            onChange={(e) => setTermoBusca(e.target.value)}
           />
         </div>
         <div className="mb-4">

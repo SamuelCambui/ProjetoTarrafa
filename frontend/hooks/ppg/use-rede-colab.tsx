@@ -1,22 +1,24 @@
 import { useState, useEffect } from "react";
-import { obterRedeColaboracao } from "@/service/ppg/serviceHome"; 
-import { GrafoCoautores } from "@/lib/ppg/definitions";
+import { obterRedeColaboracao } from "@/service/ppg/serviceHome";
+import { RedeColaboracaoData } from "@/lib/ppg/definitions";
 
 type useRedeColabResultado<T> = {
-  dadosColaboracao: T | undefined;
-  isLoading: boolean;
-  error: any;
+  dadosColaboracao: T | null; // The data you're fetching, it could be null initially
+  isLoading: boolean; // Whether the data is still being loaded
+  error: any; // To store any error that might happen during the fetch
 };
 
 export default function useRedeColab(
-  idIes: string, 
-  produto: string, 
-  fonte: string, 
-  aresta: string, 
-  anoInicio: number, 
+  idIes: string,
+  produto: string,
+  fonte: string,
+  aresta: string,
+  anoInicio: number,
   anoFim: number
-): useRedeColabResultado<GrafoCoautores[]> {
-  const [dadosColaboracao, setData] = useState<GrafoCoautores[] | undefined>(undefined);
+): useRedeColabResultado<RedeColaboracaoData> {
+  const [dadosColaboracao, setData] = useState<RedeColaboracaoData | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<any>(null);
 
@@ -30,8 +32,20 @@ export default function useRedeColab(
       setIsLoading(true);
       setError(null);
       try {
-        const resposta = await obterRedeColaboracao(idIes, produto, fonte, aresta, anoInicio, anoFim);
-        const redeColaboracao: GrafoCoautores[] = resposta?.grafoCoautores || [];
+        const resposta = await obterRedeColaboracao(
+          idIes,
+          produto,
+          fonte,
+          aresta,
+          anoInicio,
+          anoFim
+        );
+
+        const redeColaboracao: RedeColaboracaoData = {
+          grafoCoautores: resposta?.grafoCoautores[0] || null, 
+          forca: resposta?.grafoCoautores[1] || 0, 
+        };
+
         setData(redeColaboracao);
       } catch (err) {
         setError(err);

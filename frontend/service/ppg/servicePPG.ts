@@ -1,6 +1,5 @@
 "use server";
-import { toApiResponse } from "@/lib/utils";
-import { stubPPG } from "./uitls";
+import { stubPPG, toApiResponse } from "@/app/api/ppg/utils";
 import { PpgRequest } from "@/protos/messages_pb";
 
 export async function obterInfoPPG(idIes: string, idPpg: string) {
@@ -39,13 +38,11 @@ export async function obterDadosIndicadores(
 ) {
   try {
     const ppgRequest = new PpgRequest();
-    
+
     ppgRequest.setIdIes(idIes);
     ppgRequest.setIdPpg(idPpg);
     ppgRequest.setAnoi(anoInicial);
     ppgRequest.setAnof(anoFinal);
-
-    console.log(anoInicial, anoFinal)
 
     const response = await new Promise((resolve, reject) => {
       stubPPG.obtemIndicadores(
@@ -56,7 +53,6 @@ export async function obterDadosIndicadores(
             reject(error);
           } else {
             const dadosObj = listaprogramas.toObject()["itemList"];
-            console.log(dadosObj)
             resolve(toApiResponse(dadosObj));
           }
         }
@@ -190,7 +186,6 @@ export async function obterDadosEgressos(
           reject(error);
         } else {
           const dadosObj = data.toObject()["itemList"];
-          console.log(dadosObj)
           resolve(toApiResponse(dadosObj));
         }
       });
@@ -203,40 +198,3 @@ export async function obterDadosEgressos(
   }
 }
 
-// export async function obterAnosPpg(
-//   idIes: string,
-//   idPpg: string,
-//   anoInicial: number,
-//   anoFinal: number,
-//   nota: string
-// ) {
-//   try {
-//     const ppgRequest = new PpgRequest();
-
-//     ppgRequest.setIdIes(idIes);
-//     ppgRequest.setIdPpg(idPpg);
-//     ppgRequest.setAnoi(anoInicial);
-//     ppgRequest.setAnof(anoFinal);
-//     ppgRequest.setNota("6");
-
-//     const response = await new Promise((resolve, reject) => {
-//       stubPPG.obtemIndicadores(
-//         ppgRequest,
-//         (error: any, listaprogramas: any) => {
-//           debugger;
-//           if (error) {
-//             reject(error);
-//           } else {
-//             const dadosObj = listaprogramas.toObject()["itemList"];
-//             resolve(toApiResponse(dadosObj));
-//           }
-//         }
-//       );
-//     });
-
-//     return response;
-//   } catch (e) {
-//     console.log(e);
-//     new Error();
-//   }
-// }

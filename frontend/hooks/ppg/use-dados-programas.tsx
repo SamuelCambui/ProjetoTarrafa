@@ -3,7 +3,7 @@ import { obterProgramas } from "@/service/ppg/serviceHome";
 import { useEffect, useState } from "react";
 
 export default function useDadosProgramas(idIes: string) {
-  const [programas, setProgramas] = useState<Programa[] | undefined>();
+  const [programas, setProgramas] = useState<Programa[] | []>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function useDadosProgramas(idIes: string) {
         setProgramas(listaProgramas);
       } catch (error) {
         console.error("Erro ao buscar os programas:", error);
-        setProgramas(undefined);
+        setProgramas([]);
       } finally {
         setIsLoading(false);
       }

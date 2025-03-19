@@ -5,13 +5,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { TccsPorLinha } from "@/lib/ppg/definitions";
 import { Sankey } from "@ant-design/plots";
 
-interface LinhaPesquisaTCCsProps {
-  dadosLinhasPesquisa: any; 
-}
-
-export const LinhaPesquisaTCCs = ({ dadosLinhasPesquisa }: LinhaPesquisaTCCsProps) => {
+export const LinhaPesquisaTCCs = ({ dadosLinhasPesquisa }: { dadosLinhasPesquisa : TccsPorLinha}) => {
   const colors = [
     "#5B8FF9",
     "#61DDAA",
@@ -26,7 +23,7 @@ export const LinhaPesquisaTCCs = ({ dadosLinhasPesquisa }: LinhaPesquisaTCCsProp
   ];
 
   const config = {
-    data: dadosLinhasPesquisa,
+    data: dadosLinhasPesquisa.links,
     scale: { color: { range: colors } },
     layout: {
       nodeWidth: 0.01,

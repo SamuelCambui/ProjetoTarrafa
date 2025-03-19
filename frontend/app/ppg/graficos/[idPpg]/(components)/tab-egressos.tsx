@@ -4,6 +4,7 @@ import useDadosAbaEgressos from "@/hooks/ppg/use-aba-egressos";
 import { EgressoComMudanca } from "./(graficos)/egressos/egressos-mudanca";
 import { CurriculosDesatualizadosEgressos } from "./(graficos)/egressos/qtd-curriculos-desatualizados-egressos";
 import { EgressosTituladosPorAno } from "./(graficos)/egressos/qtd-egressos-ano";
+import { DadosEgressos } from "@/lib/ppg/definitions";
 
 interface TabEgressosProps {
   idIes: string;
@@ -23,7 +24,7 @@ export default function TabEgressos({
     idPpg,
     anoInicial,
     anoFinal
-  );
+  ) as { dadosEgressos?: DadosEgressos; isLoading: boolean };
 
   if (isLoading) {
     return <Loading />;

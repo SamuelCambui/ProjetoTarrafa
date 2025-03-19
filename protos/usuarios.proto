@@ -5,13 +5,14 @@ package protos;
 import "messages.proto";
 
 service Usuario {
-  rpc Login (LoginRequest) returns (LoginResponse);
-  rpc Logout (LogoutRequest) returns (LogoutResponse);
-  rpc ObtemUsuario (UsuarioRequest) returns (UsuarioResponse);
-  rpc VerificarSessao (VerificarSessaoRequest) returns (VerificarSessaoResponse);
-  // rpc ObtemListaUsuarios (UsuarioRequest) returns (ListaUsuariosResponse);
-  // rpc AtualizarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
-  // rpc CriarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
-  // rpc DeletarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
-  // rpc AlternarStatusUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+  // rpc Login (LoginRequest) returns (LoginResponse);
+  // rpc Logout (LogoutRequest) returns (LogoutResponse);
+  rpc ObtemUsuario (UsuarioRequest) returns (UsuarioDados);
+  // rpc VerificarSessao (VerificarSessaoRequest) returns (VerificarSessaoResponse);
+  rpc ObtemListaUsuarios (UsuarioResponse) returns (ListaUsuariosResponse);
+  rpc AtualizarUsuario (CriacaoUsuarioRequest) returns (AlteracaoUsuarioResponse);
+  rpc CriarUsuario (CriacaoUsuarioRequest) returns (AlteracaoUsuarioResponse);
+  rpc DeletarUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+  rpc AlternarStatusUsuario (UsuarioRequest) returns (AlteracaoUsuarioResponse);
+  rpc ObtemListaUniversidades (Empty) returns (ListaUniversidadesResponse);
 }

@@ -21,15 +21,17 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { CircleAlert } from "lucide-react";
 import DrawerInfoDocentes from "./drawer-info-docentes";
 import LegendaTabelaDocentes from "@/app/ppg/(components)/legenda-docentes";
+import { ListaDocenteTabela } from "@/lib/ppg/definitions";
 
 export default function DataTable({
-  producoesDocente = { professores: [], avatares: {}, formula: {} },
-}) {
-  const obterStatus = (statusArray) => {
+  producoesDocente
+} : {producoesDocente : ListaDocenteTabela}) {
+  
+  const obterStatus = (statusArray: string[]) => {
     return statusArray.map((status) => status.charAt(0)).join("");
   };
 
-  const calculaFormulaIndProd = (formula) => {
+  const calculaFormulaIndProd = () => {
     const weights = {
       A1: 100,
       A2: 85,
@@ -48,7 +50,7 @@ export default function DataTable({
     return `${formulaString} / período`;
   };
 
-  const indprodFormula = calculaFormulaIndProd(producoesDocente.formula);
+  const indprodFormula = calculaFormulaIndProd();
 
   return (
     <Card className="col-span-2">
