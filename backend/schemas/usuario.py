@@ -5,7 +5,7 @@ from pydantic import BaseModel, EmailStr
 
 # Shared properties
 class UsuarioBase(BaseModel):
-    id_lattes: Optional[str] = None
+    idlattes: Optional[str] = None
     email: Optional[EmailStr] = None
     nome: Optional[str] = None
     is_active: bool = True
@@ -17,7 +17,7 @@ class UsuarioBase(BaseModel):
 
     def to_redis_dict(self):
         return {
-            'idlattes': self.id_lattes if self.id_lattes is not None else '',
+            'idlattes': self.idlattes if self.idlattes is not None else '',
             'email': self.email,
             'nome': self.nome if self.nome is not None else '',
             'is_active': int(self.is_active),
@@ -29,7 +29,7 @@ class UsuarioBase(BaseModel):
     @staticmethod
     def from_redis_dict(rdict):
         return UsuarioBase(
-            id_lattes = rdict['idlattes'],
+            idlattes = rdict['idlattes'],
             email = EmailStr(rdict['email']),
             nome = rdict['full_name'],
             is_active = bool(int(rdict['is_active'])),
@@ -50,7 +50,7 @@ class UsuarioCriacao(UsuarioBase):
 
     def dict_insert(self):
         return {
-            "idlattes": self.id_lattes,
+            "idlattes": self.idlattes,
             "email": self.email,
             "nome": self.nome,
             "is_active": self.is_active,

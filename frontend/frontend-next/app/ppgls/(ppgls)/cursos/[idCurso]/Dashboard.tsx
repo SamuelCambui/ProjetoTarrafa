@@ -35,7 +35,7 @@ export const Dashboard = ({ idIes }: { idIes: string }) => {
             </h1>
             <p>
               {" "}
-              Curso de <b>TIPO_CURSO</b> com nota mínima de aprovação igual a{" "}
+              Curso com nota mínima de aprovação igual a{" "}
               <b>{data?.nota_min_aprovacao}</b>, frequência mínima{" "}
               <b>{data?.freq_min_aprovacao}%</b> e duração de{" "}
               <b>{data?.serie_final}</b> semestres.

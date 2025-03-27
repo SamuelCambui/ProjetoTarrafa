@@ -8,6 +8,7 @@ import {
 import { Box } from "@ant-design/plots";
 import { LoadingCard } from "../../../../../../_components/LoadingCard";
 import { GraficoProps } from "@/app/ppgls/_components/types";
+import { SemDados } from "@/app/ppgls/_components/SemDados";
 
 export const BoxplotNotas = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {
@@ -101,7 +102,7 @@ export const BoxplotNotas = ({ data, isLoading }: GraficoProps) => {
         <CardDescription>Distribuição de notas na disciplina.</CardDescription>
       </CardHeader>
       <CardContent>
-        <Box {...config} />
+        {data.length === 0 ? <SemDados /> : <Box {...config} />}
       </CardContent>
     </Card>
   );

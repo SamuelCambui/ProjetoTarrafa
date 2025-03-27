@@ -4,6 +4,7 @@ package protos;
 
 import "messages.proto";
 
+
 service IndicadoresPosGraduacaoLS {
     /*  
         Retorna dados para compor os indicadores da aba curso.\n
@@ -69,12 +70,7 @@ service DadosFormularioPosGraduacaoLS {
     rpc GetIndicadoresFormulario (FormularioIndicadoresRequest) returns (FormularioPPGLSResponse);
     
 
-    /*
-        Insere um novo formulário da pós-graduação latu sensu.
-        Parâmetros:
-            nome(string) - Nome do formulário.
-            data_inicio(string) - Data de início.
-    */
+
     rpc InsertFormulario (FormularioPPGLSRequest) returns (FormularioPPGLSResponse);
     
 
@@ -85,6 +81,14 @@ service DadosFormularioPosGraduacaoLS {
             data_inicio(string) - Data de início.
     */
     rpc DeleteFormulario (FormularioIndicadoresRequest) returns (FormularioPPGLSResponse);
+
+
+    /*
+        Lista todos os formaulários
+    */
+    rpc ListarFormularios(Empty) returns (FormularioPPGLSResponse);
+
+
 }
 
 service DadosPosGraduacaoLS {

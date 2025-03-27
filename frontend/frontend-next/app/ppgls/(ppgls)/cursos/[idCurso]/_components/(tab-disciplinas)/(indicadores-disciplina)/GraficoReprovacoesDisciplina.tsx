@@ -1,6 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Column } from "@ant-design/plots";
 import { GraficoProps } from "@/app/ppgls/_components/types";
+import { SemDados } from "@/app/ppgls/_components/SemDados";
+
 import {
   Card,
   CardContent,
@@ -83,7 +85,7 @@ export const GraficoReprovacoesDisciplina = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Column {...config} />
+      {data.length === 0 ? <SemDados /> : <Column {...config} />}
       </CardContent>
     </Card>
   );

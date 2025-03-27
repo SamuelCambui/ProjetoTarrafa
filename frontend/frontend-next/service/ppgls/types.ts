@@ -123,7 +123,7 @@ export type AbaDisciplinasParams = {
 
   export type GetIndicadoresFormularioParams = {
     nome_formulario: any;
-    data_inicio: any;
+    data_preenchimento: any;
   }
 
   export type DeleteFormularioParams = {

@@ -2,6 +2,10 @@ syntax = "proto3";
 
 package protos;
 
+
+message Empty {}
+
+
 message HomeRequest {
   optional string id_ies = 1;
   optional int32 anoi = 2;
@@ -57,7 +61,7 @@ message LoginResponseFormulario {
 }
 
 message UsuarioDados {
-  optional string id_lattes = 1;
+  optional string idlattes = 1;
   optional string email = 2;
   optional string nome = 3;
   optional bool is_superuser = 4;
@@ -69,7 +73,7 @@ message UsuarioDados {
 }
 
 message UsuarioDadosFormulario {
-  optional string id_lattes  = 1;
+  optional string idlattes  = 1;
   optional string nome = 2;
   optional string email = 3;
   optional bool is_coordenador = 4;
@@ -135,7 +139,9 @@ message FormularioSerchPPGLSRequest{
 
 message FormularioIndicadoresRequest{
   string nome_formulario = 1;
-  string data_inicio = 2;
+  optional string data_preenchimento = 2;
+  optional string data_inicio = 3;
+
 }
 
 message FormularioPPGLSRequest{

@@ -38,9 +38,9 @@ def tarefa_autentica_usuario(username : str, password : str) -> Optional[Usuario
         return None
     
 @app_celery_queries.task
-def tarefa_retorna_lista_usuarios(privilegio : bool, id_lattes : str, id_ies : str) -> list[Optional[Usuario]]:
+def tarefa_retorna_lista_usuarios(privilegio : bool, idlattes : str, id_ies : str) -> list[Optional[Usuario]]:
     try:
-        users = crud.user.retorna_lista_usuario(privilegio, id_lattes, id_ies)
+        users = crud.user.retorna_lista_usuario(privilegio, idlattes, id_ies)
         return users
     except Exception as e:
         print(e)

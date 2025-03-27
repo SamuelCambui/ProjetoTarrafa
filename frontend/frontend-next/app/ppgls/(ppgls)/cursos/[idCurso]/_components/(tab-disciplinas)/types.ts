@@ -21,7 +21,7 @@ type DataReprovacoes = {
 };
 
 export type TabsBoxplotProps = GraficoProps & {
-  data: DataBoxplot; // Define o tipo para o objeto `data`
+  data?: DataBoxplot | null; // Define o tipo para o objeto `data`
   isLoading?: boolean;
   serieFinal?: number; 
 };

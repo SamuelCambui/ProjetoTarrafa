@@ -8,6 +8,8 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { G6, Dendrogram } from "@ant-design/graphs";
+import { cn } from "@/lib/utils";
+import { Frown } from "lucide-react";
 
 
 const { treeToGraphData } = G6;
@@ -32,34 +34,49 @@ export const ClassificacaoDisciplinas = ({ data, isLoading }: GraficoProps) => {
           <b>Fácil</b>.
         </CardDescription>
       </CardHeader>
-      <CardContent className="h-[800px]">
-        <Dendrogram
-          autoFit="view"
-          layout={
-            {
-              direction: "LR",
-              rankSep: 600,
-              radial: true,
-            } as any
-          }
-          node={{
-            style: {
-              fill(data) {
-                if (data.id === "Difícil" || data.parentId === "Difícil") {
-                  return "red";
-                }
-                if (data.id === "Médio" || data.parentId === "Médio") {
-                  return "#EADA00";
-                }
-                if (data.id === "Fácil" || data.parentId === "Fácil") {
-                  return "#04BE00";
-                }
-                return "#1783FF";
+      <CardContent
+        className={cn(
+          Object.keys(data).length === 0 || (data as any).depth === 0
+            ? "h-48"
+            : "h-[800px]"
+        )}
+      >
+        {Object.keys(data).length === 0 || (data as any).depth === 0 ? (
+          <div className="flex justify-center text-lg items-center gap-2 text-muted-foreground h-48">
+            <Frown className="mr-2 size-6" /> <span>Sem dados.</span>
+          </div>
+        ) : (
+          <Dendrogram
+            autoFit="view"
+            layout={
+              {
+                direction: "LR",
+                rankSep: 600,
+                radial: true,
+              } as any
+            }
+            node={{
+              style: {
+                fill(data) {
+                  if (data.id === "Difícil" || data.parentId === "Difícil") {
+                    return "red";
+                  }
+                  if (data.id === "Médio" || data.parentId === "Médio") {
+                    return "#EADA00";
+                  }
+                  if (data.id === "Fácil" || data.parentId === "Fácil") {
+                    return "#04BE00";
+                  }
+                  return "#1783FF";
+                },
+
               },
-            },
-          }}
-          data={treeToGraphData(data as any)}
-        />
+         
+            }}
+            data={treeToGraphData(data as any)}
+          />
+        )}
+
       </CardContent>
     </Card>
     );

@@ -1,5 +1,5 @@
 export type User = {
-  id_lattes: string;
+  idlattes: string;
   email: string;
   nome: string;
   is_active: boolean;

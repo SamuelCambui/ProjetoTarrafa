@@ -1,6 +1,6 @@
 from __future__ import print_function
 from backend.db.cache import RedisConnector
-from backend.worker.tasks_ppgls.tasks_formulario_ppgls import tarefa_autentica_usuario, tarefa_verifica_usuario, tarefa_autentica_usuario, tarefa_verifica_usuario, tarefa_retorna_lista_usuarios
+from backend.worker.tasks_ppgls.tasks_formulario_ppgls import tarefa_autentica_usuario, tarefa_verifica_usuario, tarefa_autentica_usuario, tarefa_verifica_usuario, tarefa_retorna_lista_usuarios, tarefa_obter_status_preenchimento_formulario 
 from backend.core.security import generate_jwt_token, decode_jwt_token, ACCESS_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_EXPIRATION_TIME
 from backend.schemas.user_form import UsuarioCriacao, UsuarioAtualizacao
 from backend.worker.crud.ppgls.crud_user_form import user
@@ -10,6 +10,7 @@ from typing import List, Optional
 from fastapi import FastAPI,  HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from fastapi import Body
 
 class UserLogin(BaseModel):
     username: str
@@ -44,13 +45,13 @@ def Login(request : UserLogin) -> dict:
             raise
         access_token = generate_jwt_token(user.model_dump(), time=ACCESS_TOKEN_EXPIRATION_TIME)
         refresh_token = generate_jwt_token(
-            {"id_lattes": user.id_lattes, "token_id": str(uuid.uuid4())}, 
+            {"idlattes": user.idlattes, "token_id": str(uuid.uuid4())}, 
             time=REFRESH_TOKEN_EXPIRATION_TIME
         )
         
         redis = RedisConnector()
         redis.setJson(
-            f"user:{user.id_lattes}", 
+            f"user:{user.idlattes}", 
             {"refresh_token": refresh_token, "user": user.model_dump()}, 
             60 * 60 * 24
         )
@@ -80,12 +81,12 @@ def VerificarSessao(token : Token):
         payload = decode_jwt_token(token.refresh_token)
 
         redis = RedisConnector()
-        user_data = redis.getJson(f"user:{payload.get('id_lattes')}")
+        user_data = redis.getJson(f"user:{payload.get('idlattes')}")
 
         stored_payload = decode_jwt_token(user_data["refresh_token"])
 
         if stored_payload["token_id"] != payload["token_id"]:
-            redis.delete(f"user:{payload.get('id_lattes')}")  # Invalida a sessão
+            redis.delete(f"user:{payload.get('idlattes')}")  # Invalida a sessão
             raise Exception()
         
         new_access_token = generate_jwt_token(payload=user_data["user"], time=ACCESS_TOKEN_EXPIRATION_TIME)
@@ -102,10 +103,10 @@ def VerificarSessao(token : Token):
             }
     
 
-@app.get("/usuario/{id_lattes}")
-def obter_usuario(id_lattes: str):
+@app.get("/usuario/{idlattes}")
+def obter_usuario(idlattes: str):
     try:
-        usuario = tarefa_verifica_usuario.apply(kwargs={"idlattes": id_lattes}).get()
+        usuario = tarefa_verifica_usuario.apply(kwargs={"idlattes": idlattes}).get()
         if usuario:
             return usuario.dict()
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
@@ -119,9 +120,21 @@ def obter_lista_usuarios(is_admin: bool):
         return [usuario.dict() for usuario in lista_usuarios]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/status_formulario", response_model=List[dict])
+def obter_status_preenchimento_formulario(is_coordenador: bool, ano: int):
+    try:
+
+        lista_preench = tarefa_obter_status_preenchimento_formulario.apply(kwargs={"is_coordenador": is_coordenador, "ano": ano}).get()
+        print("Dados retornados da tarefa_obter_status_preenchimento_formulario:")
+        print(lista_preench);
+        return [usuario.dict() for usuario in lista_preench]
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
     
-@app.put("/usuario/{id_lattes}")
-def atualizar_usuario(id_lattes: str, usuario_atualizado: UsuarioAtualizacao):
+@app.put("/usuario/{idlattes}")
+def atualizar_usuario(usuario_atualizado: UsuarioAtualizacao):
     try:
         status, mensagem = user.atualizar_usuario(usuario_atualizado)
         return {"status": status, "mensagem": mensagem}
@@ -136,18 +149,21 @@ def criar_usuario(novo_usuario: UsuarioCriacao):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.delete("/usuario/{id_lattes}")
-def deletar_usuario(id_lattes: str):
+@app.delete("/usuario/{idlattes}")
+def deletar_usuario(idlattes: str):
     try:
-        status, mensagem = user.deletar_usuario(id_lattes)
+        status, mensagem = user.deletar_usuario(idlattes)
         return {"status": status, "mensagem": mensagem}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.patch("/usuario/{id_lattes}/alternar-status")
-def alternar_status_usuario(id_lattes: str):
+@app.patch("/usuario/{idlattes}/alternar-status")
+def alternar_status_usuario(idlattes: str):
     try:
-        status, mensagem = user.alternar_ativo_usuario(id_lattes)
+        status, mensagem = user.alternar_ativo_usuario(idlattes)
         return {"status": status, "mensagem": mensagem}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+

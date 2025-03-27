@@ -6,6 +6,23 @@
 
 import * as jspb from "google-protobuf";
 
+export class Empty extends jspb.Message { 
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Empty.AsObject;
+    static toObject(includeInstance: boolean, msg: Empty): Empty.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Empty, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Empty;
+    static deserializeBinaryFromReader(message: Empty, reader: jspb.BinaryReader): Empty;
+}
+
+export namespace Empty {
+    export type AsObject = {
+    }
+}
+
 export class HomeRequest extends jspb.Message { 
 
     hasIdIes(): boolean;
@@ -288,10 +305,10 @@ export namespace LoginResponseFormulario {
 
 export class UsuarioDados extends jspb.Message { 
 
-    hasIdLattes(): boolean;
-    clearIdLattes(): void;
-    getIdLattes(): string | undefined;
-    setIdLattes(value: string): UsuarioDados;
+    hasIdlattes(): boolean;
+    clearIdlattes(): void;
+    getIdlattes(): string | undefined;
+    setIdlattes(value: string): UsuarioDados;
 
     hasEmail(): boolean;
     clearEmail(): void;
@@ -345,7 +362,7 @@ export class UsuarioDados extends jspb.Message {
 
 export namespace UsuarioDados {
     export type AsObject = {
-        idLattes?: string,
+        idlattes?: string,
         email?: string,
         nome?: string,
         isSuperuser?: boolean,
@@ -359,10 +376,10 @@ export namespace UsuarioDados {
 
 export class UsuarioDadosFormulario extends jspb.Message { 
 
-    hasIdLattes(): boolean;
-    clearIdLattes(): void;
-    getIdLattes(): string | undefined;
-    setIdLattes(value: string): UsuarioDadosFormulario;
+    hasIdlattes(): boolean;
+    clearIdlattes(): void;
+    getIdlattes(): string | undefined;
+    setIdlattes(value: string): UsuarioDadosFormulario;
 
     hasNome(): boolean;
     clearNome(): void;
@@ -396,7 +413,7 @@ export class UsuarioDadosFormulario extends jspb.Message {
 
 export namespace UsuarioDadosFormulario {
     export type AsObject = {
-        idLattes?: string,
+        idlattes?: string,
         nome?: string,
         email?: string,
         isCoordenador?: boolean,
@@ -728,7 +745,15 @@ export namespace FormularioSerchPPGLSRequest {
 export class FormularioIndicadoresRequest extends jspb.Message { 
     getNomeFormulario(): string;
     setNomeFormulario(value: string): FormularioIndicadoresRequest;
-    getDataInicio(): string;
+
+    hasDataPreenchimento(): boolean;
+    clearDataPreenchimento(): void;
+    getDataPreenchimento(): string | undefined;
+    setDataPreenchimento(value: string): FormularioIndicadoresRequest;
+
+    hasDataInicio(): boolean;
+    clearDataInicio(): void;
+    getDataInicio(): string | undefined;
     setDataInicio(value: string): FormularioIndicadoresRequest;
 
     serializeBinary(): Uint8Array;
@@ -744,7 +769,8 @@ export class FormularioIndicadoresRequest extends jspb.Message {
 export namespace FormularioIndicadoresRequest {
     export type AsObject = {
         nomeFormulario: string,
-        dataInicio: string,
+        dataPreenchimento?: string,
+        dataInicio?: string,
     }
 }
 

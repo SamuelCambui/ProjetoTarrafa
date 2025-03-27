@@ -1,3 +1,4 @@
+import { UserForm } from "@/types/user_form";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -32,3 +33,11 @@ export const mapearFormatoGrafico = (
     [valor]: value,
   }));
 };
+
+
+export const obterPerfil = (usuario: UserForm) => {
+  if (usuario.is_admin) return "Dono";
+  if (usuario.is_coordenador) return "Administrador";
+  return "Usuário Comum";
+};
+

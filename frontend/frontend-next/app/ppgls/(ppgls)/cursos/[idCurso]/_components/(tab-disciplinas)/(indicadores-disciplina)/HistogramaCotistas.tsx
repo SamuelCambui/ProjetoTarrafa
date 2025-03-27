@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { LoadingCard } from "../../../../../../_components/LoadingCard";
 import { Column } from "@ant-design/plots";
+import { SemDados } from "@/app/ppgls/_components/SemDados";
 
 export const HistogramaCotistas = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {
@@ -102,7 +103,7 @@ export const HistogramaCotistas = ({ data, isLoading }: GraficoProps) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Column {...config} />
+      {data.length === 0 ? <SemDados /> : <Column {...config} />}
       </CardContent>
     </Card>
   );

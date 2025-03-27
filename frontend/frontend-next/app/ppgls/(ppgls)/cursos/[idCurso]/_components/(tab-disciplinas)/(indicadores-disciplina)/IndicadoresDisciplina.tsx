@@ -5,6 +5,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 
 import { useIndicadoresDisciplina } from "@/service/ppgls/indicadores/queries";
@@ -60,11 +61,10 @@ export const IndicadoresDisciplina = ({
 
   return (
     <div className="space-y-2">
-      <h2 className="mt-10 scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
-        Indicadores Disciplina
-      </h2>
+  
       <Card>
         <CardHeader>
+          <CardTitle>Indicadores de Disciplinas</CardTitle>
           <CardDescription>
             Escolha uma disciplina para analisar os indicadores.
           </CardDescription>

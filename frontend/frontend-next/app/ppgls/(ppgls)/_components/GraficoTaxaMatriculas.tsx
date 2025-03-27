@@ -1,10 +1,4 @@
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card";
+
   import { Chart, Line } from "@ant-design/plots";
   import { LoadingCard } from "../../_components/LoadingCard";
   import { GraficoProps } from "../../_components/types";

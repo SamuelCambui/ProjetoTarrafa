@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ReactNode } from "react";
+import { ReactNode,useEffect} from "react";
 import { Chart } from "@ant-design/plots";
 import { Button } from "@/components/ui/button";
 import { DownloadIcon } from "lucide-react";
@@ -23,6 +23,7 @@ export const Grafico = ({
   children,
   chartRef,
 }: GraficoProps) => {
+  useEffect(() => {}, [chartRef]);
   const downloadChart = () => {
     console.log("chartRef:", chartRef);
     console.log("chartRef.current:", chartRef?.current);

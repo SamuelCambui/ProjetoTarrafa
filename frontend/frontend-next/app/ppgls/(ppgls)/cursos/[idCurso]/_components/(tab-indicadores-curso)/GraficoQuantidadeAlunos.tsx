@@ -1,17 +1,13 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Chart, Column } from "@ant-design/plots";
 import { LoadingCard } from "@/app/ppgls/_components/LoadingCard";
 import { GraficoProps } from "@/app/ppgls/_components/types";
-import { useRef } from "react";
+import { SemDados } from "@/app/ppgls/_components/SemDados";
 import { Grafico } from "@/app/ppgls/_components/Grafico";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
+import { useSidebar } from "@/components/ui/sidebar";
+import { useEffect, useRef } from "react";
+
 
 
 
@@ -82,7 +78,7 @@ export const GraficoQuantidadeAlunos = ({ data, isLoading }: GraficoProps) => {
       titulo="Quantidade de Alunos"
       descricao="Alunos que possuem pelo menos uma disciplina matriculada."
     >
-      <Column {...config} ref={ref} />
+     {data.length === 0 ? <SemDados /> : <Column {...config} ref={ref} />}
     </Grafico>
   );
 };

@@ -7,31 +7,57 @@ import {
 } from "../types";
 import { stubFormularioPPGLS, toApiResponse } from "../utils";
 import { FormularioPPGLSRequest, FormularioIndicadoresRequest } from "@/protos/messages_pb";
-import { FormularioPPGLSJson } from "@/protos/messages_pb";
+import { FormularioPPGLSJson, Empty } from "@/protos/messages_pb";
 
 export async function GetIndicadoresFormulario({
-    nome_formulario, 
-    data_inicio,
+  nome_formulario, 
+  data_preenchimento,
 }: GetIndicadoresFormularioParams) {
   try {
+    console.log("Função GetIndicadoresFormulario() foi chamada.");
+    
     const request = new FormularioIndicadoresRequest();
     request.setNomeFormulario(nome_formulario);
-    request.setDataInicio(data_inicio)
+    request.setDataPreenchimento(data_preenchimento);
+
+    console.log("Enviando requisição para getIndicadoresFormulario...", request);
 
     const response = await new Promise((resolve, reject) => {
       stubFormularioPPGLS.getIndicadoresFormulario(request, (error, indicadores) => {
+        console.log("Entrou no callback do gRPC...");
+
         if (error) {
+          console.error("Erro na chamada gRPC:", error);
           reject(error);
         } else {
+          console.log("Resposta bruta do gRPC:", indicadores);
+          
           const data = indicadores.toObject();
-          resolve(toApiResponse(data));
+          console.log("Resposta do gRPC após .toObject():", data);
+
+          // Extraindo itemList
+          const itemList = data?.itemList || [];
+          let jsonData = {};
+
+          if (itemList.length > 0) {
+            try {
+              jsonData = JSON.parse(itemList[0].json); // Convertendo JSON string para objeto
+            } catch (e) {
+              console.error("Erro ao converter JSON:", e);
+            }
+          }
+
+          console.log("Dados convertidos do JSON:", jsonData);
+          resolve(jsonData);
         }
       });
     });
 
+    console.log("Resposta final da API:", response);
     return response;
+
   } catch (e) {
-    console.error(e);
+    console.error("Erro ao buscar indicadores do formulário:", e);
     throw new Error("Erro ao buscar indicadores do formulário.");
   }
 }
@@ -89,4 +115,50 @@ export async function insertFormulario({ item }: InsertFormularioParams) {
       throw new Error("Erro ao excluir formulário.");
     }
   }
+
+  export async function listarFormularios() {
+    console.log("Função listarFormularios() foi chamada.");
+    try {
+        const request = new Empty(); // Requisição vazia
+        console.log("Enviando requisição para listarFormularios...");
+
+        const response = await new Promise((resolve, reject) => {
+            stubFormularioPPGLS.listarFormularios(request, (error, response) => {
+                console.log("Entrou no callback do gRPC...");
+
+                if (error) {
+                    console.error("Erro na chamada gRPC:", error);
+                    reject(error);
+                } else {
+                    console.log("Resposta bruta do gRPC:", response);
+                    const responseObject = response.toObject();
+                    console.log("Resposta do gRPC após .toObject():", responseObject);
+
+                    // Extraindo itemList
+                    const itemList = responseObject?.itemList || [];
+                    let jsonData = {};
+
+                    if (itemList && itemList.length > 0) {
+                        try {
+                          jsonData = JSON.parse(itemList[0].json); // Convertendo JSON string para objeto
+                        } catch (e) {
+                            console.error("Erro ao converter JSON:", e);
+                        }
+                    }
+
+                    console.log("Dados convertidos do JSON:", jsonData);
+                    resolve(jsonData);
+                }
+            });
+        });
+
+        console.log("Resposta final da API:", response);
+        return response;
+
+    } catch (e) {
+        console.error("Erro ao listar formulários:", e);
+        throw new Error("Erro ao listar formulários.");
+    }
+  }
+
 

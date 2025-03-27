@@ -8,6 +8,7 @@ import {
   import { Column } from "@ant-design/plots";
   import { LoadingCard } from "../../../../../../_components/LoadingCard";
   import { GraficoProps } from "@/app/ppgls/_components/types";
+  import { SemDados } from "@/app/ppgls/_components/SemDados";
   
   export const GraficoEvasao = ({ data, isLoading }: GraficoProps) => {
     if (!data || isLoading) {
@@ -74,7 +75,7 @@ import {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Column {...config} />
+        {data.length === 0 ? <SemDados /> : <Column {...config} />}
         </CardContent>
       </Card>
     );

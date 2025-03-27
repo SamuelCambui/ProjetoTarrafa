@@ -82,12 +82,12 @@ def VerificarSessao(token : Token):
         payload = decode_jwt_token(token.refresh_token)
 
         redis = RedisConnector()
-        user_data = redis.getJson(f"user:{payload.get('id_lattes')}")
+        user_data = redis.getJson(f"user:{payload.get('idlattes')}")
 
         stored_payload = decode_jwt_token(user_data["refresh_token"])
 
         if stored_payload["token_id"] != payload["token_id"]:
-            redis.delete(f"user:{payload.get('id_lattes')}")  # Invalida a sessão
+            redis.delete(f"user:{payload.get('idlattes')}")  # Invalida a sessão
             raise Exception()
         
         new_access_token = generate_jwt_token(payload=user_data["user"], time=ACCESS_TOKEN_EXPIRATION_TIME)

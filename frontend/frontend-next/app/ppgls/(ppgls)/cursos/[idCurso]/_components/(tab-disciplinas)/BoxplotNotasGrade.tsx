@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Box } from "@ant-design/plots";
 import { GraficoProps } from "@/app/ppgls/_components/types";
+import { SemDados } from "@/app/ppgls/_components/SemDados";
 
 export const BoxplotNotasGrade = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {
@@ -8,6 +9,11 @@ export const BoxplotNotasGrade = ({ data, isLoading }: GraficoProps) => {
   }
 
   const map = new Map();
+
+  if (data.length === 0) {
+    return <SemDados />;
+  }
+
 
   data.forEach(({ nome, abreviacao, media, desvio_padrao }: any) =>
     map.set(nome, { nome, media, desvio_padrao })

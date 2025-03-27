@@ -1,15 +1,43 @@
-import React from "react";
+import React, { useRef } from "react";
 import { GraficoProps } from "../../_components/types";
-import { Column } from "@ant-design/plots";
+import { Chart, Column } from "@ant-design/plots";
 import { Grafico } from "../../_components/Grafico";
 import { LoadingCard } from "../../_components/LoadingCard";
+
+// Função para transformar os dados agregados
+const transformData = (data: any[]) => {
+  const transformedData = [];
+
+  // Agrupar os dados por semestre e sexo, somando as quantidades
+  data.forEach((item: any) => {
+    const existingItem = transformedData.find(
+      (d) => d.semestre_letivo === item.semestre_letivo && d.sexo === item.sexo
+    );
+    if (existingItem) {
+      existingItem.quantidade += item.quantidade;
+    } else {
+      transformedData.push({ ...item });
+    }
+  });
+
+  return transformedData;
+};
 
 export const GraficoQuantidadeAlunos = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {
     return <LoadingCard />;
   }
+
+  // Transformando os dados antes de usá-los
+  const transformedData = transformData(data);
+
+  console.log("----------------------Dados de GraficoQuantidadeAlunos--------------------- ");
+  console.log(transformedData);
+
+  const ref = useRef<Chart>(null);
+
   const config = {
-    data,
+    data: transformedData, // Usando os dados transformados
     xField: "semestre_letivo",
     yField: "quantidade",
     colorField: "sexo",
@@ -24,7 +52,7 @@ export const GraficoQuantidadeAlunos = ({ data, isLoading }: GraficoProps) => {
               {items.map((item: any) => {
                 const { name, value } = item;
                 return (
-                  <div key={name}>
+                  <div key={`${item.data.semestre_letivo}-${name}`}>
                     <div className="m-0 flex justify-between">
                       <div>
                         <span
@@ -52,15 +80,17 @@ export const GraficoQuantidadeAlunos = ({ data, isLoading }: GraficoProps) => {
           return "#1890FF";
         }
         return "#EB3A76";
-      }, // 圆角
+      },
     },
   };
+
   return (
     <Grafico
       titulo="Quantidade de Alunos"
-      descricao="Alunos que estão matriculados em pelo menos uma disciplina."
+      descricao="Alunos matriculados por semestre e sexo"
+      chartRef={ref}
     >
-      <Column {...config} />
+      <Column {...config} ref={ref} />
     </Grafico>
   );
 };

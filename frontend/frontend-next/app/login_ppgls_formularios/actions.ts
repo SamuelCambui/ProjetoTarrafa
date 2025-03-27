@@ -1,8 +1,8 @@
-
 "use server";
 import { auth, signIn, signOut } from "@/auth";
 import { AuthError, Session } from "next-auth";
 import { redirect } from "next/navigation";
+
 export async function authorize(
   prevState: string | undefined,
   formData: FormData
@@ -12,6 +12,7 @@ export async function authorize(
     await signIn("credentials", {
       email: formData.get("email"),
       password: formData.get("password"),
+      fromPpglsForms: true,
       redirect: false,
     });
     return;
@@ -27,10 +28,11 @@ export async function authorize(
     }
   } finally {
     if (!hasError) {
-      redirect("/ppgls/formulario");
+      redirect("/ppgls_forms");
     }
   }
 }
+
 export async function logout() {
-  await signOut({ redirect: true, redirectTo: "/login" });
+  await signOut({ redirect: true, redirectTo: "/login_ppgls_formularios" });
 }

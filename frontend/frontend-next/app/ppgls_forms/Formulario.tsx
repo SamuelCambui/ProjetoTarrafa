@@ -27,8 +27,9 @@ import {
   JsonFormulario,
   FormularioParams,
   UpdateFormularioItem,
-} from "../../../service/ppgls/types";
-import { insertFormularioData } from "../../../service/ppgls/formulario/queries";
+} from "../../service/ppgls/types";
+import { insertFormularioData } from "../../service/ppgls/formulario/queries";
+
 
 const formSchema = z.object({
   nome_espec: z.string(),
@@ -111,7 +112,7 @@ const validarCPF = (cpf: string): boolean => {
   return resto === parseInt(cpf.charAt(10));
 };
 
-export const MyForm = () => {
+export const FormPPGLS = () => {
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -1004,5 +1005,5 @@ export const MyForm = () => {
   );
 };
 
-export default MyForm;
+// export default MyForm;
   

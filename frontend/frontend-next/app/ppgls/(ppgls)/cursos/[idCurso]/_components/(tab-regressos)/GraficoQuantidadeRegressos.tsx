@@ -19,28 +19,46 @@ import {
     }
     console.log("Dados recebidos:", data);
     const config = {
-      data: Array.isArray(data) 
-      ? data.map(({ ano_matricula, quantidade_matriculas, nome_curso_graduacao }: any) => ({
-          anoMatricula: String(ano_matricula),
-          quantidade: quantidade_matriculas,
-          curso: nome_curso_graduacao,
-        }))
-      : [],
-
+      data: Array.isArray(data)
+        ? data.map(({ ano_matricula, quantidade_matriculas, nome_curso_graduacao }: any) => ({
+            anoMatricula: String(ano_matricula),
+            quantidade: quantidade_matriculas,
+            curso: nome_curso_graduacao,
+          }))
+        : [],
+    
       xField: "anoMatricula",
       yField: "quantidade",
-      seriesField: "curso", // Cada barra será dividida pelos valores únicos de 'curso'
-      isStack: false, // Habilita o empilhamento
+      seriesField: "curso",
+      isStack: false,
       tooltip: false,
       
+      // A configuração de legend para o lado direito
       legend: {
-        position: "top", // Coloca a legenda no topo
+        position: "bottom",  // Posiciona a legenda à direita do gráfico
       },
-      colorField: "curso", // Garante que cada curso tenha uma cor única
+
+      responsive: true,
+    
+      // Outras configurações do gráfico
+      colorField: "curso",
       columnStyle: {
-        borderRadius: [4, 4, 0, 0], // Borda arredondada no topo das colunas
+        borderRadius: [4, 4, 0, 0],  // Arredondar as bordas do gráfico
+      },
+    
+      // Configuração dos labels (valores em cima das barras)
+      label: {
+        position: "top",
+        offsetY: -10,  // Ajuste para cima
+        style: {
+          fill: "#000",  // Cor da fonte
+          fontSize: 12,
+          fontWeight: "bold",
+          textBaseline: "bottom",  // Posicionamento do texto em relação à barra
+        },
       },
     };
+    
   
     return (
       <Card>
@@ -51,7 +69,9 @@ import {
           </CardDescription>
         </CardHeader>
         <CardContent>
+     
           <Column {...config} />
+     
         </CardContent>
       </Card>
     );

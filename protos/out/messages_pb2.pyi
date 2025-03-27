@@ -5,6 +5,10 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class Empty(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
+
 class HomeRequest(_message.Message):
     __slots__ = ("id_ies", "anoi", "anof", "produto", "fonte", "aresta")
     ID_IES_FIELD_NUMBER: _ClassVar[int]
@@ -94,8 +98,8 @@ class LoginResponseFormulario(_message.Message):
     def __init__(self, usuario: _Optional[_Union[UsuarioDadosFormulario, _Mapping]] = ..., erro: bool = ...) -> None: ...
 
 class UsuarioDados(_message.Message):
-    __slots__ = ("id_lattes", "email", "nome", "is_superuser", "is_admin", "id_ies", "nome_ies", "sigla_ies", "link_avatar")
-    ID_LATTES_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("idlattes", "email", "nome", "is_superuser", "is_admin", "id_ies", "nome_ies", "sigla_ies", "link_avatar")
+    IDLATTES_FIELD_NUMBER: _ClassVar[int]
     EMAIL_FIELD_NUMBER: _ClassVar[int]
     NOME_FIELD_NUMBER: _ClassVar[int]
     IS_SUPERUSER_FIELD_NUMBER: _ClassVar[int]
@@ -104,7 +108,7 @@ class UsuarioDados(_message.Message):
     NOME_IES_FIELD_NUMBER: _ClassVar[int]
     SIGLA_IES_FIELD_NUMBER: _ClassVar[int]
     LINK_AVATAR_FIELD_NUMBER: _ClassVar[int]
-    id_lattes: str
+    idlattes: str
     email: str
     nome: str
     is_superuser: bool
@@ -113,21 +117,21 @@ class UsuarioDados(_message.Message):
     nome_ies: str
     sigla_ies: str
     link_avatar: str
-    def __init__(self, id_lattes: _Optional[str] = ..., email: _Optional[str] = ..., nome: _Optional[str] = ..., is_superuser: bool = ..., is_admin: bool = ..., id_ies: _Optional[str] = ..., nome_ies: _Optional[str] = ..., sigla_ies: _Optional[str] = ..., link_avatar: _Optional[str] = ...) -> None: ...
+    def __init__(self, idlattes: _Optional[str] = ..., email: _Optional[str] = ..., nome: _Optional[str] = ..., is_superuser: bool = ..., is_admin: bool = ..., id_ies: _Optional[str] = ..., nome_ies: _Optional[str] = ..., sigla_ies: _Optional[str] = ..., link_avatar: _Optional[str] = ...) -> None: ...
 
 class UsuarioDadosFormulario(_message.Message):
-    __slots__ = ("id_lattes", "nome", "email", "is_coordenador", "is_admin")
-    ID_LATTES_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("idlattes", "nome", "email", "is_coordenador", "is_admin")
+    IDLATTES_FIELD_NUMBER: _ClassVar[int]
     NOME_FIELD_NUMBER: _ClassVar[int]
     EMAIL_FIELD_NUMBER: _ClassVar[int]
     IS_COORDENADOR_FIELD_NUMBER: _ClassVar[int]
     IS_ADMIN_FIELD_NUMBER: _ClassVar[int]
-    id_lattes: str
+    idlattes: str
     nome: str
     email: str
     is_coordenador: bool
     is_admin: bool
-    def __init__(self, id_lattes: _Optional[str] = ..., nome: _Optional[str] = ..., email: _Optional[str] = ..., is_coordenador: bool = ..., is_admin: bool = ...) -> None: ...
+    def __init__(self, idlattes: _Optional[str] = ..., nome: _Optional[str] = ..., email: _Optional[str] = ..., is_coordenador: bool = ..., is_admin: bool = ...) -> None: ...
 
 class CriacaoUsuarioRequest(_message.Message):
     __slots__ = ("usuario_base", "password")
@@ -220,12 +224,14 @@ class FormularioSerchPPGLSRequest(_message.Message):
     def __init__(self, cpf: _Optional[str] = ..., tipo: _Optional[int] = ...) -> None: ...
 
 class FormularioIndicadoresRequest(_message.Message):
-    __slots__ = ("nome_formulario", "data_inicio")
+    __slots__ = ("nome_formulario", "data_preenchimento", "data_inicio")
     NOME_FORMULARIO_FIELD_NUMBER: _ClassVar[int]
+    DATA_PREENCHIMENTO_FIELD_NUMBER: _ClassVar[int]
     DATA_INICIO_FIELD_NUMBER: _ClassVar[int]
     nome_formulario: str
+    data_preenchimento: str
     data_inicio: str
-    def __init__(self, nome_formulario: _Optional[str] = ..., data_inicio: _Optional[str] = ...) -> None: ...
+    def __init__(self, nome_formulario: _Optional[str] = ..., data_preenchimento: _Optional[str] = ..., data_inicio: _Optional[str] = ...) -> None: ...
 
 class FormularioPPGLSRequest(_message.Message):
     __slots__ = ("item",)

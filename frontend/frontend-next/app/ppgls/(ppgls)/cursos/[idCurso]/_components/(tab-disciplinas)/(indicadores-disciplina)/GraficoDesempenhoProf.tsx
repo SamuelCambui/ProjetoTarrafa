@@ -8,6 +8,7 @@ import {
   import { Box } from "@ant-design/plots";
   import { LoadingCard } from "../../../../../../_components/LoadingCard";
   import { GraficoProps } from "@/app/ppgls/_components/types";
+  import { SemDados } from "@/app/ppgls/_components/SemDados";
   
   export const GraficoDesempenhoProf = ({ data, isLoading }: GraficoProps) => {
     if (!data || isLoading) {
@@ -115,7 +116,7 @@ import {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Box {...config} />
+        {data.length === 0 ? <SemDados /> : <Box {...config} />}
         </CardContent>
       </Card>
     );

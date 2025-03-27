@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Flask",
+            "name": "Python: Flaskmiddle",
             "type": "debugpy",
             "request": "launch",
             "program": "frontend/flaskmiddle/run.py",
@@ -35,40 +35,6 @@
             "justMyCode": true,
             "gevent": true,
             "envFile": "${workspaceFolder}/.env.desenvolvimento"
-        },
-        {
-            "name": "Python: QUERIES Celery LINUX",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "celery",
-            "args": [
-                "-A",
-                "backend.worker.celery_start_queries",
-                "worker",
-                "--pool=gevent",
-                "-c",
-                "4",
-                "-Q",
-                "fila_queries",
-                "-l",
-                "INFO",
-                "-n",
-                "worker1@%h"
-            ],
-            "jinja": true,
-            "justMyCode": true,
-            "gevent": true,
-            "envFile": "${workspaceFolder}/.env.desenvolvimento"
-        },
-        {
-            "name": "Python: INDICADORES gRPC SERVERPPG",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/backend/app/api/api.py",  
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "envFile": "${workspaceFolder}/.env.desenvolvimento",
-            "args": []
         },
         {
             "name": "Python: INDICADORES gRPC SERVERPPGLS",
@@ -101,7 +67,7 @@
                 "backend.app.api.api_login:app",
                 "--reload",
                 "--port",
-                "8004"
+                "8002"
             ],
             "jinja": true,
             "envFile": "${workspaceFolder}/.env.desenvolvimento"
@@ -115,7 +81,7 @@
                 "backend.app.api.api_login_formulario:app",
                 "--reload",
                 "--port",
-                "8005"
+                "8003"
             ],
             "jinja": true,
             "envFile": "${workspaceFolder}/.env.desenvolvimento"

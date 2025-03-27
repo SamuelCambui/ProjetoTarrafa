@@ -9,26 +9,46 @@ from backend.core.utils import tratamento_excecao_db_ppg
 class CRUDUser():
 
     @tratamento_excecao_db_ppg()
-    def retorna_dados_usuario_link_foto_lattes(self, email : str, db : DBConnector = None) ->tuple[Optional[UsuarioNoBanco], str]:
-
+    def retorna_dados_usuario_link_foto_lattes(self, email: str, db: DBConnector = None) -> tuple[Optional[UsuarioNoBanco], str]:
         """
-        Retorna os dados do usuário e link para a foto do perfil lattes
-        
+        Retorna os dados do usuário e link para a foto do perfil Lattes.
+
         Retornos:
             user: Dados do usuário
-            rowavatar: link para a foto do perfil lattes
+            rowavatar: link para a foto do perfil Lattes
         """
+        
         query = "SELECT * FROM usuarios WHERE email = %(email)s"
-        row = db.fetch_one(query, email = email)
-        if row:
-            dict_row = dict(row)
-            user = UsuarioNoBanco(**dict_row, id_lattes=dict_row['idlattes'], nome = dict_row['full_name'])
-            rowavatar = crud.queries_ppg.retorna_link_avatar_lattes(user.id_lattes, True)
+        
+        try:
+            row = db.fetch_one(query, email=email)
+            print(f"[DEBUG] Resultado da consulta SQL: {row}")  # Verifica se a consulta retornou algo
 
             if row:
-                return user,rowavatar
-        return None, ""
+                dict_row = dict(row)
+                print(f"[DEBUG] Dados convertidos para dicionário: {dict_row}")  # Verifica o dicionário gerado
+                
+                # Garantir que 'idlattes' existe e não é None antes de tentar criar o objeto
+                idlattes = dict_row.get("idlattes")
+                if idlattes is None:
+                    print("[ERRO] 'idlattes' está ausente ou é None")
+                    return None, ""
+
+                user = UsuarioNoBanco(**dict_row, nome=dict_row.get("full_name", ""))
+                print(f"[DEBUG] Usuário criado: {user}")
+
+                rowavatar = crud.queries_ppg.retorna_link_avatar_lattes(user.idlattes, True)
+                print(f"[DEBUG] Link do avatar retornado: {rowavatar}")
+
+                return user, rowavatar
+
+            print("[INFO] Nenhum usuário encontrado para o email fornecido.")
+            return None, ""
         
+        except Exception as e:
+            print(f"[EXCEÇÃO] Erro ao buscar dados do usuário: {e}")
+            return None, ""
+            
 
     @tratamento_excecao_db_ppg()
     def verifica_usuario(self, idlattes : str, db: DBConnector = None) -> Optional[UsuarioFront]:
@@ -41,7 +61,7 @@ class CRUDUser():
         if row:
             dict_row = dict(row)
             user = UsuarioFront(**(dict_row),
-                        id_lattes=dict_row['idlattes'],
+                        idlattes=dict_row['idlattes'],
                         nome = dict_row['full_name']
                     )
             return user
@@ -66,7 +86,7 @@ class CRUDUser():
         """
         try:
             novo_usuario.password = get_password_hash(novo_usuario.password)
-            query = "INSERT INTO usuarios (idlattes, full_name, email, hashed_password, is_active, is_superuser, id_ies, is_admin) VALUES (%(id_lattes)s, %(nome)s, %(email)s, %(password)s, %(is_active)s, %(is_superuser)s,  %(id_ies)s, %(is_admin)s)"
+            query = "INSERT INTO usuarios (idlattes, full_name, email, hashed_password, is_active, is_superuser, id_ies, is_admin) VALUES (%(idlattes)s, %(nome)s, %(email)s, %(password)s, %(is_active)s, %(is_superuser)s,  %(id_ies)s, %(is_admin)s)"
             criacao_usuario = db.insert(query, **novo_usuario.dict())
 
             if criacao_usuario:
@@ -99,7 +119,7 @@ class CRUDUser():
     def alterar_senha_usuario(self, usuario: UsuarioAtualizacao, db: DBConnector = None) -> bool:
         try:
             query = "UPDATE usuarios SET hashed_password = %(hashed_password)s WHERE idlattes = %(idlattes)s"
-            atualizacao = db.update(query, hashed_password = get_password_hash(usuario.password), idlattes = usuario.id_lattes)
+            atualizacao = db.update(query, hashed_password = get_password_hash(usuario.password), idlattes = usuario.idlattes)
             if atualizacao:
                 return True
             return False
@@ -107,13 +127,13 @@ class CRUDUser():
             return False
 
     @tratamento_excecao_db_ppg()
-    def alternar_ativo_usuario (self, id_lattes : str, db: DBConnector = None) -> tuple[bool, str]:
+    def alternar_ativo_usuario (self, idlattes : str, db: DBConnector = None) -> tuple[bool, str]:
         """
         Atualizando dados dos usuário no banco de dados
         """
         try:
-            query = "UPDATE usuarios SET is_active = NOT is_active WHERE idlattes = %(id_lattes)s"
-            alternar = db.update(query, id_lattes = id_lattes)
+            query = "UPDATE usuarios SET is_active = NOT is_active WHERE idlattes = %(idlattes)s"
+            alternar = db.update(query, idlattes = idlattes)
             if alternar:
                 return True, "Status do usuário alterado com sucesso!"
             return False, "Não foi possível alterar o status do usuário!"
@@ -182,11 +202,11 @@ class CRUDUser():
             if privilegio:
                 query = "SELECT * FROM usuarios order by full_name"
                 rows = db.fetch_all(query)
-                return [Usuario(**row, id_lattes=row['idlattes'], nome = row['full_name']) for row in rows]
+                return [Usuario(**row, idlattes=row['idlattes'], nome = row['full_name']) for row in rows]
 
             query = "SELECT * FROM usuarios where id_ies = %(id_ies)s  and is_superuser = false and (is_admin = false or idlattes = %(idlattes)s) order by full_name"
             rows = db.fetch_all(query, id_ies = id_ies, idlattes=idlattes)
-            return [Usuario(**row, id_lattes=row['idlattes'], nome = row['full_name']) for row in rows]
+            return [Usuario(**row, idlattes=row['idlattes'], nome = row['full_name']) for row in rows]
         except Exception as e:
             print(e)
             return []
@@ -217,6 +237,7 @@ class CRUDUser():
         except Exception as e:
             print(e)
             return []
+    
 
 
 

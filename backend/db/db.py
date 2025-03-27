@@ -2,6 +2,7 @@ from backend.core.config import settings
 
 import psycopg2
 import psycopg2.extras
+import traceback
 
 class DBConnector:
   dbconn = None
@@ -115,6 +116,11 @@ class DBConnector:
       return True
     except Exception as err:
       self.rollback()
+      
+      erro_traceback = traceback.format_exc()
+      print(f"Erro ao executar a query: {query}");
+      print(f"Parâmetros: {kwargs}");
+      print(f"Erro: {erro_traceback}");
       return False
     finally:
       cursor.close()

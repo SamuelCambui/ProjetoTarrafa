@@ -4,6 +4,17 @@
 var grpc = require('@grpc/grpc-js');
 var messages_pb = require('./messages_pb.js');
 
+function serialize_protos_Empty(arg) {
+  if (!(arg instanceof messages_pb.Empty)) {
+    throw new Error('Expected argument of type protos.Empty');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_protos_Empty(buffer_arg) {
+  return messages_pb.Empty.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_protos_FormularioIndicadoresRequest(arg) {
   if (!(arg instanceof messages_pb.FormularioIndicadoresRequest)) {
     throw new Error('Expected argument of type protos.FormularioIndicadoresRequest');
@@ -182,12 +193,7 @@ getIndicadoresFormulario: {
     responseSerialize: serialize_protos_FormularioPPGLSResponse,
     responseDeserialize: deserialize_protos_FormularioPPGLSResponse,
   },
-  //
-// Insere um novo formulário da pós-graduação latu sensu.
-// Parâmetros:
-// nome(string) - Nome do formulário.
-// data_inicio(string) - Data de início.
-insertFormulario: {
+  insertFormulario: {
     path: '/protos.DadosFormularioPosGraduacaoLS/InsertFormulario',
     requestStream: false,
     responseStream: false,
@@ -211,6 +217,19 @@ deleteFormulario: {
     responseType: messages_pb.FormularioPPGLSResponse,
     requestSerialize: serialize_protos_FormularioIndicadoresRequest,
     requestDeserialize: deserialize_protos_FormularioIndicadoresRequest,
+    responseSerialize: serialize_protos_FormularioPPGLSResponse,
+    responseDeserialize: deserialize_protos_FormularioPPGLSResponse,
+  },
+  //
+// Lista todos os formaulários
+listarFormularios: {
+    path: '/protos.DadosFormularioPosGraduacaoLS/ListarFormularios',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.Empty,
+    responseType: messages_pb.FormularioPPGLSResponse,
+    requestSerialize: serialize_protos_Empty,
+    requestDeserialize: deserialize_protos_Empty,
     responseSerialize: serialize_protos_FormularioPPGLSResponse,
     responseDeserialize: deserialize_protos_FormularioPPGLSResponse,
   },

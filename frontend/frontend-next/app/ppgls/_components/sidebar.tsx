@@ -1,3 +1,4 @@
+"use client";
 import {
   Book,
   Building,
@@ -6,9 +7,13 @@ import {
   Home,
   LogOut,
   FileText,
+  File, 
+  Users,
+  CheckCircle,
 } from "lucide-react";
+import { useState } from "react";
 
-import { logout } from "@/app/login/actions";
+import { logout } from "@/app/login_ppgls_formularios/actions";
 import { Loading } from "@/components/loading";
 import { Avatar } from "@/components/ui/avatar";
 import {
@@ -29,14 +34,14 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { Session } from "next-auth";
 
 
-export function AppSidebar() {
-  const { data: session } = useSession();
+export function AppSidebar({ loggedUser }: { loggedUser?: Session["user"] }) {
   const { isMobile } = useSidebar();
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const items = [
     {
@@ -54,10 +59,23 @@ export function AppSidebar() {
       url: `/ppgls/departamentos`,
       icon: Building,
     },
+  ];
+
+  const formSubItems = [
     {
-      title: "Formulário",
-      url: `/ppgls/formulario`,
-      icon: FileText,
+      title: "Dados",
+      url: `/ppgls/dados_form`,
+      icon: File,
+    },
+    {
+      title: "Usuários",
+      url: `/ppgls/usuarios_form`,
+      icon: Users,
+    },
+    {
+      title: "Status de Preenchimento",
+      url: `/ppgls/status_preenchimento`,
+      icon: CheckCircle,
     },
   ];
 
@@ -69,6 +87,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
+          {/* Dropdown "Sistema Tarrafa" */}
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -91,20 +110,47 @@ export function AppSidebar() {
             </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
+
         <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
+          {/* Itens principais */}
+          {items.map(({ title, url, icon: Icon }) => (
+            <SidebarMenuItem key={title}>
               <SidebarMenuButton asChild>
-                <Link href={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
+                <Link href={url}>
+                  <Icon />
+                  <span>{title}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
+
+          {/* Formulário (Menu expansível) */}
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={() => setIsFormOpen(!isFormOpen)}>
+              <FileText />
+              <span>Formulário</span>
+              <ChevronDown className={`ml-auto transition-transform ${isFormOpen ? "rotate-180" : ""}`} />
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          {/* Subitens de Formulário */}
+          {isFormOpen &&
+            formSubItems.map(({ title, url, icon: Icon }) => (
+              <SidebarMenuItem key={title} className="pl-6">
+                <SidebarMenuButton asChild>
+                  <Link href={url}>
+                    <Icon />
+                    <span>{title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent></SidebarContent>
+
+      <SidebarContent />
+
+      {/* Footer com Avatar e Logout */}
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -115,22 +161,18 @@ export function AppSidebar() {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <Avatar className="h-8 w-8 rounded-full">
-                    {session?.user ? (
-                      <Image
-                        src={session.user.link_avatar ?? ""}
-                        alt="AV"
-                        fill
-                      />
+                    {loggedUser ? (
+                      <Image src={loggedUser.link_avatar ?? ""} alt="AV" fill />
                     ) : (
                       <Loading />
                     )}
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">
-                      {session?.user?.nome ?? "Usuário"}
+                      {loggedUser?.nome ?? "Usuário"}
                     </span>
                     <span className="truncate text-xs">
-                      {session?.user?.email ?? "E-mail"}
+                      {loggedUser?.email ?? "E-mail"}
                     </span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
@@ -145,18 +187,14 @@ export function AppSidebar() {
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-full">
-                      <Image
-                        src={session?.user?.link_avatar ?? ""}
-                        alt="AV"
-                        fill
-                      />
+                      <Image src={loggedUser?.link_avatar ?? ""} alt="AV" fill />
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
-                        {session?.user?.nome ?? "Usuário"}
+                      {loggedUser?.nome ?? "Usuário"}
                       </span>
                       <span className="truncate text-xs">
-                        {session?.user?.email ?? "E-mail"}
+                      {loggedUser?.email ?? "E-mail"}
                       </span>
                     </div>
                   </div>
