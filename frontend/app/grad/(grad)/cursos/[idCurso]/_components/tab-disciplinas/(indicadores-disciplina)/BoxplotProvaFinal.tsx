@@ -8,6 +8,7 @@ import {
 import { Box } from "@ant-design/plots";
 import { LoadingCard } from "../../../../../../_components/LoadingCard";
 import { GraficoProps } from "@/app/grad/_components/types";
+import { Frown } from "lucide-react";
 
 export const BoxplotProvaFinal = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {
@@ -101,7 +102,13 @@ export const BoxplotProvaFinal = ({ data, isLoading }: GraficoProps) => {
         <CardDescription>Desempenho dos alunos na prova final.</CardDescription>
       </CardHeader>
       <CardContent>
-        <Box {...config} />
+        {data.length === 0 ? (
+          <div className="mx-auto flex justify-center text-lg items-center gap-2 text-muted-foreground h-48">
+            <Frown className="mr-2 size-6" /> <span>Sem dados.</span>
+          </div>
+        ) : (
+          <Box {...config} />
+        )}
       </CardContent>
     </Card>
   );

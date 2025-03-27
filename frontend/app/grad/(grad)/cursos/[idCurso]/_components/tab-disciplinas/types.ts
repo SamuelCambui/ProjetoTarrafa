@@ -16,6 +16,7 @@ export type TabDisciplinasProps = TabProps & {
 };
 
 export type TabsBoxplotProps = GraficoProps & {
+  data?: any;
   serieFinal?: any;
 };
 

@@ -45,6 +45,7 @@ app_celery_queries.conf.update(
         f'{BASE_IMPORT_PATH_GRAD}.*': {'queue': 'fila_queries'}
     },
     worker_prefetch_multiplier=1,
+    task_time_limit=180
 )
 
 app_celery_queries.conf.broker_connection_retry_on_startup = True

@@ -8,6 +8,7 @@ import {
 import { Pie } from "@ant-design/plots";
 import { GraficoProps } from "@/app/grad/_components/types";
 import { LoadingCard } from "../../../../../_components/LoadingCard";
+import { SemDados } from "@/app/grad/_components/SemDados";
 
 export const GraficoNecessidadeEspecial = ({
   data,
@@ -67,7 +68,7 @@ export const GraficoNecessidadeEspecial = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Pie {...config} />
+        {data.length === 0 ? <SemDados /> : <Pie {...config} />}
       </CardContent>
     </Card>
   );

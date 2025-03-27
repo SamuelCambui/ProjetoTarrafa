@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Copiar package.json e package-lock.json
 COPY package*.json ./
+# COPY .env.producao .env
 
 # Instalar dependências
 RUN npm ci
@@ -14,9 +15,9 @@ RUN npm ci
 COPY . .
 
 # Construir a aplicação para produção
-RUN npm run build
+# RUN npm run build
 
-# Expor a porta que o Next.js usa
+# Expor a porta que o Next.js usa 
 EXPOSE 3000
 
 # Comando para iniciar a aplicação

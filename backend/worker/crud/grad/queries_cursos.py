@@ -156,7 +156,13 @@ class QueriesCursos:
         """
         query = """
             select sexo, ano_letivo || '/' || semestre as semestre_letivo, count(sexo) as quantidade from ( 
-                select distinct h.matricula_aluno, alunos.sexo, ano_letivo, semestre from historico as h
+                select distinct h.matricula_aluno, alunos.sexo, ano_letivo, 
+                (CASE 
+                    WHEN semestre > 2 THEN 2
+                    WHEN semestre < 1 THEN 1
+                    ELSE semestre
+                END) as semestre  
+                from historico as h
                 inner join alunos on alunos.matricula = h.matricula_aluno and alunos.id_ies = h.id_ies
                 inner join aluno_curso as al on al.id = h.id_aluno_curso and al.id_ies = h.id_ies
                 where al.id_curso = %(id_curso)s

@@ -1,22 +1,16 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Chart, Column } from "@ant-design/plots";
-import { LoadingCard } from "@/app/grad/_components/LoadingCard";
-import { GraficoProps } from "@/app/grad/_components/types";
-import { useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
 import { Grafico } from "@/app/grad/_components/Grafico";
+import { LoadingCard } from "@/app/grad/_components/LoadingCard";
+import { SemDados } from "@/app/grad/_components/SemDados";
+import { GraficoProps } from "@/app/grad/_components/types";
+import { useSidebar } from "@/components/ui/sidebar";
+import { Chart, Column } from "@ant-design/plots";
+import { useEffect, useRef } from "react";
 
 export const GraficoQuantidadeAlunos = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {
     return <LoadingCard />;
   }
+
   const ref = useRef<Chart>(null);
   const config = {
     data,
@@ -76,7 +70,7 @@ export const GraficoQuantidadeAlunos = ({ data, isLoading }: GraficoProps) => {
       titulo="Quantidade de Alunos"
       descricao="Alunos que possuem pelo menos uma disciplina matriculada."
     >
-      <Column {...config} ref={ref} />
+      {data.length === 0 ? <SemDados /> : <Column {...config} ref={ref} />}
     </Grafico>
   );
 };

@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Frown } from "lucide-react";
 
 export const GraficoQuantidadeProvaFinal = ({
   data,
@@ -67,7 +68,13 @@ export const GraficoQuantidadeProvaFinal = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Column {...config} />
+        {data.length === 0 ? (
+          <div className="flex justify-center text-lg items-center gap-2 text-muted-foreground h-48">
+            <Frown className="mr-2 size-6" /> <span>Sem dados.</span>
+          </div>
+        ) : (
+          <Column {...config} />
+        )}
       </CardContent>
     </Card>
   );

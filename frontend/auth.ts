@@ -2,6 +2,8 @@ import NextAuth, { Session } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 
+const SERVER_LOGIN = process.env.SERVER_LOGIN!
+
 export async function login({
   username,
   password,
@@ -10,7 +12,8 @@ export async function login({
   password: string;
 }) {
   try {
-    const response = await fetch("http://localhost:8002", {
+    console.log("FAZENDO LOGIN: ", SERVER_LOGIN)
+    const response = await fetch(SERVER_LOGIN, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,6 +36,7 @@ export async function login({
 
     return response.usuario;
   } catch (error) {
+    console.log(error)
     throw error;
   }
 }

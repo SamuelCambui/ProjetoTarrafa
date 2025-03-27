@@ -43,7 +43,7 @@ export const TabDisciplinas = ({
           isLoading={isLoading}
           data={data?.classificacaoDisciplinas}
         />
-        <Separator />
+        <Separator className="my-8" />
         <IndicadoresDisciplina
           disciplinas={data?.disciplinas}
           idGrade={gradeAtiva}

@@ -8,6 +8,7 @@ import {
 import { Pie } from "@ant-design/plots";
 import { LoadingCard } from "../../../../../_components/LoadingCard";
 import { GraficoProps } from "@/app/grad/_components/types";
+import { SemDados } from "@/app/grad/_components/SemDados";
 
 export const GraficoFormaIngresso = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {
@@ -127,7 +128,7 @@ export const GraficoFormaIngresso = ({ data, isLoading }: GraficoProps) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Pie {...configTodos} />
+          {data.length === 0 ? <SemDados /> : <Pie {...configTodos} />}
         </CardContent>
       </Card>
       <Card>
@@ -138,7 +139,7 @@ export const GraficoFormaIngresso = ({ data, isLoading }: GraficoProps) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Pie {...configCotas} />
+          {data.length === 0 ? <SemDados /> : <Pie {...configCotas} />}
         </CardContent>
       </Card>
     </div>

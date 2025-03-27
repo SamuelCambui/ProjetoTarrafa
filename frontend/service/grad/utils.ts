@@ -5,11 +5,11 @@ import {
 import * as grpc from "@grpc/grpc-js";
 
 export const stubIndicadores = new IndicadoresGraduacaoClient(
-  "localhost:50053",
+  process.env.SERVER_GRAD!,
   grpc.credentials.createInsecure(),
 );
 
 export const stubDados = new DadosGraduacaoClient(
-  "localhost:50053",
+  process.env.SERVER_GRAD!,
   grpc.credentials.createInsecure(),
 );

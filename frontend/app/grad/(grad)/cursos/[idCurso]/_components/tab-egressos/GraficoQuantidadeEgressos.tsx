@@ -8,6 +8,7 @@ import {
 import { Column } from "@ant-design/plots";
 import { LoadingCard } from "../../../../../_components/LoadingCard";
 import { GraficoProps } from "@/app/grad/_components/types";
+import { SemDados } from "@/app/grad/_components/SemDados";
 
 export const GraficoQuantidadeEgressos = ({
   data,
@@ -65,7 +66,7 @@ export const GraficoQuantidadeEgressos = ({
         <CardDescription>Quantidade de egressos.</CardDescription>
       </CardHeader>
       <CardContent>
-        <Column {...config} />
+        {data.length === 0 ? <SemDados /> : <Column {...config} />}
       </CardContent>
     </Card>
   );

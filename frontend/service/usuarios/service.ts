@@ -1,8 +1,10 @@
 "use server";
 
+const SERVER_LOGIN = process.env.SERVER_LOGIN!
+
 export async function verificarSessao(refreshToken: string) {
   try {
-    const response = await fetch("http://localhost:8002/verificar_token", {
+    const response = await fetch(SERVER_LOGIN + "/verificar_token", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -46,6 +46,17 @@ class QueriesDisciplinas:
         """
         if id_grade:
             query = """
+                with disciplinas_grade as (
+                    select cod_disc from grad_dis 
+                    where id_curso = %(id_curso)s 
+                    and id_ies = %(id_ies)s 
+                    and id_grade = %(id_grade)s
+                    union all
+                    select cod_disc from grad_dis
+                    where id_curso = %(id_curso)s
+                    and id_ies = %(id_ies)s
+                    and not exists (select 1 from (select id_grade from grades where id_curso = %(id_curso)s and id_ies = %(id_ies)s))
+                )
                 SELECT 
                     cod_disc, 
                     dis.nome, 
@@ -54,8 +65,7 @@ class QueriesDisciplinas:
                     dep.nome as departamento 
                 FROM disciplinas AS dis
                 INNER JOIN departamentos AS dep ON dep.id_dep = dis.id_dep AND dep.id_ies = dis.id_ies
-                WHERE dis.cod_disc in 
-                    (select cod_disc from grad_dis where id_curso = %(id_curso)s and id_ies = %(id_ies)s and id_grade = %(id_grade)s)
+                WHERE dis.cod_disc in (select * from disciplinas_grade)
                 order by nome
             """
 
@@ -70,6 +80,17 @@ class QueriesDisciplinas:
                 and id_ies = %(id_ies)s
                 order by ano desc, semestre desc
                 limit 1
+            ),
+            disciplinas_grade as (
+                select cod_disc from grad_dis 
+                where id_curso = %(id_curso)s
+                and id_ies = %(id_ies)s
+                and id_grade = (select * from ultima_grade)
+                union all
+                select cod_disc from grad_dis
+                where id_curso = %(id_curso)s
+                and id_ies = %(id_ies)s
+                and not exists (select 1 from ultima_grade)
             )
             SELECT 
                 cod_disc, 
@@ -79,11 +100,7 @@ class QueriesDisciplinas:
                 dep.nome as departamento 
             FROM disciplinas AS dis
             INNER JOIN departamentos AS dep ON dep.id_dep = dis.id_dep AND dep.id_ies = dis.id_ies
-            WHERE dis.cod_disc in 
-                (
-                    select cod_disc from grad_dis 
-                    where id_curso = %(id_curso)s and id_ies = %(id_ies)s and id_grade = (select * from ultima_grade)
-                )
+            WHERE dis.cod_disc in (select * from disciplinas_grade)
             order by nome
         """
         ret = db.fetch_all(query, id_ies=id_ies, id_curso=id_curso)

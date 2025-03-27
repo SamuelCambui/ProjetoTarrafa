@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Column } from "@ant-design/plots";
 import { LoadingCard } from "@/app/grad/_components/LoadingCard";
+import { SemDados } from "@/app/grad/_components/SemDados";
 
 export const GraficoTempoFormacao = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {
@@ -64,7 +65,7 @@ export const GraficoTempoFormacao = ({ data, isLoading }: GraficoProps) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Column {...config} />
+        {data.length === 0 ? <SemDados /> : <Column {...config} />}
       </CardContent>
     </Card>
   );

@@ -1,12 +1,17 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Box } from "@ant-design/plots";
 import { GraficoProps } from "@/app/grad/_components/types";
+import { SemDados } from "@/app/grad/_components/SemDados";
 
 export const BoxplotNotasGrade = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {
     return <Skeleton className="h-full w-full" />;
   }
   const map = new Map();
+
+  if (data.length === 0) {
+    return <SemDados />;
+  }
 
   data.forEach(({ nome, abreviacao, media, desvio_padrao }: any) =>
     map.set(abreviacao, { nome, media, desvio_padrao })

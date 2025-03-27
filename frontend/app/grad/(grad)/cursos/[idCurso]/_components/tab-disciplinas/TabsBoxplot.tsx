@@ -39,7 +39,7 @@ export const TabsBoxplot = ({
           {Array.from({ length: Number(serieFinal) }).map((_, i) => (
             <TabsContent value={(i + 1).toString()} key={i}>
               <BoxplotNotasGrade
-                data={(data as any)[`boxplotNotasGradeSerie${i + 1}`]}
+                data={data[`boxplotNotasGradeSerie${i + 1}`]}
               />
             </TabsContent>
           ))}

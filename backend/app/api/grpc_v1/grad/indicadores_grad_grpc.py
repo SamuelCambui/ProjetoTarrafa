@@ -92,7 +92,7 @@ class IndicadoresGraduacaoServicer(grad_pb2_grpc.IndicadoresGraduacaoServicer):
 
         return GradResponse(item=response)
 
-    # @cache_grpc_grad()
+    @cache_grpc_grad()
     def GetAbaIndicadoresCurso(self, request: GradRequest, context):
         consultas = []
         consultas.append(

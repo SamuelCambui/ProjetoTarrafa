@@ -1,10 +1,3 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Chart, Line } from "@ant-design/plots";
 import { LoadingCard } from "../../_components/LoadingCard";
 import { GraficoProps } from "../../_components/types";
@@ -16,6 +9,7 @@ export const GraficoTaxaMatriculas = ({ data, isLoading }: GraficoProps) => {
     return <LoadingCard />;
   }
   const chartRef = useRef<Chart>(null);
+
   const config = {
     data,
     xField: "semestre_letivo",

@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { SemDados } from "@/app/grad/_components/SemDados";
 
 export const GraficoReprovacoesDisciplina = ({
   data,
@@ -83,7 +84,7 @@ export const GraficoReprovacoesDisciplina = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Column {...config} />
+        {data.length === 0 ? <SemDados /> : <Column {...config} />}
       </CardContent>
     </Card>
   );
