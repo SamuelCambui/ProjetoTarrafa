@@ -304,6 +304,32 @@ export namespace LoginResponse {
     }
 }
 
+export class LoginResponseFormulario extends jspb.Message { 
+
+    hasUsuario(): boolean;
+    clearUsuario(): void;
+    getUsuario(): UsuarioDadosFormulario | undefined;
+    setUsuario(value?: UsuarioDadosFormulario): LoginResponseFormulario;
+    getErro(): boolean;
+    setErro(value: boolean): LoginResponseFormulario;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): LoginResponseFormulario.AsObject;
+    static toObject(includeInstance: boolean, msg: LoginResponseFormulario): LoginResponseFormulario.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: LoginResponseFormulario, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): LoginResponseFormulario;
+    static deserializeBinaryFromReader(message: LoginResponseFormulario, reader: jspb.BinaryReader): LoginResponseFormulario;
+}
+
+export namespace LoginResponseFormulario {
+    export type AsObject = {
+        usuario?: UsuarioDadosFormulario.AsObject,
+        erro: boolean,
+    }
+}
+
 export class UsuarioDados extends jspb.Message { 
 
     hasIdLattes(): boolean;
@@ -381,6 +407,53 @@ export namespace UsuarioDados {
     }
 }
 
+export class UsuarioDadosFormulario extends jspb.Message { 
+
+    hasIdlattes(): boolean;
+    clearIdlattes(): void;
+    getIdlattes(): string | undefined;
+    setIdlattes(value: string): UsuarioDadosFormulario;
+
+    hasNome(): boolean;
+    clearNome(): void;
+    getNome(): string | undefined;
+    setNome(value: string): UsuarioDadosFormulario;
+
+    hasEmail(): boolean;
+    clearEmail(): void;
+    getEmail(): string | undefined;
+    setEmail(value: string): UsuarioDadosFormulario;
+
+    hasIsCoordenador(): boolean;
+    clearIsCoordenador(): void;
+    getIsCoordenador(): boolean | undefined;
+    setIsCoordenador(value: boolean): UsuarioDadosFormulario;
+
+    hasIsAdmin(): boolean;
+    clearIsAdmin(): void;
+    getIsAdmin(): boolean | undefined;
+    setIsAdmin(value: boolean): UsuarioDadosFormulario;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): UsuarioDadosFormulario.AsObject;
+    static toObject(includeInstance: boolean, msg: UsuarioDadosFormulario): UsuarioDadosFormulario.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: UsuarioDadosFormulario, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): UsuarioDadosFormulario;
+    static deserializeBinaryFromReader(message: UsuarioDadosFormulario, reader: jspb.BinaryReader): UsuarioDadosFormulario;
+}
+
+export namespace UsuarioDadosFormulario {
+    export type AsObject = {
+        idlattes?: string,
+        nome?: string,
+        email?: string,
+        isCoordenador?: boolean,
+        isAdmin?: boolean,
+    }
+}
+
 export class CriacaoUsuarioRequest extends jspb.Message { 
 
     hasUsuario(): boolean;
@@ -406,6 +479,35 @@ export class CriacaoUsuarioRequest extends jspb.Message {
 export namespace CriacaoUsuarioRequest {
     export type AsObject = {
         usuario?: UsuarioDados.AsObject,
+        password?: string,
+    }
+}
+
+export class CriacaoUsuarioFormularioRequest extends jspb.Message { 
+
+    hasUsuarioBase(): boolean;
+    clearUsuarioBase(): void;
+    getUsuarioBase(): UsuarioDadosFormulario | undefined;
+    setUsuarioBase(value?: UsuarioDadosFormulario): CriacaoUsuarioFormularioRequest;
+
+    hasPassword(): boolean;
+    clearPassword(): void;
+    getPassword(): string | undefined;
+    setPassword(value: string): CriacaoUsuarioFormularioRequest;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): CriacaoUsuarioFormularioRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: CriacaoUsuarioFormularioRequest): CriacaoUsuarioFormularioRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: CriacaoUsuarioFormularioRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CriacaoUsuarioFormularioRequest;
+    static deserializeBinaryFromReader(message: CriacaoUsuarioFormularioRequest, reader: jspb.BinaryReader): CriacaoUsuarioFormularioRequest;
+}
+
+export namespace CriacaoUsuarioFormularioRequest {
+    export type AsObject = {
+        usuarioBase?: UsuarioDadosFormulario.AsObject,
         password?: string,
     }
 }
@@ -453,6 +555,51 @@ export class UsuarioResponse extends jspb.Message {
 export namespace UsuarioResponse {
     export type AsObject = {
         usuario?: UsuarioDados.AsObject,
+    }
+}
+
+export class UsuarioFormularioResponse extends jspb.Message { 
+
+    hasUsuario(): boolean;
+    clearUsuario(): void;
+    getUsuario(): UsuarioDadosFormulario | undefined;
+    setUsuario(value?: UsuarioDadosFormulario): UsuarioFormularioResponse;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): UsuarioFormularioResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: UsuarioFormularioResponse): UsuarioFormularioResponse.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: UsuarioFormularioResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): UsuarioFormularioResponse;
+    static deserializeBinaryFromReader(message: UsuarioFormularioResponse, reader: jspb.BinaryReader): UsuarioFormularioResponse;
+}
+
+export namespace UsuarioFormularioResponse {
+    export type AsObject = {
+        usuario?: UsuarioDadosFormulario.AsObject,
+    }
+}
+
+export class ListaUsuariosFormularioResponse extends jspb.Message { 
+    clearItemList(): void;
+    getItemList(): Array<UsuarioDadosFormulario>;
+    setItemList(value: Array<UsuarioDadosFormulario>): ListaUsuariosFormularioResponse;
+    addItem(value?: UsuarioDadosFormulario, index?: number): UsuarioDadosFormulario;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ListaUsuariosFormularioResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: ListaUsuariosFormularioResponse): ListaUsuariosFormularioResponse.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: ListaUsuariosFormularioResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ListaUsuariosFormularioResponse;
+    static deserializeBinaryFromReader(message: ListaUsuariosFormularioResponse, reader: jspb.BinaryReader): ListaUsuariosFormularioResponse;
+}
+
+export namespace ListaUsuariosFormularioResponse {
+    export type AsObject = {
+        itemList: Array<UsuarioDadosFormulario.AsObject>,
     }
 }
 
@@ -715,8 +862,8 @@ export namespace PPGLSResponse {
 }
 
 export class FormularioSerchPPGLSRequest extends jspb.Message { 
-    getMasp(): number;
-    setMasp(value: number): FormularioSerchPPGLSRequest;
+    getCpf(): string;
+    setCpf(value: string): FormularioSerchPPGLSRequest;
     getTipo(): number;
     setTipo(value: number): FormularioSerchPPGLSRequest;
 
@@ -732,7 +879,7 @@ export class FormularioSerchPPGLSRequest extends jspb.Message {
 
 export namespace FormularioSerchPPGLSRequest {
     export type AsObject = {
-        masp: number,
+        cpf: string,
         tipo: number,
     }
 }
@@ -740,7 +887,15 @@ export namespace FormularioSerchPPGLSRequest {
 export class FormularioIndicadoresRequest extends jspb.Message { 
     getNomeFormulario(): string;
     setNomeFormulario(value: string): FormularioIndicadoresRequest;
-    getDataInicio(): string;
+
+    hasDataPreenchimento(): boolean;
+    clearDataPreenchimento(): void;
+    getDataPreenchimento(): string | undefined;
+    setDataPreenchimento(value: string): FormularioIndicadoresRequest;
+
+    hasDataInicio(): boolean;
+    clearDataInicio(): void;
+    getDataInicio(): string | undefined;
     setDataInicio(value: string): FormularioIndicadoresRequest;
 
     serializeBinary(): Uint8Array;
@@ -756,7 +911,8 @@ export class FormularioIndicadoresRequest extends jspb.Message {
 export namespace FormularioIndicadoresRequest {
     export type AsObject = {
         nomeFormulario: string,
-        dataInicio: string,
+        dataPreenchimento?: string,
+        dataInicio?: string,
     }
 }
 

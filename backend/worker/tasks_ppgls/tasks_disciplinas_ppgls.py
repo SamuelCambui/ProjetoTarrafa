@@ -1,29 +1,33 @@
 from protos.out.messages_pb2 import PPGLSJson
 from google.protobuf.json_format import MessageToDict
 import json
-import re
 
-from backend.schemas.grafico import DadosGrafico, DataSet, Grafico
-from backend.worker.crud.ppgls.queries.disciplinas_ppgls import queries_disciplinas
+
+from backend.worker.crud.ppgls.queries.queries_disciplinas_ppgls import queries_disciplinas
 from backend.worker.celery_start_queries import app_celery_queries
+
+
+import polars as pl
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+import pandas as pd
+
 
 
 @app_celery_queries.task
 def get_disciplinas(
-    id_grade: str,
     id_curso: str,
     id_ies: str,
 ):
     """
     Retorna todas as disciplinas de uma grade curricular de um curso.
 
-    :param id_grade(str): Código da Grade Curricular.
     :param id_curso(str): Código do curso.
     :param id_ies(str): Código da Instituição.
     """
     try:
         disciplinas = queries_disciplinas.disciplinas_grade(
-            id_grade=id_grade, id_ies=id_ies, id_curso=id_curso
+            id_ies=id_ies, id_curso=id_curso
         )
         message = PPGLSJson(
             nome="disciplinas",
@@ -80,21 +84,19 @@ def get_quantidade_alunos_disciplina(id_disc: str, id_ies: str, anoi: str, anof:
         )
         return MessageToDict(message)
     except:
-        message = PPGLSJson(nome="graficoQuantidadeAlunosDisciplina", json=None)
+        message = PPGLSJson(nome="graficoQuantidadeAlunosDisciplina", json="[]")
         return MessageToDict(message)
 
 
 @app_celery_queries.task
 def get_boxplot_notas_grade(
     id_curso: str,
-    id_grade: str | None,
     id_ies: str,
     serie: int,
 ):
     try:
         disciplinas = queries_disciplinas.boxplot_notas_grade(
             id_curso=id_curso,
-            id_grade=id_grade,
             id_ies=id_ies,
             serie=serie,
         )
@@ -111,13 +113,12 @@ def get_boxplot_notas_grade(
 @app_celery_queries.task
 def get_taxa_aprovacao_reprovacao_serie(
     id_curso: str,
-    id_grade: str,
     id_ies: str,
     serie: int,
 ):
     try:
         aprovacoes_reprovacoes = queries_disciplinas.taxa_aprovacao_reprovacao_serie(
-            id_curso=id_curso, id_ies=id_ies, serie=serie, id_grade=id_grade
+            id_curso=id_curso, id_ies=id_ies, serie=serie
         )
         message = PPGLSJson(
             nome=f"aprovacoesReprovacoesSerie{serie}",
@@ -131,7 +132,7 @@ def get_taxa_aprovacao_reprovacao_serie(
 
 @app_celery_queries.task
 def get_aprovacoes_reprovacoes_por_semestre(
-    id_disc: int,
+    id_disc: str,
     id_curso: str,
     id_ies: str,
     anoi: int,
@@ -168,7 +169,7 @@ def get_aprovacoes_reprovacoes_por_semestre(
 
 @app_celery_queries.task
 def get_boxplot_notas_disciplina(
-    id_disc: int,
+    id_disc: str,
     id_ies: str,
     anoi: str,
     anof: str,
@@ -193,7 +194,7 @@ def get_boxplot_notas_disciplina(
 
 @app_celery_queries.task
 def get_histograma_notas_disciplina(
-    id_disc: int,
+    id_disc: str,
     id_ies: str,
     anoi: str,
     anof: str,
@@ -375,3 +376,104 @@ def get_histograma_desempenho_cotistas(
     except Exception as err:
         message = PPGLSJson(nome="histogramaDesempenhoCotistas", json=None)
         return MessageToDict(message)
+    
+
+
+@app_celery_queries.task
+def get_classificacao_disciplinas(
+    id_curso: str, 
+    id_ies: str, 
+):
+    try:
+        # Chama a função para obter a classificação das disciplinas
+        disciplinas = queries_disciplinas.classificacao_disciplinas(
+            id_curso=id_curso, 
+            id_ies=id_ies, 
+        )
+
+        # Converte o resultado em um DataFrame
+        df = pl.DataFrame([dict(disciplina) for disciplina in disciplinas])
+        
+        # Normalizador dos Dados
+        scaler = StandardScaler()
+        
+        # Converte para pandas para normalização
+        df_pandas = df.select(["primeiro_quartil", "segundo_quartil", "terceiro_quartil", "taxa_aprovacao", "media"]).to_pandas()
+
+        # Dataframe normalizado
+        df_scaled = pl.DataFrame(pd.DataFrame(scaler.fit_transform(df_pandas), columns=df_pandas.columns)).with_columns(
+            pl.Series(name="nome", values=df["nome"]),
+        )
+
+        # Aplicação do K-Means
+        xkmeans = KMeans(n_clusters=3).fit(
+            df_scaled.select(["primeiro_quartil", "segundo_quartil", "terceiro_quartil", "taxa_aprovacao", "media"]).to_pandas()
+        )
+
+        # Definição da dificuldade com base na média dos clusters
+        media_clusters = pd.DataFrame(xkmeans.cluster_centers_).mean(axis=1).to_list()
+
+        labels = [0, 1, 2]
+        label_dificil = media_clusters.index(min(media_clusters))
+        labels.remove(label_dificil)
+        label_facil = media_clusters.index(max(media_clusters))
+        labels.remove(label_facil)
+        label_medio = labels[0]
+
+        # Criação da classificação das disciplinas
+        df_classificacao = df_scaled.with_columns(
+            pl.Series(name='cluster', values=xkmeans.labels_)
+        ).with_columns(
+            pl.when(pl.col("cluster") == label_facil)
+                .then(pl.lit("Fácil"))
+            .when(pl.col("cluster") == label_medio)
+                .then(pl.lit("Médio"))
+            .when(pl.col("cluster") == label_dificil)
+                .then(pl.lit("Difícil"))
+            .alias('cluster')
+        )
+        
+        # Converte para dicionário
+        dict_df = df_classificacao.select(["nome", "cluster"]).to_dicts()
+
+        # Organiza os resultados em formato hierárquico
+        classification_dict = {
+            "id": "Níveis",
+            "children": [
+                { 
+                    "id": "Fácil", 
+                    "children": [
+                        {"id": f"{disc['nome']}", "parentId": "Fácil"} for disc in dict_df if disc["cluster"] == "Fácil"
+                    ] 
+                }, 
+                { 
+                    "id": "Médio", 
+                    "children": [
+                        {"id": f"{disc['nome']}", "parentId": "Médio"} for disc in dict_df if disc["cluster"] == "Médio"
+                    ] 
+                },  
+                { 
+                    "id": "Difícil", 
+                    "children": [
+                        {"id": f"{disc['nome']}", "parentId": "Difícil"} for disc in dict_df if disc["cluster"] == "Difícil"
+                    ] 
+                }, 
+            ]
+        }
+
+        # Criação da mensagem de resposta
+        message = PPGLSJson(nome="classificacaoDisciplinas", json=json.dumps(classification_dict))
+        print("-------------------------------Resultado final:----------------------------------")
+        print(message)
+        return MessageToDict(message)
+    
+    except Exception as err:
+        # Tratamento de erros
+        message = PPGLSJson(nome="classificacaoDisciplinasComErro", json=None)
+        print("----------------------------------------------------------------------------")
+        print(err)
+        print("----------------------------------------------------------------------------")
+        return MessageToDict(message)
+
+
+

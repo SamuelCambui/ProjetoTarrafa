@@ -1,5 +1,5 @@
 from protos.out import ppgls_pb2_grpc
-from backend.worker.tasks_ppgls import tasks_disciplinas_ppgls, tasks_cursos_ppgls
+from backend.worker.tasks_ppgls import tasks_disciplinas_ppgls, tasks_cursos_ppgls, tasks_ppgls
 from protos.out.messages_pb2 import PPGLSRequest, PPGLSResponse
 import json
 from backend.db.cache import cache_grpc_ppgls
@@ -17,19 +17,22 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
         consultas = []
         consultas.append(
             tasks_disciplinas_ppgls.get_disciplinas.s(
-                id_grade=request.id_grade,
                 id_curso=request.id_curso,
                 id_ies=request.id_ies,
             )
         )
-
+        consultas.append(
+            tasks_disciplinas_ppgls.get_classificacao_disciplinas.s(
+                id_curso=request.id_curso, 
+                id_ies=request.id_ies, 
+            )
+        )
         for serie in range(serie_inicial, serie_final + 1):
             consultas.append(
                 tasks_disciplinas_ppgls.get_boxplot_notas_grade.s(
                     id_curso=request.id_curso,
                     id_ies=request.id_ies,
                     serie=serie,
-                    id_grade=request.id_grade,
                 )
             )
             consultas.append(
@@ -37,7 +40,6 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
                     id_curso=request.id_curso,
                     id_ies=request.id_ies,
                     serie=serie,
-                    id_grade=request.id_grade,
                 )
             )
 
@@ -46,10 +48,11 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
         result = result.get()
         response = [item for item in result]
 
-
+        print("-------------------------------Resultado final:----------------------------------")
+        print(response)
         return PPGLSResponse(item=response)
     
-    @cache_grpc_ppgls()
+    # @cache_grpc_ppgls()
     def GetIndicadoresDisciplina(self, request: PPGLSRequest, context):
 
         consultas = []
@@ -118,6 +121,15 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
                 id_ies=request.id_ies,
             )
         )
+        consultas.append(
+            tasks_disciplinas_ppgls.get_boxplot_desempenho_alunos_professor.s(
+                id_disc=request.id_disc,
+                id_ies=request.id_ies,
+                anoi=request.anoi,
+                anof=request.anof
+            )
+        )
+
 
         job = group(consultas)
         result = job.apply_async()
@@ -137,9 +149,6 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
         consultas = []
         
         consultas.append(
-            tasks_cursos_ppgls.get_curso.s(id_curso=request.id_curso, id_ies=request.id_ies)
-        )
-        consultas.append(
             tasks_cursos_ppgls.get_quantidade_alunos_por_sexo.s(
                 id_curso=request.id_curso,
                 id_ies=request.id_ies,
@@ -157,6 +166,14 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
         )
         consultas.append(
             tasks_cursos_ppgls.get_alunos_necessidade_especial.s(
+                id_curso=request.id_curso,
+                id_ies=request.id_ies,
+                anoi=request.anoi,
+                anof=request.anof,
+            )
+        )
+        consultas.append(
+            tasks_cursos_ppgls.get_boxplot_idade.s(
                 id_curso=request.id_curso,
                 id_ies=request.id_ies,
                 anoi=request.anoi,
@@ -222,27 +239,39 @@ class IndicadoresPPGLSServicer(ppgls_pb2_grpc.IndicadoresPosGraduacaoLSServicer)
     def GetIndicadoresGlobais(self, request: PPGLSRequest, context):
         consultas = []
         consultas.append(
-            tasks_cursos_ppgls.get_naturalidade_alunos.s(
+            tasks_ppgls.get_naturalidade_alunos.s(
                 id_ies=request.id_ies,
-                id_curso=request.id_curso,
                 anoi=request.anoi,
                 anof=request.anof,
             )
         )
         consultas.append(
-            tasks_cursos_ppgls.get_quantidade_alunos_por_sexo.s(
+            tasks_ppgls.get_quantidade_alunos_por_sexo.s(
                 id_ies=request.id_ies,
-                id_curso=request.id_curso,
+                anoi=request.anoi,
+                anof=request.anof,
+            )
+        )
+    
+        consultas.append(
+            tasks_ppgls.get_boxplot_idade.s(
+                id_ies=request.id_ies,
                 anoi=request.anoi,
                 anof=request.anof,
             )
         )
         consultas.append(
-            tasks_cursos_ppgls.get_quant_alunos_vieram_gradu_e_nao_vieram_por_curso.s(
+            tasks_ppgls.get_taxa_matriculas.s(
                 id_ies=request.id_ies,
-                id_curso=request.id_curso,
                 anoi=request.anoi,
-                anof=request.anof,
+                anof=request.anof
+            )
+        )
+        consultas.append(
+            tasks_ppgls.get_taxa_matriculas_por_cota.s(
+                id_ies=request.id_ies,
+                anoi=request.anoi,
+                anof=request.anof
             )
         )
 

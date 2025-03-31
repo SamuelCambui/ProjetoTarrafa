@@ -1,9 +1,9 @@
 from backend.db.db import DBConnectorGRAD
-from backend.core.utils import tratamento_excecao_db_grad
+from backend.core.utils import tratamento_excecao_com_db
 
 class QueriesCursos():
 
-    @tratamento_excecao_db_grad()
+    @tratamento_excecao_com_db(tipo_banco='grad')
     def lista_cursos(self, id_ies: str, db: DBConnectorGRAD = None):
         """
         Retorna todos os cursos de pós-graduação lsy a partir de 10 anos atrás.\n
@@ -27,7 +27,7 @@ class QueriesCursos():
         ret = db.fetch_all(query=query, id_ies=id_ies)
         return ret
 
-    @tratamento_excecao_db_grad()
+    @tratamento_excecao_com_db(tipo_banco='grad')
     def retorna_curso(self, id_curso: str, id_ies: str, db: DBConnectorGRAD = None):
         """
         Retorna dados de um curso em específico.
@@ -42,7 +42,7 @@ class QueriesCursos():
         ret = db.fetch_one(query, id_curso=id_curso, id_ies=id_ies)
         return ret
 
-    @tratamento_excecao_db_grad()
+    @tratamento_excecao_com_db(tipo_banco='grad')
     def quantidade_alunos_por_semestre(
         self,
         id: str,
@@ -74,7 +74,7 @@ class QueriesCursos():
         return ret
 
 
-    @tratamento_excecao_db_grad()
+    @tratamento_excecao_com_db(tipo_banco='grad')
     def quantidade_alunos_por_sexo(
         self,
         id_curso: str,
@@ -92,8 +92,14 @@ class QueriesCursos():
         :param anof(int): Ano final.
         """
         query = """
-            select sexo, ano_letivo, semestre, count(sexo) as quantidade from ( 
-                select distinct h.matricula_aluno, alunos.sexo, ano_letivo, semestre from historico as h
+            select sexo, ano_letivo || '/' || semestre as semestre_letivo, count(sexo) as quantidade from ( 
+                select distinct h.matricula_aluno, alunos.sexo, ano_letivo, 
+                (CASE 
+                    WHEN semestre > 2 THEN 2
+                    WHEN semestre < 1 THEN 1
+                    ELSE semestre
+                END) as semestre  
+                from historico as h
                 inner join alunos on alunos.matricula = h.matricula_aluno and alunos.id_ies = h.id_ies
                 inner join aluno_curso as al on al.id = h.id_aluno_curso and al.id_ies = h.id_ies
                 where al.id_curso = %(id_curso)s
@@ -103,6 +109,7 @@ class QueriesCursos():
             ) as foo
             group by sexo, ano_letivo, semestre
             order by ano_letivo
+
         """
         ret = db.fetch_all(
             query,
@@ -113,7 +120,7 @@ class QueriesCursos():
         )
         return ret
 
-    @tratamento_excecao_db_grad()
+    @tratamento_excecao_com_db(tipo_banco='grad')
     def forma_ingresso(
         self,
         id_curso: str,
@@ -148,7 +155,7 @@ class QueriesCursos():
         )
         return ret
 
-    @tratamento_excecao_db_grad()
+    @tratamento_excecao_com_db(tipo_banco='grad')
     def alunos_necessidade_especial(
         self,
         id_curso: str,
@@ -186,7 +193,7 @@ class QueriesCursos():
         )
         return ret
 
-    @tratamento_excecao_db_grad()
+    @tratamento_excecao_com_db(tipo_banco='grad')
     def professores(
         self,
         id_curso: str,
@@ -220,27 +227,34 @@ class QueriesCursos():
                     AND h.cod_disc IN (SELECT cod_disc FROM disciplinas_curso)
                     AND cast(ano_letivo as integer) between %(anoi)s and %(anof)s
                 GROUP BY h.id_prof, dis.cod_disc, dis.nome, dis.abreviacao
+                ORDER BY h.id_prof, MAX(ano_letivo) DESC
             )
             SELECT 
                 id_prof,
                 prof.nome,
                 prof.qualificacao,
                 prof.sexo,
+                COALESCE(dep.nome, 'NÃO ESPECIFICADO') as departamento,
+                COALESCE(prof.vinculo, 'NÃO ESPECIFICADO') as vinculo,
                 JSON_AGG(
                     JSON_BUILD_OBJECT(
                         'id_disc', cod_disc,
                         'nome', disciplina,
-                        'abreviacao', abreviacao,
+                        'abreviacao', historico_curso.abreviacao,
                         'ultima_vez_lecionada', ano_letivo
                     )
                 ) AS disciplinas
             FROM historico_curso
             INNER JOIN professores AS prof ON prof.id = id_prof
+            LEFT JOIN departamentos AS dep ON dep.id_dep = prof.id_dep
             GROUP BY 
                 id_prof, 
                 prof.nome,
                 prof.qualificacao,
+                dep.nome,
+                prof.vinculo,
                 prof.sexo;
+
 
         """
         ret = db.fetch_all(
@@ -252,7 +266,7 @@ class QueriesCursos():
         )
         return ret
 
-    # @tratamento_excecao_db_grad()
+    # @tratamento_excecao_com_db(tipo_banco='grad')
     # def tempo_formacao(
     #     self,
     #     id_curso: str,
@@ -294,7 +308,7 @@ class QueriesCursos():
     #     ret = db.fetch_all(query, id_curso=id_curso, anoi=anoi, id_ies=id_ies)
     #     return ret
 
-    @tratamento_excecao_db_grad()
+    @tratamento_excecao_com_db(tipo_banco='grad')
     def naturalidade_alunos(
         self,
         id_curso: str,
@@ -334,8 +348,8 @@ class QueriesCursos():
         )
         return ret
 
-    #   TESTE
-    @tratamento_excecao_db_grad()
+  
+    @tratamento_excecao_com_db(tipo_banco='grad')
     def boxplot_idade(
         self,
         id_curso: str,
@@ -347,7 +361,7 @@ class QueriesCursos():
         """
         Distribuição de idade dos ingressantes no curso.
 
-        :param id_curso(str): Código do curso.
+        :param id_curso(str): Código da do curso.
         :param id_ies(str): Código da instituição.
         :param anoi(int): Ano inicial.
         :param anof(int): Ano final.
@@ -366,10 +380,10 @@ class QueriesCursos():
             query_quartis as (
                 select
                     ano_ingresso,
-                    max(case when quartil = 1 then idade end) as primeiro_quartil,
-                    max(case when quartil = 2 then idade end) as segundo_quartil,
-                    max(case when quartil = 3 then idade end) as terceiro_quartil,
-                    round(avg(idade), 2) as media
+                    cast(max(case when quartil = 1 then idade end) as float) as primeiro_quartil,
+                    cast(max(case when quartil = 2 then idade end) as float) as segundo_quartil,
+                    cast(max(case when quartil = 3 then idade end) as float) as terceiro_quartil,
+                    cast(round(avg(idade), 2) as float) as media
                 from query_idades
                 group by ano_ingresso
                 having MAX(CASE WHEN quartil = 1 THEN idade END) IS NOT NULL
@@ -382,15 +396,16 @@ class QueriesCursos():
             from query_quartis
             order by ano_ingresso;
         """
-
+        
         ret = db.fetch_all(
-            query=query, id_curso=id_curso, id_ies=id_ies, anoi=anoi, anof=anof
+            query=query, id_curso=id_curso,id_ies=id_ies, anoi=anoi, anof=anof
         )
+        
         return ret
 
 
     
-    @tratamento_excecao_db_grad()
+    @tratamento_excecao_com_db(tipo_banco='grad')
     def quant_alunos_por_cor_por_ano(self, id: str,id_ies: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
         """
         Retorna a quantidade de alunos de cada cor de pele dos cursos e das residências de pós-graduação latu sensu em um determinado periodo 
@@ -435,7 +450,7 @@ class QueriesCursos():
   
    
 
-    # @tratamento_excecao_db_grad()
+    # @tratamento_excecao_com_db(tipo_banco='grad')
     # def quant_alu_grad_e_posgra(self, db: DBConnectorGRAD = None):
     #     """
     #     Retorna a quantidade de alunos que fizeram graduação e pós graduação e a quantidade de alunos que fizeram apenas graduação
@@ -476,7 +491,7 @@ class QueriesCursos():
     #     ret = db.fetch_all(query, id=id)
     #     return ret
     
-    @tratamento_excecao_db_grad()
+    @tratamento_excecao_com_db(tipo_banco='grad')
     def quant_alunos_vieram_gradu_e_nao_vieram_por_curso(self, id: str,id_ies: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
         """
         Retorna a quantidade de alunos que vieram de cada curso da graduação em um determinado curso de pós graduação latu sensu em um determinado curso
@@ -535,14 +550,14 @@ class QueriesCursos():
         )
         SELECT 
             pc.ano_matricula,
-            COALESCE(cg.nome_curso_graduacao, 'Não Há') AS nome_curso_graduacao,
+            COALESCE(cg.nome_curso_graduacao, 'Não Fizeram Nenhum Curso de Graduação na Unimontes') AS nome_curso_graduacao,
             COUNT(pc.matricula) AS quantidade_matriculas -- Contagem de matrículas por curso
         FROM 
             primeira_consulta pc
         LEFT JOIN 
             curso_graduacao cg ON pc.matricula = cg.matricula
         GROUP BY 
-            pc.ano_matricula, COALESCE(cg.nome_curso_graduacao, 'Não Há')
+            pc.ano_matricula, COALESCE(cg.nome_curso_graduacao, 'Não Fizeram Nenhum Curso de Graduação na Unimontes')
         ORDER BY 
             pc.ano_matricula, quantidade_matriculas DESC;
         """
@@ -550,9 +565,101 @@ class QueriesCursos():
         ret = db.fetch_all(query, id=id, id_ies=id_ies, anoi=anoi, anof=anof)
         dados = [dict(r) for r in ret]
         return dados
+    
+  
+    
+    @tratamento_excecao_com_db(tipo_banco='grad')
+    def taxa_matriculas(
+        self,
+        id_ies: str,
+        anoi: int,
+        anof: int,
+        db: DBConnectorGRAD = None,
+    ):
+        query = """
+            select alunos.sexo, date_part('year', data_matricula) as ano_ingresso, count(*) as quantidade 
+            from aluno_curso
+            inner join alunos on aluno_curso.matricula_aluno = alunos.matricula and aluno_curso.id_ies = alunos.id_ies
+            where date_part('year', data_matricula) between %(anoi)s and %(anof)s
+            and alunos.id_ies = %(id_ies)s
+            group by sexo, date_part('year', data_matricula)
+            order by date_part('year', data_matricula)
+        """
+
+        ret = db.fetch_all(
+            query=query,
+            id_ies=id_ies,
+            anoi=anoi,
+            anof=anof,
+        )
+
+        return ret
+    
+    @tratamento_excecao_com_db(tipo_banco='grad')
+    def taxa_matriculas_por_cota(
+        self,
+        id_ies: str,
+        anoi: int,
+        anof: int,
+        db: DBConnectorGRAD = None,
+    ):
+        query = """
+            select
+                formasingresso.cota, 
+                date_part('year', data_matricula) || '/' ||
+                (CASE
+                    when date_part('month', data_matricula) <= 6 THEN 1
+                    else 2
+                END) as semestre_letivo,
+                count(*) as quantidade
+            from aluno_curso
+            left join formasingresso on formasingresso.id = aluno_curso.id_forma_ing and formasingresso.id_ies = aluno_curso.id_ies
+            where date_part('year', data_matricula) between %(anoi)s and %(anof)s
+            and aluno_curso.id_ies = %(id_ies)s
+            and cota is not null
+            group by cota, date_part('year', data_matricula), semestre_letivo
+            order by date_part('year', data_matricula)
+        """
+        ret = db.fetch_all(
+            query=query,
+            id_ies=id_ies,
+            anoi=anoi,
+            anof=anof,
+        )
+        return ret
+    
+
+    @tratamento_excecao_com_db(tipo_banco='grad')
+    def cursos_aleatorios(self, id_ies: str, db: DBConnectorGRAD = None):
+        """
+        Retorna 5 cursos aletórios para população da sidebar no front-end
+        """
+        query = """
+            SELECT cursos.id, nome, tiposcursos.descricao AS tipo_curso
+            FROM cursos
+            LEFT JOIN curso_tipo ON curso_tipo.id_curso = cursos.id AND curso_tipo.id_ies = cursos.id_ies
+            LEFT JOIN tiposcursos ON tiposcursos.id = curso_tipo.id_tipo
+            WHERE curso_tipo.id_tipo IN (3,5,6)
+            AND cursos.id IN (
+                SELECT DISTINCT aluno_curso.id_curso
+                FROM historico AS h
+                INNER JOIN aluno_curso ON aluno_curso.id = h.id_aluno_curso AND aluno_curso.id_ies = h.id_ies
+                WHERE CAST(h.ano_letivo AS INTEGER) BETWEEN date_part('year', CURRENT_DATE) - 10 AND date_part('year', CURRENT_DATE)
+                AND h.id_ies = %(id_ies)s
+            )
+            AND cursos.id_ies = %(id_ies)s
+            ORDER BY RANDOM()
+            LIMIT 5;
+        """
+        ret = db.fetch_all(query=query, id_ies=id_ies)
+        return ret
+
+
+
+
 
     
-    # @tratamento_excecao_db_grad()
+    # @tratamento_excecao_com_db(tipo_banco='grad')
     # def temp_med_conclu_por_curso(self, id: str, db: DBConnectorGRAD = None):
     #     """
     #     Retorna o tempo medio de conclusao determinado curso de pós graduação latu sensu em meses

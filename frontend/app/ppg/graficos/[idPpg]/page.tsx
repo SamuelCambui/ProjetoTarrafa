@@ -22,12 +22,10 @@ type Abas =
   | "bancas"
   | "egressos";
 
-export default function Page() {
-  // if (!idIes) idIes = "3727";
-  const { idPpg } = useParams();
-
-  const [idIes, setIdIes] = useState("3727");
-  const { dadosPpg, isLoading } = useDadosPPG(idIes, idPpg as string);
+export default function Page({ idIes }: { idIes: string }) {
+  if (!idIes) idIes = "3727";
+  const { idPpg }: { idPpg: string } = useParams();
+  const { dadosPpg, isLoading } = useDadosPPG(idIes, idPpg);
 
   const [activeTab, setActiveTab] = useState<Abas>("indicadores");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

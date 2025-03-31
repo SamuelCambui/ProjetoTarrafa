@@ -133,6 +133,7 @@ class IndicadoresPosGraduacaoLSServicer(object):
         id(string) - Código do curso.\n
         anoi(int) - Ano Inicial.\n
         anof(int) - Ano Final.\n
+        teste
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -365,24 +366,19 @@ class DadosFormularioPosGraduacaoLSStub(object):
                 request_serializer=messages__pb2.FormularioIndicadoresRequest.SerializeToString,
                 response_deserializer=messages__pb2.FormularioPPGLSResponse.FromString,
                 _registered_method=True)
-        self.SearchRegistrosFormualario = channel.unary_unary(
-                '/protos.DadosFormularioPosGraduacaoLS/SearchRegistrosFormualario',
-                request_serializer=messages__pb2.FormularioSerchPPGLSRequest.SerializeToString,
-                response_deserializer=messages__pb2.FormularioPPGLSResponse.FromString,
-                _registered_method=True)
         self.InsertFormulario = channel.unary_unary(
                 '/protos.DadosFormularioPosGraduacaoLS/InsertFormulario',
-                request_serializer=messages__pb2.FormularioPPGLSRequest.SerializeToString,
-                response_deserializer=messages__pb2.FormularioPPGLSResponse.FromString,
-                _registered_method=True)
-        self.UpdateFormulario = channel.unary_unary(
-                '/protos.DadosFormularioPosGraduacaoLS/UpdateFormulario',
                 request_serializer=messages__pb2.FormularioPPGLSRequest.SerializeToString,
                 response_deserializer=messages__pb2.FormularioPPGLSResponse.FromString,
                 _registered_method=True)
         self.DeleteFormulario = channel.unary_unary(
                 '/protos.DadosFormularioPosGraduacaoLS/DeleteFormulario',
                 request_serializer=messages__pb2.FormularioIndicadoresRequest.SerializeToString,
+                response_deserializer=messages__pb2.FormularioPPGLSResponse.FromString,
+                _registered_method=True)
+        self.ListarFormularios = channel.unary_unary(
+                '/protos.DadosFormularioPosGraduacaoLS/ListarFormularios',
+                request_serializer=messages__pb2.Empty.SerializeToString,
                 response_deserializer=messages__pb2.FormularioPPGLSResponse.FromString,
                 _registered_method=True)
 
@@ -401,36 +397,8 @@ class DadosFormularioPosGraduacaoLSServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def SearchRegistrosFormualario(self, request, context):
-        """
-        Retorna o dados de professor ou de coordenador da pós-graduação latu sensu.
-        Parâmetros:
-        masp(int) - Código MASP do professor
-        tipo(int) - Professor ou coordenador
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def InsertFormulario(self, request, context):
-        """
-        Insere um novo formulário da pós-graduação latu sensu.
-        Parâmetros:
-        nome(string) - Nome do formulário.
-        data_inicio(string) - Data de início.
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def UpdateFormulario(self, request, context):
-        """
-        Atualiza os dados de um formulário existente.
-        Parâmetros:
-        id(int) - ID do formulário.
-        nome(string) - Nome do formulário.
-        data_inicio(string) - Data de início.
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -446,6 +414,14 @@ class DadosFormularioPosGraduacaoLSServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ListarFormularios(self, request, context):
+        """
+        Lista todos os formaulários
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DadosFormularioPosGraduacaoLSServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -454,24 +430,19 @@ def add_DadosFormularioPosGraduacaoLSServicer_to_server(servicer, server):
                     request_deserializer=messages__pb2.FormularioIndicadoresRequest.FromString,
                     response_serializer=messages__pb2.FormularioPPGLSResponse.SerializeToString,
             ),
-            'SearchRegistrosFormualario': grpc.unary_unary_rpc_method_handler(
-                    servicer.SearchRegistrosFormualario,
-                    request_deserializer=messages__pb2.FormularioSerchPPGLSRequest.FromString,
-                    response_serializer=messages__pb2.FormularioPPGLSResponse.SerializeToString,
-            ),
             'InsertFormulario': grpc.unary_unary_rpc_method_handler(
                     servicer.InsertFormulario,
-                    request_deserializer=messages__pb2.FormularioPPGLSRequest.FromString,
-                    response_serializer=messages__pb2.FormularioPPGLSResponse.SerializeToString,
-            ),
-            'UpdateFormulario': grpc.unary_unary_rpc_method_handler(
-                    servicer.UpdateFormulario,
                     request_deserializer=messages__pb2.FormularioPPGLSRequest.FromString,
                     response_serializer=messages__pb2.FormularioPPGLSResponse.SerializeToString,
             ),
             'DeleteFormulario': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteFormulario,
                     request_deserializer=messages__pb2.FormularioIndicadoresRequest.FromString,
+                    response_serializer=messages__pb2.FormularioPPGLSResponse.SerializeToString,
+            ),
+            'ListarFormularios': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListarFormularios,
+                    request_deserializer=messages__pb2.Empty.FromString,
                     response_serializer=messages__pb2.FormularioPPGLSResponse.SerializeToString,
             ),
     }
@@ -513,33 +484,6 @@ class DadosFormularioPosGraduacaoLS(object):
             _registered_method=True)
 
     @staticmethod
-    def SearchRegistrosFormualario(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/protos.DadosFormularioPosGraduacaoLS/SearchRegistrosFormualario',
-            messages__pb2.FormularioSerchPPGLSRequest.SerializeToString,
-            messages__pb2.FormularioPPGLSResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
     def InsertFormulario(request,
             target,
             options=(),
@@ -554,33 +498,6 @@ class DadosFormularioPosGraduacaoLS(object):
             request,
             target,
             '/protos.DadosFormularioPosGraduacaoLS/InsertFormulario',
-            messages__pb2.FormularioPPGLSRequest.SerializeToString,
-            messages__pb2.FormularioPPGLSResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def UpdateFormulario(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/protos.DadosFormularioPosGraduacaoLS/UpdateFormulario',
             messages__pb2.FormularioPPGLSRequest.SerializeToString,
             messages__pb2.FormularioPPGLSResponse.FromString,
             options,
@@ -609,6 +526,33 @@ class DadosFormularioPosGraduacaoLS(object):
             target,
             '/protos.DadosFormularioPosGraduacaoLS/DeleteFormulario',
             messages__pb2.FormularioIndicadoresRequest.SerializeToString,
+            messages__pb2.FormularioPPGLSResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListarFormularios(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.DadosFormularioPosGraduacaoLS/ListarFormularios',
+            messages__pb2.Empty.SerializeToString,
             messages__pb2.FormularioPPGLSResponse.FromString,
             options,
             channel_credentials,

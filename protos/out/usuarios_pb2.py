@@ -15,7 +15,7 @@ _sym_db = _symbol_database.Default()
 from . import messages_pb2 as messages__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0eusuarios.proto\x12\x06protos\x1a\x0emessages.proto2\xcf\x03\n\x07Usuario\x12?\n\x0cObtemUsuario\x12\x16.protos.UsuarioRequest\x1a\x17.protos.UsuarioResponse\x12L\n\x12ObtemListaUsuarios\x12\x17.protos.UsuarioResponse\x1a\x1d.protos.ListaUsuariosResponse\x12L\n\x10\x41tualizarUsuario\x12\x16.protos.UsuarioRequest\x1a .protos.AlteracaoUsuarioResponse\x12H\n\x0c\x43riarUsuario\x12\x16.protos.UsuarioRequest\x1a .protos.AlteracaoUsuarioResponse\x12J\n\x0e\x44\x65letarUsuario\x12\x16.protos.UsuarioRequest\x1a .protos.AlteracaoUsuarioResponse\x12Q\n\x15\x41lternarStatusUsuario\x12\x16.protos.UsuarioRequest\x1a .protos.AlteracaoUsuarioResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0eusuarios.proto\x12\x06protos\x1a\x0emessages.proto2\xa8\x04\n\x07Usuario\x12<\n\x0cObtemUsuario\x12\x16.protos.UsuarioRequest\x1a\x14.protos.UsuarioDados\x12L\n\x12ObtemListaUsuarios\x12\x17.protos.UsuarioResponse\x1a\x1d.protos.ListaUsuariosResponse\x12S\n\x10\x41tualizarUsuario\x12\x1d.protos.CriacaoUsuarioRequest\x1a .protos.AlteracaoUsuarioResponse\x12O\n\x0c\x43riarUsuario\x12\x1d.protos.CriacaoUsuarioRequest\x1a .protos.AlteracaoUsuarioResponse\x12J\n\x0e\x44\x65letarUsuario\x12\x16.protos.UsuarioRequest\x1a .protos.AlteracaoUsuarioResponse\x12Q\n\x15\x41lternarStatusUsuario\x12\x16.protos.UsuarioRequest\x1a .protos.AlteracaoUsuarioResponse\x12L\n\x17ObtemListaUniversidades\x12\r.protos.Empty\x1a\".protos.ListaUniversidadesResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -23,5 +23,5 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'usuarios_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_USUARIO']._serialized_start=43
-  _globals['_USUARIO']._serialized_end=506
+  _globals['_USUARIO']._serialized_end=595
 # @@protoc_insertion_point(module_scope)

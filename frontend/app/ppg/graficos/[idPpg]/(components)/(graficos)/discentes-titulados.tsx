@@ -2,7 +2,7 @@ import { Column } from "@ant-design/plots";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Line } from "@ant-design/plots";
 
-export const DiscentesTitulados = ({dadosDiscentesTitulados}: {dadosDiscentesTitulados: any}) => {
+export const DiscentesTitulados = ({dadosDiscentesTitulados}) => {
 
   const config = {
     data: dadosDiscentesTitulados,

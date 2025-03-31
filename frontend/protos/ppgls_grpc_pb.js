@@ -4,6 +4,17 @@
 var grpc = require('@grpc/grpc-js');
 var messages_pb = require('./messages_pb.js');
 
+function serialize_protos_Empty(arg) {
+  if (!(arg instanceof messages_pb.Empty)) {
+    throw new Error('Expected argument of type protos.Empty');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_protos_Empty(buffer_arg) {
+  return messages_pb.Empty.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_protos_FormularioIndicadoresRequest(arg) {
   if (!(arg instanceof messages_pb.FormularioIndicadoresRequest)) {
     throw new Error('Expected argument of type protos.FormularioIndicadoresRequest');
@@ -35,17 +46,6 @@ function serialize_protos_FormularioPPGLSResponse(arg) {
 
 function deserialize_protos_FormularioPPGLSResponse(buffer_arg) {
   return messages_pb.FormularioPPGLSResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_protos_FormularioSerchPPGLSRequest(arg) {
-  if (!(arg instanceof messages_pb.FormularioSerchPPGLSRequest)) {
-    throw new Error('Expected argument of type protos.FormularioSerchPPGLSRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_protos_FormularioSerchPPGLSRequest(buffer_arg) {
-  return messages_pb.FormularioSerchPPGLSRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_protos_PPGLSRequest(arg) {
@@ -150,6 +150,7 @@ getAbaProfessores: {
 // id(string) - Código do curso.\n
 // anoi(int) - Ano Inicial.\n
 // anof(int) - Ano Final.\n
+// teste
 getIndicadoresDisciplina: {
     path: '/protos.IndicadoresPosGraduacaoLS/GetIndicadoresDisciplina',
     requestStream: false,
@@ -192,46 +193,8 @@ getIndicadoresFormulario: {
     responseSerialize: serialize_protos_FormularioPPGLSResponse,
     responseDeserialize: deserialize_protos_FormularioPPGLSResponse,
   },
-  //
-// Retorna o dados de professor ou de coordenador da pós-graduação latu sensu.
-// Parâmetros:
-// masp(int) - Código MASP do professor
-// tipo(int) - Professor ou coordenador
-searchRegistrosFormualario: {
-    path: '/protos.DadosFormularioPosGraduacaoLS/SearchRegistrosFormualario',
-    requestStream: false,
-    responseStream: false,
-    requestType: messages_pb.FormularioSerchPPGLSRequest,
-    responseType: messages_pb.FormularioPPGLSResponse,
-    requestSerialize: serialize_protos_FormularioSerchPPGLSRequest,
-    requestDeserialize: deserialize_protos_FormularioSerchPPGLSRequest,
-    responseSerialize: serialize_protos_FormularioPPGLSResponse,
-    responseDeserialize: deserialize_protos_FormularioPPGLSResponse,
-  },
-  //
-// Insere um novo formulário da pós-graduação latu sensu.
-// Parâmetros:
-// nome(string) - Nome do formulário.
-// data_inicio(string) - Data de início.
-insertFormulario: {
+  insertFormulario: {
     path: '/protos.DadosFormularioPosGraduacaoLS/InsertFormulario',
-    requestStream: false,
-    responseStream: false,
-    requestType: messages_pb.FormularioPPGLSRequest,
-    responseType: messages_pb.FormularioPPGLSResponse,
-    requestSerialize: serialize_protos_FormularioPPGLSRequest,
-    requestDeserialize: deserialize_protos_FormularioPPGLSRequest,
-    responseSerialize: serialize_protos_FormularioPPGLSResponse,
-    responseDeserialize: deserialize_protos_FormularioPPGLSResponse,
-  },
-  //
-// Atualiza os dados de um formulário existente.
-// Parâmetros:
-// id(int) - ID do formulário.
-// nome(string) - Nome do formulário.
-// data_inicio(string) - Data de início.
-updateFormulario: {
-    path: '/protos.DadosFormularioPosGraduacaoLS/UpdateFormulario',
     requestStream: false,
     responseStream: false,
     requestType: messages_pb.FormularioPPGLSRequest,
@@ -254,6 +217,19 @@ deleteFormulario: {
     responseType: messages_pb.FormularioPPGLSResponse,
     requestSerialize: serialize_protos_FormularioIndicadoresRequest,
     requestDeserialize: deserialize_protos_FormularioIndicadoresRequest,
+    responseSerialize: serialize_protos_FormularioPPGLSResponse,
+    responseDeserialize: deserialize_protos_FormularioPPGLSResponse,
+  },
+  //
+// Lista todos os formaulários
+listarFormularios: {
+    path: '/protos.DadosFormularioPosGraduacaoLS/ListarFormularios',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.Empty,
+    responseType: messages_pb.FormularioPPGLSResponse,
+    requestSerialize: serialize_protos_Empty,
+    requestDeserialize: deserialize_protos_Empty,
     responseSerialize: serialize_protos_FormularioPPGLSResponse,
     responseDeserialize: deserialize_protos_FormularioPPGLSResponse,
   },

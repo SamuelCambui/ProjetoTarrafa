@@ -55,6 +55,11 @@ message LoginResponse {
   optional string refresh_token = 4; 
 }
 
+message LoginResponseFormulario {
+  optional UsuarioDadosFormulario usuario = 1;
+  bool erro = 2;
+}
+
 message UsuarioDados {
   optional string id_lattes = 1;
   optional string email = 2;
@@ -68,10 +73,24 @@ message UsuarioDados {
   optional string link_avatar = 10;
 }
 
+message UsuarioDadosFormulario {
+  optional string idlattes  = 1;
+  optional string nome = 2;
+  optional string email = 3;
+  optional bool is_coordenador = 4;
+  optional bool is_admin = 5;
+}
+
 message CriacaoUsuarioRequest{
   optional UsuarioDados usuario = 1;
   optional string password = 2;
 }
+
+message CriacaoUsuarioFormularioRequest{
+  optional UsuarioDadosFormulario usuario_base = 1;
+  optional string password = 2;
+}
+
 
 message UsuarioRequest {
   optional string id_lattes = 1;
@@ -79,6 +98,14 @@ message UsuarioRequest {
 
 message UsuarioResponse {
   optional UsuarioDados usuario = 1;
+}
+
+message UsuarioFormularioResponse {
+  optional UsuarioDadosFormulario usuario = 1;
+}
+
+message ListaUsuariosFormularioResponse {
+  repeated UsuarioDadosFormulario item = 1;
 }
 
 message AlteracaoUsuarioResponse {
@@ -128,13 +155,15 @@ message PPGLSResponse{
 }
 
 message FormularioSerchPPGLSRequest{
-  int32 masp = 1;
+  string cpf = 1;
   int32 tipo = 2;
 }
 
 message FormularioIndicadoresRequest{
   string nome_formulario = 1;
-  string data_inicio = 2;
+  optional string data_preenchimento = 2;
+  optional string data_inicio = 3;
+
 }
 
 message FormularioPPGLSRequest{

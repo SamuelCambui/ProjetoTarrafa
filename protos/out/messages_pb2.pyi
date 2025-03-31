@@ -93,13 +93,22 @@ class LoginResponse(_message.Message):
     refresh_token: str
     def __init__(self, usuario: _Optional[_Union[UsuarioDados, _Mapping]] = ..., erro: bool = ..., access_token: _Optional[str] = ..., refresh_token: _Optional[str] = ...) -> None: ...
 
+class LoginResponseFormulario(_message.Message):
+    __slots__ = ("usuario", "erro")
+    USUARIO_FIELD_NUMBER: _ClassVar[int]
+    ERRO_FIELD_NUMBER: _ClassVar[int]
+    usuario: UsuarioDadosFormulario
+    erro: bool
+    def __init__(self, usuario: _Optional[_Union[UsuarioDadosFormulario, _Mapping]] = ..., erro: bool = ...) -> None: ...
+
 class UsuarioDados(_message.Message):
-    __slots__ = ("id_lattes", "email", "nome", "is_superuser", "is_admin", "id_ies", "nome_ies", "sigla_ies", "link_avatar")
+    __slots__ = ("id_lattes", "email", "nome", "is_superuser", "is_admin", "is_active", "id_ies", "nome_ies", "sigla_ies", "link_avatar")
     ID_LATTES_FIELD_NUMBER: _ClassVar[int]
     EMAIL_FIELD_NUMBER: _ClassVar[int]
     NOME_FIELD_NUMBER: _ClassVar[int]
     IS_SUPERUSER_FIELD_NUMBER: _ClassVar[int]
     IS_ADMIN_FIELD_NUMBER: _ClassVar[int]
+    IS_ACTIVE_FIELD_NUMBER: _ClassVar[int]
     ID_IES_FIELD_NUMBER: _ClassVar[int]
     NOME_IES_FIELD_NUMBER: _ClassVar[int]
     SIGLA_IES_FIELD_NUMBER: _ClassVar[int]
@@ -109,31 +118,66 @@ class UsuarioDados(_message.Message):
     nome: str
     is_superuser: bool
     is_admin: bool
+    is_active: bool
     id_ies: str
     nome_ies: str
     sigla_ies: str
     link_avatar: str
-    def __init__(self, id_lattes: _Optional[str] = ..., email: _Optional[str] = ..., nome: _Optional[str] = ..., is_superuser: bool = ..., is_admin: bool = ..., id_ies: _Optional[str] = ..., nome_ies: _Optional[str] = ..., sigla_ies: _Optional[str] = ..., link_avatar: _Optional[str] = ...) -> None: ...
+    def __init__(self, id_lattes: _Optional[str] = ..., email: _Optional[str] = ..., nome: _Optional[str] = ..., is_superuser: bool = ..., is_admin: bool = ..., is_active: bool = ..., id_ies: _Optional[str] = ..., nome_ies: _Optional[str] = ..., sigla_ies: _Optional[str] = ..., link_avatar: _Optional[str] = ...) -> None: ...
+
+class UsuarioDadosFormulario(_message.Message):
+    __slots__ = ("idlattes", "nome", "email", "is_coordenador", "is_admin")
+    IDLATTES_FIELD_NUMBER: _ClassVar[int]
+    NOME_FIELD_NUMBER: _ClassVar[int]
+    EMAIL_FIELD_NUMBER: _ClassVar[int]
+    IS_COORDENADOR_FIELD_NUMBER: _ClassVar[int]
+    IS_ADMIN_FIELD_NUMBER: _ClassVar[int]
+    idlattes: str
+    nome: str
+    email: str
+    is_coordenador: bool
+    is_admin: bool
+    def __init__(self, idlattes: _Optional[str] = ..., nome: _Optional[str] = ..., email: _Optional[str] = ..., is_coordenador: bool = ..., is_admin: bool = ...) -> None: ...
 
 class CriacaoUsuarioRequest(_message.Message):
+    __slots__ = ("usuario", "password")
+    USUARIO_FIELD_NUMBER: _ClassVar[int]
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    usuario: UsuarioDados
+    password: str
+    def __init__(self, usuario: _Optional[_Union[UsuarioDados, _Mapping]] = ..., password: _Optional[str] = ...) -> None: ...
+
+class CriacaoUsuarioFormularioRequest(_message.Message):
     __slots__ = ("usuario_base", "password")
     USUARIO_BASE_FIELD_NUMBER: _ClassVar[int]
     PASSWORD_FIELD_NUMBER: _ClassVar[int]
-    usuario_base: UsuarioDados
+    usuario_base: UsuarioDadosFormulario
     password: str
-    def __init__(self, usuario_base: _Optional[_Union[UsuarioDados, _Mapping]] = ..., password: _Optional[str] = ...) -> None: ...
+    def __init__(self, usuario_base: _Optional[_Union[UsuarioDadosFormulario, _Mapping]] = ..., password: _Optional[str] = ...) -> None: ...
 
 class UsuarioRequest(_message.Message):
-    __slots__ = ("email",)
-    EMAIL_FIELD_NUMBER: _ClassVar[int]
-    email: str
-    def __init__(self, email: _Optional[str] = ...) -> None: ...
+    __slots__ = ("id_lattes",)
+    ID_LATTES_FIELD_NUMBER: _ClassVar[int]
+    id_lattes: str
+    def __init__(self, id_lattes: _Optional[str] = ...) -> None: ...
 
 class UsuarioResponse(_message.Message):
     __slots__ = ("usuario",)
     USUARIO_FIELD_NUMBER: _ClassVar[int]
     usuario: UsuarioDados
     def __init__(self, usuario: _Optional[_Union[UsuarioDados, _Mapping]] = ...) -> None: ...
+
+class UsuarioFormularioResponse(_message.Message):
+    __slots__ = ("usuario",)
+    USUARIO_FIELD_NUMBER: _ClassVar[int]
+    usuario: UsuarioDadosFormulario
+    def __init__(self, usuario: _Optional[_Union[UsuarioDadosFormulario, _Mapping]] = ...) -> None: ...
+
+class ListaUsuariosFormularioResponse(_message.Message):
+    __slots__ = ("item",)
+    ITEM_FIELD_NUMBER: _ClassVar[int]
+    item: _containers.RepeatedCompositeFieldContainer[UsuarioDadosFormulario]
+    def __init__(self, item: _Optional[_Iterable[_Union[UsuarioDadosFormulario, _Mapping]]] = ...) -> None: ...
 
 class AlteracaoUsuarioResponse(_message.Message):
     __slots__ = ("status", "menssagem")
@@ -210,20 +254,22 @@ class PPGLSResponse(_message.Message):
     def __init__(self, item: _Optional[_Iterable[_Union[PPGLSJson, _Mapping]]] = ...) -> None: ...
 
 class FormularioSerchPPGLSRequest(_message.Message):
-    __slots__ = ("masp", "tipo")
-    MASP_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("cpf", "tipo")
+    CPF_FIELD_NUMBER: _ClassVar[int]
     TIPO_FIELD_NUMBER: _ClassVar[int]
-    masp: int
+    cpf: str
     tipo: int
-    def __init__(self, masp: _Optional[int] = ..., tipo: _Optional[int] = ...) -> None: ...
+    def __init__(self, cpf: _Optional[str] = ..., tipo: _Optional[int] = ...) -> None: ...
 
 class FormularioIndicadoresRequest(_message.Message):
-    __slots__ = ("nome_formulario", "data_inicio")
+    __slots__ = ("nome_formulario", "data_preenchimento", "data_inicio")
     NOME_FORMULARIO_FIELD_NUMBER: _ClassVar[int]
+    DATA_PREENCHIMENTO_FIELD_NUMBER: _ClassVar[int]
     DATA_INICIO_FIELD_NUMBER: _ClassVar[int]
     nome_formulario: str
+    data_preenchimento: str
     data_inicio: str
-    def __init__(self, nome_formulario: _Optional[str] = ..., data_inicio: _Optional[str] = ...) -> None: ...
+    def __init__(self, nome_formulario: _Optional[str] = ..., data_preenchimento: _Optional[str] = ..., data_inicio: _Optional[str] = ...) -> None: ...
 
 class FormularioPPGLSRequest(_message.Message):
     __slots__ = ("item",)

@@ -13,7 +13,6 @@ export async function obterInfoPPG(idIes: string, idPpg: string) {
       stubPPG.obtemInformacaoPPG(
         ppgRequest,
         (error: any, listaprogramas: any) => {
-          debugger;
           if (error) {
             reject(error);
           } else {

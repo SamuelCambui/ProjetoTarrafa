@@ -143,6 +143,7 @@
             "name": "Next.js: debug full stack",
             "type": "node-terminal",
             "cwd": "${workspaceFolder}/frontend",
+            "envFile": "${workspaceFolder}/.env.desenvolvimento",
             "request": "launch",
             "command": "npm run dev",
             "serverReadyAction": {

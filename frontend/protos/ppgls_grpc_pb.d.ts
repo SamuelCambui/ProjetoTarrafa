@@ -128,10 +128,9 @@ export class IndicadoresPosGraduacaoLSClient extends grpc.Client implements IInd
 
 interface IDadosFormularioPosGraduacaoLSService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
     getIndicadoresFormulario: IDadosFormularioPosGraduacaoLSService_IGetIndicadoresFormulario;
-    searchRegistrosFormualario: IDadosFormularioPosGraduacaoLSService_ISearchRegistrosFormualario;
     insertFormulario: IDadosFormularioPosGraduacaoLSService_IInsertFormulario;
-    updateFormulario: IDadosFormularioPosGraduacaoLSService_IUpdateFormulario;
     deleteFormulario: IDadosFormularioPosGraduacaoLSService_IDeleteFormulario;
+    listarFormularios: IDadosFormularioPosGraduacaoLSService_IListarFormularios;
 }
 
 interface IDadosFormularioPosGraduacaoLSService_IGetIndicadoresFormulario extends grpc.MethodDefinition<messages_pb.FormularioIndicadoresRequest, messages_pb.FormularioPPGLSResponse> {
@@ -143,26 +142,8 @@ interface IDadosFormularioPosGraduacaoLSService_IGetIndicadoresFormulario extend
     responseSerialize: grpc.serialize<messages_pb.FormularioPPGLSResponse>;
     responseDeserialize: grpc.deserialize<messages_pb.FormularioPPGLSResponse>;
 }
-interface IDadosFormularioPosGraduacaoLSService_ISearchRegistrosFormualario extends grpc.MethodDefinition<messages_pb.FormularioSerchPPGLSRequest, messages_pb.FormularioPPGLSResponse> {
-    path: "/protos.DadosFormularioPosGraduacaoLS/SearchRegistrosFormualario";
-    requestStream: false;
-    responseStream: false;
-    requestSerialize: grpc.serialize<messages_pb.FormularioSerchPPGLSRequest>;
-    requestDeserialize: grpc.deserialize<messages_pb.FormularioSerchPPGLSRequest>;
-    responseSerialize: grpc.serialize<messages_pb.FormularioPPGLSResponse>;
-    responseDeserialize: grpc.deserialize<messages_pb.FormularioPPGLSResponse>;
-}
 interface IDadosFormularioPosGraduacaoLSService_IInsertFormulario extends grpc.MethodDefinition<messages_pb.FormularioPPGLSRequest, messages_pb.FormularioPPGLSResponse> {
     path: "/protos.DadosFormularioPosGraduacaoLS/InsertFormulario";
-    requestStream: false;
-    responseStream: false;
-    requestSerialize: grpc.serialize<messages_pb.FormularioPPGLSRequest>;
-    requestDeserialize: grpc.deserialize<messages_pb.FormularioPPGLSRequest>;
-    responseSerialize: grpc.serialize<messages_pb.FormularioPPGLSResponse>;
-    responseDeserialize: grpc.deserialize<messages_pb.FormularioPPGLSResponse>;
-}
-interface IDadosFormularioPosGraduacaoLSService_IUpdateFormulario extends grpc.MethodDefinition<messages_pb.FormularioPPGLSRequest, messages_pb.FormularioPPGLSResponse> {
-    path: "/protos.DadosFormularioPosGraduacaoLS/UpdateFormulario";
     requestStream: false;
     responseStream: false;
     requestSerialize: grpc.serialize<messages_pb.FormularioPPGLSRequest>;
@@ -179,33 +160,38 @@ interface IDadosFormularioPosGraduacaoLSService_IDeleteFormulario extends grpc.M
     responseSerialize: grpc.serialize<messages_pb.FormularioPPGLSResponse>;
     responseDeserialize: grpc.deserialize<messages_pb.FormularioPPGLSResponse>;
 }
+interface IDadosFormularioPosGraduacaoLSService_IListarFormularios extends grpc.MethodDefinition<messages_pb.Empty, messages_pb.FormularioPPGLSResponse> {
+    path: "/protos.DadosFormularioPosGraduacaoLS/ListarFormularios";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<messages_pb.Empty>;
+    requestDeserialize: grpc.deserialize<messages_pb.Empty>;
+    responseSerialize: grpc.serialize<messages_pb.FormularioPPGLSResponse>;
+    responseDeserialize: grpc.deserialize<messages_pb.FormularioPPGLSResponse>;
+}
 
 export const DadosFormularioPosGraduacaoLSService: IDadosFormularioPosGraduacaoLSService;
 
 export interface IDadosFormularioPosGraduacaoLSServer extends grpc.UntypedServiceImplementation {
     getIndicadoresFormulario: grpc.handleUnaryCall<messages_pb.FormularioIndicadoresRequest, messages_pb.FormularioPPGLSResponse>;
-    searchRegistrosFormualario: grpc.handleUnaryCall<messages_pb.FormularioSerchPPGLSRequest, messages_pb.FormularioPPGLSResponse>;
     insertFormulario: grpc.handleUnaryCall<messages_pb.FormularioPPGLSRequest, messages_pb.FormularioPPGLSResponse>;
-    updateFormulario: grpc.handleUnaryCall<messages_pb.FormularioPPGLSRequest, messages_pb.FormularioPPGLSResponse>;
     deleteFormulario: grpc.handleUnaryCall<messages_pb.FormularioIndicadoresRequest, messages_pb.FormularioPPGLSResponse>;
+    listarFormularios: grpc.handleUnaryCall<messages_pb.Empty, messages_pb.FormularioPPGLSResponse>;
 }
 
 export interface IDadosFormularioPosGraduacaoLSClient {
     getIndicadoresFormulario(request: messages_pb.FormularioIndicadoresRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     getIndicadoresFormulario(request: messages_pb.FormularioIndicadoresRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     getIndicadoresFormulario(request: messages_pb.FormularioIndicadoresRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
-    searchRegistrosFormualario(request: messages_pb.FormularioSerchPPGLSRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
-    searchRegistrosFormualario(request: messages_pb.FormularioSerchPPGLSRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
-    searchRegistrosFormualario(request: messages_pb.FormularioSerchPPGLSRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     insertFormulario(request: messages_pb.FormularioPPGLSRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     insertFormulario(request: messages_pb.FormularioPPGLSRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     insertFormulario(request: messages_pb.FormularioPPGLSRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
-    updateFormulario(request: messages_pb.FormularioPPGLSRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
-    updateFormulario(request: messages_pb.FormularioPPGLSRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
-    updateFormulario(request: messages_pb.FormularioPPGLSRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     deleteFormulario(request: messages_pb.FormularioIndicadoresRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     deleteFormulario(request: messages_pb.FormularioIndicadoresRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     deleteFormulario(request: messages_pb.FormularioIndicadoresRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
+    listarFormularios(request: messages_pb.Empty, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
+    listarFormularios(request: messages_pb.Empty, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
+    listarFormularios(request: messages_pb.Empty, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
 }
 
 export class DadosFormularioPosGraduacaoLSClient extends grpc.Client implements IDadosFormularioPosGraduacaoLSClient {
@@ -213,18 +199,15 @@ export class DadosFormularioPosGraduacaoLSClient extends grpc.Client implements 
     public getIndicadoresFormulario(request: messages_pb.FormularioIndicadoresRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     public getIndicadoresFormulario(request: messages_pb.FormularioIndicadoresRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     public getIndicadoresFormulario(request: messages_pb.FormularioIndicadoresRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
-    public searchRegistrosFormualario(request: messages_pb.FormularioSerchPPGLSRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
-    public searchRegistrosFormualario(request: messages_pb.FormularioSerchPPGLSRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
-    public searchRegistrosFormualario(request: messages_pb.FormularioSerchPPGLSRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     public insertFormulario(request: messages_pb.FormularioPPGLSRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     public insertFormulario(request: messages_pb.FormularioPPGLSRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     public insertFormulario(request: messages_pb.FormularioPPGLSRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
-    public updateFormulario(request: messages_pb.FormularioPPGLSRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
-    public updateFormulario(request: messages_pb.FormularioPPGLSRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
-    public updateFormulario(request: messages_pb.FormularioPPGLSRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     public deleteFormulario(request: messages_pb.FormularioIndicadoresRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     public deleteFormulario(request: messages_pb.FormularioIndicadoresRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
     public deleteFormulario(request: messages_pb.FormularioIndicadoresRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
+    public listarFormularios(request: messages_pb.Empty, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
+    public listarFormularios(request: messages_pb.Empty, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
+    public listarFormularios(request: messages_pb.Empty, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.FormularioPPGLSResponse) => void): grpc.ClientUnaryCall;
 }
 
 interface IDadosPosGraduacaoLSService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {

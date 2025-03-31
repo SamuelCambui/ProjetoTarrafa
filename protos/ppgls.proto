@@ -4,6 +4,7 @@ package protos;
 
 import "messages.proto";
 
+
 service IndicadoresPosGraduacaoLS {
     /*  
         Retorna dados para compor os indicadores da aba curso.\n
@@ -51,6 +52,7 @@ service IndicadoresPosGraduacaoLS {
             id(string) - Código do curso.\n
             anoi(int) - Ano Inicial.\n
             anof(int) - Ano Final.\n
+            teste
     */
     rpc GetIndicadoresDisciplina (PPGLSRequest) returns (PPGLSResponse);
 
@@ -67,31 +69,11 @@ service DadosFormularioPosGraduacaoLS {
     */
     rpc GetIndicadoresFormulario (FormularioIndicadoresRequest) returns (FormularioPPGLSResponse);
     
-    /*
-        Retorna o dados de professor ou de coordenador da pós-graduação latu sensu.
-        Parâmetros:
-            masp(int) - Código MASP do professor
-            tipo(int) - Professor ou coordenador
-    */
-    rpc SearchRegistrosFormualario (FormularioSerchPPGLSRequest) returns (FormularioPPGLSResponse);
 
-    /*
-        Insere um novo formulário da pós-graduação latu sensu.
-        Parâmetros:
-            nome(string) - Nome do formulário.
-            data_inicio(string) - Data de início.
-    */
+
     rpc InsertFormulario (FormularioPPGLSRequest) returns (FormularioPPGLSResponse);
     
-    /*
-        Atualiza os dados de um formulário existente.
-        Parâmetros:
-            id(int) - ID do formulário.
-            nome(string) - Nome do formulário.
-            data_inicio(string) - Data de início.
-    */
-    rpc UpdateFormulario (FormularioPPGLSRequest) returns (FormularioPPGLSResponse);
-    
+
     /*
         Exclui um formulário da pós-graduação latu sensu.
         Parâmetros:
@@ -99,6 +81,14 @@ service DadosFormularioPosGraduacaoLS {
             data_inicio(string) - Data de início.
     */
     rpc DeleteFormulario (FormularioIndicadoresRequest) returns (FormularioPPGLSResponse);
+
+
+    /*
+        Lista todos os formaulários
+    */
+    rpc ListarFormularios(Empty) returns (FormularioPPGLSResponse);
+
+
 }
 
 service DadosPosGraduacaoLS {
