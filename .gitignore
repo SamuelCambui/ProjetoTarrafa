@@ -1,7 +1,6 @@
 .venv
 downloads
 curriculos
-dados
 backup
 __pycache__
 sucupira_extract\.venv
