@@ -249,6 +249,17 @@ getCursos: {
     responseSerialize: serialize_protos_PPGLSResponse,
     responseDeserialize: deserialize_protos_PPGLSResponse,
   },
+  getCursosPPGLSForm: {
+    path: '/protos.DadosPosGraduacaoLS/GetCursosPPGLSForm',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.PPGLSRequest,
+    responseType: messages_pb.PPGLSResponse,
+    requestSerialize: serialize_protos_PPGLSRequest,
+    requestDeserialize: deserialize_protos_PPGLSRequest,
+    responseSerialize: serialize_protos_PPGLSResponse,
+    responseDeserialize: deserialize_protos_PPGLSResponse,
+  },
   //  
 // Retorna um curso em específico.\n
 // Parâmetros:\n

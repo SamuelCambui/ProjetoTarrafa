@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-import { logout } from "@/app/login_ppgls_formularios/actions";
+import { logout } from "@/app/login/actions";
 import { Loading } from "@/components/loading";
 import { Avatar } from "@/components/ui/avatar";
 import {

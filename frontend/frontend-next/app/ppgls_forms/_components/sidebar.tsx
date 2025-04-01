@@ -1,7 +1,7 @@
 "use client";
 import { LogOut } from "lucide-react";
 import { useState } from "react";
-import { logout } from "@/app/login/actions";
+import { logout } from "@/app/login_ppgls_formularios/actions";
 import { Avatar } from "@/components/ui/avatar";
 import { Sidebar, SidebarFooter } from "@/components/ui/sidebar";
 import Image from "next/image";

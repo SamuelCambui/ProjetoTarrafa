@@ -7,13 +7,10 @@ import { AppSidebar } from "./_components/sidebar";
 export default async function FormularioPage() {
   const session = await auth();
 
-  // Verifica se o usuário tem acesso ao PPGLS Forms
+  //Se session.user.ppglsForms for indefinido, nulo, falso ou diferente de "true" redirecione para login_ppgls_formularios
   if (!session?.user?.ppglsForms || session.user.ppglsForms !== "true") {
-    redirect("/login_ppgls_formularios"); // Redireciona para login se não tiver permissão
+    redirect("login_ppgls_formularios");
   }
-
-  // return <FormPPGLS />; // Renderiza o formulário se a verificação passar
-
 
   return (
       <SidebarProvider>

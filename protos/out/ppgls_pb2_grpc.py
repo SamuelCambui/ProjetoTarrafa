@@ -579,6 +579,11 @@ class DadosPosGraduacaoLSStub(object):
                 request_serializer=messages__pb2.PPGLSRequest.SerializeToString,
                 response_deserializer=messages__pb2.PPGLSResponse.FromString,
                 _registered_method=True)
+        self.GetCursosPPGLSForm = channel.unary_unary(
+                '/protos.DadosPosGraduacaoLS/GetCursosPPGLSForm',
+                request_serializer=messages__pb2.PPGLSRequest.SerializeToString,
+                response_deserializer=messages__pb2.PPGLSResponse.FromString,
+                _registered_method=True)
         self.GetCurso = channel.unary_unary(
                 '/protos.DadosPosGraduacaoLS/GetCurso',
                 request_serializer=messages__pb2.PPGLSRequest.SerializeToString,
@@ -602,6 +607,12 @@ class DadosPosGraduacaoLSServicer(object):
     def GetCursos(self, request, context):
         """Retorna todos os cursos cadastrados.
         """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetCursosPPGLSForm(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -641,6 +652,11 @@ def add_DadosPosGraduacaoLSServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetCursos': grpc.unary_unary_rpc_method_handler(
                     servicer.GetCursos,
+                    request_deserializer=messages__pb2.PPGLSRequest.FromString,
+                    response_serializer=messages__pb2.PPGLSResponse.SerializeToString,
+            ),
+            'GetCursosPPGLSForm': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCursosPPGLSForm,
                     request_deserializer=messages__pb2.PPGLSRequest.FromString,
                     response_serializer=messages__pb2.PPGLSResponse.SerializeToString,
             ),
@@ -685,6 +701,33 @@ class DadosPosGraduacaoLS(object):
             request,
             target,
             '/protos.DadosPosGraduacaoLS/GetCursos',
+            messages__pb2.PPGLSRequest.SerializeToString,
+            messages__pb2.PPGLSResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetCursosPPGLSForm(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.DadosPosGraduacaoLS/GetCursosPPGLSForm',
             messages__pb2.PPGLSRequest.SerializeToString,
             messages__pb2.PPGLSResponse.FromString,
             options,

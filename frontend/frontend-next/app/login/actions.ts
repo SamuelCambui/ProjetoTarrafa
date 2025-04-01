@@ -34,6 +34,13 @@ export async function authorize(
 }
 
 export async function logout() {
-  await signOut({ redirect: true, redirectTo: "/login" });
+  const token = "false";
+  console.log("Token retornado");
+  console.log(token);
+
+
+  await signOut({ redirect: false });
+  // redirect(`/login`);
+  redirect(`/login`);
 }
 

@@ -29,7 +29,8 @@ import {
   UpdateFormularioItem,
 } from "../../service/ppgls/types";
 import { insertFormularioData } from "../../service/ppgls/formulario/queries";
-
+import { useGetCursosPPGLSForm } from "../../service/ppgls/dados/queries";
+import { GetCursosParams } from "../../service/ppgls/types";
 
 const formSchema = z.object({
   nome_espec: z.string(),
@@ -80,11 +81,15 @@ const opcoesCategoriaProfissional = [
   { valor: "PSICOLOGO", rotulo: "Psicólogo" },
 ];
 
+
+
 const opcoesTitulacao = [
   { valor: "ESPECIALISTA", rotulo: "Especialista" },
   { valor: "MESTRE", rotulo: "Mestre" },
   { valor: "DOUTOR", rotulo: "Doutor" },
 ];
+
+
 
 const validarCPF = (cpf: string): boolean => {
   cpf = cpf.replace(/\D/g, ""); // Remove caracteres não numéricos
@@ -303,8 +308,29 @@ export const FormPPGLS = () => {
     setLinhaSelecionada(index);
   };
 
+  const [opcoesCursoPPGLS, setOpcoesCursoPPGLS] = useState<{ valor: string; rotulo: string }[]>([]);
+
+
+  const { data: { cursos = [] } = {}, isLoading } = useGetCursosPPGLSForm({ idIes: "3727" });
+
+  useEffect(() => {
+    if (cursos && Array.isArray(cursos)) {
+      setOpcoesCursoPPGLS((prevOpcoes) => {
+        const novasOpcoes = cursos.map((curso) => ({
+          valor: curso.nome.toString(),
+          rotulo: curso.nome.toString(),
+        }));
+  
+        // Só atualiza o estado se as opções forem diferentes para evitar loop infinito
+        return JSON.stringify(prevOpcoes) !== JSON.stringify(novasOpcoes)
+          ? novasOpcoes
+          : prevOpcoes;
+      });
+    }
+  }, [cursos]);
 
   return (
+    
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
         <div className="flex items-center justify-center space-x-4 text-center mb-16">
@@ -322,29 +348,35 @@ export const FormPPGLS = () => {
         <p className="text-sm font-medium -mb-2">Especialização ou Residência</p>
         <div className="border border-gray-300 p-6 rounded-md space-y-6 !mt-0">
           <div className="grid grid-cols-12 gap-4 items-center">
-            <div className="col-span-6 flex flex-col">
-              <FormField
-                control={form.control}
-                name="nome_espec"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Insira o nome da residência" 
-                        {...field} 
-                        required
-                      />
-                    </FormControl>
-                    <FormMessage>
-                      {form.formState.errors.nome_espec && (
-                        <span className="text-red-500">Este campo é obrigatório</span>
-                      )}
-                    </FormMessage>
-                  </FormItem>
-                )}
-              />
-            </div>
+          <div className="col-span-6 flex flex-col">
+  <FormField
+    control={form.control}
+    name="nome_espec"
+    render={({ field }) => (
+      <FormItem>
+        <FormLabel>Nome</FormLabel>
+        <FormControl>
+        <CampoSelecao
+  options={opcoesCursoPPGLS}
+  value={field.value || ""}
+  onChange={(valorSelecionado) => {
+    console.log("🔹 Selecionado:", valorSelecionado);
+    field.onChange(valorSelecionado);
+  }}
+  styles={{
+    menu: (provided) => ({
+      ...provided,
+      maxHeight: "200px", // Altura máxima da lista de opções
+      overflowY: "auto", // Rolagem caso tenha muitas opções
+    }),
+  }}
+/>
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+</div>
 
             <div className="col-span-6 flex flex-col">
               <FormField
@@ -629,7 +661,7 @@ export const FormPPGLS = () => {
             </div>
           </div>
         </div>
-        <p className="text-sm font-medium -mb-0">Coordenador da Especialização ou Residência</p>
+        <p className="text-sm font-medium -mb-0">Coordenador/Supervisor da Especialização ou Residência</p>
         <div className="border border-gray-300 p-6 rounded-md space-y-6 !mt-0">
           <div className="grid grid-cols-12 gap-4 items-center">
             <div className="col-span-6 flex flex-col">

@@ -6,7 +6,7 @@ class QueriesCursos():
     @tratamento_excecao_com_db(tipo_banco='grad')
     def lista_cursos(self, id_ies: str, db: DBConnectorGRAD = None):
         """
-        Retorna todos os cursos de pós-graduação lsy a partir de 10 anos atrás.\n
+        Retorna todos os cursos de pós-graduação latu sensu a partir de 10 anos atrás.\n
 
         :param id_ies(str): Código da Instituição
         """
@@ -15,6 +15,30 @@ class QueriesCursos():
             LEFT JOIN curso_tipo on curso_tipo.id_curso = cursos.id AND curso_tipo.id_ies = cursos.id_ies
             LEFT JOIN tiposcursos on tiposcursos.id = curso_tipo.id_tipo
             WHERE curso_tipo.id_tipo in (3,5,6)
+            AND cursos.id IN (
+                SELECT distinct aluno_curso.id_curso FROM historico AS h
+                INNER JOIN aluno_curso ON aluno_curso.id = h.id_aluno_curso AND aluno_curso.id_ies = h.id_ies
+                WHERE CAST(h.ano_letivo AS integer) BETWEEN date_part('year', CURRENT_DATE) - 10 AND date_part('year', CURRENT_DATE)
+                AND h.id_ies = %(id_ies)s
+            )
+            AND cursos.id_ies = %(id_ies)s
+            ORDER BY nome;
+        """
+        ret = db.fetch_all(query=query, id_ies=id_ies)
+        return ret
+    
+    @tratamento_excecao_com_db(tipo_banco='grad')
+    def lista_cursos_ppgls_form(self, id_ies: str, db: DBConnectorGRAD = None):
+        """
+        Retorna todos os cursos de pós-graduação latu sensu a partir de 10 anos atrás.\n
+
+        :param id_ies(str): Código da Instituição
+        """
+        query = """
+            SELECT cursos.id, nome FROM cursos
+            LEFT JOIN curso_tipo on curso_tipo.id_curso = cursos.id AND curso_tipo.id_ies = cursos.id_ies
+            LEFT JOIN tiposcursos on tiposcursos.id = curso_tipo.id_tipo
+            WHERE curso_tipo.id_tipo in (3)
             AND cursos.id IN (
                 SELECT distinct aluno_curso.id_curso FROM historico AS h
                 INNER JOIN aluno_curso ON aluno_curso.id = h.id_aluno_curso AND aluno_curso.id_ies = h.id_ies

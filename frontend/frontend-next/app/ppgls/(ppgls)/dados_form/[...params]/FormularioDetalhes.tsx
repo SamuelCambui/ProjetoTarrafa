@@ -80,7 +80,7 @@ const FormularioDetalhes = () => {
         </tbody>
     </table>
     {/* Tabela Coordenador */}
-    <h2 className="text-xl font-bold mb-2">Coordenador</h2>
+    <h2 className="text-xl font-bold mb-2">Coordenador/Supervisor</h2>
       <table className="border-collapse border border-gray-500 w-full mb-6">
         <thead>
             <tr className="bg-gray-200">

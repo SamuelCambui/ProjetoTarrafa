@@ -4,9 +4,10 @@ import { redirect } from "next/navigation"; // Para redirecionar caso a origem n
 
 export default async function Home() {
   const session = await auth();
-  // Se o usuário tiver `ppglsForms` como "true", redireciona para outra página
+
+  //Se session.user.ppglsForms === "true", o usuário é redirecionado para /ppgls_forms
   if (session?.user?.ppglsForms === "true") {
-    redirect("/lppgls_forms"); // Redireciona para a página desejada
+    redirect("/login_ppgls_formularios"); 
   }
   return <Graficos idIes={session?.user.id_ies!} />;
 }

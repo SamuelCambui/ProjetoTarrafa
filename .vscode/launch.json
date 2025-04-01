@@ -4,15 +4,15 @@
     // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        {
-            "name": "Python: Flaskmiddle",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "frontend/flaskmiddle/run.py",
-            "jinja": true,
-            "justMyCode": false,
-            "envFile": "${workspaceFolder}/.env.desenvolvimento"
-        },
+        // {
+        //     "name": "Python: Flaskmiddle",
+        //     "type": "debugpy",
+        //     "request": "launch",
+        //     "program": "frontend/flaskmiddle/run.py",
+        //     "jinja": true,
+        //     "justMyCode": false,
+        //     "envFile": "${workspaceFolder}/.env.desenvolvimento"
+        // },
         {
             "name": "Python: QUERIES Celery WINDOWS",
             "type": "debugpy",

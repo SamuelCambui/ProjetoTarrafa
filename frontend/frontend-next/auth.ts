@@ -113,26 +113,21 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
     }),
   ],
   callbacks: {
-    async redirect({ url, baseUrl, token }) {
-      console.log("URL de redirecionamento:", url);
-      console.log("Base URL:", baseUrl);
-      console.log("Token recebido:", token);
+    // async redirect({ url, baseUrl}) {
+    //   console.log("URL recebida no redirect:", url);
+    //   console.log("URL base:", baseUrl);
+      
+    //   const urlObj = new URL(url, baseUrl);
+
+    //   const token = urlObj.searchParams.get("token");
     
-      if (url.startsWith("/login")) {
-        console.log("Usuário tentando acessar /login");
-    
-        if (token?.user?.ppglsForms === "true") {
-          console.log("Redirecionando para /login_ppgls_formularios");
-          return "/login_ppgls_formularios";
-        } else {
-          console.log("Redirecionando para /login normal");
-          return "/login";
-        }
-      }
-    
-      // Mantém o comportamento padrão
-      return url.startsWith(baseUrl) ? url : baseUrl;
-    },
+    //   console.log("Token recebido no redirect:", token);
+
+    //   if (token === "true") {
+    //     return "/login_ppgls_formularios";
+    //   }
+    //   return "/login"; 
+    // },
     // Esta função é chamada sempre que o usuário tenta acessar uma página
     async authorized({ auth, request: { nextUrl } }) {
       const isLogged = !!auth?.user;
@@ -188,7 +183,9 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
       return true;
     },
     async jwt({ token, user }) {
-      user && (token.user = user); // Adiciona o usuário ao token JWT
+      if (user) {
+        token.user = user;
+      }
       return token;
     },
     async session({ session, token }) {
