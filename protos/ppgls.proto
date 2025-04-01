@@ -96,6 +96,8 @@ service DadosPosGraduacaoLS {
     // Retorna todos os cursos cadastrados.
     rpc GetCursos (PPGLSRequest) returns (PPGLSResponse);
 
+    rpc GetCursosPPGLSForm (PPGLSRequest) returns (PPGLSResponse);
+
     /*  
         Retorna um curso em específico.\n
         Parâmetros:\n

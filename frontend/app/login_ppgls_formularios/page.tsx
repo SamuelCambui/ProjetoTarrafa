@@ -26,8 +26,8 @@ const Login = () => {
     >
       <Card className="w-96">
         <CardHeader>
-          <CardTitle>Sistema Tarrafa(PPGLS Formulários)</CardTitle>
-          <CardDescription>Versão Pro</CardDescription>
+          <CardTitle>Formulário PPGLS - Sistema Tarrafa</CardTitle>
+          <CardDescription>Versão 1.0</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-2">
           <div>
@@ -57,6 +57,7 @@ const Login = () => {
             </div>
           </div>
         </CardContent>
+        
         <CardFooter className="flex flex-col gap-2">
           <Button className="w-full" disabled={isSubmitting}>
             {isSubmitting && <Loader2Icon className="animate-spin" />}

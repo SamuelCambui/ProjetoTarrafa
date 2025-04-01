@@ -3089,8 +3089,8 @@ class QueriesPPG():
         row = db.fetch_one(query, anoi=anoi, anof=anof, id=id, nota=nota)
         return row[0]
     
-    @tratamento_excecao_db_ppg_views()
-    def retorna_contagem_de_qualis_do_lattes_com_lista(self, id: str, anof: int, db: DBConnector = None, db_views : DBConnector = None):
+    @tratamento_excecao_db_views()
+    def retorna_contagem_de_qualis_do_lattes_com_lista(self, id: str, anof: int, db_views : DBConnector = None):
         """
         Retornar o quantitativo de artigos com qualis considerando a base de dados lattes
 
@@ -3279,7 +3279,7 @@ class QueriesPPG():
         
         products = sorted(products, key=lambda k: k['ano'])
 
-        if listanegra is None:
+        if not listanegra:
             listanegra = []
 
             lista_qualis = products

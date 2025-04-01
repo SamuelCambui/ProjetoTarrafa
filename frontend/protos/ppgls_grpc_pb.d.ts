@@ -212,6 +212,7 @@ export class DadosFormularioPosGraduacaoLSClient extends grpc.Client implements 
 
 interface IDadosPosGraduacaoLSService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
     getCursos: IDadosPosGraduacaoLSService_IGetCursos;
+    getCursosPPGLSForm: IDadosPosGraduacaoLSService_IGetCursosPPGLSForm;
     getCurso: IDadosPosGraduacaoLSService_IGetCurso;
     getDisciplinas: IDadosPosGraduacaoLSService_IGetDisciplinas;
     getDisciplina: IDadosPosGraduacaoLSService_IGetDisciplina;
@@ -219,6 +220,15 @@ interface IDadosPosGraduacaoLSService extends grpc.ServiceDefinition<grpc.Untype
 
 interface IDadosPosGraduacaoLSService_IGetCursos extends grpc.MethodDefinition<messages_pb.PPGLSRequest, messages_pb.PPGLSResponse> {
     path: "/protos.DadosPosGraduacaoLS/GetCursos";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<messages_pb.PPGLSRequest>;
+    requestDeserialize: grpc.deserialize<messages_pb.PPGLSRequest>;
+    responseSerialize: grpc.serialize<messages_pb.PPGLSResponse>;
+    responseDeserialize: grpc.deserialize<messages_pb.PPGLSResponse>;
+}
+interface IDadosPosGraduacaoLSService_IGetCursosPPGLSForm extends grpc.MethodDefinition<messages_pb.PPGLSRequest, messages_pb.PPGLSResponse> {
+    path: "/protos.DadosPosGraduacaoLS/GetCursosPPGLSForm";
     requestStream: false;
     responseStream: false;
     requestSerialize: grpc.serialize<messages_pb.PPGLSRequest>;
@@ -258,6 +268,7 @@ export const DadosPosGraduacaoLSService: IDadosPosGraduacaoLSService;
 
 export interface IDadosPosGraduacaoLSServer extends grpc.UntypedServiceImplementation {
     getCursos: grpc.handleUnaryCall<messages_pb.PPGLSRequest, messages_pb.PPGLSResponse>;
+    getCursosPPGLSForm: grpc.handleUnaryCall<messages_pb.PPGLSRequest, messages_pb.PPGLSResponse>;
     getCurso: grpc.handleUnaryCall<messages_pb.PPGLSRequest, messages_pb.PPGLSResponse>;
     getDisciplinas: grpc.handleUnaryCall<messages_pb.PPGLSRequest, messages_pb.PPGLSResponse>;
     getDisciplina: grpc.handleUnaryCall<messages_pb.PPGLSRequest, messages_pb.PPGLSResponse>;
@@ -267,6 +278,9 @@ export interface IDadosPosGraduacaoLSClient {
     getCursos(request: messages_pb.PPGLSRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
     getCursos(request: messages_pb.PPGLSRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
     getCursos(request: messages_pb.PPGLSRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
+    getCursosPPGLSForm(request: messages_pb.PPGLSRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
+    getCursosPPGLSForm(request: messages_pb.PPGLSRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
+    getCursosPPGLSForm(request: messages_pb.PPGLSRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
     getCurso(request: messages_pb.PPGLSRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
     getCurso(request: messages_pb.PPGLSRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
     getCurso(request: messages_pb.PPGLSRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
@@ -283,6 +297,9 @@ export class DadosPosGraduacaoLSClient extends grpc.Client implements IDadosPosG
     public getCursos(request: messages_pb.PPGLSRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
     public getCursos(request: messages_pb.PPGLSRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
     public getCursos(request: messages_pb.PPGLSRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
+    public getCursosPPGLSForm(request: messages_pb.PPGLSRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
+    public getCursosPPGLSForm(request: messages_pb.PPGLSRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
+    public getCursosPPGLSForm(request: messages_pb.PPGLSRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
     public getCurso(request: messages_pb.PPGLSRequest, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
     public getCurso(request: messages_pb.PPGLSRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;
     public getCurso(request: messages_pb.PPGLSRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: messages_pb.PPGLSResponse) => void): grpc.ClientUnaryCall;

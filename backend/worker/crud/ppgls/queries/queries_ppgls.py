@@ -1,11 +1,10 @@
 from backend.core import utils
+from backend.core.utils import tratamento_excecao_db_grad
 from backend.db.db import DBConnectorGRAD
-from backend.core.utils import tratamento_excecao_com_db
+
 
 class QueriesPPGLS:
-   
-
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def naturalidade_alunos(
         self,
         anoi: int,
@@ -32,8 +31,10 @@ class QueriesPPGLS:
         ret = db.fetch_all(query, anoi=anoi, anof=anof, id_ies=id_ies)
         return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
-    def sexo_alunos(self, anoi: int, anof: int, id_ies: str, db: DBConnectorGRAD = None):
+    @tratamento_excecao_db_grad()
+    def sexo_alunos(
+        self, anoi: int, anof: int, id_ies: str, db: DBConnectorGRAD = None
+    ):
         """
         Retorna a quantidade de alunos do sexo masculino e feminino.
         """
@@ -68,9 +69,7 @@ class QueriesPPGLS:
         ret = db.fetch_all(query, anoi=anoi, anof=anof, id_ies=id_ies)
         return ret
 
-    
-
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def boxplot_idade(self, id_ies: str, anoi: int, anof: int, db: DBConnectorGRAD):
         """
         Retorna as medidas do boxplot para a variável idade de todos os cursos de Graduação ou Licenciatura.
@@ -115,7 +114,7 @@ class QueriesPPGLS:
         ret = db.fetch_all(query=query, id_ies=id_ies, anoi=anoi, anof=anof)
         return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def taxa_matriculas(
         self,
         id_ies: str,
@@ -148,8 +147,8 @@ class QueriesPPGLS:
         )
 
         return ret
-    
-    @tratamento_excecao_com_db(tipo_banco='grad')
+
+    @tratamento_excecao_db_grad()
     def taxa_matriculas_por_cota(
         self,
         id_ies: str,
@@ -181,5 +180,6 @@ class QueriesPPGLS:
             anof=anof,
         )
         return ret
+
 
 queries_ppgls = QueriesPPGLS()

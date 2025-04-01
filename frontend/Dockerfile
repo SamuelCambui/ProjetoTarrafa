@@ -6,13 +6,13 @@ WORKDIR /app
 
 # Copiar package.json e package-lock.json
 COPY package*.json ./
-# COPY .env.producao .env
 
 # Instalar dependências
 RUN npm ci
 
 # Copiar o restante dos arquivos do frontend
 COPY . .
+COPY .env.producao .env
 
 # Construir a aplicação para produção
 # RUN npm run build

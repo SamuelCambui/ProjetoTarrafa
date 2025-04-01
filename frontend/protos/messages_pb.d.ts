@@ -774,11 +774,6 @@ export class PPGLSRequest extends jspb.Message {
     getIdCurso(): string | undefined;
     setIdCurso(value: string): PPGLSRequest;
 
-    hasIdGrade(): boolean;
-    clearIdGrade(): void;
-    getIdGrade(): string | undefined;
-    setIdGrade(value: string): PPGLSRequest;
-
     hasAnoi(): boolean;
     clearAnoi(): void;
     getAnoi(): number | undefined;
@@ -804,7 +799,6 @@ export namespace PPGLSRequest {
         idDisc?: string,
         idIes?: string,
         idCurso?: string,
-        idGrade?: string,
         anoi?: number,
         anof?: number,
     }

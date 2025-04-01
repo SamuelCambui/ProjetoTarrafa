@@ -140,8 +140,8 @@ services:
   frontend:
     build: ./frontend
     command: npm run dev
-    volumes:
-      - ./frontend:/app
+    # volumes:
+    #   - ./frontend:/app
     ports:
       - "3002:3000"  # Porta padrão do Next.js
     networks:
@@ -165,7 +165,7 @@ services:
     environment:
     - POSTGRES_PORT=${POSTGRES_PORT}
     volumes:
-      - ./dados/postgres_data:/var/lib/postgresql/data
+      - ./data/postgres_data:/var/lib/postgresql/data
       - ./backend/db/tarrafaDB_2_tables.sql:/docker-entrypoint-initdb.d/tarrafaDB_2_tables.sql
       - ./backend/db/tarrafaDB_2_view_tables.sql:/docker-entrypoint-initdb.d/tarrafaDB_2_view_tables.sql
       - ./backend/db/tarrafaDB_2_formularios_tables.sql:/docker-entrypoint-initdb.d/tarrafaDB_2_formularios_tables.sql
@@ -203,7 +203,7 @@ services:
       # - "8004:5672"
       - "8004:15672"
     volumes:
-      - ./dados/rabbitmq_data:/var/lib/rabbitmq/data
+      - ./data/rabbitmq_data:/var/lib/rabbitmq/data
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 5s

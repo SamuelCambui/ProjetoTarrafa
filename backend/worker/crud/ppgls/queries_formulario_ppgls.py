@@ -1,70 +1,66 @@
-from backend.db.db import DBConnectorGRAD, DBConnectorGRADForm
-from backend.core.utils import tratamento_excecao_com_db
 import json
-from datetime import datetime, date
-
-
-
-from backend.core import utils
+from datetime import date, datetime
 from typing import List
 
-#db = deps.get_db_grad()
+from backend.core import utils
+from backend.core.utils import tratamento_excecao_db_grad, tratamento_excecao_db_grad_form
+from backend.db.db import DBConnectorGRAD, DBConnectorGRADForm
 
-class QueriesFormularioPPGLS():
+# db = deps.get_db_grad()
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+
+class QueriesFormularioPPGLS:
+    @tratamento_excecao_db_grad()
     def inserir_usuarios_formulario(self, db: DBConnectorGRAD = None, **kwargs):
-        query = utils.InsertQuery('formulario', **kwargs)
+        query = utils.InsertQuery("formulario", **kwargs)
         ret = db.insert(query, **kwargs)
         if ret:
             return True
         return False
-    
-    @tratamento_excecao_com_db(tipo_banco='grad')
+
+    @tratamento_excecao_db_grad()
     def verifica_pendencia_formulario(self, cpf: str, db: DBConnectorGRAD = None):
-        
-        ret = db.fetch_one('''select * from formulario where cpf = %(cpf)s''',cpf=cpf)
+        ret = db.fetch_one("""select * from formulario where cpf = %(cpf)s""", cpf=cpf)
         if ret:
             return False
         return True
 
-
-
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')   
+    @tratamento_excecao_db_grad_form()
     def inserir_formulario_ppgls(self, db: DBConnectorGRADForm = None, **kwargs):
         print("Conteúdo de kwargs da query:", kwargs)
 
-        itens = kwargs.get('item', [])
+        itens = kwargs.get("item", [])
         print("Conteúdo de kwargs na forma de lista:", itens)
 
         for item in itens:
             # Extraia o campo 'nome' do item
-            nome_formulario = item.get('nome')
+            nome_formulario = item.get("nome")
 
             # Extraia o campo 'json', que é uma string JSON
-            json_str = item.get('json')
+            json_str = item.get("json")
             if json_str:
                 # Converta a string JSON para um dicionário Python
                 json_data = json.loads(json_str)
             else:
                 print("Campo 'json' não encontrado ou está vazio.")
                 json_data = {}
-            
 
-            data_preenchimento = json_data.get('data_preenchimento')
+            data_preenchimento = json_data.get("data_preenchimento")
 
-            residencia = json_data.get('residencia_especializacao', {})
+            residencia = json_data.get("residencia_especializacao", {})
             residencia_dados = {
-                'nome': str(residencia.get('nome', '')),
-                'data_inicio': residencia.get('data_inicio', ''),
-                'data_termino': residencia.get('data_termino', ''),
-                'vagas_ofertadas': int(residencia.get('vagas_ofertadas', 0)),
-                'vagas_preenchidas': int(residencia.get('vagas_preenchidas', 0)),
-                'categoria_profissional': str(residencia.get('categoria_profissional', '')),
-                'centro': str(residencia.get('centro', '')),
-                'r1': residencia.get('r1', ''),
-                'r2': residencia.get('r2', ''),
-                'r3': residencia.get('r3', ''),
+                "nome": str(residencia.get("nome", "")),
+                "data_inicio": residencia.get("data_inicio", ""),
+                "data_termino": residencia.get("data_termino", ""),
+                "vagas_ofertadas": int(residencia.get("vagas_ofertadas", 0)),
+                "vagas_preenchidas": int(residencia.get("vagas_preenchidas", 0)),
+                "categoria_profissional": str(
+                    residencia.get("categoria_profissional", "")
+                ),
+                "centro": str(residencia.get("centro", "")),
+                "r1": residencia.get("r1", ""),
+                "r2": residencia.get("r2", ""),
+                "r3": residencia.get("r3", ""),
             }
 
             try:
@@ -83,10 +79,12 @@ class QueriesFormularioPPGLS():
                 db.insert(residencia_query, **residencia_dados)
 
                 # Consultar o último ID inserido
-                id_query = "SELECT currval('residencia_especializacao_planilha_id_seq') AS id;"
+                id_query = (
+                    "SELECT currval('residencia_especializacao_planilha_id_seq') AS id;"
+                )
                 result = db.fetch_all(id_query)
 
-                residencia_especializacao_id = result[0]['id'] if result else None
+                residencia_especializacao_id = result[0]["id"] if result else None
 
                 db.commit()
                 # print("Dados da residência/especialização que estão sendo inseridos:", residencia_dados)
@@ -94,10 +92,10 @@ class QueriesFormularioPPGLS():
                 print(f"Erro ao inserir residência/especialização: {e}")
                 db.rollback()
 
-            coordenador = json_data.get('coordenador', {})
+            coordenador = json_data.get("coordenador", {})
             coordenador_dados = {
-                'id': str(coordenador.get('id')),
-                'nome': str(coordenador.get('nome'))
+                "id": str(coordenador.get("id")),
+                "nome": str(coordenador.get("nome")),
             }
 
             coordenador_query = """
@@ -108,12 +106,12 @@ class QueriesFormularioPPGLS():
             db.insert(coordenador_query, **coordenador_dados)
 
             coordenador_carga_horaria_dados = {
-                'coordenador_id': coordenador['id'],
-                'carga_horaria': int(coordenador.get('carga_horaria')),
-                'ano': int(coordenador.get('ano')),
-                'semestre': int(coordenador.get('semestre')),
-                'nome_formulario': item.get('nome'),
-                'data_preenchimento': json_data.get('data_preenchimento')
+                "coordenador_id": coordenador["id"],
+                "carga_horaria": int(coordenador.get("carga_horaria")),
+                "ano": int(coordenador.get("ano")),
+                "semestre": int(coordenador.get("semestre")),
+                "nome_formulario": item.get("nome"),
+                "data_preenchimento": json_data.get("data_preenchimento"),
             }
 
             coordenador_query = """
@@ -128,17 +126,17 @@ class QueriesFormularioPPGLS():
                 db.insert(coordenador_query, **coordenador_carga_horaria_dados)
                 id_query = "SELECT currval('coordenador_carga_horaria_id_seq') AS id;"
                 result = db.fetch_all(id_query)
-                coordenador_carga_horaria_id = result[0]['id'] if result else None
+                coordenador_carga_horaria_id = result[0]["id"] if result else None
 
                 db.commit()
             except Exception as e:
                 print(f"Erro ao inserir coordenador carga horária: {e}")
 
-            professores = json_data.get('professores', [])
+            professores = json_data.get("professores", [])
             for professor in professores:
                 professor_dados = {
-                    'id': professor.get('id'),
-                    'nome': professor.get('nome')      
+                    "id": professor.get("id"),
+                    "nome": professor.get("nome"),
                 }
 
                 professor_query = """
@@ -150,17 +148,23 @@ class QueriesFormularioPPGLS():
                 db.insert(professor_query, **professor_dados)
 
                 professor_carga_dados = {
-                    'professor_id': professor.get('id'),
-                    'vinculo': professor.get('vinculo'),
-                    'titulacao' : professor.get('titulacao'),
-                    'carga_horaria_jornada_extendida': int(professor.get('carga_horaria_jornada_extendida')),
-                    'carga_horaria_projeto_extencao': int(professor.get('carga_horaria_projeto_extencao')),
-                    'carga_horaria_projeto_pesquisa': int(professor.get('carga_horaria_projeto_pesquisa')),
-                    'carga_horaria_total': int(professor.get('carga_horaria_total')),
-                    'ano': int(professor.get('ano')),
-                    'semestre': int(professor.get('semestre')),
-                    'nome_formulario': item.get('nome'),
-                    'data_preenchimento': json_data.get('data_preenchimento')
+                    "professor_id": professor.get("id"),
+                    "vinculo": professor.get("vinculo"),
+                    "titulacao": professor.get("titulacao"),
+                    "carga_horaria_jornada_extendida": int(
+                        professor.get("carga_horaria_jornada_extendida")
+                    ),
+                    "carga_horaria_projeto_extencao": int(
+                        professor.get("carga_horaria_projeto_extencao")
+                    ),
+                    "carga_horaria_projeto_pesquisa": int(
+                        professor.get("carga_horaria_projeto_pesquisa")
+                    ),
+                    "carga_horaria_total": int(professor.get("carga_horaria_total")),
+                    "ano": int(professor.get("ano")),
+                    "semestre": int(professor.get("semestre")),
+                    "nome_formulario": item.get("nome"),
+                    "data_preenchimento": json_data.get("data_preenchimento"),
                 }
 
                 professor_query = """
@@ -178,9 +182,8 @@ class QueriesFormularioPPGLS():
                 db.insert(professor_query, **professor_carga_dados)
                 id_query = "SELECT currval('professor_carga_horaria_id_seq') AS id;"
                 result = db.fetch_all(id_query)
-                professor_carga_horaria_id = result[0]['id'] if result else None
+                professor_carga_horaria_id = result[0]["id"] if result else None
                 db.commit()
-
 
                 # Inserir relação entre residência/especialização, professor e coordenador
                 relacao_query = """
@@ -192,11 +195,11 @@ class QueriesFormularioPPGLS():
                     )
                 """
                 relacao_dados = {
-                    'nome_formulario': nome_formulario,
-                    'data_preenchimento': data_preenchimento,
-                    'residencia_especializacao_id': residencia_especializacao_id,
-                    'professor_carga_horaria_id': professor_carga_horaria_id,
-                    'coordenador_carga_horaria_id':coordenador_carga_horaria_id
+                    "nome_formulario": nome_formulario,
+                    "data_preenchimento": data_preenchimento,
+                    "residencia_especializacao_id": residencia_especializacao_id,
+                    "professor_carga_horaria_id": professor_carga_horaria_id,
+                    "coordenador_carga_horaria_id": coordenador_carga_horaria_id,
                 }
 
                 db.insert(relacao_query, **relacao_dados)
@@ -204,14 +207,17 @@ class QueriesFormularioPPGLS():
 
         return True
 
-    
-
-
-
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
-    def buscar_formulario_ppgls(self, nome_formulario: str, data_preenchimento: str, db: DBConnectorGRADForm = None):
+    @tratamento_excecao_db_grad_form()
+    def buscar_formulario_ppgls(
+        self,
+        nome_formulario: str,
+        data_preenchimento: str,
+        db: DBConnectorGRADForm = None,
+    ):
         if not nome_formulario or not data_preenchimento:
-            raise ValueError("Os parâmetros 'nome_formulario' e 'data_preenchimento' são obrigatórios.")
+            raise ValueError(
+                "Os parâmetros 'nome_formulario' e 'data_preenchimento' são obrigatórios."
+            )
 
         # Buscar todos os dados relacionados ao formulário, conforme a consulta SQL
         query_residencia = """
@@ -264,13 +270,19 @@ class QueriesFormularioPPGLS():
             resp.nome_formulario = %(nome_formulario)s
             AND resp.data_preenchimento = %(data_preenchimento)s;
         """
-        
+
         # Executar a consulta para obter os dados
-        resultados = db.fetch_all(query_residencia, nome_formulario=nome_formulario, data_preenchimento=data_preenchimento)
+        resultados = db.fetch_all(
+            query_residencia,
+            nome_formulario=nome_formulario,
+            data_preenchimento=data_preenchimento,
+        )
 
         # Se não encontrar o formulário
         if not resultados:
-            raise ValueError(f"Formulário não encontrado para o nome '{nome_formulario}' e a data '{data_preenchimento}'.")
+            raise ValueError(
+                f"Formulário não encontrado para o nome '{nome_formulario}' e a data '{data_preenchimento}'."
+            )
 
         # Pegamos os dados gerais do formulário apenas da primeira linha
         primeira_linha = resultados[0]
@@ -284,12 +296,18 @@ class QueriesFormularioPPGLS():
                 "nome_professor": row[30],  # nome_professor
                 "vinculo": row[18],  # vinculo
                 "titulacao": row[19],  # titulacao
-                "carga_horaria_jornada_extendida": row[20],  # carga_horaria_jornada_extendida
-                "carga_horaria_projeto_extencao": row[21],  # carga_horaria_projeto_extencao
-                "carga_horaria_projeto_pesquisa": row[22],  # carga_horaria_projeto_pesquisa
+                "carga_horaria_jornada_extendida": row[
+                    20
+                ],  # carga_horaria_jornada_extendida
+                "carga_horaria_projeto_extencao": row[
+                    21
+                ],  # carga_horaria_projeto_extencao
+                "carga_horaria_projeto_pesquisa": row[
+                    22
+                ],  # carga_horaria_projeto_pesquisa
                 "carga_horaria_total": row[23],  # carga_horaria_total
                 "ano_professor": row[24],  # ano_professor
-                "semestre_professor": row[25]  # semestre_professor
+                "semestre_professor": row[25],  # semestre_professor
             }
 
             # Verifica se o professor já foi adicionado para evitar duplicação
@@ -300,18 +318,26 @@ class QueriesFormularioPPGLS():
         coordenador = {
             "coordenador_id": primeira_linha[26],  # coordenador_id
             "nome_coordenador": primeira_linha[31],  # nome_coordenador
-            "carga_horaria_coordenador": primeira_linha[27],  # carga_horaria_coordenador
+            "carga_horaria_coordenador": primeira_linha[
+                27
+            ],  # carga_horaria_coordenador
             "ano_coordenador": primeira_linha[28],  # ano_coordenador
-            "semestre_coordenador": primeira_linha[29]  # semestre_coordenador
+            "semestre_coordenador": primeira_linha[29],  # semestre_coordenador
         }
 
         # Montando o formulário com os dados recuperados
         formulario = {
             "nome_formulario": primeira_linha[1],  # nome_formulario
-            "data_preenchimento": primeira_linha[2].strftime("%Y-%m-%d") if isinstance(primeira_linha[2], (datetime, date)) else primeira_linha[2],
+            "data_preenchimento": primeira_linha[2].strftime("%Y-%m-%d")
+            if isinstance(primeira_linha[2], (datetime, date))
+            else primeira_linha[2],
             "nome_residencia": primeira_linha[7],  # nome_residencia
-            "data_inicio": primeira_linha[8].strftime("%Y-%m-%d") if isinstance(primeira_linha[8], (datetime, date)) else primeira_linha[8],
-            "data_termino": primeira_linha[9].strftime("%Y-%m-%d") if isinstance(primeira_linha[9], (datetime, date)) else primeira_linha[9],
+            "data_inicio": primeira_linha[8].strftime("%Y-%m-%d")
+            if isinstance(primeira_linha[8], (datetime, date))
+            else primeira_linha[8],
+            "data_termino": primeira_linha[9].strftime("%Y-%m-%d")
+            if isinstance(primeira_linha[9], (datetime, date))
+            else primeira_linha[9],
             "vagas_ofertadas": primeira_linha[10],  # vagas_ofertadas
             "vagas_preenchidas": primeira_linha[11],  # vagas_preenchidas
             "categoria_profissional": primeira_linha[12],  # categoria_profissional
@@ -319,15 +345,16 @@ class QueriesFormularioPPGLS():
             "r1": primeira_linha[14],  # r1
             "r2": primeira_linha[15],  # r2
             "r3": primeira_linha[16],  # r3
-            "professores": list(professores_dict.values()),  # lista de professores sem duplicação
-            "coordenador": coordenador  # coordenador único
+            "professores": list(
+                professores_dict.values()
+            ),  # lista de professores sem duplicação
+            "coordenador": coordenador,  # coordenador único
         }
 
         # Retorna o objeto formulado em formato JSON para compatibilidade com a mensagem `FormularioPPGLSJson`
         return formulario
 
-
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
+    @tratamento_excecao_db_grad_form()
     def listar_formularios_ppgls(self, db: DBConnectorGRADForm = None):
         # Buscar todos os dados dos formulários
         query_residencia = """
@@ -336,9 +363,11 @@ class QueriesFormularioPPGLS():
                 residencia_especializacao_professor_planilha.data_preenchimento AS data_preenchimento
             FROM residencia_especializacao_professor_planilha;
         """
-        
+
         # Executar a consulta para obter os dados
-        resultados = db.fetch_all(query_residencia)  # Alterado para `fetch_all()` para pegar todos os registros
+        resultados = db.fetch_all(
+            query_residencia
+        )  # Alterado para `fetch_all()` para pegar todos os registros
 
         # Se não encontrar formulários, retorna uma lista vazia
         if not resultados:
@@ -346,30 +375,29 @@ class QueriesFormularioPPGLS():
 
         # Estrutura os dados retornados como uma lista de dicionários
         formatted_resultados = []
-        
+
         for row in resultados:
-            resultado = {
-                "nome": row[0], 
-                "data_preenchimento": row[1]
-            }
+            resultado = {"nome": row[0], "data_preenchimento": row[1]}
 
             # Formatar a data
             for chave, valor in resultado.items():
                 if isinstance(valor, (datetime, date)):
-                    resultado[chave] = valor.strftime("%Y-%m-%d %H:%M:%S")  # Formatação da data
+                    resultado[chave] = valor.strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    )  # Formatação da data
 
             # Adicionar ao resultado formatado
             formatted_resultados.append(resultado)
 
         return formatted_resultados
 
-
-
-
-    
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')  
-    def excluir_formulario_ppgls(self, nome_formulario: str, data_inicio: str, db: DBConnectorGRADForm = None):
-        print(f"Excluindo formulário com nome: {nome_formulario} e data_inicio: {data_inicio}")
+    @tratamento_excecao_db_grad_form()
+    def excluir_formulario_ppgls(
+        self, nome_formulario: str, data_inicio: str, db: DBConnectorGRADForm = None
+    ):
+        print(
+            f"Excluindo formulário com nome: {nome_formulario} e data_inicio: {data_inicio}"
+        )
 
         try:
             # Excluir a relação entre residência/especialização, professor e coordenador
@@ -378,7 +406,9 @@ class QueriesFormularioPPGLS():
                 WHERE nome_formulario = %(nome_formulario)s
                 AND data_preenchimento::DATE = %(data_inicio)s;
             """
-            db.delete(relacao_query, nome_formulario=nome_formulario, data_inicio=data_inicio)
+            db.delete(
+                relacao_query, nome_formulario=nome_formulario, data_inicio=data_inicio
+            )
 
             # Excluir carga horária dos professores
             professor_carga_query = """
@@ -386,7 +416,11 @@ class QueriesFormularioPPGLS():
                 WHERE nome_formulario = %(nome_formulario)s
                 AND data_preenchimento::DATE = %(data_inicio)s;
             """
-            db.delete(professor_carga_query, nome_formulario=nome_formulario, data_inicio=data_inicio)
+            db.delete(
+                professor_carga_query,
+                nome_formulario=nome_formulario,
+                data_inicio=data_inicio,
+            )
 
             # Excluir carga horária do coordenador
             coordenador_carga_query = """
@@ -394,7 +428,11 @@ class QueriesFormularioPPGLS():
                 WHERE nome_formulario = %(nome_formulario)s
                 AND data_preenchimento::DATE = %(data_inicio)s;
             """
-            db.delete(coordenador_carga_query, nome_formulario=nome_formulario, data_inicio=data_inicio)
+            db.delete(
+                coordenador_carga_query,
+                nome_formulario=nome_formulario,
+                data_inicio=data_inicio,
+            )
 
             # Excluir professor (considerando que a exclusão pode ocorrer apenas se não houver dependência)
             professor_query = """
@@ -405,7 +443,11 @@ class QueriesFormularioPPGLS():
                     AND data_preenchimento::DATE = %(data_inicio)s
                 );
             """
-            db.delete(professor_query, nome_formulario=nome_formulario, data_inicio=data_inicio)
+            db.delete(
+                professor_query,
+                nome_formulario=nome_formulario,
+                data_inicio=data_inicio,
+            )
 
             # Excluir coordenador
             coordenador_query = """
@@ -416,7 +458,11 @@ class QueriesFormularioPPGLS():
                     AND data_preenchimento::DATE = %(data_inicio)s
                 );
             """
-            db.delete(coordenador_query, nome_formulario=nome_formulario, data_inicio=data_inicio)
+            db.delete(
+                coordenador_query,
+                nome_formulario=nome_formulario,
+                data_inicio=data_inicio,
+            )
 
             # Excluir residência/especialização
             residencia_query = """
@@ -424,15 +470,21 @@ class QueriesFormularioPPGLS():
                 WHERE nome = %(nome_formulario)s
                 AND data_inicio = %(data_inicio)s;
             """
-            db.delete(residencia_query, nome_formulario=nome_formulario, data_inicio=data_inicio)
+            db.delete(
+                residencia_query,
+                nome_formulario=nome_formulario,
+                data_inicio=data_inicio,
+            )
 
             db.commit()
-            print(f"Formulário com nome {nome_formulario} e data_inicio {data_inicio} excluído com sucesso.")
+            print(
+                f"Formulário com nome {nome_formulario} e data_inicio {data_inicio} excluído com sucesso."
+            )
         except Exception as e:
             print(f"Erro ao excluir o formulário: {e}")
             db.rollback()
 
         return True
-    
-  
+
+
 queries_formulario_ppgls = QueriesFormularioPPGLS()

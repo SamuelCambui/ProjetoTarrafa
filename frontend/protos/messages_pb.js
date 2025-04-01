@@ -6119,7 +6119,6 @@ proto.protos.PPGLSRequest.toObject = function(includeInstance, msg) {
     idDisc: jspb.Message.getFieldWithDefault(msg, 1, ""),
     idIes: jspb.Message.getFieldWithDefault(msg, 2, ""),
     idCurso: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    idGrade: jspb.Message.getFieldWithDefault(msg, 4, ""),
     anoi: jspb.Message.getFieldWithDefault(msg, 5, 0),
     anof: jspb.Message.getFieldWithDefault(msg, 6, 0)
   };
@@ -6169,10 +6168,6 @@ proto.protos.PPGLSRequest.deserializeBinaryFromReader = function(msg, reader) {
     case 3:
       var value = /** @type {string} */ (reader.readString());
       msg.setIdCurso(value);
-      break;
-    case 4:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setIdGrade(value);
       break;
     case 5:
       var value = /** @type {number} */ (reader.readInt32());
@@ -6229,13 +6224,6 @@ proto.protos.PPGLSRequest.serializeBinaryToWriter = function(message, writer) {
   if (f != null) {
     writer.writeString(
       3,
-      f
-    );
-  }
-  f = /** @type {string} */ (jspb.Message.getField(message, 4));
-  if (f != null) {
-    writer.writeString(
-      4,
       f
     );
   }
@@ -6361,42 +6349,6 @@ proto.protos.PPGLSRequest.prototype.clearIdCurso = function() {
  */
 proto.protos.PPGLSRequest.prototype.hasIdCurso = function() {
   return jspb.Message.getField(this, 3) != null;
-};
-
-
-/**
- * optional string id_grade = 4;
- * @return {string}
- */
-proto.protos.PPGLSRequest.prototype.getIdGrade = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.protos.PPGLSRequest} returns this
- */
-proto.protos.PPGLSRequest.prototype.setIdGrade = function(value) {
-  return jspb.Message.setField(this, 4, value);
-};
-
-
-/**
- * Clears the field making it undefined.
- * @return {!proto.protos.PPGLSRequest} returns this
- */
-proto.protos.PPGLSRequest.prototype.clearIdGrade = function() {
-  return jspb.Message.setField(this, 4, undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.protos.PPGLSRequest.prototype.hasIdGrade = function() {
-  return jspb.Message.getField(this, 4) != null;
 };
 
 

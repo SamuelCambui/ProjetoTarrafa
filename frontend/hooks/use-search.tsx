@@ -1,12 +1,12 @@
 import { useState } from "react";
 
 export function useSearch<T>(
-  data: Array<T>,
-  filterFunction: (item: T, term: string) => boolean
+  dados: Array<T>,
+  filterFunction: (item: T, termo: string) => boolean
 ) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [termoBusca, setTermoBusca] = useState("");
 
-  const filteredData = data.filter((item) => filterFunction(item, searchTerm));
+  const dadosFiltrados = dados.filter((item) => filterFunction(item, termoBusca));
 
-  return { filteredData, searchTerm, setSearchTerm };
+  return { dadosFiltrados, termoBusca, setTermoBusca };
 }

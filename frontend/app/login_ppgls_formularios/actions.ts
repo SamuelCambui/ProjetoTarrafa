@@ -34,5 +34,13 @@ export async function authorize(
 }
 
 export async function logout() {
-  await signOut({ redirect: true, redirectTo: "/login" });
+  const token = "true";
+  console.log("---------------------Token retornado--------------------------");
+  console.log(token);
+
+
+  await signOut({ redirect: false });
+
+  // redirect(`/login_ppgls_formularios`);
+  redirect(`/login_ppgls_formularios`);
 }
