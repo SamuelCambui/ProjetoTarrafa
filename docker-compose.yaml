@@ -10,8 +10,29 @@ services:
       - ./protos:/app/protos
     env_file:
       - ./.env
-    ports:
-      - "8002:8002"
+    # ports:
+    #   - "8002:8002"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - backend-net
+      - frontend-backend-net
+
+  api_login_ppgls:
+    build: ./backend
+    command: >
+      /bin/bash -c "uvicorn backend.app.api.api_login_formulario:app --host 0.0.0.0 --port 8001 --reload"
+    volumes:
+      - ./protos:/app/protos
+    env_file:
+      - ./.env
+    # ports:
+    #   - "8001:8001"
     depends_on:
       rabbitmq:
         condition: service_healthy

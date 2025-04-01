@@ -11,6 +11,11 @@ class DadosPPGLSServicer(ppgls_pb2_grpc.DadosPosGraduacaoLSServicer):
         return PPGLSResponse(item=[curso])
     
     @cache_grpc_ppgls()
+    def GetCursosPPGLSForm(self, request, context):
+        cursos = tasks_cursos_ppgls.get_lista_cursos_ppgls_form.delay(id_ies=request.id_ies).get()
+        return PPGLSResponse(item=[cursos])
+    
+    @cache_grpc_ppgls()
     def GetCursos(self, request, context):
         cursos = tasks_cursos_ppgls.get_cursos.delay(id_ies=request.id_ies).get()
         return PPGLSResponse(item=[cursos])

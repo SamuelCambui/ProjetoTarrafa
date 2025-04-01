@@ -54,7 +54,7 @@ export default function YearFilter() {
             <SelectContent>
               <SelectGroup>
                 {years.map((year) => (
-                  <SelectItem key={year} value={year} disabled={startYear && parseInt(year) < parseInt(startYear)}>
+                  <SelectItem key={year} value={year} disabled={startYear ? parseInt(year) < parseInt(startYear) : false}>
                     {year}
                   </SelectItem>
                 ))}

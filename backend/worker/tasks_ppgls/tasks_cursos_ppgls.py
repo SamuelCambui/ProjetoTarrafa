@@ -21,6 +21,25 @@ def get_cursos(id_ies: str):
     except Exception as error:
         message = PPGLSJson(nome="cursos", json=None)
         return MessageToDict(message)
+    
+
+@app_celery_queries.task
+def get_lista_cursos_ppgls_form(id_ies: str):
+    """
+    Retorna todos os cursos de pós graduação latu sensu.
+
+    :param id_ies(str): Código da Instituição
+    """
+    try:
+        cursos = queries_cursos.lista_cursos_ppgls_form(id_ies=id_ies)
+        message = PPGLSJson(
+            nome="cursos", json=json.dumps([dict(curso) for curso in cursos])
+        )
+        return MessageToDict(message)
+    except Exception as error:
+        message = PPGLSJson(nome="cursos", json=None)
+        return MessageToDict(message)
+
 
 
 @app_celery_queries.task
