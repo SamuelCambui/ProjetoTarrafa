@@ -9,6 +9,8 @@ import { stubFormularioPPGLS, toApiResponse } from "../utils";
 import { FormularioPPGLSRequest, FormularioIndicadoresRequest } from "@/protos/messages_pb";
 import { FormularioPPGLSJson, Empty } from "@/protos/messages_pb";
 
+
+
 export async function GetIndicadoresFormulario({
   nome_formulario, 
   data_preenchimento,
@@ -17,8 +19,8 @@ export async function GetIndicadoresFormulario({
     console.log("Função GetIndicadoresFormulario() foi chamada.");
     
     const request = new FormularioIndicadoresRequest();
-    request.setNomeFormulario(nome_formulario);
-    request.setDataPreenchimento(data_preenchimento);
+    request.setNomeFormulario(nome_formulario ?? "");
+    request.setDataPreenchimento(data_preenchimento ?? "");
 
     console.log("Enviando requisição para getIndicadoresFormulario...", request);
 
@@ -39,12 +41,14 @@ export async function GetIndicadoresFormulario({
           const itemList = data?.itemList || [];
           let jsonData = {};
 
-          if (itemList.length > 0) {
+          if (itemList.length > 0 && itemList[0].json) {
             try {
-              jsonData = JSON.parse(itemList[0].json); // Convertendo JSON string para objeto
+                jsonData = JSON.parse(itemList[0].json);
             } catch (e) {
-              console.error("Erro ao converter JSON:", e);
+                console.error("Erro ao converter JSON:", e);
             }
+          } else {
+              jsonData = {}; // Valor padrão caso não haja JSON válido
           }
 
           console.log("Dados convertidos do JSON:", jsonData);
@@ -96,8 +100,8 @@ export async function insertFormulario({ item }: InsertFormularioParams) {
   }: DeleteFormularioParams) {
     try {
       const request = new FormularioIndicadoresRequest();
-      request.setNomeFormulario(nome_formulario);
-      request.setDataInicio(data_inicio);
+      request.setNomeFormulario(nome_formulario ?? "");
+      request.setDataInicio(data_inicio ?? "");
   
       const response = await new Promise((resolve, reject) => {
         stubFormularioPPGLS.deleteFormulario(request, (error, response) => {
@@ -138,13 +142,15 @@ export async function insertFormulario({ item }: InsertFormularioParams) {
                     const itemList = responseObject?.itemList || [];
                     let jsonData = {};
 
-                    if (itemList && itemList.length > 0) {
-                        try {
+                    if (itemList && itemList.length > 0 && itemList[0].json) {
+                      try {
                           jsonData = JSON.parse(itemList[0].json); // Convertendo JSON string para objeto
-                        } catch (e) {
-                            console.error("Erro ao converter JSON:", e);
-                        }
-                    }
+                      } catch (e) {
+                          console.error("Erro ao converter JSON:", e);
+                      }
+                  } else {
+                      jsonData = {}; // Valor padrão caso não haja JSON válido
+                  }
 
                     console.log("Dados convertidos do JSON:", jsonData);
                     resolve(jsonData);

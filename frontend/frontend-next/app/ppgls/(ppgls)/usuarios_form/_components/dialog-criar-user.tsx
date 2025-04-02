@@ -137,7 +137,7 @@ export default function DialogCriarUsuario({ aberto, aoFechar }: DialogCriarUsua
         setPerfil("")
         aoFechar()
       } else {
-        throw new Error(resp.message || "Erro desconhecido ao criar usuário");
+        throw new Error("mensagem" in resp ? resp.mensagem : resp.error || "Erro desconhecido ao criar usuário");
       }
     } catch (error: any) {
       console.error("🔴 Erro ao criar usuário:", error);
@@ -252,8 +252,9 @@ export default function DialogCriarUsuario({ aberto, aoFechar }: DialogCriarUsua
               <Select
                 value={perfil}
                 onValueChange={(value) => {
+                  const perfilSelecionado = value as Perfil; 
                   setPerfil(value)
-                  setValue("perfil", value)
+                  setValue("perfil", perfilSelecionado)
                 }}
               >
                 <SelectTrigger id="create-perfil">

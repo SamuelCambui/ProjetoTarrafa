@@ -30,7 +30,7 @@ import {
 } from "../../service/ppgls/types";
 import { insertFormularioData } from "../../service/ppgls/formulario/queries";
 import { useGetCursosPPGLSForm } from "../../service/ppgls/dados/queries";
-import { GetCursosParams } from "../../service/ppgls/types";
+
 
 const formSchema = z.object({
   nome_espec: z.string(),
@@ -150,10 +150,10 @@ export const FormPPGLS = () => {
 
   const [professores, setProfessores] = useState([]);
   const [dadosTabela, setDadosTabela] = useState<FormValues[]>([]);
-  const [linhaSelecionada, setLinhaSelecionada] = useState(null);
+  const [linhaSelecionada, setLinhaSelecionada] =  useState<number | null>(null);
   const isFormValid = form.formState.isValid && dadosTabela.length > 0;
 
-  const handleSelecionarLinha = (index) => {
+  const handleSelecionarLinha = (index:number) => {
     setLinhaSelecionada(index === linhaSelecionada ? null : index);
   };
   
@@ -293,7 +293,7 @@ export const FormPPGLS = () => {
   }, [form]); // Dependência adicionada para garantir a execução correta
   
 
-  const saveToLocalStorage = (values) => {
+  const saveToLocalStorage = (values: Record<string, any>) => {
     localStorage.setItem("formData", JSON.stringify(values));
   };
 
@@ -304,7 +304,7 @@ export const FormPPGLS = () => {
     return () => subscription.unsubscribe();
   }, [form]);
 
-  const handleLinhaClick = (index) => {
+  const handleLinhaClick = (index : number) => {
     setLinhaSelecionada(index);
   };
 
@@ -349,34 +349,34 @@ export const FormPPGLS = () => {
         <div className="border border-gray-300 p-6 rounded-md space-y-6 !mt-0">
           <div className="grid grid-cols-12 gap-4 items-center">
           <div className="col-span-6 flex flex-col">
-  <FormField
-    control={form.control}
-    name="nome_espec"
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel>Nome</FormLabel>
-        <FormControl>
-        <CampoSelecao
-  options={opcoesCursoPPGLS}
-  value={field.value || ""}
-  onChange={(valorSelecionado) => {
-    console.log("🔹 Selecionado:", valorSelecionado);
-    field.onChange(valorSelecionado);
-  }}
-  styles={{
-    menu: (provided) => ({
-      ...provided,
-      maxHeight: "200px", // Altura máxima da lista de opções
-      overflowY: "auto", // Rolagem caso tenha muitas opções
-    }),
-  }}
-/>
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-</div>
+            <FormField
+              control={form.control}
+              name="nome_espec"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome</FormLabel>
+                  <FormControl>
+                  <CampoSelecao
+            options={opcoesCursoPPGLS}
+            value={field.value || ""}
+            onChange={(valorSelecionado) => {
+              console.log("🔹 Selecionado:", valorSelecionado);
+              field.onChange(valorSelecionado);
+            }}
+            styles={{
+              menu: (provided) => ({
+                ...provided,
+                maxHeight: "200px", // Altura máxima da lista de opções
+                overflowY: "auto", // Rolagem caso tenha muitas opções
+              }),
+            }}
+          />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
             <div className="col-span-6 flex flex-col">
               <FormField

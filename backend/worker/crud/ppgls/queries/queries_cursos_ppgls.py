@@ -1,9 +1,9 @@
 from backend.db.db import DBConnectorGRAD
-from backend.core.utils import tratamento_excecao_com_db
+from backend.core.utils import tratamento_excecao_db_grad
 
 class QueriesCursos():
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def lista_cursos(self, id_ies: str, db: DBConnectorGRAD = None):
         """
         Retorna todos os cursos de pós-graduação latu sensu a partir de 10 anos atrás.\n
@@ -27,7 +27,7 @@ class QueriesCursos():
         ret = db.fetch_all(query=query, id_ies=id_ies)
         return ret
     
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def lista_cursos_ppgls_form(self, id_ies: str, db: DBConnectorGRAD = None):
         """
         Retorna todos os cursos de pós-graduação latu sensu a partir de 10 anos atrás.\n
@@ -51,7 +51,7 @@ class QueriesCursos():
         ret = db.fetch_all(query=query, id_ies=id_ies)
         return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def retorna_curso(self, id_curso: str, id_ies: str, db: DBConnectorGRAD = None):
         """
         Retorna dados de um curso em específico.
@@ -66,7 +66,7 @@ class QueriesCursos():
         ret = db.fetch_one(query, id_curso=id_curso, id_ies=id_ies)
         return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def quantidade_alunos_por_semestre(
         self,
         id: str,
@@ -98,7 +98,7 @@ class QueriesCursos():
         return ret
 
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def quantidade_alunos_por_sexo(
         self,
         id_curso: str,
@@ -144,7 +144,7 @@ class QueriesCursos():
         )
         return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def forma_ingresso(
         self,
         id_curso: str,
@@ -179,7 +179,7 @@ class QueriesCursos():
         )
         return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def alunos_necessidade_especial(
         self,
         id_curso: str,
@@ -217,7 +217,7 @@ class QueriesCursos():
         )
         return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def professores(
         self,
         id_curso: str,
@@ -332,7 +332,7 @@ class QueriesCursos():
     #     ret = db.fetch_all(query, id_curso=id_curso, anoi=anoi, id_ies=id_ies)
     #     return ret
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def naturalidade_alunos(
         self,
         id_curso: str,
@@ -373,7 +373,7 @@ class QueriesCursos():
         return ret
 
   
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def boxplot_idade(
         self,
         id_curso: str,
@@ -429,7 +429,7 @@ class QueriesCursos():
 
 
     
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def quant_alunos_por_cor_por_ano(self, id: str,id_ies: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
         """
         Retorna a quantidade de alunos de cada cor de pele dos cursos e das residências de pós-graduação latu sensu em um determinado periodo 
@@ -515,7 +515,7 @@ class QueriesCursos():
     #     ret = db.fetch_all(query, id=id)
     #     return ret
     
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def quant_alunos_vieram_gradu_e_nao_vieram_por_curso(self, id: str,id_ies: str, anoi: int, anof: int, db: DBConnectorGRAD = None):
         """
         Retorna a quantidade de alunos que vieram de cada curso da graduação em um determinado curso de pós graduação latu sensu em um determinado curso
@@ -573,7 +573,7 @@ class QueriesCursos():
                 h.matricula_aluno, c.nome
         )
         SELECT 
-            pc.ano_matricula,
+            CAST(pc.ano_matricula as INTEGER),
             COALESCE(cg.nome_curso_graduacao, 'Não Fizeram Nenhum Curso de Graduação na Unimontes') AS nome_curso_graduacao,
             COUNT(pc.matricula) AS quantidade_matriculas -- Contagem de matrículas por curso
         FROM 
@@ -592,7 +592,7 @@ class QueriesCursos():
     
   
     
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def taxa_matriculas(
         self,
         id_ies: str,
@@ -619,7 +619,7 @@ class QueriesCursos():
 
         return ret
     
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def taxa_matriculas_por_cota(
         self,
         id_ies: str,
@@ -653,7 +653,7 @@ class QueriesCursos():
         return ret
     
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
+    @tratamento_excecao_db_grad()
     def cursos_aleatorios(self, id_ies: str, db: DBConnectorGRAD = None):
         """
         Retorna 5 cursos aletórios para população da sidebar no front-end

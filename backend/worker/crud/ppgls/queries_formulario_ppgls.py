@@ -1,5 +1,5 @@
 from backend.db.db import DBConnectorGRAD, DBConnectorGRADForm
-from backend.core.utils import tratamento_excecao_com_db
+from backend.core.utils import tratamento_excecao_db_grad_form
 import json
 from datetime import datetime, date
 
@@ -12,25 +12,8 @@ from typing import List
 
 class QueriesFormularioPPGLS():
 
-    @tratamento_excecao_com_db(tipo_banco='grad')
-    def inserir_usuarios_formulario(self, db: DBConnectorGRAD = None, **kwargs):
-        query = utils.InsertQuery('formulario', **kwargs)
-        ret = db.insert(query, **kwargs)
-        if ret:
-            return True
-        return False
-    
-    @tratamento_excecao_com_db(tipo_banco='grad')
-    def verifica_pendencia_formulario(self, cpf: str, db: DBConnectorGRAD = None):
-        
-        ret = db.fetch_one('''select * from formulario where cpf = %(cpf)s''',cpf=cpf)
-        if ret:
-            return False
-        return True
-
-
-
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')   
+  
+    @tratamento_excecao_db_grad_form() 
     def inserir_formulario_ppgls(self, db: DBConnectorGRADForm = None, **kwargs):
         print("Conteúdo de kwargs da query:", kwargs)
 
@@ -208,7 +191,7 @@ class QueriesFormularioPPGLS():
 
 
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
+    @tratamento_excecao_db_grad_form()
     def buscar_formulario_ppgls(self, nome_formulario: str, data_preenchimento: str, db: DBConnectorGRADForm = None):
         if not nome_formulario or not data_preenchimento:
             raise ValueError("Os parâmetros 'nome_formulario' e 'data_preenchimento' são obrigatórios.")
@@ -327,7 +310,7 @@ class QueriesFormularioPPGLS():
         return formulario
 
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
+    @tratamento_excecao_db_grad_form()
     def listar_formularios_ppgls(self, db: DBConnectorGRADForm = None):
         # Buscar todos os dados dos formulários
         query_residencia = """
@@ -367,7 +350,7 @@ class QueriesFormularioPPGLS():
 
 
     
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')  
+    @tratamento_excecao_db_grad_form()
     def excluir_formulario_ppgls(self, nome_formulario: str, data_inicio: str, db: DBConnectorGRADForm = None):
         print(f"Excluindo formulário com nome: {nome_formulario} e data_inicio: {data_inicio}")
 

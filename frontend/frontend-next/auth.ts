@@ -16,23 +16,18 @@ export async function login({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
+      body: JSON.stringify({ username, password }),
     })
-      .then<{ usuario: Session["user"]; erro: boolean }>(async (res) => await res.json())
-      .catch(() => {
-        return { erro: true }; // Adiciona erro padrão para falha na comunicação
-      });
+      .then(async (res) => await res.json())
+      .catch(() => ({ erro: true })); // Retorna um objeto com erro se falhar
 
-    if (!response || response.erro) {
-      return null; // Retorna null se a resposta for inválida ou erro
+    if (!response || response.erro || !response.usuario) {
+      return null; // Retorna null caso haja erro ou não tenha usuário
     }
 
-    return response.usuario; // Retorna o usuário caso a autenticação seja bem-sucedida
+    return response.usuario; // Retorna o usuário se autenticado com sucesso
   } catch (error) {
-    throw error; // Lança erro caso algo falhe na execução
+    throw error; // Propaga o erro
   }
 }
 
@@ -49,23 +44,18 @@ export async function login_form({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
+      body: JSON.stringify({ username, password }),
     })
-      .then<{ usuario: Session["user"]; erro: boolean }>(async (res) => await res.json())
-      .catch(() => {
-        return { erro: true }; // Adiciona erro padrão para falha na comunicação
-      });
+      .then(async (res) => await res.json())
+      .catch(() => ({ erro: true }));
 
-    if (!response || response.erro) {
-      return null; // Retorna null se a resposta for inválida ou erro
+    if (!response || response.erro || !response.usuario) {
+      return null;
     }
 
-    return response.usuario; // Retorna o usuário caso a autenticação seja bem-sucedida
+    return response.usuario;
   } catch (error) {
-    throw error; // Lança erro caso algo falhe na execução
+    throw error;
   }
 }
 

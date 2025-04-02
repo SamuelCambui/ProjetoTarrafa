@@ -193,3 +193,11 @@ def tratamento_excecao_com_db(tipo_banco : Literal['ppg'] | Literal['grad']= 'pp
 
 def tratamento_excecao_db_ppg():
     return tratamento_excecao_com_db(tipo_banco=DBConnectorPPG)
+
+def tratamento_excecao_db_grad():
+    return tratamento_excecao_com_db(db=DBConnectorGRAD)
+
+def tratamento_excecao_db_grad_form():
+    return tratamento_excecao_com_db(db=DBConnectorGRADForm)
+
+

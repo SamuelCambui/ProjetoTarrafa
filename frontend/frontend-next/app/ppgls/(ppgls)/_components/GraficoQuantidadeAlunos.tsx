@@ -4,9 +4,15 @@ import { Chart, Column } from "@ant-design/plots";
 import { Grafico } from "../../_components/Grafico";
 import { LoadingCard } from "../../_components/LoadingCard";
 
+interface DataItem {
+  semestre_letivo: string;
+  sexo: string;
+  quantidade: number;
+}
+
 // Função para transformar os dados agregados
-const transformData = (data: any[]) => {
-  const transformedData = [];
+const transformData = (data: DataItem[]): DataItem[] => {
+  const transformedData: DataItem[] = [];
 
   // Agrupar os dados por semestre e sexo, somando as quantidades
   data.forEach((item: any) => {

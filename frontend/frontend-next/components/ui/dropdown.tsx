@@ -15,6 +15,13 @@ interface CampoSelecaoProps {
   className?: string
 }
 
+interface CampoSelecaoProps {
+  options: { valor: string; rotulo: string }[];
+  value: string;
+  onChange: (valorSelecionado: string) => void;
+  styles?: { menu: (provided: any) => any }; // Adicionando a propriedade styles
+}
+
 export function CampoSelecao({
   options,
   value,

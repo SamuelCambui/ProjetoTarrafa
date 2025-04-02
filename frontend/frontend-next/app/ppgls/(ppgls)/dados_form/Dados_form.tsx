@@ -14,6 +14,11 @@ import { useRouter } from "next/navigation";
 import { useListarFormularios } from "@/service/ppgls/formulario/queries";
 import { usePathname } from "next/navigation";
 
+interface Formulario {
+  nome: string;
+  data_preenchimento: string;
+}
+
 export const Forms = () => {
   const { data, isLoading } = useListarFormularios();
 
@@ -37,7 +42,7 @@ export const Forms = () => {
 
   const handleYearChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const yearSearch = e.target.value;
-    const filteredForms = data?.dados.filter((formulario) => {
+    const filteredForms = data?.dados.filter((formulario: Formulario) => {
       const year = new Date(formulario.data_preenchimento).getFullYear();
       return year.toString().startsWith(yearSearch);
     });

@@ -5,12 +5,12 @@ from backend.schemas.user_form import UsuarioAtualizacao, UsuarioNoBanco, Usuari
 from backend.schemas.user_form_notif import UsuarioNotificacao
 from backend.worker import crud
 from backend.db.db import DBConnectorGRADForm
-from backend.core.utils import tratamento_excecao_com_db, tratamento_excecao_db_ppg
+from backend.core.utils import tratamento_excecao_com_db, tratamento_excecao_db_grad_form
 import traceback
 
 class CRUDUser():
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')    
+    @tratamento_excecao_db_grad_form()   
     def retorna_dados_usuario_link_foto_lattes(self, email: str, db: DBConnectorGRADForm = None) -> tuple[Optional[UsuarioNoBanco], str]:
         """
         Retorna os dados do usuário e link para a foto do perfil Lattes.
@@ -47,7 +47,7 @@ class CRUDUser():
         print("[DEBUG] Nenhum registro encontrado ou erro na criação do objeto.")
         return None, ""
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')  
+    @tratamento_excecao_db_grad_form()
     def verifica_usuario(self, idlattes : str, db: DBConnectorGRADForm = None) -> Optional[UsuarioFront]:
         """
         Verificando se existe o usuário no banco de dados
@@ -64,7 +64,7 @@ class CRUDUser():
         return None
 
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')  
+    @tratamento_excecao_db_grad_form()  
     def criacao_usuario(self, novo_usuario : UsuarioCriacao, db: DBConnectorGRADForm = None) -> tuple[bool, str]:
         """
         Criando um novo usuário
@@ -88,7 +88,7 @@ class CRUDUser():
             print(f"Erro ao criar usuário: {erro_traceback}")  # Log no console
             return False, str(e)
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')  
+    @tratamento_excecao_db_grad_form() 
     def atualizar_usuario(self, usuario_atualizacao : UsuarioAtualizacao, db: DBConnectorGRADForm = None) -> tuple[bool, str]:
         """
         Atualizando dados do usuário no banco de dados
@@ -110,7 +110,7 @@ class CRUDUser():
             return False, str(e)
 
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')  
+    @tratamento_excecao_db_grad_form()  
     def alterar_senha_usuario(self, usuario: UsuarioAtualizacao, db: DBConnectorGRADForm = None) -> bool:
         """
         Alterna o status do usuário (ativo/inativo)
@@ -124,7 +124,7 @@ class CRUDUser():
         except Exception as e:
             return False
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')
+    @tratamento_excecao_db_grad_form()
     def alternar_ativo_usuario (self, idlattes : str, db: DBConnectorGRADForm = None) -> tuple[bool, str]:
         """
         Atualizando dados dos usuário no banco de dados
@@ -138,7 +138,7 @@ class CRUDUser():
         except Exception as e:
             return False, str(e)
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')  
+    @tratamento_excecao_db_grad_form() 
     def autenticar_usuario(self, db: DBConnectorGRADForm = None, *, password: str, **kwargs) -> tuple[Optional[UsuarioNoBanco], str]:
         """
         Autenticando usuário no banco
@@ -171,7 +171,7 @@ class CRUDUser():
         """Verifica se o usuário é administrador"""
         return user.is_admin
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')  
+    @tratamento_excecao_db_grad_form()  
     def retorna_dados_usuario(self, idllates : str, db: DBConnectorGRADForm = None) -> Optional[Usuario]:
         """
         Retorna os dados do usuário
@@ -188,7 +188,7 @@ class CRUDUser():
     
 
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')  
+    @tratamento_excecao_db_grad_form()  
     def deletar_usuario(self, idlattes : str, db: DBConnectorGRADForm = None) -> tuple[bool, str]:
         """
         Remove um usuário do banco de dados
@@ -200,7 +200,7 @@ class CRUDUser():
         return False, "Não foi possível deletar o usuário!"
     
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')  
+    @tratamento_excecao_db_grad_form()  
     def retorna_lista_usuario(self, is_admin: bool, db: DBConnectorGRADForm = None) -> list[Optional[Usuario]]:
         """
         Retorna todos os usuários no banco
@@ -216,7 +216,7 @@ class CRUDUser():
             return []
     
 
-    @tratamento_excecao_com_db(tipo_banco='grad_formularios')  
+    @tratamento_excecao_db_grad_form()  
     def obter_status_preenchimento_formulario(self, is_coordenador: bool, ano: int, db: DBConnectorGRADForm = None) -> list[Optional[UsuarioNotificacao]]:
         """
         Retorna todos os usuários no banco
