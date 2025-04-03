@@ -160,7 +160,6 @@ class CRUDUser():
             return None, str(e)
 
 
-
     def is_active(self, user: Usuario) -> bool:
         """
         Retorna se o usuário é ativo ou não -> Booleano
@@ -191,7 +190,6 @@ class CRUDUser():
         except Exception as e:
             print(e)
             return None
-
 
     @tratamento_excecao_db_ppg()
     def retorna_lista_usuario(self, privilegio: bool, idlattes: str, id_ies : str, db: DBConnector = None) -> list[Optional[Usuario]]:

@@ -11,7 +11,3 @@ temp\logs*
 flask_session
 *.pyc
 node_modules
-<<<<<<< HEAD
-=======
-
->>>>>>> c3ff0cc (implementação do front-end primeira parte)

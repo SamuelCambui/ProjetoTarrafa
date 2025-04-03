@@ -32,7 +32,6 @@ def tarefa_autentica_usuario(username : str, password : str) -> Optional[Usuario
         usuario_front.link_avatar = useravatar
             
         return usuario_front
-
     except Exception as e:
         print(e)
         return None
@@ -45,7 +44,6 @@ def tarefa_retorna_lista_usuarios(privilegio : bool, idlattes : str, id_ies : st
     except Exception as e:
         print(e)
         return []
-
 @app_celery_queries.task
 def tarefa_retorna_lista_universidades() -> list[Optional[dict]]:
     try:

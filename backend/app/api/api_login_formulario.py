@@ -1,16 +1,20 @@
 from __future__ import print_function
 from backend.db.cache import RedisConnector
-from backend.worker.tasks_ppgls.tasks_formulario_ppgls import tarefa_autentica_usuario, tarefa_verifica_usuario, tarefa_autentica_usuario, tarefa_verifica_usuario, tarefa_retorna_lista_usuarios, tarefa_obter_status_preenchimento_formulario 
+
+
+
+from backend.worker.tasks_ppgls.tasks_formulario_ppgls import tarefa_autentica_usuario, tarefa_verifica_usuario, tarefa_retorna_lista_usuarios, tarefa_obter_status_preenchimento_formulario 
 from backend.core.security import generate_jwt_token, decode_jwt_token, ACCESS_TOKEN_EXPIRATION_TIME, REFRESH_TOKEN_EXPIRATION_TIME
 from backend.schemas.user_form import UsuarioCriacao, UsuarioAtualizacao
 from backend.worker.crud.ppgls.crud_user_form import user
 import uuid
-from typing import List, Optional
 
-from fastapi import FastAPI,  HTTPException, Depends
+from typing import List
+
+from fastapi import FastAPI,  HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from fastapi import Body
+
 
 class UserLogin(BaseModel):
     username: str
@@ -128,6 +132,8 @@ def obter_status_preenchimento_formulario(is_coordenador: bool, ano: int):
         lista_preench = tarefa_obter_status_preenchimento_formulario.apply(kwargs={"is_coordenador": is_coordenador, "ano": ano}).get()
         print("Dados retornados da tarefa_obter_status_preenchimento_formulario:")
         print(lista_preench);
+
+
         return [usuario.dict() for usuario in lista_preench]
     except Exception as e:
         print(e)
@@ -164,6 +170,4 @@ def alternar_status_usuario(idlattes: str):
         return {"status": status, "mensagem": mensagem}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
-
 

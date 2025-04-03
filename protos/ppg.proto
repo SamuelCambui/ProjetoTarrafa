@@ -4,6 +4,39 @@ package protos;
 
 import "messages.proto";
 
-service Indicadores {
+/*
+  Serviço PPG
+  Este serviço oferece uma API para interagir com os dados de PPG.
+  Ele permite obter indicadores, bancas, docentes, egressos,
+  informações gerais, projetos e tarefas relacionadas ao PPG.
+*/
+service PPG{
+  // Retorna os indicadores do PPG.
+  rpc ObtemInformacaoPPG(PpgRequest)returns (PpgResponse);
+  // Retorna os indicadores de desempenho do PPG.
   rpc ObtemIndicadores (PpgRequest) returns (PpgResponse);
+  // Retorna as informações sobre as bancas do PPG.
+  rpc ObtemBancas (PpgRequest) returns (PpgResponse);
+  // Retorna os dados sobre os docentes do PPG.
+  rpc ObtemDocentes (PpgRequest) returns (PpgResponse);
+  // Retorna informações sobre os egressos do PPG.
+  rpc ObtemEgressos (PpgRequest) returns (PpgResponse);
+  // Retorna informações sobre projetos do PPG.
+  rpc ObtemProjetos (PpgRequest) returns (PpgResponse);
+}
+
+/*
+  Serviço Home
+  Este serviço fornece a interface para obter as informações
+  gerais da página inicial da aplicação.
+*/
+service Home{
+  // Retorna os programas da Universidade
+  rpc ObtemProgramas (HomeRequest) returns (HomeResponse);
+  // Retorna a rede de colaboração da univesidade
+  rpc ObtemRedeColaboracao (HomeRequest) returns (HomeResponse);
+  // Retorna o ranking dos docentes da Universidade
+  rpc ObtemRankingDocentes(HomeRequest) returns (HomeResponse);
+  // Retorna os artigos dos docentes da Universidade
+  rpc ObtemArtigosDocentes(HomeRequest) returns (HomeResponse);
 }

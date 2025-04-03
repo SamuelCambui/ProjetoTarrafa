@@ -1,10 +1,14 @@
-# conftest.py
-import pytest
-from dotenv import load_dotenv
+# testes/tests/conftest.py
 import os
+import sys
+from pathlib import Path
 
-# def pytest_configure():
-#     # Carrega um arquivo .env específico antes de iniciar os testes
-#     dotenv_path = os.path.join(os.path.dirname(__file__), '../..', '.env.desenvolvimento')
-#     print(dotenv_path)
-#     load_dotenv(dotenv_path=dotenv_path)
+from dotenv import load_dotenv
+
+# Forçar o carregamento do .env.desenvolvimento
+load_dotenv(dotenv_path='.env.desenvolvimento', override=True)
+
+# Adiciona o diretório raiz do projeto ao PYTHONPATH
+root_dir = Path(__file__).parent.parent.parent
+sys.path.append(str(root_dir))
+

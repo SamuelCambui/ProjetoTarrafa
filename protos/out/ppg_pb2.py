@@ -15,13 +15,15 @@ _sym_db = _symbol_database.Default()
 from . import messages_pb2 as messages__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tppg.proto\x12\x06protos\x1a\x0emessages.proto2J\n\x0bIndicadores\x12;\n\x10ObtemIndicadores\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tppg.proto\x12\x06protos\x1a\x0emessages.proto2\xe7\x02\n\x03PPG\x12=\n\x12ObtemInformacaoPPG\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12;\n\x10ObtemIndicadores\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x36\n\x0bObtemBancas\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x38\n\rObtemDocentes\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x38\n\rObtemEgressos\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse\x12\x38\n\rObtemProjetos\x12\x12.protos.PpgRequest\x1a\x13.protos.PpgResponse2\x8c\x02\n\x04Home\x12;\n\x0eObtemProgramas\x12\x13.protos.HomeRequest\x1a\x14.protos.HomeResponse\x12\x41\n\x14ObtemRedeColaboracao\x12\x13.protos.HomeRequest\x1a\x14.protos.HomeResponse\x12\x41\n\x14ObtemRankingDocentes\x12\x13.protos.HomeRequest\x1a\x14.protos.HomeResponse\x12\x41\n\x14ObtemArtigosDocentes\x12\x13.protos.HomeRequest\x1a\x14.protos.HomeResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'ppg_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_INDICADORES']._serialized_start=37
-  _globals['_INDICADORES']._serialized_end=111
+  _globals['_PPG']._serialized_start=38
+  _globals['_PPG']._serialized_end=397
+  _globals['_HOME']._serialized_start=400
+  _globals['_HOME']._serialized_end=668
 # @@protoc_insertion_point(module_scope)

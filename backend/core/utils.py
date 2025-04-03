@@ -1,5 +1,5 @@
-from typing import Any, Dict, Literal
-from backend.db.db import DBConnector,DBConnectorGRAD, DBConnectorGRADForm
+from typing import Any, Dict
+from backend.db.db import DBConnector, DBConnectorGRAD, DBConnectorGRADForm, DBConnectorViews
 from backend.db.db import DBConnectorPPG
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -106,7 +106,7 @@ def send_email(email_to: str, subject_template: str = "", html_template: str = "
         server.quit()
         return True
     except Exception as err:
-        return err
+        return False
     
 def InsertQuery(table_name : str, **kwargs):
     """
@@ -165,21 +165,16 @@ def tratamento_excecao(func):
             raise error
     return wrapper
 
-def tratamento_excecao_com_db(tipo_banco : Literal['ppg'] | Literal['grad']= 'ppg'):
+
+def tratamento_excecao_com_db(**tipo_banco):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             try:
-                if 'db' not in kwargs:
-                    if tipo_banco == 'grad':
-                        db = DBConnectorGRAD()
-                    elif tipo_banco == 'grad_formularios':
-                        db = DBConnectorGRADForm()
-                    else:
-                        db = DBConnectorPPG()
-                    kwargs['db'] = db
-                else:
-                    db = kwargs['db']
+                bancos = {}
+                for variavel, instancia in tipo_banco.items():
+                    bancos[variavel] = instancia()
+                    kwargs[variavel] = bancos[variavel]
                 return func(*args, **kwargs)
             except Exception as error:
                 nome_funcao = func.__name__
@@ -187,17 +182,32 @@ def tratamento_excecao_com_db(tipo_banco : Literal['ppg'] | Literal['grad']= 'pp
                 print(f"Erro: {str(error)}")
                 raise error
             finally:
-                db.close()
+                for db in bancos.values():
+                    db.close()
+
         return wrapper
+
     return decorator
 
+
 def tratamento_excecao_db_ppg():
-    return tratamento_excecao_com_db(tipo_banco=DBConnectorPPG)
+    return tratamento_excecao_com_db(db=DBConnectorPPG)
+
+
+def tratamento_excecao_db_grad_form():
+    return tratamento_excecao_com_db(db=DBConnectorGRADForm)
+
 
 def tratamento_excecao_db_grad():
     return tratamento_excecao_com_db(db=DBConnectorGRAD)
 
-def tratamento_excecao_db_grad_form():
-    return tratamento_excecao_com_db(db=DBConnectorGRADForm)
+def tratamento_excecao_db_ppg_views():
+    return tratamento_excecao_com_db(db=DBConnectorPPG, db_views=DBConnectorViews)
+
+
+def tratamento_excecao_db_views():
+    return tratamento_excecao_com_db(db_views=DBConnectorViews)
+
+
 
 

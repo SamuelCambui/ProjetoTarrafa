@@ -4,6 +4,28 @@
 var grpc = require('@grpc/grpc-js');
 var messages_pb = require('./messages_pb.js');
 
+function serialize_protos_HomeRequest(arg) {
+  if (!(arg instanceof messages_pb.HomeRequest)) {
+    throw new Error('Expected argument of type protos.HomeRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_protos_HomeRequest(buffer_arg) {
+  return messages_pb.HomeRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_protos_HomeResponse(arg) {
+  if (!(arg instanceof messages_pb.HomeResponse)) {
+    throw new Error('Expected argument of type protos.HomeResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_protos_HomeResponse(buffer_arg) {
+  return messages_pb.HomeResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_protos_PpgRequest(arg) {
   if (!(arg instanceof messages_pb.PpgRequest)) {
     throw new Error('Expected argument of type protos.PpgRequest');
@@ -27,9 +49,75 @@ function deserialize_protos_PpgResponse(buffer_arg) {
 }
 
 
-var IndicadoresService = exports.IndicadoresService = {
-  obtemIndicadores: {
-    path: '/protos.Indicadores/ObtemIndicadores',
+//
+// Serviço PPG
+// Este serviço oferece uma API para interagir com os dados de PPG.
+// Ele permite obter indicadores, bancas, docentes, egressos,
+// informações gerais, projetos e tarefas relacionadas ao PPG.
+var PPGService = exports.PPGService = {
+  // Retorna os indicadores do PPG.
+obtemInformacaoPPG: {
+    path: '/protos.PPG/ObtemInformacaoPPG',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.PpgRequest,
+    responseType: messages_pb.PpgResponse,
+    requestSerialize: serialize_protos_PpgRequest,
+    requestDeserialize: deserialize_protos_PpgRequest,
+    responseSerialize: serialize_protos_PpgResponse,
+    responseDeserialize: deserialize_protos_PpgResponse,
+  },
+  // Retorna os indicadores de desempenho do PPG.
+obtemIndicadores: {
+    path: '/protos.PPG/ObtemIndicadores',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.PpgRequest,
+    responseType: messages_pb.PpgResponse,
+    requestSerialize: serialize_protos_PpgRequest,
+    requestDeserialize: deserialize_protos_PpgRequest,
+    responseSerialize: serialize_protos_PpgResponse,
+    responseDeserialize: deserialize_protos_PpgResponse,
+  },
+  // Retorna as informações sobre as bancas do PPG.
+obtemBancas: {
+    path: '/protos.PPG/ObtemBancas',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.PpgRequest,
+    responseType: messages_pb.PpgResponse,
+    requestSerialize: serialize_protos_PpgRequest,
+    requestDeserialize: deserialize_protos_PpgRequest,
+    responseSerialize: serialize_protos_PpgResponse,
+    responseDeserialize: deserialize_protos_PpgResponse,
+  },
+  // Retorna os dados sobre os docentes do PPG.
+obtemDocentes: {
+    path: '/protos.PPG/ObtemDocentes',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.PpgRequest,
+    responseType: messages_pb.PpgResponse,
+    requestSerialize: serialize_protos_PpgRequest,
+    requestDeserialize: deserialize_protos_PpgRequest,
+    responseSerialize: serialize_protos_PpgResponse,
+    responseDeserialize: deserialize_protos_PpgResponse,
+  },
+  // Retorna informações sobre os egressos do PPG.
+obtemEgressos: {
+    path: '/protos.PPG/ObtemEgressos',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.PpgRequest,
+    responseType: messages_pb.PpgResponse,
+    requestSerialize: serialize_protos_PpgRequest,
+    requestDeserialize: deserialize_protos_PpgRequest,
+    responseSerialize: serialize_protos_PpgResponse,
+    responseDeserialize: deserialize_protos_PpgResponse,
+  },
+  // Retorna informações sobre projetos do PPG.
+obtemProjetos: {
+    path: '/protos.PPG/ObtemProjetos',
     requestStream: false,
     responseStream: false,
     requestType: messages_pb.PpgRequest,
@@ -41,4 +129,60 @@ var IndicadoresService = exports.IndicadoresService = {
   },
 };
 
-exports.IndicadoresClient = grpc.makeGenericClientConstructor(IndicadoresService);
+exports.PPGClient = grpc.makeGenericClientConstructor(PPGService);
+//
+// Serviço Home
+// Este serviço fornece a interface para obter as informações
+// gerais da página inicial da aplicação.
+var HomeService = exports.HomeService = {
+  // Retorna os programas da Universidade
+obtemProgramas: {
+    path: '/protos.Home/ObtemProgramas',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.HomeRequest,
+    responseType: messages_pb.HomeResponse,
+    requestSerialize: serialize_protos_HomeRequest,
+    requestDeserialize: deserialize_protos_HomeRequest,
+    responseSerialize: serialize_protos_HomeResponse,
+    responseDeserialize: deserialize_protos_HomeResponse,
+  },
+  // Retorna a rede de colaboração da univesidade
+obtemRedeColaboracao: {
+    path: '/protos.Home/ObtemRedeColaboracao',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.HomeRequest,
+    responseType: messages_pb.HomeResponse,
+    requestSerialize: serialize_protos_HomeRequest,
+    requestDeserialize: deserialize_protos_HomeRequest,
+    responseSerialize: serialize_protos_HomeResponse,
+    responseDeserialize: deserialize_protos_HomeResponse,
+  },
+  // Retorna o ranking dos docentes da Universidade
+obtemRankingDocentes: {
+    path: '/protos.Home/ObtemRankingDocentes',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.HomeRequest,
+    responseType: messages_pb.HomeResponse,
+    requestSerialize: serialize_protos_HomeRequest,
+    requestDeserialize: deserialize_protos_HomeRequest,
+    responseSerialize: serialize_protos_HomeResponse,
+    responseDeserialize: deserialize_protos_HomeResponse,
+  },
+  // Retorna os artigos dos docentes da Universidade
+obtemArtigosDocentes: {
+    path: '/protos.Home/ObtemArtigosDocentes',
+    requestStream: false,
+    responseStream: false,
+    requestType: messages_pb.HomeRequest,
+    responseType: messages_pb.HomeResponse,
+    requestSerialize: serialize_protos_HomeRequest,
+    requestDeserialize: deserialize_protos_HomeRequest,
+    responseSerialize: serialize_protos_HomeResponse,
+    responseDeserialize: deserialize_protos_HomeResponse,
+  },
+};
+
+exports.HomeClient = grpc.makeGenericClientConstructor(HomeService);

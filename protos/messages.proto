@@ -2,9 +2,7 @@ syntax = "proto3";
 
 package protos;
 
-
 message Empty {}
-
 
 message HomeRequest {
   optional string id_ies = 1;
@@ -21,14 +19,16 @@ message HomeResponse {
 }
 
 message PpgRequest {
-    string id = 1;
-    int32 anoi = 2;
-    int32 anof = 3;
+  optional string id_ies = 1;
+  optional string id_ppg = 2;
+  optional int32 anoi = 3;
+  optional int32 anof = 4;
+  optional string nota = 5;
 }
 
 message PpgJson {
-    string nome = 1;
-    string json = 2;
+  optional string nome = 1;
+  optional string json = 2;
 }
 
 message PpgResponse {
@@ -55,21 +55,29 @@ message LoginResponse {
   optional string refresh_token = 4;
 }
 
+
+message CriacaoUsuarioRequest{
+  optional UsuarioDados usuario_base = 1;
+  optional string password = 2;
+}
+
+
 message LoginResponseFormulario {
   optional UsuarioDadosFormulario usuario = 1;
   bool erro = 2;
 }
 
 message UsuarioDados {
-  optional string idlattes = 1;
+  optional string id_lattes = 1;
   optional string email = 2;
   optional string nome = 3;
   optional bool is_superuser = 4;
   optional bool is_admin = 5;
-  optional string id_ies = 6;
-  optional string nome_ies = 7;
-  optional string sigla_ies = 8;
-  optional string link_avatar = 9;
+  optional bool is_active = 6;
+  optional string id_ies = 7;
+  optional string nome_ies = 8;
+  optional string sigla_ies = 9;
+  optional string link_avatar = 10;
 }
 
 message UsuarioDadosFormulario {
@@ -80,15 +88,12 @@ message UsuarioDadosFormulario {
   optional bool is_admin = 5;
 }
 
-message CriacaoUsuarioRequest{
-  optional UsuarioDados usuario_base = 1;
-  optional string password = 2;
-}
 
 message CriacaoUsuarioFormularioRequest{
   optional UsuarioDadosFormulario usuario_base = 1;
   optional string password = 2;
 }
+
 
 message UsuarioRequest {
   optional string email = 1;
@@ -108,19 +113,36 @@ message ListaUsuariosFormularioResponse {
 
 message AlteracaoUsuarioResponse {
   optional bool status = 1;
-  optional string menssagem = 2;
+  optional string mensagem = 2;
 }
 
 message ListaUsuariosResponse {
   repeated UsuarioResponse item = 1;
 }
 
+
+
+message VerificarSessaoResponse {
+  string access_token = 1;
+  optional bool erro = 2;
+}
+
+message Universidade {
+  optional string id_ies = 1;
+  optional string nome = 2;
+  optional string sigla = 3;
+}
+
+message ListaUniversidadesResponse {
+  repeated Universidade item = 1;
+}
+
 message PPGLSRequest{
   optional string id_disc = 1;
   optional string id_ies = 2;
   optional string id_curso = 3;
-  optional int32 anoi = 5;
-  optional int32 anof = 6;
+  optional int32 anoi = 4;
+  optional int32 anof = 5;
 }
 
 message PPGLSJson{
@@ -157,11 +179,32 @@ message FormularioPPGLSResponse{
   repeated FormularioPPGLSJson item = 1;
 }
 
+
 message VerificarSessaoRequest {
   string refresh_token = 1;
 }
 
-message VerificarSessaoResponse {
-  string access_token = 1;
-  optional bool erro = 2;
+message GradRequest {
+  optional string id = 1;
+  optional int32 anoi = 2;
+  optional int32 anof = 3;
+  optional string id_ies = 4;
+}
+
+message GradDisciplinasRequest {
+  optional string id_disc = 1;
+  optional string id_ies = 2;
+  optional string id_curso = 3;
+  optional string id_grade = 4;
+  optional int32 anoi = 5;
+  optional int32 anof = 6;
+}
+
+message GradJson {
+  optional string nome = 1;
+  optional string json = 2;
+}
+
+message GradResponse {
+  repeated GradJson item = 1;
 }

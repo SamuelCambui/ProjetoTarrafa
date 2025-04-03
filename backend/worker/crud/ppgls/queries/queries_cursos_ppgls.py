@@ -97,7 +97,6 @@ class QueriesCursos():
         ret = db.fetch_all(query, id=id, anoi=anoi, anof=anof, id_ies=id_ies)
         return ret
 
-
     @tratamento_excecao_db_grad()
     def quantidade_alunos_por_sexo(
         self,

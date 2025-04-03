@@ -5,6 +5,9 @@ from pydantic_settings import BaseSettings
 
 import os
 
+from pydantic_settings import BaseSettings
+
+
 class Settings(BaseSettings):
     #* Project
     API_STR: str = os.getenv('API_STR', '')
@@ -27,17 +30,16 @@ class Settings(BaseSettings):
     LOCAL_REDIS_URL: str = os.getenv('LOCAL_REDIS_URL', '')
     REDIS_PORT: str = os.getenv('REDIS_PORT', '')
 
-
     #* Postgres
     POSTGRES_USER: str= os.getenv('POSTGRES_USER', '')
     POSTGRES_PASSWORD: str= os.getenv('POSTGRES_PASSWORD', '')
     POSTGRES_HOST_2: str= os.getenv('POSTGRES_HOST_2', '')
     POSTGRES_DB_2: str= os.getenv('POSTGRES_DB_2', '')
-
     #POSTGRES_DB_GRAD: str = os.getenv('POSTGRES_DB_GRAD')
     POSTGRES_DB_GRAD_FORM: str = os.getenv('POSTGRES_DB_GRAD_FORM', '')
     POSTGRES_DB_GRAD: str = os.getenv('POSTGRES_DB_GRAD', '')
     POSTGRES_PORT: str = os.getenv('POSTGRES_PORT', '')
+    POSTGRES_DB_VIEWS: str = os.getenv('POSTGRES_DB_VIEWS', '')
     
     #* Email
     # Senha email tarrafa : #sistema@tarrafa#2024
@@ -55,6 +57,15 @@ class Settings(BaseSettings):
     GRPC_SERVER_LOGIN : str =os.getenv('GRPC_SERVER_LOGIN', "localhost")
     GRPC_SERVER_LOGIN_FORM : str =os.getenv('GRPC_SERVER_LOGIN_FORM', "localhost")
     GRPC_SERVER_PPGLS : str = os.getenv('GRPC_SERVER_PPGLS', "localhost:50054")
+    RABBITMQ_PORT : str = os.getenv('RABBITMQ_PORT', "5672")
+
+  
+    GRPC_SERVER_USUARIOS : str = os.getenv('GRPC_SERVER_USUARIOS', "localhost")
+    GRPC_SERVER_GRAD : str = os.getenv('GRPC_SERVER_GRAD', "localhost")
+    FILA_TAREFAS_CRITICAS : str = os.getenv('FILA_TAREFAS_CRITICAS', 'tarefas_criticas')
+    FILA_TAREFAS_CURRICULOS : str = os.getenv('FILA_TAREFAS_CURRICULOS', 'tarefas_curriculos')
+    FILA_PROGRESSOS : str = os.getenv('FILA_PROGRESSOS', 'progressos_tarefas')
+    JWT_SECRET_KEY : str = os.getenv('JWT_SECRET_KEY', "")
     
     FILA_TAREFAS_CRITICAS : str = os.getenv('FILA_TAREFAS_CRITICAS', 'tarefas_criticas')
     FILA_TAREFAS_CURRICULOS : str = os.getenv('FILA_TAREFAS_CURRICULOS', 'tarefas_curriculos')

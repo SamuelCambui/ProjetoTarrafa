@@ -309,7 +309,6 @@ class QueriesFormularioPPGLS():
         # Retorna o objeto formulado em formato JSON para compatibilidade com a mensagem `FormularioPPGLSJson`
         return formulario
 
-
     @tratamento_excecao_db_grad_form()
     def listar_formularios_ppgls(self, db: DBConnectorGRADForm = None):
         # Buscar todos os dados dos formulários

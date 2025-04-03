@@ -1,3 +1,14 @@
 {
-    "python.analysis.typeCheckingMode": "off"
+    "python.analysis.typeCheckingMode": "off",
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestArgs": [
+        "testes/tests"
+    ],
+    "python.analysis.extraPaths": [
+        ".",
+        "./protos/out"
+    ]
 }
+

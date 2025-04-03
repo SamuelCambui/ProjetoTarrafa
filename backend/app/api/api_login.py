@@ -1,7 +1,10 @@
 from __future__ import print_function
 
+
 import sys
 from pathlib import Path
+
+
 
 diretorio_raiz = Path(__name__).resolve().parent
 sys.path.append(str(diretorio_raiz))
@@ -84,10 +87,14 @@ def VerificarSessao(token : Token):
         redis = RedisConnector()
         user_data = redis.getJson(f"user:{payload.get('idlattes')}")
 
+
+
         stored_payload = decode_jwt_token(user_data["refresh_token"])
 
         if stored_payload["token_id"] != payload["token_id"]:
             redis.delete(f"user:{payload.get('idlattes')}")  # Invalida a sessão
+
+
             raise Exception()
         
         new_access_token = generate_jwt_token(payload=user_data["user"], time=ACCESS_TOKEN_EXPIRATION_TIME)

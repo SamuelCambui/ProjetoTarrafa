@@ -60,11 +60,9 @@ class UsuarioCriacao(UsuarioBase):
             "password": self.password
         }
 
-
 # Properties to receive via API on update
 class UsuarioAtualizacao(UsuarioBase):
     password: Optional[str] = None
-
 
 
 # Additional properties to return via API

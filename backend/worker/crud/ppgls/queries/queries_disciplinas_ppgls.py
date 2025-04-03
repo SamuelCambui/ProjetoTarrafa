@@ -166,7 +166,6 @@ class QueriesDisciplinas():
             print(f"Erro inesperado: {e}")
             return {"erro": "Erro na execução da consulta."}
 
-
     @tratamento_excecao_db_grad()
     def aprovacoes_reprovacoes_por_semestre(
         self,
@@ -321,7 +320,6 @@ class QueriesDisciplinas():
             query=query, id_disc=id_disc_tuple, id_ies=id_ies, anoi=anoi, anof=anof
         )
         return ret
-
 
     @tratamento_excecao_db_grad()
     def boxplot_notas_grade(
@@ -489,7 +487,6 @@ class QueriesDisciplinas():
 
         return ret
 
-
     @tratamento_excecao_db_grad()
     def boxplot_notas_evasao(
         self,
@@ -565,7 +562,6 @@ class QueriesDisciplinas():
         )
 
         return ret
-
 
     @tratamento_excecao_db_grad()
     def boxplot_desempenho_alunos_professor(
@@ -774,7 +770,6 @@ class QueriesDisciplinas():
         ret = db.fetch_all(query=query, id_disc=id_disc_tuple, id_ies=id_ies)
 
         return ret
-
 
     @tratamento_excecao_db_grad()
     def histograma_desempenho_cotistas(

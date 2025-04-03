@@ -184,4 +184,3 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
     },
   },
 });
-

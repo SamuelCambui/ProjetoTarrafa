@@ -31,7 +31,6 @@ import {
 import { insertFormularioData } from "../../service/ppgls/formulario/queries";
 import { useGetCursosPPGLSForm } from "../../service/ppgls/dados/queries";
 
-
 const formSchema = z.object({
   nome_espec: z.string(),
   centro: z.string(),

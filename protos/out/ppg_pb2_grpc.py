@@ -30,8 +30,13 @@ if _version_not_supported:
     )
 
 
-class IndicadoresStub(object):
-    """Missing associated documentation comment in .proto file."""
+class PPGStub(object):
+    """
+    Serviço PPG
+    Este serviço oferece uma API para interagir com os dados de PPG.
+    Ele permite obter indicadores, bancas, docentes, egressos,
+    informações gerais, projetos e tarefas relacionadas ao PPG.
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -39,40 +44,163 @@ class IndicadoresStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.ObtemInformacaoPPG = channel.unary_unary(
+                '/protos.PPG/ObtemInformacaoPPG',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
         self.ObtemIndicadores = channel.unary_unary(
-                '/protos.Indicadores/ObtemIndicadores',
+                '/protos.PPG/ObtemIndicadores',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
+        self.ObtemBancas = channel.unary_unary(
+                '/protos.PPG/ObtemBancas',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
+        self.ObtemDocentes = channel.unary_unary(
+                '/protos.PPG/ObtemDocentes',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
+        self.ObtemEgressos = channel.unary_unary(
+                '/protos.PPG/ObtemEgressos',
+                request_serializer=messages__pb2.PpgRequest.SerializeToString,
+                response_deserializer=messages__pb2.PpgResponse.FromString,
+                _registered_method=True)
+        self.ObtemProjetos = channel.unary_unary(
+                '/protos.PPG/ObtemProjetos',
                 request_serializer=messages__pb2.PpgRequest.SerializeToString,
                 response_deserializer=messages__pb2.PpgResponse.FromString,
                 _registered_method=True)
 
 
-class IndicadoresServicer(object):
-    """Missing associated documentation comment in .proto file."""
+class PPGServicer(object):
+    """
+    Serviço PPG
+    Este serviço oferece uma API para interagir com os dados de PPG.
+    Ele permite obter indicadores, bancas, docentes, egressos,
+    informações gerais, projetos e tarefas relacionadas ao PPG.
+    """
+
+    def ObtemInformacaoPPG(self, request, context):
+        """Retorna os indicadores do PPG.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def ObtemIndicadores(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Retorna os indicadores de desempenho do PPG.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemBancas(self, request, context):
+        """Retorna as informações sobre as bancas do PPG.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemDocentes(self, request, context):
+        """Retorna os dados sobre os docentes do PPG.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemEgressos(self, request, context):
+        """Retorna informações sobre os egressos do PPG.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemProjetos(self, request, context):
+        """Retorna informações sobre projetos do PPG.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_IndicadoresServicer_to_server(servicer, server):
+def add_PPGServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'ObtemInformacaoPPG': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemInformacaoPPG,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
             'ObtemIndicadores': grpc.unary_unary_rpc_method_handler(
                     servicer.ObtemIndicadores,
                     request_deserializer=messages__pb2.PpgRequest.FromString,
                     response_serializer=messages__pb2.PpgResponse.SerializeToString,
             ),
+            'ObtemBancas': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemBancas,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
+            'ObtemDocentes': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemDocentes,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
+            'ObtemEgressos': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemEgressos,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
+            'ObtemProjetos': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemProjetos,
+                    request_deserializer=messages__pb2.PpgRequest.FromString,
+                    response_serializer=messages__pb2.PpgResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'protos.Indicadores', rpc_method_handlers)
+            'protos.PPG', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('protos.Indicadores', rpc_method_handlers)
+    server.add_registered_method_handlers('protos.PPG', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class Indicadores(object):
-    """Missing associated documentation comment in .proto file."""
+class PPG(object):
+    """
+    Serviço PPG
+    Este serviço oferece uma API para interagir com os dados de PPG.
+    Ele permite obter indicadores, bancas, docentes, egressos,
+    informações gerais, projetos e tarefas relacionadas ao PPG.
+    """
+
+    @staticmethod
+    def ObtemInformacaoPPG(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.PPG/ObtemInformacaoPPG',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
     def ObtemIndicadores(request,
@@ -88,9 +216,334 @@ class Indicadores(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/protos.Indicadores/ObtemIndicadores',
+            '/protos.PPG/ObtemIndicadores',
             messages__pb2.PpgRequest.SerializeToString,
             messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemBancas(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.PPG/ObtemBancas',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemDocentes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.PPG/ObtemDocentes',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemEgressos(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.PPG/ObtemEgressos',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemProjetos(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.PPG/ObtemProjetos',
+            messages__pb2.PpgRequest.SerializeToString,
+            messages__pb2.PpgResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+
+class HomeStub(object):
+    """
+    Serviço Home
+    Este serviço fornece a interface para obter as informações
+    gerais da página inicial da aplicação.
+    """
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.ObtemProgramas = channel.unary_unary(
+                '/protos.Home/ObtemProgramas',
+                request_serializer=messages__pb2.HomeRequest.SerializeToString,
+                response_deserializer=messages__pb2.HomeResponse.FromString,
+                _registered_method=True)
+        self.ObtemRedeColaboracao = channel.unary_unary(
+                '/protos.Home/ObtemRedeColaboracao',
+                request_serializer=messages__pb2.HomeRequest.SerializeToString,
+                response_deserializer=messages__pb2.HomeResponse.FromString,
+                _registered_method=True)
+        self.ObtemRankingDocentes = channel.unary_unary(
+                '/protos.Home/ObtemRankingDocentes',
+                request_serializer=messages__pb2.HomeRequest.SerializeToString,
+                response_deserializer=messages__pb2.HomeResponse.FromString,
+                _registered_method=True)
+        self.ObtemArtigosDocentes = channel.unary_unary(
+                '/protos.Home/ObtemArtigosDocentes',
+                request_serializer=messages__pb2.HomeRequest.SerializeToString,
+                response_deserializer=messages__pb2.HomeResponse.FromString,
+                _registered_method=True)
+
+
+class HomeServicer(object):
+    """
+    Serviço Home
+    Este serviço fornece a interface para obter as informações
+    gerais da página inicial da aplicação.
+    """
+
+    def ObtemProgramas(self, request, context):
+        """Retorna os programas da Universidade
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemRedeColaboracao(self, request, context):
+        """Retorna a rede de colaboração da univesidade
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemRankingDocentes(self, request, context):
+        """Retorna o ranking dos docentes da Universidade
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ObtemArtigosDocentes(self, request, context):
+        """Retorna os artigos dos docentes da Universidade
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_HomeServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'ObtemProgramas': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemProgramas,
+                    request_deserializer=messages__pb2.HomeRequest.FromString,
+                    response_serializer=messages__pb2.HomeResponse.SerializeToString,
+            ),
+            'ObtemRedeColaboracao': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemRedeColaboracao,
+                    request_deserializer=messages__pb2.HomeRequest.FromString,
+                    response_serializer=messages__pb2.HomeResponse.SerializeToString,
+            ),
+            'ObtemRankingDocentes': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemRankingDocentes,
+                    request_deserializer=messages__pb2.HomeRequest.FromString,
+                    response_serializer=messages__pb2.HomeResponse.SerializeToString,
+            ),
+            'ObtemArtigosDocentes': grpc.unary_unary_rpc_method_handler(
+                    servicer.ObtemArtigosDocentes,
+                    request_deserializer=messages__pb2.HomeRequest.FromString,
+                    response_serializer=messages__pb2.HomeResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'protos.Home', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('protos.Home', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class Home(object):
+    """
+    Serviço Home
+    Este serviço fornece a interface para obter as informações
+    gerais da página inicial da aplicação.
+    """
+
+    @staticmethod
+    def ObtemProgramas(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.Home/ObtemProgramas',
+            messages__pb2.HomeRequest.SerializeToString,
+            messages__pb2.HomeResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemRedeColaboracao(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.Home/ObtemRedeColaboracao',
+            messages__pb2.HomeRequest.SerializeToString,
+            messages__pb2.HomeResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemRankingDocentes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.Home/ObtemRankingDocentes',
+            messages__pb2.HomeRequest.SerializeToString,
+            messages__pb2.HomeResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ObtemArtigosDocentes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/protos.Home/ObtemArtigosDocentes',
+            messages__pb2.HomeRequest.SerializeToString,
+            messages__pb2.HomeResponse.FromString,
             options,
             channel_credentials,
             insecure,

@@ -1,6 +1,7 @@
 "use server";
 import { auth, signIn, signOut } from "@/auth";
 import { AuthError, Session } from "next-auth";
+import { isRedirectError } from "next/dist/client/components/redirect";
 import { redirect } from "next/navigation";
 
 export async function authorize(
@@ -34,9 +35,7 @@ export async function authorize(
 }
 
 export async function logout() {
-  const token = "false";
-  console.log("Token retornado");
-  console.log(token);
+
 
 
   await signOut({ redirect: false });

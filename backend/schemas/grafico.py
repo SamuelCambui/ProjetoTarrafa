@@ -1,14 +1,13 @@
-from enum import Enum
-from typing import Optional
 import json
+from typing import Optional
 from pydantic import BaseModel
 
 class DataSet(BaseModel):
-    label: Optional[str] = ''     #dataset1                     #dataset2
-    data: Optional[list[float]] = []  #30   #10   #50  #null     #70 #-50   
+    label: Optional[str] = ''
+    data: Optional[list[float]] = []
 
 class DadosGrafico(BaseModel):
-    labels: Optional[list[str]] = [] #janeiro #fevereiro... july
+    labels: Optional[list[str]] = []
     datasets: Optional[list[DataSet]] = []
 
 class Grafico(BaseModel):
