@@ -14,7 +14,8 @@
         //     "envFile": "${workspaceFolder}/.env.desenvolvimento"
         // },
         {
-            "name": "Python: QUERIES Celery WINDOWS",
+            // Worker para fila_ppg
+            "name": "Python: QUERIES Celery PPG",
             "type": "debugpy",
             "request": "launch",
             "module": "celery",
@@ -25,15 +26,60 @@
                 "--pool=threads",
                 "--concurrency=8",
                 "-Q",
-                "fila_queries",
+                "fila_ppg",
                 "-l",
                 "INFO",
                 "-n",
-                "worker1@%h"
+                "worker_ppg@%h"
             ],
             "jinja": true,
             "justMyCode": true,
-            "gevent": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento"
+        },
+        {
+            // Worker para fila_ppgls
+            "name": "Python: QUERIES Celery PPGLS",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "celery",
+            "args": [
+                "-A",
+                "backend.worker.celery_start_queries",
+                "worker",
+                "--pool=threads",
+                "--concurrency=8",
+                "-Q",
+                "fila_ppgls",
+                "-l",
+                "INFO",
+                "-n",
+                "worker_ppgls@%h"
+            ],
+            "jinja": true,
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env.desenvolvimento"
+        },
+        {
+            // Worker para fila_grad
+            "name": "Python: QUERIES Celery GRAD",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "celery",
+            "args": [
+                "-A",
+                "backend.worker.celery_start_queries",
+                "worker",
+                "--pool=threads",
+                "--concurrency=8",
+                "-Q",
+                "fila_grad",
+                "-l",
+                "INFO",
+                "-n",
+                "worker_grad@%h"
+            ],
+            "jinja": true,
+            "justMyCode": true,
             "envFile": "${workspaceFolder}/.env.desenvolvimento"
         },
         {

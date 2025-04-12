@@ -3,10 +3,7 @@ import { LoadingCard } from "@/app/ppgls/_components/LoadingCard";
 import { GraficoProps } from "@/app/ppgls/_components/types";
 import { SemDados } from "@/app/ppgls/_components/SemDados";
 import { Grafico } from "@/app/ppgls/_components/Grafico";
-import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
-import { useSidebar } from "@/components/ui/sidebar";
-import { useEffect, useRef } from "react";
+import {useRef } from "react";
 
 
 
@@ -15,13 +12,10 @@ export const GraficoQuantidadeAlunos = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {
     return <LoadingCard />;
   }
-  const transformedData = data.map(({ ano_letivo, semestre, ...resto }: any) => ({
-    ...resto,
-    semestre_letivo: `${ano_letivo}.${semestre}`,
-  }));
+
   const ref = useRef<Chart>(null);
   const config = {
-    data: transformedData,
+    data,
     xField: "semestre_letivo",
     yField: "quantidade",
     colorField: "sexo",
@@ -47,7 +41,7 @@ export const GraficoQuantidadeAlunos = ({ data, isLoading }: GraficoProps) => {
                         ></span>
                         <span className="mr-6 capitalize">{name}</span>
                       </div>
-                      <b>{value} Alunos</b>
+                      <span>{value} Alunos</span>
                     </div>
                   </div>
                 );
@@ -78,7 +72,7 @@ export const GraficoQuantidadeAlunos = ({ data, isLoading }: GraficoProps) => {
       titulo="Quantidade de Alunos"
       descricao="Alunos que possuem pelo menos uma disciplina matriculada."
     >
-     {data.length === 0 ? <SemDados /> : <Column {...config} ref={ref} />}
+      {data.length === 0 ? <SemDados /> : <Column {...config} ref={ref} />}
     </Grafico>
   );
 };

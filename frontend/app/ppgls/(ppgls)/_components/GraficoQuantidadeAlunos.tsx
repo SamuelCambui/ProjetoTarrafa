@@ -37,7 +37,7 @@ export const GraficoQuantidadeAlunos = ({ data, isLoading }: GraficoProps) => {
   // Transformando os dados antes de usá-los
   const transformedData = transformData(data);
 
-  console.log("----------------------Dados de GraficoQuantidadeAlunos--------------------- ");
+  console.log("----------------------Dados de GraficoQuantidadeAlunos---------------------");
   console.log(transformedData);
 
   const ref = useRef<Chart>(null);

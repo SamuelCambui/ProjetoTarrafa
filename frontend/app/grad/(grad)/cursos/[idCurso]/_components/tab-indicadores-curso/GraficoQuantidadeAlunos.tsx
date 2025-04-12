@@ -2,9 +2,8 @@ import { Grafico } from "@/app/grad/_components/Grafico";
 import { LoadingCard } from "@/app/grad/_components/LoadingCard";
 import { SemDados } from "@/app/grad/_components/SemDados";
 import { GraficoProps } from "@/app/grad/_components/types";
-import { useSidebar } from "@/components/ui/sidebar";
 import { Chart, Column } from "@ant-design/plots";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 export const GraficoQuantidadeAlunos = ({ data, isLoading }: GraficoProps) => {
   if (!data || isLoading) {

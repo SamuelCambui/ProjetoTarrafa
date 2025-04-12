@@ -40,9 +40,9 @@ app_celery_queries = Celery('queries', broker=broker, backend=backend, include=t
 
 app_celery_queries.conf.update(
     task_routes={
-        f'{BASE_IMPORT_PATH_PPG}.*': {'queue': 'fila_queries'},
-        f'{BASE_IMPORT_PATH_PPGLS}.*': {'queue': 'fila_queries'},
-        f'{BASE_IMPORT_PATH_GRAD}.*': {'queue': 'fila_queries'}
+        f'{BASE_IMPORT_PATH_PPG}.*': {'queue': 'fila_ppg'},
+        f'{BASE_IMPORT_PATH_PPGLS}.*': {'queue': 'fila_ppgls'},
+        f'{BASE_IMPORT_PATH_GRAD}.*': {'queue': 'fila_grad'}
     },
     worker_prefetch_multiplier=1,
     task_time_limit=180
